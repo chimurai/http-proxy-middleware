@@ -1,0 +1,31 @@
+{
+  "name": "http-proxy-middleware",
+  "version": "0.0.1",
+  "description": "http-proxy middleware for connect",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chimurai/http-proxy-middleware.git"
+  },
+  "keywords": [
+    "proxy",
+    "middleware",
+    "http",
+    "https",
+    "connect",
+    "browser-sync",
+    "gulp-connect"
+  ],
+  "author": "Steven Chim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chimurai/http-proxy-middleware/issues"
+  },
+  "homepage": "https://github.com/chimurai/http-proxy-middleware",
+  "devDependencies": {
+    "http-proxy": "^1.9.0"
+  }
+}
