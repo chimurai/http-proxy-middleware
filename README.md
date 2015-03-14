@@ -1,8 +1,6 @@
-# http-proxy-middleware
+# http-proxy-middleware [![Build Status](https://travis-ci.org/chimurai/http-proxy-middleware.svg?branch=master)][https://travis-ci.org/chimurai/http-proxy-middleware]
 
 Middleware for [connect](https://github.com/senchalabs/connect) and [browser-sync](https://github.com/BrowserSync/browser-sync)
-
-[![Build Status][travis-image]][travis-url]
 
 ## Usage
 
