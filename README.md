@@ -2,6 +2,8 @@
 
 Middleware for [connect](https://github.com/senchalabs/connect) and [browser-sync](https://github.com/BrowserSync/browser-sync)
 
+[![Build Status][travis-image]][travis-url]
+
 ## Usage
 
 ### core concept
