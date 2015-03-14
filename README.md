@@ -2,6 +2,11 @@
 
 Middleware for [connect](https://github.com/senchalabs/connect) and [browser-sync](https://github.com/BrowserSync/browser-sync)
 
+## Install
+```javascript
+npm install --save-dev http-proxy-middleware
+```
+
 ## Usage
 
 ### core concept
