@@ -14,6 +14,22 @@ var proxy = proxyMiddleware(context, options);
 * `context` path to proxy. Example: '/api'
 * `options.target` target host to proxy to. (See "Options" for all options)
 
+### connect
+Example: Proxy http://localhost:3000/ajax requests to http://cdnjs.cloudfare.com/ajax
+
+```javascript
+var http  = require('http');
+var connect  = require('connect');
+var proxyMiddleware = require('http-proxy-middleware');
+
+var context = '/ajax';
+var proxy = proxyMiddleware(context, {target: 'http://cdnjs.cloudflare.com'});
+
+var app = connect();
+    app.use(context, proxy);
+
+http.createServer(app).listen(3000);
+```
 
 ### browser-sync
 Example: Proxy http://localhost:3000/ajax requests to http://cdnjs.cloudfare.com/ajax
@@ -22,13 +38,13 @@ Example: Proxy http://localhost:3000/ajax requests to http://cdnjs.cloudfare.com
 var browserSync = require('browser-sync');
 var proxyMiddleware = require('http-proxy-middleware');
 
-var cdnjsProxy = proxyMiddleware('/ajax', {target: 'http://cdnjs.cloudflare.com'});
+var proxy = proxyMiddleware('/ajax', {target: 'http://cdnjs.cloudflare.com'});
 
 browserSync({
     server: {
     	baseDir: "./",
     	port: 3000,
-        middleware: [cdnjsProxy]
+        middleware: [proxy]
     }
 });
 ```
@@ -42,13 +58,13 @@ var browserSync = require('browser-sync');
 var proxyMiddleware = require('http-proxy-middleware');
 
 gulp.task('serve', function () {
-    var cdnjsProxy = proxyMiddleware('/ajax', {target: 'http://cdnjs.cloudflare.com'});
+    var proxy = proxyMiddleware('/ajax', {target: 'http://cdnjs.cloudflare.com'});
  
     browserSync({
         server: {
         	baseDir: "./",
         	port: 3000,
-            middleware: [cdnjsProxy]
+            middleware: [proxy]
         }
     });
 });
