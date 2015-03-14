@@ -1,4 +1,5 @@
-var httpProxy   = require('http-proxy');
+var httpProxy = require('http-proxy');
+var utils     = require('./lib/utils');
 
 var httpProxyMiddleware = function (context, opts) {
 
@@ -12,15 +13,11 @@ var httpProxyMiddleware = function (context, opts) {
     return fnProxyMiddleWare;
 
     function fnProxyMiddleWare (req, res, next) {
-       if (hasContextInUrl(context, req.url)) {
+       if (utils.hasContext(context, req.url)) {
            proxy.web(req, res);
        } else {
            next();
        }
-    }
-
-    function hasContextInUrl (context, url) {
-        return url.indexOf(context) > -1;
     }
 
     function proxyReqHost (proxyReq, req, res, options) {
@@ -31,6 +28,5 @@ var httpProxyMiddleware = function (context, opts) {
     }
 
 };
-
 
 module.exports = httpProxyMiddleware;
