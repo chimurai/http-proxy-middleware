@@ -13,11 +13,11 @@ var httpProxyMiddleware = function (context, opts) {
     return fnProxyMiddleWare;
 
     function fnProxyMiddleWare (req, res, next) {
-       if (utils.hasContext(context, req.url)) {
+        if (utils.hasContext(context, req.url)) {
            proxy.web(req, res);
-       } else {
+        } else {
            next();
-       }
+        }
     }
 
     function proxyReqHost (proxyReq, req, res, options) {
