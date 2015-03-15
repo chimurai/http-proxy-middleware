@@ -8,7 +8,7 @@ var httpProxyMiddleware = function (context, opts) {
 
     console.log('[http-proxy-middleware] Proxy created:', context, proxyOptions.target);
 
-    proxy.on('proxyReq', proxyReqHost);
+    proxy.on('proxyReq', utils.proxyReqHost);
 
     return fnProxyMiddleWare;
 
@@ -17,13 +17,6 @@ var httpProxyMiddleware = function (context, opts) {
            proxy.web(req, res);
         } else {
            next();
-        }
-    }
-
-    function proxyReqHost (proxyReq, req, res, options) {
-        var host = options.target.host;
-        if (host) {
-            proxyReq.setHeader('host', host);
         }
     }
 

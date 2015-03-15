@@ -26,8 +26,8 @@
   },
   "homepage": "https://github.com/chimurai/http-proxy-middleware",
   "devDependencies": {
-    "mocha": "^2.2.1",
-    "should": "^5.2.0"
+    "chai": "^2.1.1",
+    "mocha": "^2.2.1"
   },
   "dependencies": {
     "http-proxy": "^1.9.0",
