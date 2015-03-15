@@ -4,4 +4,5 @@ node_js:
   - "0.11"
   - "0.10"
   - "iojs"
-  - "iojs-v1.0.4" 
+after_success:
+  npm run coveralls

@@ -4,7 +4,9 @@
   "description": "http-proxy middleware for connect",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "mocha --reporter spec",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && rm -rf coverage",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && istanbul-coveralls && rm -rf coverage"
   },
   "repository": {
     "type": "git",
@@ -27,7 +29,9 @@
   "homepage": "https://github.com/chimurai/http-proxy-middleware",
   "devDependencies": {
     "chai": "^2.1.1",
-    "mocha": "^2.2.1"
+    "coveralls": "^2.11.2",
+    "mocha": "^2.2.1",
+    "mocha-lcov-reporter": "0.0.2"
   },
   "dependencies": {
     "http-proxy": "^1.9.0",
