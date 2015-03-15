@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "http-proxy middleware for connect",
   "main": "index.js",
   "scripts": {
@@ -26,9 +26,11 @@
   },
   "homepage": "https://github.com/chimurai/http-proxy-middleware",
   "devDependencies": {
-    "http-proxy": "^1.9.0",
     "mocha": "^2.2.1",
     "should": "^5.2.0",
     "url": "^0.10.3"
+  },
+  "dependencies": {
+    "http-proxy": "^1.9.0"
   }
 }
