@@ -28,7 +28,7 @@ var proxy = proxyMiddleware(context, options);
 Example: Proxy http://localhost:3000/ajax requests to http://cdnjs.cloudfare.com/ajax
 
 ```javascript
-var http  = require('http');
+var http = require('http');
 var connect  = require('connect');
 var proxyMiddleware = require('http-proxy-middleware');
 
@@ -52,8 +52,8 @@ var proxy = proxyMiddleware('/ajax', {target: 'http://cdnjs.cloudflare.com'});
 
 browserSync({
     server: {
-    	baseDir: "./",
-    	port: 3000,
+        baseDir: "./",
+        port: 3000,
         middleware: [proxy]
     }
 });
@@ -69,11 +69,11 @@ var proxyMiddleware = require('http-proxy-middleware');
 
 gulp.task('serve', function () {
     var proxy = proxyMiddleware('/ajax', {target: 'http://cdnjs.cloudflare.com'});
- 
+
     browserSync({
         server: {
-        	baseDir: "./",
-        	port: 3000,
+            baseDir: "./",
+            port: 3000,
             middleware: [proxy]
         }
     });
@@ -84,8 +84,10 @@ gulp.task('default', ['serve']);
 
 ## Options
 
-### options from [http-proxy](https://www.npmjs.com/package/http-proxy):
+ * **option.proxyHost**: true/false, proxy `host` header to target. default:false. Useful for [Name-based virtual hosting](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based)
 
+### http-proxy options:
+These options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
  *  **target**: url string to be parsed with the url module
  *  **forward**: url string to be parsed with the url module
  *  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
