@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "http-proxy middleware for connect",
   "main": "index.js",
   "scripts": {
