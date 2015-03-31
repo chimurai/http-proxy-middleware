@@ -30,6 +30,8 @@
   "devDependencies": {
     "chai": "^2.1.1",
     "coveralls": "^2.11.2",
+    "istanbul": "^0.3.13",
+    "istanbul-coveralls": "^1.0.2",
     "mocha": "^2.2.1",
     "mocha-lcov-reporter": "0.0.2"
   },
