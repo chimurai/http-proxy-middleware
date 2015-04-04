@@ -18,24 +18,28 @@ var proxyOptions = {
 
 describe('utils#proxyError(err, req, res, proxyOptions)', function () {
 
-    it('should set the header: host to match the target host', function () {
-        var httpErrorCode;
-        var errorMessage;
+    var httpErrorCode;
+    var errorMessage;
 
-        var mockRes = {
-            writeHead : function (v) {
-                httpErrorCode = v;
-                return v;
-            },
-            end : function (v) {
-                errorMessage = v;
-                return v;
-            }
-        };
+    var mockRes = {
+        writeHead : function (v) {
+            httpErrorCode = v;
+            return v;
+        },
+        end : function (v) {
+            errorMessage = v;
+            return v;
+        }
+    };
 
-        proxyError(mockError, mockReq, mockRes, proxyOptions);
+    // simulate proxy error
+    proxyError(mockError, mockReq, mockRes, proxyOptions);
 
+    it('should set the http status code to: 500', function () {
         expect(httpErrorCode).to.equal(500);
+    });
+
+    it('should end the response and return error message', function () {
         expect(errorMessage).to.equal('Error occured while trying to proxy to: localhost.dev/api');
     });
 
