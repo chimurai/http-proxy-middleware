@@ -1,7 +1,7 @@
 {
   "name": "http-proxy-middleware",
   "version": "0.0.5",
-  "description": "http-proxy middleware for connect",
+  "description": "http-proxy middleware",
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec",
@@ -19,7 +19,7 @@
     "https",
     "connect",
     "browser-sync",
-    "gulp-connect"
+    "gulp"
   ],
   "author": "Steven Chim",
   "license": "MIT",
