@@ -1,5 +1,6 @@
 var httpProxy = require('http-proxy');
 var utils     = require('./lib/utils');
+var handlers  = require('./lib/handlers');
 
 var httpProxyMiddleware = function (context, opts) {
 
@@ -9,16 +10,16 @@ var httpProxyMiddleware = function (context, opts) {
     console.log('[HPM] Proxy created:', context, proxyOptions.target);
 
     if (proxyOptions.proxyHost) {
-        proxy.on('proxyReq', utils.proxyReqHost);
+        proxy.on('proxyReq', handlers.proxyReqHost);
     }
 
     proxy.on('error', function (err, req, res) {
-        utils.proxyError(err, req, res, proxyOptions);
+        handlers.proxyError(err, req, res, proxyOptions);
     });
 
-    return fnProxyMiddleWare;
+    return middleware;
 
-    function fnProxyMiddleWare (req, res, next) {
+    function middleware (req, res, next) {
         if (utils.hasContext(context, req.url)) {
            proxy.web(req, res);
         } else {
