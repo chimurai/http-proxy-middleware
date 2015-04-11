@@ -18,21 +18,40 @@ describe('handlers.proxyReqHost(proxyReq, req, res, options)', function () {
         }
     };
 
-    var proxyReqOptions = {
-        target : {
-            host : 'localhost.dev'
-        }
-    };
-
-
-    it('should set the header: host to match the target host', function () {
-
+    // deprecated proxyHost
+    it('should set the host header with deprecated option.proxyHost', function () {
         var proxyReq = new ProxyReq();
-        handlers.proxyReqHost(proxyReq, {}, {}, proxyReqOptions);
-
+        handlers.proxyReqHost(proxyReq, {}, {}, {
+            target : {
+                host : 'localhost.dev'
+            },
+            proxyHost : true
+        });
         var result = proxyReq.getHeader('host');
-
         expect(result).to.equal('localhost.dev');
+    });
+
+    it('should set the host header to match the target host by default', function () {
+        var proxyReq = new ProxyReq();
+        handlers.proxyReqHost(proxyReq, {}, {}, {
+            target : {
+                host : 'localhost.dev'
+            }
+        });
+        var result = proxyReq.getHeader('host');
+        expect(result).to.equal('localhost.dev');
+    });
+
+    it('should set the host header manually', function () {
+        var proxyReq = new ProxyReq();
+        handlers.proxyReqHost(proxyReq, {}, {}, {
+            target : {
+                host : 'localhost.dev'
+            },
+            host : 'www.example.org'
+        });
+        var result = proxyReq.getHeader('host');
+        expect(result).to.equal('www.example.org');
     });
 
 });
@@ -42,7 +61,6 @@ describe('handlers.proxyError(err, req, res, proxyOptions)', function () {
     var mockError = {
         code : 'ECONNREFUSED'
     };
-
 
     var mockReq = {
         url : '/api'

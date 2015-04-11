@@ -14,11 +14,13 @@ npm install --save-dev http-proxy-middleware
 
 ## Core concept
 Create and configure the proxy middleware so it can be used as middleware in connect or browser-sync.
+
 ```javascript
 var proxyMiddleware = require('http-proxy-middleware');
 
 var proxy = proxyMiddleware(context, options);
 ```
+
 * `context` path to proxy. Example: '/api'
 * `options.target` target host to proxy to. (See "Options" for all options)
 
@@ -29,7 +31,9 @@ var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 
 ## Options
 
- * **option.proxyHost**: true/false, proxy `host` header to target. default:false. Useful for [name-based virtual hosted](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based) sites.
+ * **option.host**: string, proxy `host` header to target.
+ Default host is set to the target's host.
+ (useful for [name-based virtual hosted](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based) sites)
 
 The following options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
  *  **option.target**: url string to be parsed with the url module

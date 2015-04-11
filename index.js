@@ -7,15 +7,22 @@ var httpProxyMiddleware = function (context, opts) {
     var proxyOptions = opts || {};
     var proxy = httpProxy.createProxyServer(proxyOptions);
 
-    console.log('[HPM] Proxy created:', context, proxyOptions.target);
-
     if (proxyOptions.proxyHost) {
-        proxy.on('proxyReq', handlers.proxyReqHost);
+        console.log('*************************************');
+        console.log('[HPM] Depecrecated "option.proxyHost"');
+        console.log('      Use option.host instead');
+        console.log('*************************************');
     }
 
+    // modify requests
+    proxy.on('proxyReq', handlers.proxyReqHost);
+
+    // handle error and close connection properly
     proxy.on('error', function (err, req, res) {
         handlers.proxyError(err, req, res, proxyOptions);
     });
+
+    console.log('[HPM] Proxy created:', context, proxyOptions.target);
 
     return middleware;
 
