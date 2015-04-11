@@ -12,9 +12,7 @@ Middleware for [connect](https://github.com/senchalabs/connect) and [browser-syn
 npm install --save-dev http-proxy-middleware
 ```
 
-## Usage
-
-### core concept
+## Core concept
 Create and configure the proxy middleware so it can be used as middleware in connect or browser-sync.
 ```javascript
 var proxyMiddleware = require('http-proxy-middleware');
@@ -24,31 +22,50 @@ var proxy = proxyMiddleware(context, options);
 * `context` path to proxy. Example: '/api'
 * `options.target` target host to proxy to. (See "Options" for all options)
 
+```javascript
+// Requests to '/api/x/y/z' will be proxied to 'http://example.org/api/x/y/z'
+var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
+```
+
+## Options
+
+ * **option.proxyHost**: true/false, proxy `host` header to target. default:false. Useful for [name-based virtual hosted](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based) sites.
+
+The following options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
+ *  **option.target**: url string to be parsed with the url module
+ *  **option.forward**: url string to be parsed with the url module
+ *  **option.agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
+ *  **option.secure**: true/false, if you want to verify the SSL Certs
+ *  **option.xfwd**: true/false, adds x-forward headers
+ *  **option.toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
+ *  **option.hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
+
+## Examples
+
 ### connect
-Example: Proxy http://localhost:3000/ajax requests to http://cdnjs.cloudfare.com/ajax
+Example: Proxy http://localhost:3000/api requests to http://www.example.org/api
 
 ```javascript
 var http = require('http');
 var connect  = require('connect');
 var proxyMiddleware = require('http-proxy-middleware');
 
-var context = '/ajax';
-var proxy = proxyMiddleware(context, {target: 'http://cdnjs.cloudflare.com'});
+var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 
 var app = connect();
-    app.use(context, proxy);
+    app.use(proxy);
 
 http.createServer(app).listen(3000);
 ```
 
 ### browser-sync
-Example: Proxy http://localhost:3000/ajax requests to http://cdnjs.cloudfare.com/ajax
+Example: Proxy http://localhost:3000/api requests to http://www.example.org/api
 
 ```javascript
 var browserSync = require('browser-sync');
 var proxyMiddleware = require('http-proxy-middleware');
 
-var proxy = proxyMiddleware('/ajax', {target: 'http://cdnjs.cloudflare.com'});
+var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 
 browserSync({
     server: {
@@ -60,7 +77,7 @@ browserSync({
 ```
 
 ### gulp + browser-sync
-Example: Proxy http://localhost:3000/ajax requests to http://cdnjs.cloudfare.com/ajax
+Example: Proxy http://localhost:3000/api requests to http://www.example.org/api
 
 ```javascript
 var gulp = require('gulp');
@@ -68,7 +85,7 @@ var browserSync = require('browser-sync');
 var proxyMiddleware = require('http-proxy-middleware');
 
 gulp.task('serve', function () {
-    var proxy = proxyMiddleware('/ajax', {target: 'http://cdnjs.cloudflare.com'});
+    var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 
     browserSync({
         server: {
@@ -81,20 +98,6 @@ gulp.task('serve', function () {
 
 gulp.task('default', ['serve']);
 ```
-
-## Options
-
- * **option.proxyHost**: true/false, proxy `host` header to target. default:false. Useful for [Name-based virtual hosting](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based)
-
-### http-proxy options:
-These options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
- *  **target**: url string to be parsed with the url module
- *  **forward**: url string to be parsed with the url module
- *  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
- *  **secure**: true/false, if you want to verify the SSL Certs
- *  **xfwd**: true/false, adds x-forward headers
- *  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
- *  **hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 
 ## License:
 The MIT License (MIT)
