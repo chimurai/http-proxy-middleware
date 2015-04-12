@@ -22,12 +22,15 @@ var proxy = proxyMiddleware(context, options);
 ```
 
 * `context` path to proxy. Example: '/api'
-* `options.target` target host to proxy to. (See "Options" for all options)
+* `options.target` target host to proxy to. (See "[Options](#options)" for all options)
 
+example
 ```javascript
 // Requests to '/api/x/y/z' will be proxied to 'http://example.org/api/x/y/z'
 var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 ```
+
+Use this `proxy` object as middleware in any middleware compatible server, e.g., [connect](https://www.npmjs.com/package/connect), [express](https://www.npmjs.com/package/express), [browser-sync](https://www.npmjs.com/package/browser-sync)
 
 ## Options
 
@@ -46,62 +49,39 @@ The following options are provided by the underlying [http-proxy](https://www.np
 
 ## Examples
 
-### connect
-Example: Proxy http://localhost:3000/api requests to http://www.example.org/api
+  To view the examples, clone the http-proxy-middleware repo and install the dependencies:
 
-```javascript
-var http = require('http');
-var connect  = require('connect');
-var proxyMiddleware = require('http-proxy-middleware');
-
-var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
-
-var app = connect();
-    app.use(proxy);
-
-http.createServer(app).listen(3000);
+```bash
+$ git clone https://github.com/chimurai/http-proxy-middleware.git
+$ cd http-proxy-middleware
+$ npm install
 ```
 
-### browser-sync
-Example: Proxy http://localhost:3000/api requests to http://www.example.org/api
+  Then run whichever example you want:
 
-```javascript
-var browserSync = require('browser-sync');
-var proxyMiddleware = require('http-proxy-middleware');
-
-var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
-
-browserSync({
-    server: {
-        baseDir: "./",
-        port: 3000,
-        middleware: [proxy]
-    }
-});
+```bash
+$ node examples/connect
 ```
 
-### gulp + browser-sync
-Example: Proxy http://localhost:3000/api requests to http://www.example.org/api
+  Or just [explore the examples sources](https://github.com/chimurai/http-proxy-middleware/tree/master/examples)
+ * [connect](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect)
+ * [express](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express)
+ * [browser-sync](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync)
 
-```javascript
-var gulp = require('gulp');
-var browserSync = require('browser-sync');
-var proxyMiddleware = require('http-proxy-middleware');
+## Tests
 
-gulp.task('serve', function () {
-    var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
+  To run the test suite, first install the dependencies, then run `npm test`:
 
-    browserSync({
-        server: {
-            baseDir: "./",
-            port: 3000,
-            middleware: [proxy]
-        }
-    });
-});
-
-gulp.task('default', ['serve']);
+```bash
+$ npm test
 ```
+
+## Todo
+ * context - add more flexibiliy to control when to proxy a request (multiple paths and glob patterns)
+ * WebSocket support.
+ * rewrite - ability to rewrite paths.
+ * headers - ability to add headers to proxied requests.
+
 
 ## License:
 The MIT License (MIT)

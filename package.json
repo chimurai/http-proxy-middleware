@@ -28,8 +28,11 @@
   },
   "homepage": "https://github.com/chimurai/http-proxy-middleware",
   "devDependencies": {
+    "browser-sync": "^2.5.3",
     "chai": "^2.1.1",
+    "connect": "^3.3.5",
     "coveralls": "^2.11.2",
+    "express": "^4.12.3",
     "istanbul": "^0.3.13",
     "istanbul-coveralls": "^1.0.2",
     "mocha": "^2.2.1",
