@@ -11,95 +11,142 @@ describe('http-proxy-middleware creation', function () {
     });
 });
 
-describe('http-proxy-middleware pass through', function () {
-    it('should not proxy requests when request url does not match context' , function () {
-        var middleware;
-        var skipped = false;
+describe('context matching', function () {
+    describe('do not proxy', function () {
+        var isSkipped;
 
-        var mockReq = {url:'/foo/bar'};
-        var mockRes = {};
-        var mockNext = function () {
-            // mockNext will be called when request is not proxied
-            skipped = true;
-        };
+        beforeEach(function () {
+            isSkipped = false;
 
-        middleware = proxyMiddleware('/api', {target:'http://localhost:8000'});
-        middleware(mockReq, mockRes, mockNext);
-        expect(skipped).to.be.true;
+            var middleware;
+
+            var mockReq = {url:'/foo/bar'};
+            var mockRes = {};
+            var mockNext = function () {
+                // mockNext will be called when request is not proxied
+                isSkipped = true;
+            };
+
+            middleware = proxyMiddleware('/api', {target:'http://localhost:8000'});
+            middleware(mockReq, mockRes, mockNext);
+        });
+
+        it('should not proxy requests when request url does not match context' , function () {
+            expect(isSkipped).to.be.true;
+        });
+
     });
 });
 
-describe('http-proxy-middleware as middleware in actual server', function () {
+describe('http-proxy-middleware in actual server', function () {
+    var servers;
 
-    it('should proxy requests to target server', function (done) {
-        var hostResult;
+    describe('basic setup', function () {
+        var targetHeaders;
+        var responseBody;
 
-        var servers = createServers({
-            proxy: proxyMiddleware('/api', {target:'http://localhost:8000'}),
-            sourceMiddleware : function (req, res, next) {next()},
-            targetMiddleware: function (req, res, next) {
-                hostResult = req.headers.host;                              // host
-                res.write('BBB');                                           // respond with 'BBB'
-                res.end()
-            },
+        beforeEach(function (done) {
+            servers = createServers({
+                proxy: proxyMiddleware('/api', {target:'http://localhost:8000'}),
+                sourceMiddleware : function (req, res, next) {next()},
+                targetMiddleware: function (req, res, next) {
+                    targetHeaders = req.headers;                              // store target headers.
+                    res.write('HELLO WEB');                                   // respond with 'HELLO WEB'
+                    res.end()
+                },
+            });
+
+            http.get('http://localhost:3000/api/', function (res) {
+                res.on('data', function (chunk) {
+                    responseBody = chunk.toString();
+                    done();
+                });
+            });
         });
 
-        http.get('http://localhost:3000/api/', function (res) {
-            expect(hostResult).to.equal('localhost:8000');                  // should be target host
 
-            res.on('data', function (chunk) {
-                expect(chunk.toString()).to.equal('BBB');
+        it('should have the same headers.host value', function () {
+            expect(targetHeaders.host).to.equal('localhost:3000');
+        });
 
-                // clean up and finish
-                closeServers(servers);
-                servers = null;
+        it('should have response body: "HELLO WEB"', function () {
+            expect(responseBody).to.equal('HELLO WEB');
+        });
+    });
+
+    describe('additional request headers', function () {
+        var targetHeaders;
+
+        beforeEach(function (done) {
+            servers = createServers({
+                proxy: proxyMiddleware('/api', {target:'http://localhost:8000', headers: {host:'foobar.dev'} }),
+                sourceMiddleware : function (req, res, next) {next()},
+                targetMiddleware: function (req, res, next) {
+                    targetHeaders = req.headers;                              // host
+                    res.end();
+                },
+            });
+
+            http.get('http://localhost:3000/api/', function (res) {
+                done();
+            });
+
+        });
+
+        it('should send request header "host" to target server', function () {
+            expect(targetHeaders.host).to.equal('foobar.dev');
+        });
+    });
+
+    describe('legacy proxyHost parameter', function () {
+        var targetHeaders;
+
+        beforeEach(function (done) {
+            servers = createServers({
+                proxy: proxyMiddleware('/api', {target:'http://localhost:8000', proxyHost: 'foobar.dev'}),
+                sourceMiddleware : function (req, res, next) {next()},
+                targetMiddleware: function (req, res, next) {
+                    targetHeaders = req.headers;                              // host
+                    res.end();
+                },
+            });
+
+            http.get('http://localhost:3000/api/', function (res) {
+                done();
+            });
+
+        });
+
+        it('should proxy host header to target server', function () {
+            expect(targetHeaders.host).to.equal('foobar.dev');
+        });
+    });
+
+    describe('Error handling', function () {
+        var response;
+
+        beforeEach(function (done) {
+            servers = createServers({
+                proxy: proxyMiddleware('/api', {target:'http://localhost:666'}),  // unreachable host on port:666
+                sourceMiddleware : function (req, res, next) {next()},
+                targetMiddleware: function (req, res, next) {next()},
+            });
+
+            http.get('http://localhost:3000/api/', function (res) {
+                response = res;
                 done();
             });
         });
-    });
 
-    it('should proxy host header to target server', function (done) {
-        var hostResult;
-
-        var servers = createServers({
-            proxy: proxyMiddleware('/api', {target:'http://localhost:8000', host:'foobar.dev'}),
-            sourceMiddleware : function (req, res, next) {next()},
-            targetMiddleware: function (req, res, next) {
-                hostResult = req.headers.host;                              // host
-                res.end();
-            },
-        });
-
-        http.get('http://localhost:3000/api/', function (res) {
-
-            expect(hostResult).to.equal('foobar.dev');
-
-            // clean up and finish
-            closeServers(servers);
-            servers = null;
-            done();
+        it('should handle errors when host is not reachable', function () {
+            expect(response.statusCode).to.equal(500);
         });
     });
 
-    it('should handle errors when host is not reachable', function (done) {
-        var hostResult;
-
-        var servers = createServers({
-            proxy: proxyMiddleware('/api', {target:'http://localhost:666'}),  // unreachable host on port:666
-            sourceMiddleware : function (req, res, next) {next()},
-            targetMiddleware: function (req, res, next) {next()},
-        });
-
-        http.get('http://localhost:3000/api/', function (res) {
-            expect(res.statusCode).to.equal(500);
-
-            // clean up and finish
-            closeServers(servers);
-            servers = null;
-            done();
-        });
+    afterEach(function () {
+        closeServers(servers);
+        servers = null;
     });
-
 
 });
 

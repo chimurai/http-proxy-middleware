@@ -5,17 +5,24 @@ var handlers  = require('./lib/handlers');
 var httpProxyMiddleware = function (context, opts) {
 
     var proxyOptions = opts || {};
-    var proxy = httpProxy.createProxyServer(proxyOptions);
 
+    // Legacy option.proxyHost
+    // set options.headers.host when option.proxyHost is provided
     if (proxyOptions.proxyHost) {
         console.log('*************************************');
-        console.log('[HPM] Depecrecated "option.proxyHost"');
-        console.log('      Use option.host instead');
+        console.log('[HPM] Deprecated "option.proxyHost"');
+        console.log('      Use "option.headers.host" instead');
+        console.log('      "option.proxyHost" will be removed in future release.');
         console.log('*************************************');
+
+        proxyOptions.headers = proxyOptions.headers || {};
+        proxyOptions.headers.host = proxyOptions.proxyHost;
     }
 
+    var proxy = httpProxy.createProxyServer(proxyOptions);
+
     // modify requests
-    proxy.on('proxyReq', handlers.proxyReqHost);
+    // proxy.on('proxyReq', function () {});
 
     // handle error and close connection properly
     proxy.on('error', function (err, req, res) {

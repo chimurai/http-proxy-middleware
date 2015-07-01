@@ -5,7 +5,7 @@
 [![devDependency Status](https://img.shields.io/david/dev/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=devDependencies)
 [![MIT license](https://img.shields.io/npm/l/http-proxy-middleware.svg?style=flat-square)](https://www.npmjs.com/package/http-proxy-middleware)
 
-Middleware for [connect](https://github.com/senchalabs/connect) and [browser-sync](https://github.com/BrowserSync/browser-sync)
+Proxy middleware for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express) and [browser-sync](https://github.com/BrowserSync/browser-sync)
 
 ## Install
 ```javascript
@@ -13,30 +13,41 @@ npm install --save-dev http-proxy-middleware
 ```
 
 ## Core concept
-Create and configure the proxy middleware so it can be used as middleware in connect or browser-sync.
+Create and configure the proxy middleware so it can be used in servers such as: connect, express or browser-sync.
 
 ```javascript
+// dependencies
+var express = require('express');
 var proxyMiddleware = require('http-proxy-middleware');
 
+// configure proxy middleware
+var context = '/api';
+var options = {target: 'http://www.example.org'};
 var proxy = proxyMiddleware(context, options);
+
+// use the configured `proxy` in web server
+var app = express();
+    app.use(proxy);
+    app.listen(3000);
 ```
 
 * `context` path to proxy. Example: '/api'
 * `options.target` target host to proxy to. (See "[Options](#options)" for all options)
 
-example
+**Note:** For [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based), you'll need to add the 'host' field to the request headers.
 ```javascript
 // Requests to '/api/x/y/z' will be proxied to 'http://example.org/api/x/y/z'
-var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
+var proxy = proxyMiddleware('/api', {
+                target: 'http://www.example.org',
+                headers: {host: 'example.org'}
+            });
 ```
 
-Use this `proxy` object as middleware in any middleware compatible server, e.g., [connect](https://www.npmjs.com/package/connect), [express](https://www.npmjs.com/package/express), [browser-sync](https://www.npmjs.com/package/browser-sync)
+Use the created `proxy` object as middleware in any middleware compatible server, e.g., [connect](https://www.npmjs.com/package/connect), [express](https://www.npmjs.com/package/express), [browser-sync](https://www.npmjs.com/package/browser-sync)
 
 ## Options
 
- * **option.host**: string, proxy `host` header to target.
- Default host is set to the target's host.
- (useful for [name-based virtual hosted](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based) sites)
+ * (DEPRECATED) **option.proxyHost**: Use `option.headers.host` instead.
 
 The following options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
  *  **option.target**: url string to be parsed with the url module
@@ -47,9 +58,12 @@ The following options are provided by the underlying [http-proxy](https://www.np
  *  **option.toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
  *  **option.hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 
+Undocumented options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
+ *  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}` adds host to request header. Useful for [name-based virtual hosted](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based) sites)
+
 ## Examples
 
-  To view the examples, clone the http-proxy-middleware repo and install the dependencies:
+  To [view the examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples), clone the http-proxy-middleware repo and install the dependencies:
 
 ```bash
 $ git clone https://github.com/chimurai/http-proxy-middleware.git
@@ -63,10 +77,10 @@ $ npm install
 $ node examples/connect
 ```
 
-  Or just [explore the examples sources](https://github.com/chimurai/http-proxy-middleware/tree/master/examples)
- * [connect](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect)
- * [express](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express)
- * [browser-sync](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync)
+  Or just [explore the examples sources](https://github.com/chimurai/http-proxy-middleware/tree/master/examples):
+ * `examples/connect` - Example usage with [connect](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect)
+ * `examples/express` - Example usage with [express](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express)
+ * `examples/browser-sync` - Example usage with [browser-sync](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync)
 
 ## Tests
 
@@ -75,12 +89,6 @@ $ node examples/connect
 ```bash
 $ npm test
 ```
-
-## Todo
- * context - add more flexibiliy to control when to proxy a request (multiple paths and glob patterns)
- * WebSocket support.
- * rewrite - ability to rewrite paths.
- * headers - ability to add headers to proxied requests.
 
 
 ## License:

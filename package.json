@@ -18,6 +18,7 @@
     "http",
     "https",
     "connect",
+    "express",
     "browser-sync",
     "gulp"
   ],

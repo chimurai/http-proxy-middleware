@@ -7,7 +7,7 @@ var proxyMiddleware = require('../../index');                      // require('h
 // configure proxy middleware
 // context: '/' will proxy all requests
 //     use: '/api' to proxy request when path starts with '/api'
-var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
+var proxy = proxyMiddleware('/api', {target: 'http://www.example.org', headers: {host:'www.example.org'}});
 
 var app = express();
 app.use(proxy);
