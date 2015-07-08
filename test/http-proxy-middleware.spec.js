@@ -143,6 +143,38 @@ describe('http-proxy-middleware in actual server', function () {
         });
     });
 
+    describe('Rewrite path', function () {
+        var responseBody;
+
+        beforeEach(function (done) {
+            servers = createServers({
+                proxy: proxyMiddleware('/api', {
+                    target:'http://localhost:8000',
+                    pathRewrite: {
+                        '^/api' : '/rest',
+                        '^/remove' : '',
+                    }
+                }),
+                sourceMiddleware : function (req, res, next) {next()},
+                targetMiddleware: function (req, res, next) {
+                    res.write(req.url);                                       // respond with req.url
+                    res.end()
+                },
+            });
+
+            http.get('http://localhost:3000/api/foo/bar', function (res) {
+                res.on('data', function (chunk) {
+                    responseBody = chunk.toString();
+                    done();
+                });
+            });
+        });
+
+        it('should have response body with the rewritten req.url: "/rest/..."', function () {
+            expect(responseBody).to.equal('/rest/foo/bar');
+        });
+    });
+
     afterEach(function () {
         closeServers(servers);
         servers = null;

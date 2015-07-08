@@ -19,10 +19,17 @@ var httpProxyMiddleware = function (context, opts) {
         proxyOptions.headers.host = proxyOptions.proxyHost;
     }
 
+    // create proxy
     var proxy = httpProxy.createProxyServer(proxyOptions);
 
-    // modify requests
-    // proxy.on('proxyReq', function () {});
+    // handle option.pathRewrite
+    if (proxyOptions.pathRewrite) {
+        var pathRewriter = utils.createPathRewriter(proxyOptions.pathRewrite);
+
+        proxy.on('proxyReq', function (proxyReq, req, res, options) {
+            handlers.proxyPathRewrite(proxyReq, pathRewriter);
+        });
+    }
 
     // handle error and close connection properly
     proxy.on('error', function (err, req, res) {

@@ -48,6 +48,14 @@ Use the created `proxy` object as middleware in any middleware compatible server
 ## Options
 
  * (DEPRECATED) **option.proxyHost**: Use `option.headers.host` instead.
+ *  **option.rewritePath**: object, rewrite the url path. Object-keys will be used as _RegEx_ to match paths.
+
+    ```javascript
+    {
+        "^/old/api" : "/new/api",    // rewrite path
+        "^/remove/api" : ""          // remove path
+    }
+    ```
 
 The following options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
  *  **option.target**: url string to be parsed with the url module
@@ -61,7 +69,7 @@ The following options are provided by the underlying [http-proxy](https://www.np
 Undocumented options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
  *  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}` adds host to request header. Useful for [name-based virtual hosted](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based) sites)
 
-## Examples
+## More Examples
 
   To [view the examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples), clone the http-proxy-middleware repo and install the dependencies:
 
