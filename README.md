@@ -16,20 +16,20 @@ npm install --save-dev http-proxy-middleware
 Create and configure the proxy middleware.
 ```javascript
 var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
-//  'proxy' is now ready to be used is a server.
+//  'proxy' is now ready to be used in a server.
 
 ```
 
 ## Example
 ```javascript
-// dependencies
+// include dependencies
 var express = require('express');
 var proxyMiddleware = require('http-proxy-middleware');
 
 // configure proxy middleware
 var context = '/api';                     // requests with this path will be proxied
 var options = {
-        target: 'http://www.example.org', // target
+        target: 'http://www.example.org', // target host
         changeOrigin: true                // needed for virtual hosted sites
     };
 
@@ -75,8 +75,7 @@ The following options are provided by the underlying [http-proxy](https://www.np
  *  **option.toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
  *  **option.hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 
-Undocumented options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
-https://github.com/nodejitsu/node-http-proxy/blob/master/lib/http-proxy.js#L32
+Undocumented options are provided by the underlying [http-proxy](https://github.com/nodejitsu/node-http-proxy/blob/master/lib/http-proxy.js#L32).
  *  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}`
  *  **option.changeOrigin**: true/false, adds host to request header.
  *  **option.prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path>
