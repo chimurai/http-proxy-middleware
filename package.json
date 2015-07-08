@@ -1,7 +1,7 @@
 {
   "name": "http-proxy-middleware",
   "version": "0.0.5",
-  "description": "http-proxy middleware",
+  "description": "The one-liner http-proxy middleware",
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec",
@@ -29,18 +29,18 @@
   },
   "homepage": "https://github.com/chimurai/http-proxy-middleware",
   "devDependencies": {
-    "browser-sync": "^2.5.3",
-    "chai": "^2.1.1",
-    "connect": "^3.3.5",
+    "browser-sync": "^2.7.13",
+    "chai": "^3.0.0",
+    "connect": "^3.4.0",
     "coveralls": "^2.11.2",
-    "express": "^4.12.3",
-    "istanbul": "^0.3.13",
-    "istanbul-coveralls": "^1.0.2",
-    "mocha": "^2.2.1",
+    "express": "^4.13.1",
+    "istanbul": "^0.3.17",
+    "istanbul-coveralls": "^1.0.3",
+    "mocha": "^2.2.5",
     "mocha-lcov-reporter": "0.0.2"
   },
   "dependencies": {
-    "http-proxy": "^1.9.0",
+    "http-proxy": "^1.11.1",
     "url": "^0.10.3"
   }
 }
