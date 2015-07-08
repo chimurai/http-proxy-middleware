@@ -5,7 +5,7 @@
 [![devDependency Status](https://img.shields.io/david/dev/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=devDependencies)
 [![MIT license](https://img.shields.io/npm/l/http-proxy-middleware.svg?style=flat-square)](https://www.npmjs.com/package/http-proxy-middleware)
 
-Proxy middleware for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express) and [browser-sync](https://github.com/BrowserSync/browser-sync)
+The one-liner proxy middleware for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express) and [browser-sync](https://github.com/BrowserSync/browser-sync)
 
 ## Install
 ```javascript
@@ -13,16 +13,27 @@ npm install --save-dev http-proxy-middleware
 ```
 
 ## Core concept
-Create and configure the proxy middleware so it can be used in servers such as: connect, express or browser-sync.
+Create and configure the proxy middleware.
+```javascript
+var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
+//  'proxy' is now ready to be used is a server.
 
+```
+
+## Example
 ```javascript
 // dependencies
 var express = require('express');
 var proxyMiddleware = require('http-proxy-middleware');
 
 // configure proxy middleware
-var context = '/api';
-var options = {target: 'http://www.example.org'};
+var context = '/api';                     // requests with this path will be proxied
+var options = {
+        target: 'http://www.example.org', // target
+        changeOrigin: true                // needed for virtual hosted sites
+    };
+
+// create the proxy
 var proxy = proxyMiddleware(context, options);
 
 // use the configured `proxy` in web server
@@ -34,21 +45,19 @@ var app = express();
 * `context` path to proxy. Example: '/api'
 * `options.target` target host to proxy to. (See "[Options](#options)" for all options)
 
-**Note:** For [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based), you'll need to add the 'host' field to the request headers.
-```javascript
-// Requests to '/api/x/y/z' will be proxied to 'http://example.org/api/x/y/z'
-var proxy = proxyMiddleware('/api', {
-                target: 'http://www.example.org',
-                headers: {host: 'example.org'}
-            });
-```
+**Tip:** For [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based), you'll need to use the option `changeOrigin` and set it to `true`.
 
-Use the created `proxy` object as middleware in any middleware compatible server, e.g., [connect](https://www.npmjs.com/package/connect), [express](https://www.npmjs.com/package/express), [browser-sync](https://www.npmjs.com/package/browser-sync)
+## Compatible servers:
+http-proxy-middleware is compatible with the following servers:
+* [connect](https://www.npmjs.com/package/connect)
+* [express](https://www.npmjs.com/package/express)
+* [browser-sync](https://www.npmjs.com/package/browser-sync)
+
 
 ## Options
 
- * (DEPRECATED) **option.proxyHost**: Use `option.headers.host` instead.
- *  **option.pathRewrite**: object, rewrite the url path. Object-keys will be used as _RegEx_ to match paths.
+* (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
+*  **option.pathRewrite**: object, rewrite the url path. Object-keys will be used as _RegEx_ to match paths.
 
     ```javascript
     {
@@ -67,7 +76,17 @@ The following options are provided by the underlying [http-proxy](https://www.np
  *  **option.hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 
 Undocumented options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
- *  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}` adds host to request header. Useful for [name-based virtual hosted](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based) sites)
+https://github.com/nodejitsu/node-http-proxy/blob/master/lib/http-proxy.js#L32
+ *  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}`
+ *  **option.changeOrigin**: true/false, adds host to request header.
+ *  **option.prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path>
+ *  **option.ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request>
+ *  **option.localAddress** : Local interface string to bind for outgoing connections
+ *  **option.auth** : Basic authentication i.e. 'user:password' to compute an Authorization header.
+ *  **option.autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
+ *  **option.protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
+
+
 
 ## More Examples
 
