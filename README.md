@@ -48,7 +48,7 @@ Use the created `proxy` object as middleware in any middleware compatible server
 ## Options
 
  * (DEPRECATED) **option.proxyHost**: Use `option.headers.host` instead.
- *  **option.rewritePath**: object, rewrite the url path. Object-keys will be used as _RegEx_ to match paths.
+ *  **option.pathRewrite**: object, rewrite the url path. Object-keys will be used as _RegEx_ to match paths.
 
     ```javascript
     {
