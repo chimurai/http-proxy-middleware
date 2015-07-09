@@ -39,22 +39,23 @@ describe('context matching', function () {
 });
 
 describe('http-proxy-middleware in actual server', function () {
-    var servers;
 
     describe('basic setup', function () {
+        var proxyServer, targetServer;
         var targetHeaders;
         var responseBody;
 
         beforeEach(function (done) {
-            servers = createServers({
-                proxy: proxyMiddleware('/api', {target:'http://localhost:8000'}),
-                sourceMiddleware : function (req, res, next) {next()},
-                targetMiddleware: function (req, res, next) {
-                    targetHeaders = req.headers;                              // store target headers.
-                    res.write('HELLO WEB');                                   // respond with 'HELLO WEB'
-                    res.end()
-                },
-            });
+            var mw_proxy = proxyMiddleware('/api', {target:'http://localhost:8000'});
+
+            var mw_target = function (req, res, next) {
+                targetHeaders = req.headers;                              // store target headers.
+                res.write('HELLO WEB');                                   // respond with 'HELLO WEB'
+                res.end()
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
 
             http.get('http://localhost:3000/api/', function (res) {
                 res.on('data', function (chunk) {
@@ -64,6 +65,10 @@ describe('http-proxy-middleware in actual server', function () {
             });
         });
 
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
 
         it('should have the same headers.host value', function () {
             expect(targetHeaders.host).to.equal('localhost:3000');
@@ -75,22 +80,28 @@ describe('http-proxy-middleware in actual server', function () {
     });
 
     describe('additional request headers', function () {
+        var proxyServer, targetServer;
         var targetHeaders;
 
         beforeEach(function (done) {
-            servers = createServers({
-                proxy: proxyMiddleware('/api', {target:'http://localhost:8000', headers: {host:'foobar.dev'} }),
-                sourceMiddleware : function (req, res, next) {next()},
-                targetMiddleware: function (req, res, next) {
-                    targetHeaders = req.headers;                              // host
-                    res.end();
-                },
-            });
+            var mw_proxy = proxyMiddleware('/api', { target:'http://localhost:8000', headers: {host:'foobar.dev'} });
+
+            var mw_target = function (req, res, next) {
+                targetHeaders = req.headers;
+                res.end();
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
 
             http.get('http://localhost:3000/api/', function (res) {
                 done();
             });
+        });
 
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
         });
 
         it('should send request header "host" to target server', function () {
@@ -99,23 +110,30 @@ describe('http-proxy-middleware in actual server', function () {
     });
 
     describe('legacy proxyHost parameter', function () {
+        var proxyServer, targetServer;
         var targetHeaders;
 
         beforeEach(function (done) {
-            servers = createServers({
-                proxy: proxyMiddleware('/api', {target:'http://localhost:8000', proxyHost: 'foobar.dev'}),
-                sourceMiddleware : function (req, res, next) {next()},
-                targetMiddleware: function (req, res, next) {
-                    targetHeaders = req.headers;                              // host
-                    res.end();
-                },
-            });
+            var mw_proxy = proxyMiddleware('/api', {target:'http://localhost:8000', proxyHost: 'foobar.dev'});
+
+            var mw_target = function (req, res, next) {
+                targetHeaders = req.headers;
+                res.end();
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
 
             http.get('http://localhost:3000/api/', function (res) {
                 done();
             });
-
         });
+
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
 
         it('should proxy host header to target server', function () {
             expect(targetHeaders.host).to.equal('foobar.dev');
@@ -123,14 +141,15 @@ describe('http-proxy-middleware in actual server', function () {
     });
 
     describe('Error handling', function () {
+        var proxyServer, targetServer;
         var response;
 
         beforeEach(function (done) {
-            servers = createServers({
-                proxy: proxyMiddleware('/api', {target:'http://localhost:666'}),  // unreachable host on port:666
-                sourceMiddleware : function (req, res, next) {next()},
-                targetMiddleware: function (req, res, next) {next()},
-            });
+            var mw_proxy = proxyMiddleware('/api', {target:'http://localhost:666'});  // unreachable host on port:666
+            var mw_target = function (req, res, next) {next()};
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
 
             http.get('http://localhost:3000/api/', function (res) {
                 response = res;
@@ -138,29 +157,36 @@ describe('http-proxy-middleware in actual server', function () {
             });
         });
 
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+
         it('should handle errors when host is not reachable', function () {
             expect(response.statusCode).to.equal(500);
         });
     });
 
     describe('Rewrite path', function () {
+        var proxyServer, targetServer;
         var responseBody;
 
         beforeEach(function (done) {
-            servers = createServers({
-                proxy: proxyMiddleware('/api', {
-                    target:'http://localhost:8000',
-                    pathRewrite: {
-                        '^/api' : '/rest',
-                        '^/remove' : '',
-                    }
-                }),
-                sourceMiddleware : function (req, res, next) {next()},
-                targetMiddleware: function (req, res, next) {
-                    res.write(req.url);                                       // respond with req.url
-                    res.end()
-                },
+            var mw_proxy = proxyMiddleware('/api', {
+                target:'http://localhost:8000',
+                pathRewrite: {
+                    '^/api' : '/rest',
+                    '^/remove' : ''
+                }
             });
+            var mw_target = function (req, res, next) {
+                res.write(req.url);                                       // respond with req.url
+                res.end()
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
 
             http.get('http://localhost:3000/api/foo/bar', function (res) {
                 res.on('data', function (chunk) {
@@ -170,46 +196,28 @@ describe('http-proxy-middleware in actual server', function () {
             });
         });
 
-        it('should have response body with the rewritten req.url: "/rest/..."', function () {
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+        it('should have rewritten path from "/api/foo/bar" to "/rest/foo/bar"', function () {
             expect(responseBody).to.equal('/rest/foo/bar');
         });
     });
 
-    afterEach(function () {
-        closeServers(servers);
-        servers = null;
-    });
 
 });
 
 
-/**
- *  source Server: http:localhost:3000
- *  target Server: http:localhost:8000
- **/
-function createServers (options) {
-    var sourceServer,
-        targetServer;
+function createServer (portNumber, middleware) {
+    var app = express();
 
-    // source server
-    var sourceApp = express();
-        sourceApp.use(options.sourceMiddleware);
-        sourceApp.use(options.proxy);
-        sourceServer = sourceApp.listen(3000);
-
-
-    // target server
-    var targetApp = express();
-        targetApp.use(options.targetMiddleware);
-        targetServer = targetApp.listen(8000);
-
-    return {
-        sourceServer : sourceServer,
-        targetServer : targetServer,
+    if (middleware) {
+        app.use(middleware);
     }
-}
 
-function closeServers (servers) {
-    servers.sourceServer.close();
-    servers.targetServer.close();
+    var server = app.listen(portNumber);
+
+    return server;
 }
