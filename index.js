@@ -41,7 +41,7 @@ var httpProxyMiddleware = function (context, opts) {
     return middleware;
 
     function middleware (req, res, next) {
-        if (utils.hasContext(context, req.url)) {
+        if (utils.matchContext(context, req.url)) {
            proxy.web(req, res);
         } else {
            next();

@@ -79,6 +79,80 @@ describe('http-proxy-middleware in actual server', function () {
         });
     });
 
+    describe('multi path', function () {
+        var proxyServer, targetServer;
+        var targetHeaders;
+        var response, responseBody;
+
+        beforeEach(function () {
+            var mw_proxy = proxyMiddleware(['/api', '/ajax'], {target:'http://localhost:8000'});
+
+            var mw_target = function (req, res, next) {
+                res.write(req.url);                                       // respond with req.url
+                res.end()
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
+        });
+
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+        describe('request to path A, configured', function () {
+            beforeEach(function (done) {
+                http.get('http://localhost:3000/api/some/endpoint', function (res) {
+                    response = res;
+                    res.on('data', function (chunk) {
+                        responseBody = chunk.toString();
+                        done();
+                    });
+                });
+            });
+
+            it('should proxy to path A', function () {
+                expect(response.statusCode).to.equal(200);
+                expect(responseBody).to.equal('/api/some/endpoint');
+            });
+        });
+
+        describe('request to path B, configured', function () {
+            beforeEach(function (done) {
+                http.get('http://localhost:3000/ajax/some/library', function (res) {
+                    response = res;
+                    res.on('data', function (chunk) {
+                        responseBody = chunk.toString();
+                        done();
+                    });
+                });
+            });
+
+            it('should proxy to path B', function () {
+                expect(response.statusCode).to.equal(200);
+                expect(responseBody).to.equal('/ajax/some/library');
+            });
+        });
+
+        describe('request to path C, not configured', function () {
+            beforeEach(function (done) {
+                http.get('http://localhost:3000/lorum/ipsum', function (res) {
+                    response = res;
+                    res.on('data', function (chunk) {
+                        responseBody = chunk.toString();
+                        done();
+                    });
+                });
+            });
+
+            it('should not proxy to this path', function () {
+                expect(response.statusCode).to.equal(404);
+            });
+        });
+
+    });
+
     describe('additional request headers', function () {
         var proxyServer, targetServer;
         var targetHeaders;
