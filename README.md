@@ -13,12 +13,18 @@ npm install --save-dev http-proxy-middleware
 ```
 
 ## Core concept
-Create and configure the proxy middleware.
+Configure the proxy middleware.
 ```javascript
 var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 //  'proxy' is now ready to be used in a server.
 
 ```
+* `context` path to proxy. Example: `'/api'` or `['/api', '/ajax']` for multiple paths.
+* `options.target` target host to proxy to.
+
+Check out available [proxy options](#options).
+
+
 
 ## Example
 ```javascript
@@ -41,9 +47,6 @@ var app = express();
     app.use(proxy);
     app.listen(3000);
 ```
-
-* `context` path to proxy. Example: '/api'
-* `options.target` target host to proxy to. (See "[Options](#options)" for all options)
 
 **Tip:** For [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based), you'll need to use the option `changeOrigin` and set it to `true`.
 
@@ -103,10 +106,10 @@ $ npm install
 $ node examples/connect
 ```
 
-  Or just [explore the examples sources](https://github.com/chimurai/http-proxy-middleware/tree/master/examples):
- * `examples/connect` - Example usage with [connect](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect)
- * `examples/express` - Example usage with [express](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express)
- * `examples/browser-sync` - Example usage with [browser-sync](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync)
+  Or just explore the [proxy examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples) sources:
+ * `examples/connect` - [connect proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect)
+ * `examples/express` - [express proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express)
+ * `examples/browser-sync` - [browser-sync proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync)
 
 ## Tests
 

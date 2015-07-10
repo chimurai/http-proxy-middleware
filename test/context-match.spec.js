@@ -49,3 +49,41 @@ describe('Multi path matching', function () {
     });
 
 });
+
+
+describe('Test invalid contexts', function () {
+    var testContext;
+
+    beforeEach(function () {
+        testContext = function (context) {
+            return function () {
+                utils.matchContext(context, 'http://localhost/api/foo/bar');
+            };
+        };
+    });
+
+    it('should throw error with undefined', function () {
+        expect(testContext(undefined)).to.throw(Error);
+    });
+
+    it('should throw error with null', function () {
+        expect(testContext(null)).to.throw(Error);
+    });
+
+    it('should throw error with object literal', function () {
+        expect(testContext({})).to.throw(Error);
+    });
+
+    it('should throw error with integers', function () {
+        expect(testContext(123)).to.throw(Error);
+    });
+
+    it('should not throw error with string', function () {
+        expect(testContext('/123')).not.to.throw(Error);
+    });
+
+    it('should not throw error with Array', function () {
+        expect(testContext(['/123'])).not.to.throw(Error);
+    });
+
+});

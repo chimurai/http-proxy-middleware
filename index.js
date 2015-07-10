@@ -11,7 +11,7 @@ var httpProxyMiddleware = function (context, opts) {
     if (proxyOptions.proxyHost) {
         console.log('*************************************');
         console.log('[HPM] Deprecated "option.proxyHost"');
-        console.log('      Use "option.headers.host" instead');
+        console.log('      Use "option.changeOrigin" or "option.headers.host" instead');
         console.log('      "option.proxyHost" will be removed in future release.');
         console.log('*************************************');
 
