@@ -14,7 +14,7 @@ var proxy = proxyMiddleware('/api', {
             });
 
 var app = connect();
-app.use(proxy);
+app.use(proxy);                      // add the proxy to connect
 
 http.createServer(app).listen(3000);
 
