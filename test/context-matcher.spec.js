@@ -1,26 +1,26 @@
 var expect = require('chai').expect;
-var utils =  require('../lib/utils');
+var contextMatcher = require('../lib/context-matcher');
 
 describe('Single path matching', function () {
     var result;
 
     it('should return true when the context is present in url', function () {
-        result = utils.matchContext('/api', 'http://localhost/api/foo/bar');
+        result = contextMatcher.match('/api', 'http://localhost/api/foo/bar');
         expect(result).to.be.true;
     });
 
     it('should return false when the context is not present in url', function () {
-        result = utils.matchContext('/abc', 'http://localhost/api/foo/bar');
+        result = contextMatcher.match('/abc', 'http://localhost/api/foo/bar');
         expect(result).to.be.false;
     });
 
     it('should return false when the context is present half way in url', function () {
-        result = utils.matchContext('/foo', 'http://localhost/api/foo/bar');
+        result = contextMatcher.match('/foo', 'http://localhost/api/foo/bar');
         expect(result).to.be.false;
     });
 
     it('should return false when the context does not start with /', function () {
-        result = utils.matchContext('api', 'http://localhost/api/foo/bar');
+        result = contextMatcher.match('api', 'http://localhost/api/foo/bar');
         expect(result).to.be.false;
     });
 });
@@ -29,22 +29,22 @@ describe('Multi path matching', function () {
     var result;
 
     it('should return true when the context is present in url', function () {
-        result = utils.matchContext(['/api'], 'http://localhost/api/foo/bar');
+        result = contextMatcher.match(['/api'], 'http://localhost/api/foo/bar');
         expect(result).to.be.true;
     });
 
     it('should return true when the context is present in url', function () {
-        result = utils.matchContext(['/api', '/ajax'], 'http://localhost/ajax/foo/bar');
+        result = contextMatcher.match(['/api', '/ajax'], 'http://localhost/ajax/foo/bar');
         expect(result).to.be.true;
     });
 
     it('should return false when the context does not match url', function () {
-        result = utils.matchContext(['/api', '/ajax'], 'http://localhost/foo/bar');
+        result = contextMatcher.match(['/api', '/ajax'], 'http://localhost/foo/bar');
         expect(result).to.be.false;
     });
 
     it('should return false when empty array provided', function () {
-        result = utils.matchContext([], 'http://localhost/api/foo/bar');
+        result = contextMatcher.match([], 'http://localhost/api/foo/bar');
         expect(result).to.be.false;
     });
 
@@ -57,7 +57,7 @@ describe('Test invalid contexts', function () {
     beforeEach(function () {
         testContext = function (context) {
             return function () {
-                utils.matchContext(context, 'http://localhost/api/foo/bar');
+                contextMatcher.match(context, 'http://localhost/api/foo/bar');
             };
         };
     });

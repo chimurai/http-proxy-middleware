@@ -40,15 +40,17 @@ describe('context matching', function () {
 
 describe('http-proxy-middleware in actual server', function () {
 
-    describe('basic setup', function () {
+    describe('basic setup, requests to target', function () {
         var proxyServer, targetServer;
         var targetHeaders;
+        var targetUrl;
         var responseBody;
 
         beforeEach(function (done) {
             var mw_proxy = proxyMiddleware('/api', {target:'http://localhost:8000'});
 
             var mw_target = function (req, res, next) {
+                targetUrl     = req.url;                                  // store target url.
                 targetHeaders = req.headers;                              // store target headers.
                 res.write('HELLO WEB');                                   // respond with 'HELLO WEB'
                 res.end()
@@ -57,7 +59,7 @@ describe('http-proxy-middleware in actual server', function () {
             proxyServer = createServer(3000, mw_proxy);
             targetServer = createServer(8000, mw_target);
 
-            http.get('http://localhost:3000/api/', function (res) {
+            http.get('http://localhost:3000/api/b/c/d;p?q=1&r=[2,3]#s"', function (res) {
                 res.on('data', function (chunk) {
                     responseBody = chunk.toString();
                     done();
@@ -72,6 +74,10 @@ describe('http-proxy-middleware in actual server', function () {
 
         it('should have the same headers.host value', function () {
             expect(targetHeaders.host).to.equal('localhost:3000');
+        });
+
+        it('should have proxied the uri-path and uri-query, but not the uri-hash', function () {
+            expect(targetUrl).to.equal('/api/b/c/d;p?q=1&r=[2,3]');
         });
 
         it('should have response body: "HELLO WEB"', function () {
