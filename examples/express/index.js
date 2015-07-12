@@ -13,7 +13,7 @@ var proxy = proxyMiddleware('/api', {
             });
 
 var app = express();
-app.use(proxy);
+app.use(proxy);                      // add the proxy to express
 
 app.listen(3000);
 

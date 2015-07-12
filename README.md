@@ -3,7 +3,6 @@
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square)](https://coveralls.io/r/chimurai/http-proxy-middleware)
 [![dependency Status](https://img.shields.io/david/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=devDependencies)
 [![devDependency Status](https://img.shields.io/david/dev/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=devDependencies)
-[![MIT license](https://img.shields.io/npm/l/http-proxy-middleware.svg?style=flat-square)](https://www.npmjs.com/package/http-proxy-middleware)
 
 The one-liner proxy middleware for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express) and [browser-sync](https://github.com/BrowserSync/browser-sync)
 
@@ -13,12 +12,25 @@ npm install --save-dev http-proxy-middleware
 ```
 
 ## Core concept
-Create and configure the proxy middleware.
+Configure the proxy middleware.
 ```javascript
+var proxyMiddleware = require('http-proxy-middleware');
+
 var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
+//                          \____/  \________________________________/
+//                            |                     |
+//                          context              options
+
 //  'proxy' is now ready to be used in a server.
 
 ```
+* **context**: matches provided context against request-urls' path.
+    Matching requests will be proxied to the target host.
+    Example: `'/api'` or `['/api', '/ajax']`
+* **options.target**: target host to proxy to.
+    Check out available [proxy options](#options).
+
+
 
 ## Example
 ```javascript
@@ -42,9 +54,6 @@ var app = express();
     app.listen(3000);
 ```
 
-* `context` path to proxy. Example: '/api'
-* `options.target` target host to proxy to. (See "[Options](#options)" for all options)
-
 **Tip:** For [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based), you'll need to use the option `changeOrigin` and set it to `true`.
 
 ## Compatible servers:
@@ -57,7 +66,7 @@ http-proxy-middleware is compatible with the following servers:
 ## Options
 
 * (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
-*  **option.pathRewrite**: object, rewrite the url path. Object-keys will be used as _RegEx_ to match paths.
+*  **option.pathRewrite**: object, rewrite target's url path. Object-keys will be used as _RegExp_ to match paths.
 
     ```javascript
     {
@@ -103,10 +112,10 @@ $ npm install
 $ node examples/connect
 ```
 
-  Or just [explore the examples sources](https://github.com/chimurai/http-proxy-middleware/tree/master/examples):
- * `examples/connect` - Example usage with [connect](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect)
- * `examples/express` - Example usage with [express](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express)
- * `examples/browser-sync` - Example usage with [browser-sync](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync)
+  Or just explore the [proxy examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples) sources:
+ * `examples/connect` - [connect proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect)
+ * `examples/express` - [express proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express)
+ * `examples/browser-sync` - [browser-sync proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync)
 
 ## Tests
 

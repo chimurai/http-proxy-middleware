@@ -16,7 +16,7 @@ browserSync({
     server: {
         baseDir: "./",
         port: 3000,
-        middleware: [proxy],
+        middleware: [proxy],         // add the proxy to browser-sync
         open: false
     }
 });

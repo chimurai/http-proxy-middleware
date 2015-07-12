@@ -1,6 +1,7 @@
-var httpProxy = require('http-proxy');
-var utils     = require('./lib/utils');
-var handlers  = require('./lib/handlers');
+var httpProxy      = require('http-proxy');
+var handlers       = require('./lib/handlers');
+var contextMatcher = require('./lib/context-matcher');
+var pathRewriter   = require('./lib/path-rewriter');
 
 var httpProxyMiddleware = function (context, opts) {
 
@@ -11,7 +12,7 @@ var httpProxyMiddleware = function (context, opts) {
     if (proxyOptions.proxyHost) {
         console.log('*************************************');
         console.log('[HPM] Deprecated "option.proxyHost"');
-        console.log('      Use "option.headers.host" instead');
+        console.log('      Use "option.changeOrigin" or "option.headers.host" instead');
         console.log('      "option.proxyHost" will be removed in future release.');
         console.log('*************************************');
 
@@ -24,10 +25,10 @@ var httpProxyMiddleware = function (context, opts) {
 
     // handle option.pathRewrite
     if (proxyOptions.pathRewrite) {
-        var pathRewriter = utils.createPathRewriter(proxyOptions.pathRewrite);
+        var rewriter = pathRewriter.create(proxyOptions.pathRewrite);
 
         proxy.on('proxyReq', function (proxyReq, req, res, options) {
-            handlers.proxyPathRewrite(proxyReq, pathRewriter);
+            handlers.proxyPathRewrite(proxyReq, rewriter);
         });
     }
 
@@ -36,12 +37,12 @@ var httpProxyMiddleware = function (context, opts) {
         handlers.proxyError(err, req, res, proxyOptions);
     });
 
-    console.log('[HPM] Proxy created:', context, proxyOptions.target);
+    console.log('[HPM] Proxy created:', context, ' -> ', proxyOptions.target);
 
     return middleware;
 
     function middleware (req, res, next) {
-        if (utils.hasContext(context, req.url)) {
+        if (contextMatcher.match(context, req.url)) {
            proxy.web(req, res);
         } else {
            next();

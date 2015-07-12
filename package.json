@@ -1,7 +1,7 @@
 {
   "name": "http-proxy-middleware",
   "version": "0.1.0",
-  "description": "The one-liner http-proxy middleware",
+  "description": "The one-liner proxy middleware for connect, express and browser-sync",
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec",
