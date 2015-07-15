@@ -53,7 +53,7 @@ describe('http-proxy-middleware in actual server', function () {
                 targetUrl     = req.url;                                  // store target url.
                 targetHeaders = req.headers;                              // store target headers.
                 res.write('HELLO WEB');                                   // respond with 'HELLO WEB'
-                res.end()
+                res.end();
             };
 
             proxyServer = createServer(3000, mw_proxy);
@@ -95,7 +95,7 @@ describe('http-proxy-middleware in actual server', function () {
 
             var mw_target = function (req, res, next) {
                 res.write(req.url);                                       // respond with req.url
-                res.end()
+                res.end();
             };
 
             proxyServer = createServer(3000, mw_proxy);
@@ -158,6 +158,99 @@ describe('http-proxy-middleware in actual server', function () {
         });
 
     });
+
+    describe('wildcard path matching', function () {
+        var proxyServer, targetServer;
+        var targetHeaders;
+        var response, responseBody;
+
+        beforeEach(function () {
+            var mw_proxy = proxyMiddleware('/api/**', {target:'http://localhost:8000'});
+
+            var mw_target = function (req, res, next) {
+                res.write(req.url);                                       // respond with req.url
+                res.end();
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
+        });
+
+        beforeEach(function (done) {
+            http.get('http://localhost:3000/api/some/endpoint', function (res) {
+                response = res;
+                res.on('data', function (chunk) {
+                    responseBody = chunk.toString();
+                    done();
+                });
+            });
+        });
+
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+        it('should proxy to path', function () {
+            expect(response.statusCode).to.equal(200);
+            expect(responseBody).to.equal('/api/some/endpoint');
+        });
+    });
+
+
+    describe('multi glob wildcard path matching', function () {
+        var proxyServer, targetServer;
+        var targetHeaders;
+        var responseA, responseBodyA;
+        var responseB, responseBodyB;
+
+        beforeEach(function () {
+            var mw_proxy = proxyMiddleware(['**.html', '!**.json'], {target:'http://localhost:8000'});
+
+            var mw_target = function (req, res, next) {
+                res.write(req.url);                                       // respond with req.url
+                res.end();
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
+        });
+
+        beforeEach(function (done) {
+            http.get('http://localhost:3000/api/some/endpoint/index.html', function (res) {
+                responseA = res;
+                res.on('data', function (chunk) {
+                    responseBodyA = chunk.toString();
+                    done();
+                });
+            });
+        });
+
+        beforeEach(function (done) {
+            http.get('http://localhost:3000/api/some/endpoint/data.json', function (res) {
+                responseB = res;
+                res.on('data', function (chunk) {
+                    responseBodyB = chunk.toString();
+                    done();
+                });
+            });
+        });
+
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+        it('should proxy to paths ending with *.html', function () {
+            expect(responseA.statusCode).to.equal(200);
+            expect(responseBodyA).to.equal('/api/some/endpoint/index.html');
+        });
+
+        it('should not proxy to paths ending with *.json', function () {
+            expect(responseB.statusCode).to.equal(404);
+        });
+    });
+
 
     describe('additional request headers', function () {
         var proxyServer, targetServer;
@@ -262,7 +355,7 @@ describe('http-proxy-middleware in actual server', function () {
             });
             var mw_target = function (req, res, next) {
                 res.write(req.url);                                       // respond with req.url
-                res.end()
+                res.end();
             };
 
             proxyServer = createServer(3000, mw_proxy);

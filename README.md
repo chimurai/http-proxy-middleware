@@ -8,7 +8,7 @@ The one-liner proxy middleware for [connect](https://github.com/senchalabs/conne
 
 ## Install
 ```javascript
-npm install --save-dev http-proxy-middleware
+$ npm install --save-dev http-proxy-middleware
 ```
 
 ## Core concept
@@ -26,13 +26,14 @@ var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 ```
 * **context**: matches provided context against request-urls' path.
     Matching requests will be proxied to the target host.
-    Example: `'/api'` or `['/api', '/ajax']`
+    Example: `'/api'` or `['/api', '/ajax']`. (more about [context matching](#context-matching))
 * **options.target**: target host to proxy to.
     Check out available [proxy options](#options).
 
 
 
 ## Example
+A simple example with express server.
 ```javascript
 // include dependencies
 var express = require('express');
@@ -53,6 +54,8 @@ var app = express();
     app.use(proxy);
     app.listen(3000);
 ```
+
+See [more examples](#more-examples).
 
 **Tip:** For [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based), you'll need to use the option `changeOrigin` and set it to `true`.
 
@@ -95,10 +98,31 @@ Undocumented options are provided by the underlying [http-proxy](https://github.
  *  **option.protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
 
 
+## Context matching
+Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986#section-3) will be used for context matching .
+
+* URL: `http://example.com:8042/over/there?name=ferret#nose`
+* context: `/over/there?name=ferret`
+
+http-proxy-middleware offers several ways to decide which requests should be proxied:
+* path matching
+  * `'/'` - matches any path, all requests will be proxied.
+  * `'/api'` - matches paths starting with `/api`
+* multiple path matching
+  * `['/api','/ajax','/someotherpath']`
+* wildcard path matching
+
+  For fine-grained control you can use wildcard matching. Glob pattern matching is done by _micromatch_. Visit [micromatch](https://www.npmjs.com/package/micromatch) or [glob](https://www.npmjs.com/package/glob) for more globbing examples.
+  * `**` matches any path, all requests will be proxied.
+  * `**.html` matches any path which ends with `.html`
+  * `/*.html` matches paths directly under path-absolute
+  * `/api/**.html` matches requests ending with `.html` in the path of `/api`
+  * `['/api/**', '/ajax/**']` combine multiple patterns
+  * `['/api/**', '!**/bad.json']` exclusion
 
 ## More Examples
 
-  To [view the examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples), clone the http-proxy-middleware repo and install the dependencies:
+  To run and view the [proxy examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples), clone the http-proxy-middleware repo and install the dependencies:
 
 ```bash
 $ git clone https://github.com/chimurai/http-proxy-middleware.git
@@ -112,17 +136,21 @@ $ npm install
 $ node examples/connect
 ```
 
-  Or just explore the [proxy examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples) sources:
+  Or just explore the proxy examples' sources:
  * `examples/connect` - [connect proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect)
  * `examples/express` - [express proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express)
  * `examples/browser-sync` - [browser-sync proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync)
 
 ## Tests
 
-  To run the test suite, first install the dependencies, then run `npm test`:
+  To run the test suite, first install the dependencies, then run:
 
 ```bash
+# unit tests
 $ npm test
+
+# code coverage
+$ npm run cover
 ```
 
 
