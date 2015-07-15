@@ -8,4 +8,4 @@ after_success: npm run coveralls
 env:
   global:
     # COVERALLS_REPO_TOKEN=
-    - secure: "QVqwPjujP/oJPr/6GDeetRS4jGy5kOcKypz8cFryxbV4Tw3kTGUaD5Zo5u4cnT4Y+lEWnYEZ3049oaNf5czKA4RvddYwX0py7c//INSR7vZuP+fsZckzf9yBAPlxTWZM4aN0HY9cP7uHEesCv0Gho2jGoz/SjtMzQimhamHTv6M="
+      secure: "I8mDH0n2DQHAPvUFEV/ZNmrMNYTJxgywg8+P3yuCAWwQkZeXQi0DWG+6VUpOylaRhL/4kCdZK9gnJD2MfrqvNqVLDUqBK3tTmZVoyqqJEdE0UdEHcPncAPmxWrG98sDjqFN9r4nWeizHvyA1fNRQHRN56Zy+DcQWjgEhHJaYeNA="
