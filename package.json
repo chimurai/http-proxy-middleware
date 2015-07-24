@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "The one-liner proxy middleware for connect, express and browser-sync",
   "main": "index.js",
   "scripts": {
@@ -42,7 +42,7 @@
   "dependencies": {
     "http-proxy": "^1.11.1",
     "is-glob": "^2.0.0",
-    "micromatch": "^2.1.6",
+    "micromatch": "~2.1.6",
     "url": "^0.10.3"
   }
 }
