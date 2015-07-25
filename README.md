@@ -114,9 +114,9 @@ http-proxy-middleware offers several ways to decide which requests should be pro
 
   For fine-grained control you can use wildcard matching. Glob pattern matching is done by _micromatch_. Visit [micromatch](https://www.npmjs.com/package/micromatch) or [glob](https://www.npmjs.com/package/glob) for more globbing examples.
   * `**` matches any path, all requests will be proxied.
-  * `**.html` matches any path which ends with `.html`
+  * `**/*.html` matches any path which ends with `.html`
   * `/*.html` matches paths directly under path-absolute
-  * `/api/**.html` matches requests ending with `.html` in the path of `/api`
+  * `/api/**/*.html` matches requests ending with `.html` in the path of `/api`
   * `['/api/**', '/ajax/**']` combine multiple patterns
   * `['/api/**', '!**/bad.json']` exclusion
 

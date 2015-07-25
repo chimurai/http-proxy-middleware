@@ -205,7 +205,7 @@ describe('http-proxy-middleware in actual server', function () {
         var responseB, responseBodyB;
 
         beforeEach(function () {
-            var mw_proxy = proxyMiddleware(['**.html', '!**.json'], {target:'http://localhost:8000'});
+            var mw_proxy = proxyMiddleware(['/**.html', '!**.json'], {target:'http://localhost:8000'});
 
             var mw_target = function (req, res, next) {
                 res.write(req.url);                                       // respond with req.url
