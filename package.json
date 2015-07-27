@@ -20,7 +20,8 @@
     "connect",
     "express",
     "browser-sync",
-    "gulp"
+    "gulp",
+    "websocket"
   ],
   "author": "Steven Chim",
   "license": "MIT",
