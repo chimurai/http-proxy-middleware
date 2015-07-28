@@ -6,12 +6,12 @@
 
 The one-liner proxy middleware for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express) and [browser-sync](https://github.com/BrowserSync/browser-sync)
 
-## Install
+### Install
 ```javascript
 $ npm install --save-dev http-proxy-middleware
 ```
 
-## Core concept
+### Core concept
 Configure the proxy middleware.
 ```javascript
 var proxyMiddleware = require('http-proxy-middleware');
@@ -32,7 +32,7 @@ var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 
 
 
-## Example
+### Example
 A simple example with express server.
 ```javascript
 // include dependencies
@@ -59,14 +59,14 @@ See [more examples](#more-examples).
 
 **Tip:** For [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based), you'll need to use the option `changeOrigin` and set it to `true`.
 
-## Compatible servers:
+### Compatible servers:
 http-proxy-middleware is compatible with the following servers:
 * [connect](https://www.npmjs.com/package/connect)
 * [express](https://www.npmjs.com/package/express)
 * [browser-sync](https://www.npmjs.com/package/browser-sync)
 
 
-## Options
+### Options
 
 * (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
 *  **option.pathRewrite**: object, rewrite target's url path. Object-keys will be used as _RegExp_ to match paths.
@@ -100,7 +100,7 @@ Undocumented options are provided by the underlying [http-proxy](https://github.
  *  **option.protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
 
 
-## Context matching
+### Context matching
 Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986#section-3) will be used for context matching .
 
 * URL: `http://example.com:8042/over/there?name=ferret#nose`
@@ -122,7 +122,7 @@ http-proxy-middleware offers several ways to decide which requests should be pro
   * `['/api/**', '/ajax/**']` combine multiple patterns
   * `['/api/**', '!**/bad.json']` exclusion
 
-## More Examples
+### More Examples
 
   To run and view the [proxy examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples), clone the http-proxy-middleware repo and install the dependencies:
 
@@ -144,7 +144,7 @@ $ node examples/connect
  * `examples/browser-sync` - [browser-sync proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync)
  * `examples/websocket` - [websocket proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/websocket) with express
 
-## Tests
+### Tests
 
   To run the test suite, first install the dependencies, then run:
 
@@ -156,8 +156,14 @@ $ npm test
 $ npm run cover
 ```
 
+### Changlog
+* [v0.4.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.4.0) - support websocket
+* [v0.3.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.3.0) - support wildcard / glob
+* [v0.2.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.2.0) - support multiple paths
+* [v0.1.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.1.0) - support path rewrite. deprecate proxyHost option
+* [v0.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.0.5) - initial release
 
-## License:
+### License:
 The MIT License (MIT)
 
 Copyright (c) 2015 Steven Chim
