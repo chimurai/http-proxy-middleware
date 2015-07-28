@@ -54,10 +54,13 @@ describe('Path rewriting', function () {
             };
         });
 
+        it('should return undefined when no config is provided', function () {
+            expect((badFn())()).to.equal(undefined);
+            expect((badFn(null)())).to.equal(undefined);
+            expect((badFn(undefined)())).to.equal(undefined);
+        });
+
         it('should throw when bad config is provided', function () {
-            expect(badFn()).to.throw(Error);
-            expect(badFn(null)).to.throw(Error);
-            expect(badFn(undefined)).to.throw(Error);
             expect(badFn(123)).to.throw(Error);
             expect(badFn("abc")).to.throw(Error);
             expect(badFn(function(){})).to.throw(Error);
