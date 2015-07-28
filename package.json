@@ -38,7 +38,8 @@
     "istanbul": "^0.3.17",
     "istanbul-coveralls": "^1.0.3",
     "mocha": "^2.2.5",
-    "mocha-lcov-reporter": "0.0.2"
+    "mocha-lcov-reporter": "0.0.2",
+    "ws": "^0.7.2"
   },
   "dependencies": {
     "http-proxy": "^1.11.1",
