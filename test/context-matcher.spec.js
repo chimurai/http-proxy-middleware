@@ -6,6 +6,11 @@ describe('String path matching', function () {
 
     describe('Single path matching', function () {
         it('should match all paths', function () {
+            result = contextMatcher.match('', 'http://localhost/api/foo/bar');
+            expect(result).to.be.true;
+        });
+
+        it('should match all paths starting with forward-slash', function () {
             result = contextMatcher.match('/', 'http://localhost/api/foo/bar');
             expect(result).to.be.true;
         });

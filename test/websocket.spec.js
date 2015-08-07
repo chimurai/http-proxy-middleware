@@ -5,7 +5,7 @@ var express         = require('express');
 var WebSocket       = require('ws');
 var WebSocketServer = require('ws').Server;
 
-describe('websocket proxy', function () {
+describe('option.ws - WebSocket proxy', function () {
     var proxyServer, ws, wss;
     var targetHeaders;
     var responseMessage;

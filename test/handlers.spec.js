@@ -8,6 +8,9 @@ describe('handlers.proxyError(err, req, res, proxyOptions)', function () {
     };
 
     var mockReq = {
+        headers : {
+            host : 'localhost:3000'
+        },
         url : '/api'
     };
 
@@ -39,7 +42,7 @@ describe('handlers.proxyError(err, req, res, proxyOptions)', function () {
     });
 
     it('should end the response and return error message', function () {
-        expect(errorMessage).to.equal('Error occured while trying to proxy to: localhost.dev/api');
+        expect(errorMessage).to.equal('Error occured while trying to proxy to: localhost:3000/api');
     });
 
 });
