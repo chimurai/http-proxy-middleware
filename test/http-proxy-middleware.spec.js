@@ -252,7 +252,7 @@ describe('http-proxy-middleware in actual server', function () {
     });
 
 
-    describe('additional request headers', function () {
+    describe('option.headers - additional request headers', function () {
         var proxyServer, targetServer;
         var targetHeaders;
 
@@ -282,7 +282,7 @@ describe('http-proxy-middleware in actual server', function () {
         });
     });
 
-    describe('legacy proxyHost parameter', function () {
+    describe('legacy option.proxyHost', function () {
         var proxyServer, targetServer;
         var targetHeaders;
 
@@ -313,20 +313,97 @@ describe('http-proxy-middleware in actual server', function () {
         });
     });
 
-    describe('Error handling', function () {
+    describe('option.onError - Error handling', function () {
         var proxyServer, targetServer;
         var response;
 
+        describe('default', function () {
+            beforeEach(function (done) {
+                var mw_proxy = proxyMiddleware('/api', {target:'http://localhost:666'});  // unreachable host on port:666
+                var mw_target = function (req, res, next) {next()};
+
+                proxyServer = createServer(3000, mw_proxy);
+                targetServer = createServer(8000, mw_target);
+
+                http.get('http://localhost:3000/api/', function (res) {
+                    response = res;
+                    done();
+                });
+            });
+
+            afterEach(function () {
+                proxyServer.close();
+                targetServer.close();
+            });
+
+            it('should handle errors when host is not reachable', function () {
+                expect(response.statusCode).to.equal(500);
+            });
+        });
+
+        describe('custom', function () {
+            beforeEach(function (done) {
+                var customOnError = function (err, req, res) {
+                    res.writeHead(418);     // different error code
+                    res.end("I'm a teapot");              // no response body
+                };
+
+                var mw_proxy = proxyMiddleware('/api', {target:'http://localhost:666', onError: customOnError});  // unreachable host on port:666
+                var mw_target = function (req, res, next) {next()};
+
+                proxyServer = createServer(3000, mw_proxy);
+                targetServer = createServer(8000, mw_target);
+
+                http.get('http://localhost:3000/api/', function (res) {
+                    response = res;
+                    done();
+                });
+            });
+
+            afterEach(function () {
+                proxyServer.close();
+                targetServer.close();
+            });
+
+            it('should respond with custom http status code', function () {
+                expect(response.statusCode).to.equal(418);
+            });
+
+            it('should respond with custom status message', function () {
+                expect(response.statusMessage).to.equal("I'm a teapot");
+            });
+        });
+    });
+
+    describe('option.onProxyRes', function () {
+        var proxyServer, targetServer;
+        var response, responseBody;
+
         beforeEach(function (done) {
-            var mw_proxy = proxyMiddleware('/api', {target:'http://localhost:666'});  // unreachable host on port:666
-            var mw_target = function (req, res, next) {next()};
+            var fnOnProxyRes = function (proxyRes, req, res) {
+                proxyRes.headers['x-added'] = 'foobar';                        // add custom header to response
+                delete proxyRes.headers['x-removed'];
+            };
+
+            var mw_proxy = proxyMiddleware('/api', {
+                target:'http://localhost:8000',
+                onProxyRes: fnOnProxyRes
+            });
+            var mw_target = function (req, res, next) {
+                res.setHeader('x-removed', 'remove-header');
+                res.write(req.url);                                       // respond with req.url
+                res.end();
+            };
 
             proxyServer = createServer(3000, mw_proxy);
             targetServer = createServer(8000, mw_target);
 
-            http.get('http://localhost:3000/api/', function (res) {
+            http.get('http://localhost:3000/api/foo/bar', function (res) {
                 response = res;
-                done();
+                res.on('data', function (chunk) {
+                    responseBody = chunk.toString();
+                    done();
+                });
             });
         });
 
@@ -335,13 +412,16 @@ describe('http-proxy-middleware in actual server', function () {
             targetServer.close();
         });
 
+        it('should add `x-added` as custom header to response"', function () {
+            expect(response.headers['x-added']).to.equal('foobar');
+        });
 
-        it('should handle errors when host is not reachable', function () {
-            expect(response.statusCode).to.equal(500);
+        it('should remove `x-removed` field from response header"', function () {
+            expect(response.headers['x-removed']).to.equal(undefined);
         });
     });
 
-    describe('Rewrite path', function () {
+    describe('option.pathRewrite', function () {
         var proxyServer, targetServer;
         var responseBody;
 
