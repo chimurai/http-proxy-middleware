@@ -6,7 +6,6 @@ var PathRewriter   = require('./lib/path-rewriter');
 var httpProxyMiddleware = function (context, opts) {
     var isWsUpgradeListened = false;
     var proxyOptions = opts || {};
-    var pathRewriter;
 
     // Legacy option.proxyHost
     // set options.headers.host when option.proxyHost is provided
@@ -25,19 +24,26 @@ var httpProxyMiddleware = function (context, opts) {
     var proxy = httpProxy.createProxyServer(proxyOptions);
     console.log('[HPM] Proxy created:', context, ' -> ', proxyOptions.target);
 
-    pathRewriter = PathRewriter.create(proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
+    var pathRewriter = PathRewriter.create(proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
     // handle option.pathRewrite
     if (pathRewriter) {
-        proxy.on('proxyReq', function (proxyReq, req, res, options) {
+        var proxyReqPathRewrite = function (proxyReq, req, res, options) {
             proxyReq.path = pathRewriter(proxyReq.path);
-        });
+        };
+        proxy.on('proxyReq', proxyReqPathRewrite);
     }
 
+    // Custom listener for the `proxyRes` event on `proxy`.
+    if (isFunction(proxyOptions.onProxyRes)) {
+        proxy.on('proxyRes', proxyOptions.onProxyRes);
+    }
+
+    // Custom listener for the `error` event on `proxy`.
+    var onProxyError = getProxyErrorHandler();
     // handle error and close connection properly
-    proxy.on('error', function (err, req, res) {
-        handlers.proxyError(err, req, res, proxyOptions);
-    });
+    proxy.on('error', onProxyError);
+    proxy.on('error', proxyErrorLogger);
 
     // Listen for the `close` event on `proxy`.
     proxy.on('close', function (req, socket, head) {
@@ -76,6 +82,23 @@ var httpProxyMiddleware = function (context, opts) {
                 console.log('[HPM] Upgrading to WebSocket');
             }
         });
+    }
+
+    function getProxyErrorHandler () {
+        if (isFunction(proxyOptions.onError)) {
+            return proxyOptions.onError;   // custom error listener
+        }
+
+        return handlers.proxyError;       // otherwise fall back to default
+    }
+
+    function proxyErrorLogger (err, req, res) {
+        var targetUri = proxyOptions.target.host + req.url;
+        console.log('[HPM] Proxy error:', err.code, targetUri);
+    }
+
+    function isFunction (v) {
+        return (v && typeof v === 'function');
     }
 
 };
