@@ -315,7 +315,7 @@ describe('http-proxy-middleware in actual server', function () {
 
     describe('option.onError - Error handling', function () {
         var proxyServer, targetServer;
-        var response;
+        var response, responseBody;
 
         describe('default', function () {
             beforeEach(function (done) {
@@ -356,7 +356,10 @@ describe('http-proxy-middleware in actual server', function () {
 
                 http.get('http://localhost:3000/api/', function (res) {
                     response = res;
-                    done();
+                    res.on('data', function (chunk) {
+                        responseBody = chunk.toString();
+                        done();
+                    });
                 });
             });
 
@@ -370,7 +373,7 @@ describe('http-proxy-middleware in actual server', function () {
             });
 
             it('should respond with custom status message', function () {
-                expect(response.statusMessage).to.equal("I'm a teapot");
+                expect(responseBody).to.equal("I'm a teapot");
             });
         });
     });
