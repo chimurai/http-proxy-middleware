@@ -2,6 +2,7 @@ var httpProxy      = require('http-proxy');
 var handlers       = require('./lib/handlers');
 var contextMatcher = require('./lib/context-matcher');
 var PathRewriter   = require('./lib/path-rewriter');
+var ProxyTable     = require('./lib/proxy-table');
 
 var httpProxyMiddleware = function (context, opts) {
     var isWsUpgradeListened = false;
@@ -47,7 +48,7 @@ var httpProxyMiddleware = function (context, opts) {
 
     // Listen for the `close` event on `proxy`.
     proxy.on('close', function (req, socket, head) {
-      // view disconnected websocket connections
+        // view disconnected websocket connections
         console.log('[HPM] Client disconnected');
     });
 
@@ -55,9 +56,15 @@ var httpProxyMiddleware = function (context, opts) {
 
     function middleware (req, res, next) {
         if (contextMatcher.match(context, req.url)) {
-           proxy.web(req, res);
+            if (proxyOptions.proxyTable) {
+                // change option.target when proxyTable present.
+                proxy.web(req, res, ProxyTable.createProxyOptions(req, proxyOptions));
+            } else {
+                proxy.web(req, res);
+            }
+
         } else {
-           next();
+            next();
         }
 
         if (proxyOptions.ws === true) {
