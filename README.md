@@ -47,6 +47,11 @@ var options = {
         ws: true,                         // proxy websockets
         pathRewrite: {
             '^/old/api' : '/new/api'      // rewrite paths
+        },
+        proxyTable: {
+            // when request.headers.host == 'dev.localhost:3000',
+            // override target 'http://www.example.org' to 'http://localhost:8000'
+            'dev.localhost:3000' : 'http://localhost:8000'
         }
     };
 
@@ -68,12 +73,14 @@ See [working  examples](#more-examples).
 http-proxy-middleware offers several ways to decide which requests should be proxied.
 Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986#section-3) will be used for context matching .
 
-* path matching
+* **path matching**
   * `'/'` - matches any path, all requests will be proxied.
   * `'/api'` - matches paths starting with `/api`
-* multiple path matching
-  * `['/api','/ajax','/someotherpath']`
-* wildcard path matching
+
+* **multiple path matching**
+  * `['/api', '/ajax', '/someotherpath']`
+
+* **wildcard path matching**
 
   For fine-grained control you can use wildcard matching. Glob pattern matching is done by _micromatch_. Visit [micromatch](https://www.npmjs.com/package/micromatch) or [glob](https://www.npmjs.com/package/glob) for more globbing examples.
   * `**` matches any path, all requests will be proxied.
@@ -82,13 +89,6 @@ Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986
   * `/api/**/*.html` matches requests ending with `.html` in the path of `/api`
   * `['/api/**', '/ajax/**']` combine multiple patterns
   * `['/api/**', '!**/bad.json']` exclusion
-
-
-### Compatible servers:
-http-proxy-middleware is compatible with the following servers:
-* [connect](https://www.npmjs.com/package/connect)
-* [express](https://www.npmjs.com/package/express)
-* [browser-sync](https://www.npmjs.com/package/browser-sync)
 
 
 ### Options
@@ -100,18 +100,29 @@ http-proxy-middleware is compatible with the following servers:
     }
     ```
 
+* **option.proxyTable**: object, re-target `option.target` based on the request header `host` parameter. `host` can be used in conjunction with `path`. The order of the configuration matters.
+    ```javascript
+    {
+        "integration.localhost:3000" : "http://localhost:8001",    // host only
+        "staging.localhost:3000"     : "http://localhost:8002",    // host only
+        "localhost:3000/api"         : "http://localhost:8003",    // host + path
+        "/rest"                      : "http://localhost:8004"     // path only
+    }
+    ```
+
 *  **option.onError**: function, subscribe to http-proxy's error event for custom error handling.
     ```javascript
-    function onError (err, req, res) {
+    function onError(err, req, res) {
         res.writeHead(500, {
             'Content-Type': 'text/plain'
         });
         res.end('Something went wrong. And we are reporting a custom error message.');
     }
     ```
+
 *  **option.onProxyRes**: function, subscribe to http-proxy's proxyRes event.
     ```javascript
-    function (proxyRes, req, res) {
+    function onProxyRes(proxyRes, req, res) {
         proxyRes.headers['x-added'] = 'foobar';     // add new header to response
         delete proxyRes.headers['x-removed'];       // remove header from response
     }
@@ -162,6 +173,14 @@ $ node examples/connect
  * `examples/express` - [express proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express/index.js)
  * `examples/browser-sync` - [browser-sync proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync/index.js)
  * `examples/websocket` - [websocket proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/websocket/index.js) with express
+
+
+### Compatible servers:
+http-proxy-middleware is compatible with the following servers:
+* [connect](https://www.npmjs.com/package/connect)
+* [express](https://www.npmjs.com/package/express)
+* [browser-sync](https://www.npmjs.com/package/browser-sync)
+
 
 ### Tests
 
