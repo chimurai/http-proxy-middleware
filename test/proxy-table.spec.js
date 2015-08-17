@@ -105,18 +105,20 @@ describe('Proxy Table', function () {
 
             config = {
                 target : 'http://localhost:6000',
-                changeOrigin : true                 // other options should be return, such as changeOrigin
+                changeOrigin : true                 // other options should be returned, such as changeOrigin
             }
 
             configProxyTable = {
                 target : 'http://localhost:6000',
-                changeOrigin : true,                // other options should be return, such as changeOrigin
+                changeOrigin : true,                // other options should be returned, such as changeOrigin
                 proxyTable : {
                     'alpha.localhost'     : 'http://localhost:6001',
                     'beta.localhost'      : 'http://localhost:6002',
                     'gamma.localhost/api' : 'http://localhost:6003',
                     'gamma.localhost'     : 'http://localhost:6004',
-                    '/rest'               : 'http://localhost:6005'
+                    '/rest'               : 'http://localhost:6005',
+                    '/some/specific/path' : 'http://localhost:6006',
+                    '/some'               : 'http://localhost:6007'
                 }
             }
         });
@@ -191,6 +193,15 @@ describe('Proxy Table', function () {
                 req.url = '/unknow-path';
                 result = ProxyTable.createProxyOptions(req, configProxyTable);
                 expect(result.target).to.equal('http://localhost:6000');
+                expect(result.changeOrigin).to.be.true;
+            });
+        });
+
+        describe('matching order of proxyTable config', function () {
+            it('should return first matching target when similar paths are configured', function () {
+                req.url = '/some/specific/path';
+                result = ProxyTable.createProxyOptions(req, configProxyTable);
+                expect(result.target).to.equal('http://localhost:6006');
                 expect(result.changeOrigin).to.be.true;
             });
         });

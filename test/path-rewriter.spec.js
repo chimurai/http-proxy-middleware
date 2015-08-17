@@ -8,10 +8,12 @@ describe('Path rewriting', function () {
     describe('Configuration and usage', function () {
         beforeEach(function () {
             var config = {
-                '^/api/old' : '/api/new',
-                '^/remove' : '',
-                'invalid' : 'path/new',
-                '/valid' : '/path/new'
+                '^/api/old'           : '/api/new',
+                '^/remove'            : '',
+                'invalid'             : 'path/new',
+                '/valid'              : '/path/new',
+                '/some/specific/path' : '/awe/some/specific/path',
+                '/some'               : '/awe/some'
             };
             rewriter = pathRewriter.create(config);
         });
@@ -41,6 +43,12 @@ describe('Path rewriting', function () {
             result = rewriter('/valid/foo/bar.json');
             expect(result).to.equal('/path/new/foo/bar.json');
         });
+
+        it('should return first match when similar paths are configured', function () {
+            result = rewriter('/some/specific/path/bar.json');
+            expect(result).to.equal('/awe/some/specific/path/bar.json');
+        });
+
     });
 
     describe('Invalid configuration', function () {

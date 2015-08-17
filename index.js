@@ -1,3 +1,4 @@
+var _              = require('lodash');
 var httpProxy      = require('http-proxy');
 var handlers       = require('./lib/handlers');
 var contextMatcher = require('./lib/context-matcher');
@@ -36,7 +37,7 @@ var httpProxyMiddleware = function (context, opts) {
     }
 
     // Custom listener for the `proxyRes` event on `proxy`.
-    if (isFunction(proxyOptions.onProxyRes)) {
+    if (_.isFunction(proxyOptions.onProxyRes)) {
         proxy.on('proxyRes', proxyOptions.onProxyRes);
     }
 
@@ -92,7 +93,7 @@ var httpProxyMiddleware = function (context, opts) {
     }
 
     function getProxyErrorHandler () {
-        if (isFunction(proxyOptions.onError)) {
+        if (_.isFunction(proxyOptions.onError)) {
             return proxyOptions.onError;   // custom error listener
         }
 
@@ -102,10 +103,6 @@ var httpProxyMiddleware = function (context, opts) {
     function proxyErrorLogger (err, req, res) {
         var targetUri = proxyOptions.target.host + req.url;
         console.log('[HPM] Proxy error:', err.code, targetUri);
-    }
-
-    function isFunction (v) {
-        return (v && typeof v === 'function');
     }
 
 };
