@@ -21,7 +21,10 @@ var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 //                            |                     |
 //                          context              options
 
-//  'proxy' is now ready to be used in a server.
+// 'proxy' is now ready to be used in a server.
+
+// shorthand syntax for the example above:
+// proxyMiddleware('http://www.example.org/api');
 
 ```
 * **context**: matches provided context against request-urls' path.
@@ -39,8 +42,10 @@ A simple example with express server.
 var express = require('express');
 var proxyMiddleware = require('http-proxy-middleware');
 
-// configure proxy middleware
+// configure proxy middleware context
 var context = '/api';                     // requests with this path will be proxied
+
+// configure proxy middleware options
 var options = {
         target: 'http://www.example.org', // target host
         changeOrigin: true,               // needed for virtual hosted sites
@@ -64,7 +69,7 @@ var app = express();
     app.listen(3000);
 ```
 
-See [working  examples](#more-examples).
+Check out [working  examples](#more-examples).
 
 **Tip:** For [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based), you'll need to use the option `changeOrigin` and set it to `true`.
 
@@ -90,6 +95,22 @@ Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986
   * `['/api/**', '/ajax/**']` combine multiple patterns
   * `['/api/**', '!**/bad.json']` exclusion
 
+
+### Shorthand
+Use the shorthand syntax for simple use cases. The `context` and `option.target` will be automatically configured when shorthand is used. Options can still be used if needed.
+
+```javascript
+proxyMiddleware('http://www.example.org:8000/api');
+// proxyMiddleware('/api', {target: 'http://www.example.org:8000'});
+
+
+proxyMiddleware('http://www.example.org:8000/api/books/*/**.json');
+// proxyMiddleware('/api/books/*/**.json', {target: 'http://www.example.org:8000'});
+
+
+proxyMiddleware('http://www.example.org:8000/api', {changeOrigin:true});
+// proxyMiddleware('/api', {target: 'http://www.example.org:8000', changeOrigin: true});
+```
 
 ### Options
 *  **option.pathRewrite**: object, rewrite target's url path. Object-keys will be used as _RegExp_ to match paths.
@@ -194,7 +215,7 @@ $ npm test
 $ npm run cover
 ```
 
-### Changlog
+### Changelog
 * [v0.6.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.6.0) - support proxyTable
 * [v0.5.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.5.0) - support subscribing to http-proxy error- and proxyRes-event
 * [v0.4.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.4.0) - support websocket

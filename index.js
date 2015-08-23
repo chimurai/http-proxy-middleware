@@ -1,5 +1,6 @@
 var _              = require('lodash');
 var httpProxy      = require('http-proxy');
+var configFactory  = require('./lib/config-factory');
 var handlers       = require('./lib/handlers');
 var contextMatcher = require('./lib/context-matcher');
 var PathRewriter   = require('./lib/path-rewriter');
@@ -7,24 +8,12 @@ var ProxyTable     = require('./lib/proxy-table');
 
 var httpProxyMiddleware = function (context, opts) {
     var isWsUpgradeListened = false;
-    var proxyOptions = opts || {};
-
-    // Legacy option.proxyHost
-    // set options.headers.host when option.proxyHost is provided
-    if (proxyOptions.proxyHost) {
-        console.log('*************************************');
-        console.log('[HPM] Deprecated "option.proxyHost"');
-        console.log('      Use "option.changeOrigin" or "option.headers.host" instead');
-        console.log('      "option.proxyHost" will be removed in future release.');
-        console.log('*************************************');
-
-        proxyOptions.headers = proxyOptions.headers || {};
-        proxyOptions.headers.host = proxyOptions.proxyHost;
-    }
+    var config              = configFactory.createConfig(context, opts);
+    var proxyOptions        = config.options;
 
     // create proxy
     var proxy = httpProxy.createProxyServer(proxyOptions);
-    console.log('[HPM] Proxy created:', context, ' -> ', proxyOptions.target);
+    console.log('[HPM] Proxy created:', config.context, ' -> ', proxyOptions.target);
 
     var pathRewriter = PathRewriter.create(proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
@@ -56,7 +45,7 @@ var httpProxyMiddleware = function (context, opts) {
     return middleware;
 
     function middleware (req, res, next) {
-        if (contextMatcher.match(context, req.url)) {
+        if (contextMatcher.match(config.context, req.url)) {
             if (proxyOptions.proxyTable) {
                 // change option.target when proxyTable present.
                 proxy.web(req, res, ProxyTable.createProxyOptions(req, proxyOptions));
@@ -82,7 +71,7 @@ var httpProxyMiddleware = function (context, opts) {
         isWsUpgradeListened = true;
 
         req.connection.server.on('upgrade', function (req, socket, head) {
-            if (contextMatcher.match(context, req.url)) {
+            if (contextMatcher.match(config.context, req.url)) {
                 if (pathRewriter) {
                     req.url = pathRewriter(req.url);
                 }

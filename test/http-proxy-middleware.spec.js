@@ -462,6 +462,38 @@ describe('http-proxy-middleware in actual server', function () {
         });
     });
 
+    describe('shorthand usage', function () {
+        var proxyServer, targetServer;
+        var responseBody;
+
+        beforeEach(function (done) {
+            var mw_proxy = proxyMiddleware('http://localhost:8000/api');
+            var mw_target = function (req, res, next) {
+                res.write(req.url);                                       // respond with req.url
+                res.end();
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
+
+            http.get('http://localhost:3000/api/foo/bar', function (res) {
+                res.on('data', function (chunk) {
+                    responseBody = chunk.toString();
+                    done();
+                });
+            });
+        });
+
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+        it('should have proxy with shorthand configuration', function () {
+            expect(responseBody).to.equal('/api/foo/bar');
+        });
+    });
+
 
 });
 
