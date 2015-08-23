@@ -494,14 +494,50 @@ describe('http-proxy-middleware in actual server', function () {
         });
     });
 
+    describe('express with path + proxy', function () {
+        var proxyServer, targetServer;
+        var responseBody;
+
+        beforeEach(function (done) {
+            var mw_proxy = proxyMiddleware('http://localhost:8000');
+            var mw_target = function (req, res, next) {
+                res.write(req.url);                                       // respond with req.url
+                res.end();
+            };
+
+            proxyServer = createServer(3000, mw_proxy, '/api');
+            targetServer = createServer(8000, mw_target);
+
+            http.get('http://localhost:3000/api/foo/bar', function (res) {
+                res.on('data', function (chunk) {
+                    responseBody = chunk.toString();
+                    done();
+                });
+            });
+        });
+
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+        it('should proxy to target with the baseUrl', function () {
+            expect(responseBody).to.equal('/api/foo/bar');
+        });
+
+    });
 
 });
 
 
-function createServer (portNumber, middleware) {
+function createServer (portNumber, middleware, path) {
     var app = express();
 
-    if (middleware) {
+    if (middleware, path) {
+        console.log('pathpathpathpathpathpathpath: ', path);
+        app.use(path, middleware);
+    }
+    else if (middleware) {
         app.use(middleware);
     }
 
