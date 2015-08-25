@@ -65,7 +65,20 @@ describe('configFactory', function () {
             });
 
             it('should return on options with ws = true', function () {
-                console.log(result)
+                expect(result.options.ws).to.equal(true);
+            });
+        });
+
+        describe('shorthand api for secure websocket url', function () {
+            beforeEach(function () {
+                result = configFactory.createConfig('wss://www.example.org:8000');
+            });
+
+            it('should return on config object with context', function () {
+                expect(result.context).to.equal('/');
+            });
+
+            it('should return on options with ws = true', function () {
                 expect(result.options.ws).to.equal(true);
             });
         });
