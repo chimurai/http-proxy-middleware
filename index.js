@@ -42,6 +42,13 @@ var httpProxyMiddleware = function (context, opts) {
         console.log('[HPM] Client disconnected');
     });
 
+    // https://github.com/chimurai/http-proxy-middleware/issues/19
+    // expose function to upgrade externally
+    middleware.upgrade = function (req, socket, head) {
+        handleUpgrade(req, socket, head);
+        isWsUpgradeListened = true;
+    };
+
     return middleware;
 
     function middleware (req, res, next) {
@@ -63,27 +70,28 @@ var httpProxyMiddleware = function (context, opts) {
         }
 
         if (proxyOptions.ws === true) {
-            catchUpgradeRequest(req);
+            catchUpgradeRequest(req.connection.server);
         }
     }
 
-    function catchUpgradeRequest (req) {
+    function catchUpgradeRequest (server) {
         // make sure only 1 handle listens to server's upgrade request.
         if (isWsUpgradeListened === true) {
             return;
         }
 
+        server.on('upgrade', handleUpgrade);
         isWsUpgradeListened = true;
+    }
 
-        req.connection.server.on('upgrade', function (req, socket, head) {
-            if (contextMatcher.match(config.context, req.url)) {
-                if (pathRewriter) {
-                    req.url = pathRewriter(req.url);
-                }
-                proxy.ws(req, socket, head);
-                console.log('[HPM] Upgrading to WebSocket');
+    function handleUpgrade (req, socket, head) {
+        if (contextMatcher.match(config.context, req.url)) {
+            if (pathRewriter) {
+                req.url = pathRewriter(req.url);
             }
-        });
+            proxy.ws(req, socket, head);
+            console.log('[HPM] Upgrading to WebSocket');
+        }
     }
 
     function getProxyErrorHandler () {
