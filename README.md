@@ -112,6 +112,32 @@ proxyMiddleware('http://www.example.org:8000/api', {changeOrigin:true});
 // proxyMiddleware('/api', {target: 'http://www.example.org:8000', changeOrigin: true});
 ```
 
+
+### WebSocket
+```javascript
+// verbose api
+proxyMiddleware('/', {target:'http://echo.websocket.org', ws: true});
+
+// shorthand
+proxyMiddleware('http://echo.websocket.org', {ws:true});
+
+// shorter shorthand
+proxyMiddleware('ws://echo.websocket.org');
+```
+
+#### External WebSocket upgrade
+In the previous WebSocket examples, http-proxy-middleware relies on a initial http request in order to listen to the http `upgrade` event. If you need to proxy WebSockets without the initial http request, you can subscribe to the server's http `upgrade` event manually.
+```javascript
+var proxy = proxyMiddleware('ws://echo.websocket.org', {changeOrigin:true});
+
+var app = express();
+    app.use(proxy);
+
+var server = app.listen(3000);
+    server.on('upgrade', proxy.upgrade);    // <-- subscribe to http 'upgrade'
+```
+
+
 ### Options
 *  **option.pathRewrite**: object, rewrite target's url path. Object-keys will be used as _RegExp_ to match paths.
     ```javascript
