@@ -77,34 +77,34 @@ describe('WebSocket proxy', function () {
         });
     });
 
-    // describe('option.ws with external server "upgrade" and shorthand usage', function () {
+    describe('option.ws with external server "upgrade" and shorthand usage', function () {
 
-    //     beforeEach(function () {
-    //         proxyServer.close();
-    //         // override
-    //         proxy = proxyMiddleware('ws://localhost:8000', {pathRewrite: {'^/socket' : ''}});
-    //         proxyServer = createServer(3000, proxy);
-    //     });
+        beforeEach(function () {
+            proxyServer.close();
+            // override
+            proxy = proxyMiddleware('ws://localhost:8000', {pathRewrite: {'^/socket' : ''}});
+            proxyServer = createServer(3000, proxy);
+        });
 
-    //     beforeEach(function (done) {
-    //         proxyServer.on('upgrade', proxy.upgrade);
+        beforeEach(function (done) {
+            proxyServer.on('upgrade', proxy.upgrade);
 
-    //         ws = new WebSocket('ws://localhost:3000/socket');
+            ws = new WebSocket('ws://localhost:3000/socket');
 
-    //         ws.on('message', function incoming(message) {
-    //             responseMessage = message;
-    //             done();
-    //         });
+            ws.on('message', function incoming(message) {
+                responseMessage = message;
+                done();
+            });
 
-    //         ws.on('open', function open() {
-    //           ws.send('foobar');
-    //         });
-    //     });
+            ws.on('open', function open() {
+              ws.send('foobar');
+            });
+        });
 
-    //     it('should proxy to path', function () {
-    //         expect(responseMessage).to.equal('foobar');
-    //     });
-    // });
+        it('should proxy to path', function () {
+            expect(responseMessage).to.equal('foobar');
+        });
+    });
 
     afterEach(function () {
         proxyServer.close();

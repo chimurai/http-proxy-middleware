@@ -55,6 +55,21 @@ describe('configFactory', function () {
             });
         });
 
+        describe('shorthand api for websocket url', function () {
+            beforeEach(function () {
+                result = configFactory.createConfig('ws://www.example.org:8000');
+            });
+
+            it('should return on config object with context', function () {
+                expect(result.context).to.equal('/');
+            });
+
+            it('should return on options with ws = true', function () {
+                console.log(result)
+                expect(result.options.ws).to.equal(true);
+            });
+        });
+
         describe('shorthand api with globbing', function () {
             beforeEach(function () {
                 result = configFactory.createConfig('http://www.example.org:8000/api/*.json');
