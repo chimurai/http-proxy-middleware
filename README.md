@@ -22,10 +22,6 @@ var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 //                          context              options
 
 // 'proxy' is now ready to be used in a server.
-
-// shorthand syntax for the example above:
-// proxyMiddleware('http://www.example.org/api');
-
 ```
 * **context**: matches provided context against request-urls' path.
     Matching requests will be proxied to the target host.
@@ -33,10 +29,16 @@ var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 * **options.target**: target host to proxy to.
     Check out available [proxy middleware options](#options).
 
+``` javascript
+// shorthand syntax for the example above:
+var proxy = proxyMiddleware('http://www.example.org/api');
+
+```
+More about the [shorthand configuration](#shorthand).
 
 
 ### Example
-A simple example with express server.
+An example with express server.
 ```javascript
 // include dependencies
 var express = require('express');
@@ -97,7 +99,7 @@ Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986
 
 
 ### Shorthand
-Use the shorthand syntax for simple use cases. The `context` and `option.target` will be automatically configured when shorthand is used. Options can still be used if needed.
+Use the shorthand syntax when verbose configuration is not needed. The `context` and `option.target` will be automatically configured when shorthand is used. Options can still be used if needed.
 
 ```javascript
 proxyMiddleware('http://www.example.org:8000/api');
@@ -147,7 +149,7 @@ var server = app.listen(3000);
     }
     ```
 
-* **option.proxyTable**: object, re-target `option.target` based on the request header `host` parameter. `host` can be used in conjunction with `path`. The order of the configuration matters.
+* **option.proxyTable**: object, re-target `option.target` based on the request header `host` parameter. `host` can be used in conjunction with `path`. Only one instance of the proxy will be used. The order of the configuration matters.
     ```javascript
     {
         "integration.localhost:3000" : "http://localhost:8001",    // host only
@@ -216,9 +218,9 @@ $ node examples/connect
 ```
 
   Or just explore the proxy examples' sources:
- * `examples/connect` - [connect proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect/index.js)
- * `examples/express` - [express proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express/index.js)
- * `examples/browser-sync` - [browser-sync proxy middleware example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync/index.js)
+ * `examples/connect` - [connect proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect/index.js)
+ * `examples/express` - [express proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express/index.js)
+ * `examples/browser-sync` - [browser-sync proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync/index.js)
  * `examples/websocket` - [websocket proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/websocket/index.js) with express
 
 

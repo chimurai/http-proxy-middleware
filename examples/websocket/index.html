@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>http-proxy-middleware - WebSocket example</title>
+    <style>
+        fieldset {
+            border: 0;
+        }
+        label {
+            display: inline-block;
+            width: 5em;
+            vertical-align: top;
+        }
+        code {
+            background-color: #eee;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>WebSocket demo</h2>
+
+    <p>
+        Proxy <code>ws://localhost:3000</code> to <code>ws://echo.websocket.org</code>
+    </p>
+
+    <fieldset id="configuration">
+        <p>
+            <label for="location">location:</label>
+            <input id="location" type="text" disabled="disabled" value="ws://localhost:3000">
+            <button id="connect">connect</button>
+            <button id="disconnect" disabled="disabled">disconnect</button>
+        </p>
+    </fieldset>
+    <fieldset id="messaging" disabled="disabled">
+        <p>
+            <label for="message">message:</label>
+            <input type="text" id="message" value="Hello WebSocket">
+            <button id="send">send</button>
+        </p>
+        <p>
+            <label for="logger">log:</label>
+            <textarea id="logger" cols="30" rows="10"></textarea>
+        </p>
+    </fieldset>
+
+    <script>
+    window.onload = function () {
+        // elements
+        var configuration = document.getElementById('configuration');
+        var location      = document.getElementById('location');
+        var connect       = document.getElementById('connect');
+        var disconnect    = document.getElementById('disconnect');
+        var messaging     = document.getElementById('messaging');
+        var message       = document.getElementById('message');
+        var send          = document.getElementById('send');
+        var logger        = document.getElementById('logger');
+
+        // ws
+        var socket;
+
+        connect.onclick = function () {
+            connect.disabled = true;
+            disconnect.disabled = false;
+            messaging.disabled = false;
+
+            socket = new WebSocket('ws://localhost:3000');
+            socket.onopen    = function () { log('CONNECTED'); };
+            socket.onclose   = function () { log('DISCONNECTED'); };
+            socket.onerror   = function () { log('SOCKET ERROR OCCURED'); };
+            socket.onmessage = function (msg) { log('RECEIVED:' + msg.data); };
+        }
+
+        disconnect.onclick = function () {
+            connect.disabled = false;
+            disconnect.disabled = true;
+            messaging.disabled = true;
+            socket.close();
+        }
+
+        send.onclick = function () {
+            log('SEND: ' + message.value);
+            socket.send(message.value);
+        };
+
+        function log (message) {
+            logger.value = logger.value + message + '\n'
+        }
+
+    }
+    </script>
+
+</body>
+</html>
