@@ -35,14 +35,14 @@
     "connect": "^3.4.0",
     "coveralls": "^2.11.4",
     "express": "^4.13.3",
-    "istanbul": "^0.3.18",
+    "istanbul": "^0.3.19",
     "istanbul-coveralls": "^1.0.3",
-    "mocha": "^2.2.5",
+    "mocha": "^2.3.0",
     "mocha-lcov-reporter": "0.0.2",
     "ws": "^0.8.0"
   },
   "dependencies": {
-    "http-proxy": "^1.11.1",
+    "http-proxy": "^1.11.2",
     "is-glob": "^2.0.0",
     "lodash": "^3.10.1",
     "micromatch": "^2.2.0"
