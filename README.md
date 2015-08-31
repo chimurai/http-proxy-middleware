@@ -244,6 +244,7 @@ $ npm run cover
 ```
 
 ### Changelog
+* [v0.8.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.0) - support external websocket upgrade, fixed websocket shorthand
 * [v0.7.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.7.0) - support shorthand syntax, fixed express/connect mounting
 * [v0.6.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.6.0) - support proxyTable
 * [v0.5.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.5.0) - support subscribing to http-proxy error- and proxyRes-event
