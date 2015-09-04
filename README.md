@@ -2,7 +2,7 @@
 
 [![Build Status](https://img.shields.io/travis/chimurai/http-proxy-middleware/master.svg?style=flat-square)](https://travis-ci.org/chimurai/http-proxy-middleware)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square)](https://coveralls.io/r/chimurai/http-proxy-middleware)
-[![Codacy](https://img.shields.io/codacy/43dc1adc5e4b490ca84a1f447c13795a.svg?style=flat-square)]()
+[![Codacy](https://img.shields.io/codacy/43dc1adc5e4b490ca84a1f447c13795a.svg?style=flat-square)](https://www.codacy.com/app/chimurai/http-proxy-middleware/dashboard)
 [![dependency Status](https://img.shields.io/david/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=dependencies)
 [![devDependency Status](https://img.shields.io/david/dev/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=devDependencies)
 
