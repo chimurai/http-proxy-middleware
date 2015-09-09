@@ -17,14 +17,6 @@ var httpProxyMiddleware = function (context, opts) {
 
     var pathRewriter = PathRewriter.create(proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
-    // handle option.pathRewrite
-    if (pathRewriter) {
-        var proxyReqPathRewrite = function (proxyReq, req, res, options) {
-            proxyReq.path = pathRewriter(proxyReq.path);
-        };
-        proxy.on('proxyReq', proxyReqPathRewrite);
-    }
-
     // Custom listener for the `proxyRes` event on `proxy`.
     if (_.isFunction(proxyOptions.onProxyRes)) {
         proxy.on('proxyRes', proxyOptions.onProxyRes);
@@ -58,6 +50,11 @@ var httpProxyMiddleware = function (context, opts) {
         }
 
         if (contextMatcher.match(config.context, req.url)) {
+            // handle option.pathRewrite
+            if (pathRewriter) {
+                req.url = pathRewriter(req.url);
+            }
+
             if (proxyOptions.proxyTable) {
                 // change option.target when proxyTable present.
                 proxy.web(req, res, ProxyTable.createProxyOptions(req, proxyOptions));
