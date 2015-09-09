@@ -181,6 +181,15 @@ var server = app.listen(3000);
     }
     ```
 
+*  **option.onProxyReq**: function, subscribe to http-proxy's proxyReq event.
+    ```javascript
+    function onProxyReq(proxyReq, req, res) {
+        // add custom header to request
+        proxyReq.setHeader('x-added', 'foobar');
+        // or log the req
+    }
+    ```
+
 * (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
 
 The following options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
@@ -248,6 +257,7 @@ $ npm run cover
 
 ## Changelog
 
+* [v0.8.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.1) - fixed pathRewrite when `agent` is configured
 * [v0.8.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.0) - support external websocket upgrade, fixed websocket shorthand
 * [v0.7.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.7.0) - support shorthand syntax, fixed express/connect mounting
 * [v0.6.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.6.0) - support proxyTable
