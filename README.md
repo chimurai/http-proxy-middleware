@@ -180,6 +180,7 @@ var server = app.listen(3000);
         delete proxyRes.headers['x-removed'];       // remove header from response
     }
     ```
+*  **option.debugLog**: boolean, log to console when proxy-related events happen.
 
 * (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
 
