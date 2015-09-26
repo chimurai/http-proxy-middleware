@@ -183,7 +183,7 @@ var server = app.listen(3000);
 
 *  **option.onProxyReq**: function, subscribe to http-proxy's proxyReq event.
     ```javascript
-    function onProxyReq(proxyRes, req, res) {
+    function onProxyReq(proxyReq, req, res) {
         // add custom header to request
         proxyReq.setHeader('x-added', 'foobar');
         // or log the req
