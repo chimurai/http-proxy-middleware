@@ -181,6 +181,15 @@ var server = app.listen(3000);
     }
     ```
 
+*  **option.onProxyReq**: function, subscribe to http-proxy's proxyReq event.
+    ```javascript
+    function onProxyReq(proxyReq, req, res) {
+        // add custom header to request
+        proxyReq.setHeader('x-added', 'foobar');
+        // or log the req
+    }
+    ```
+
 * (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
 
 The following options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
