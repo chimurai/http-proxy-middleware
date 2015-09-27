@@ -163,6 +163,33 @@ var server = app.listen(3000);
     }
     ```
 
+*  **option.logLevel**: string, ['debug', 'info', 'warn', 'error', 'silent']. Default: 'info'
+
+*  **option.logProvider**: function, modify or replace log provider. Default: `console`.
+    ```javascript
+    // simple replace
+    function logProvider(provider) {
+        // replace the default console log provider.
+        return require('winston');
+    }
+    ```
+
+    ```javascript
+    // verbose replacement
+    function logProvider(provider) {
+        var logger = new (require('winston').Logger)();
+
+        var myCustomProvider = {
+            log: logger.log,
+            debug: logger.debug,
+            info: logger.info,
+            warn: logger.warn,
+            error: logger.error
+        }
+        return myCustomProvider;
+    }
+    ```
+
 *  **option.onError**: function, subscribe to http-proxy's error event for custom error handling.
     ```javascript
     function onError(err, req, res) {
@@ -222,10 +249,10 @@ $ node examples/connect
 ```
 
   Or just explore the proxy examples' sources:
-    * `examples/connect` - [connect proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect/index.js)
-    * `examples/express` - [express proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express/index.js)
-    * `examples/browser-sync` - [browser-sync proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync/index.js)
-    * `examples/websocket` - [websocket proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/websocket/index.js) with express
+* `examples/connect` - [connect proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect/index.js)
+* `examples/express` - [express proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express/index.js)
+* `examples/browser-sync` - [browser-sync proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync/index.js)
+* `examples/websocket` - [websocket proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/websocket/index.js) with express
 
 ## Compatible servers
 

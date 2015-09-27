@@ -527,6 +527,51 @@ describe('http-proxy-middleware in actual server', function () {
 
     });
 
+
+    describe('option.logLevel & option.logProvider', function () {
+        var proxyServer, targetServer;
+        var responseBody;
+        var logMessage;
+
+        beforeEach(function (done) {
+            var customLogger = function (message) {
+                logMessage = message;
+            }
+
+            var mw_proxy = proxyMiddleware('http://localhost:8000/api', {
+                logLevel: 'info',
+                logProvider: function (provider) {
+                    provider.debug = customLogger;
+                    provider.info = customLogger;
+                    return provider;
+                }
+            });
+            var mw_target = function (req, res, next) {
+                res.write(req.url);                                       // respond with req.url
+                res.end();
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
+
+            http.get('http://localhost:3000/api/foo/bar', function (res) {
+                res.on('data', function (chunk) {
+                    responseBody = chunk.toString();
+                    done();
+                });
+            });
+        });
+
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+        it('should have logged messages', function () {
+            expect(logMessage).not.to.equal(undefined);
+        });
+    });
+
 });
 
 
@@ -534,7 +579,6 @@ function createServer (portNumber, middleware, path) {
     var app = express();
 
     if (middleware, path) {
-        console.log('pathpathpathpathpathpathpath: ', path);
         app.use(path, middleware);
     }
     else if (middleware) {
