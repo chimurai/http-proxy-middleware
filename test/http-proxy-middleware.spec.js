@@ -424,6 +424,44 @@ describe('http-proxy-middleware in actual server', function () {
         });
     });
 
+    describe('option.onProxyReq', function () {
+        var proxyServer, targetServer;
+        var receivedRequest;
+
+        beforeEach(function (done) {
+            var fnOnProxyReq = function (proxyReq, req, res) {
+                proxyReq.setHeader('x-added', 'foobar');                // add custom header to request
+            };
+
+            var mw_proxy = proxyMiddleware('/api', {
+                target: 'http://localhost:8000',
+                onProxyReq: fnOnProxyReq
+            });
+
+            var mw_target = function (req, res, next) {
+                receivedRequest = req;
+                res.write(req.url);                                       // respond with req.url
+                res.end();
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
+
+            http.get('http://localhost:3000/api/foo/bar', function () {
+                done();
+            });
+        });
+
+        afterEach(function () {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+        it('should add `x-added` as custom header to request"', function () {
+            expect(receivedRequest.headers['x-added']).to.equal('foobar');
+        });
+    });
+
     describe('option.pathRewrite', function () {
         var proxyServer, targetServer;
         var responseBody;

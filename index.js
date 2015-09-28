@@ -23,6 +23,11 @@ var httpProxyMiddleware = function (context, opts) {
         proxy.on('proxyRes', proxyOptions.onProxyRes);
     }
 
+    // Custom listener for the `proxyReq` event on `proxy`.
+    if (_.isFunction(proxyOptions.onProxyReq)) {
+        proxy.on('proxyReq', proxyOptions.onProxyReq);
+    }
+
     // Custom listener for the `error` event on `proxy`.
     var onProxyError = getProxyErrorHandler();
     // handle error and close connection properly
