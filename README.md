@@ -215,6 +215,7 @@ var server = app.listen(3000);
         proxyReq.setHeader('x-added', 'foobar');
         // or log the req
     }
+    ```
 
 * (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
 
@@ -283,6 +284,7 @@ $ npm run cover
 
 ## Changelog
 
+* [v0.8.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.2) - fixed proxyError handler ([mTazelaar](https://github.com/mTazelaar))
 * [v0.8.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.1) - fixed pathRewrite when `agent` is configured
 * [v0.8.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.0) - support external websocket upgrade, fixed websocket shorthand
 * [v0.7.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.7.0) - support shorthand syntax, fixed express/connect mounting
