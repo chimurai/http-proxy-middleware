@@ -284,6 +284,7 @@ $ npm run cover
 
 ## Changelog
 
+* [v0.9.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.9.0) - support subscribing to http-proxy proxyReq-event ([trbngr](https://github.com/trbngr)). Added logLevel and logProvider support.
 * [v0.8.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.2) - fixed proxyError handler ([mTazelaar](https://github.com/mTazelaar))
 * [v0.8.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.1) - fixed pathRewrite when `agent` is configured
 * [v0.8.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.0) - support external websocket upgrade, fixed websocket shorthand
