@@ -121,7 +121,7 @@ proxyMiddleware('http://www.example.org:8000/api', {changeOrigin:true});
 
 ```javascript
 // verbose api
-proxyMiddleware('/', {target:'http://echo.websocket.org', ws: true});
+proxyMiddleware('/', {target:'http://echo.websocket.org', ws:true});
 
 // shorthand
 proxyMiddleware('http://echo.websocket.org', {ws:true});
@@ -241,6 +241,10 @@ The following options are provided by the underlying [http-proxy](https://www.np
 Undocumented options are provided by the underlying http-proxy
 *  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}`) [source](https://github.com/nodejitsu/node-http-proxy/blob/master/examples/http/proxy-http-to-https.js#L41)
 
+## Recipes
+
+View [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master/recipes).
+
 ## More Examples
 
   To run and view the [proxy examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples), clone the http-proxy-middleware repo and install the dependencies:
@@ -275,6 +279,9 @@ http-proxy-middleware is compatible with the following servers:
   To run the test suite, first install the dependencies, then run:
 
 ```bash
+# install dependencies
+$ npm install
+
 # unit tests
 $ npm test
 
