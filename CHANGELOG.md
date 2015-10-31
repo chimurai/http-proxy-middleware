@@ -2,20 +2,21 @@
 
 ## [v0.9.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.9.0)
 - support subscribing to http-proxy `proxyReq` event ([trbngr](https://github.com/trbngr))
-- added `logLevel` and `logProvider` support
+- add `logLevel` and `logProvider` support
 
 ## [v0.8.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.2)
-- fixed proxyError handler ([mTazelaar](https://github.com/mTazelaar))
+- fix proxyError handler ([mTazelaar](https://github.com/mTazelaar))
 
 ## [v0.8.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.1)
-- fixed pathRewrite when `agent` is configured
+- fix pathRewrite when `agent` is configured
 
 ## [v0.8.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.8.0)
-- support external websocket upgrade, fixed websocket shorthand
+- support external websocket upgrade
+- fix websocket shorthand
 
 ## [v0.7.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.7.0)
 - support shorthand syntax
-- fixed express/connect mounting
+- fix express/connect mounting
 
 ## [v0.6.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.6.0)
 - support proxyTable
