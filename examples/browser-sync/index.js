@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-var browserSync     = require('../../node_modules/browser-sync/index'); // require('browser-sync');
+var browserSync     = require('../../node_modules/browser-sync/index').create(); // require('browser-sync').create();
 var proxyMiddleware = require('../../index');                           // require('http-proxy-middleware');
 
 // configure proxy middleware
@@ -12,13 +12,13 @@ var proxy = proxyMiddleware('/api', {
                 changeOrigin: true   // for vhosted sites, changes host header to match to target's host
             });
 
-browserSync({
+browserSync.init({
     server: {
         baseDir: "./",
         port: 3000,
         middleware: [proxy],         // add the proxy to browser-sync
-        open: false
-    }
+    },
+    startPath: "/api"
 });
 
 console.log('listening on port 3000');
