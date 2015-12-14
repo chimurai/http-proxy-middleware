@@ -116,6 +116,21 @@ describe('configFactory', function () {
             });
         });
 
+        describe('faulty config. mixing classic with shorthand', function () {
+            var fn
+            beforeEach(function () {
+                result = configFactory.createConfig('http://localhost:3000/api', {target: 'http://localhost:8000'});
+            });
+
+            it('should use the target in the configuration as target', function () {
+                expect(result.options.target).to.equal('http://localhost:8000');
+            });
+
+            it('should not use the host from the shorthand as target', function () {
+                expect(result.options.target).not.to.equal('http://localhost:3000');
+            });
+        });
+
 
     });
 
