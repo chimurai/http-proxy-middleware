@@ -7,7 +7,7 @@
 
 Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express) and [browser-sync](https://github.com/BrowserSync/browser-sync).
 
-Powered by Nodejitsu's popular and community hardened [http-proxy](https://github.com/nodejitsu/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy)
+Powered by the popular Nodejitsu [`http-proxy`](https://github.com/nodejitsu/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy)
 
 ## Install
 
@@ -28,7 +28,7 @@ var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
 
 // 'proxy' is now ready to be used in a server.
 ```
-* **context**: matches provided context against request-urls' path.
+* **context**: matches provided context against request-urls' **path**.
     Matching requests will be proxied to the target host.
     Example: `'/api'` or `['/api', '/ajax']`. (more about [context matching](#context-matching))
 * **options.target**: target host to proxy to.
