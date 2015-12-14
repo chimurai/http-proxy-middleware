@@ -6,9 +6,7 @@ Common usages of `http-proxy-middleware`.
 
 Overview of `http-proxy-middleware` specific options.
 
-http-proxy-middleware uses [http-proxy](https://github.com/nodejitsu/node-http-proxy) to do the actual proxying. All of its [options](https://github.com/nodejitsu/node-http-proxy#options) are exposed via http-proxy-middleware's configuration object.
-
-Don't forget to check out the `http-proxy` [examples](https://github.com/nodejitsu/node-http-proxy/tree/master/examples).
+http-proxy-middleware uses Nodejitsu's [http-proxy](https://github.com/nodejitsu/node-http-proxy) to do the actual proxying. All of its [options](https://github.com/nodejitsu/node-http-proxy#options) are exposed via http-proxy-middleware's configuration object.
 
 
 ```javascript
@@ -79,6 +77,29 @@ var options = {
         // add custom header to request
         proxyReq.setHeader('x-powered-by', 'foobar');
     }
+
+    /**
+     * The following options are provided by Nodejitsu's http-proxy
+     */
+
+    // target
+    // forward
+    // agent
+    // ssl
+    // ws
+    // xfwd
+    // secure
+    // toProxy
+    // prependPath
+    // ignorePath
+    // localAddress
+    // changeOrigin
+    // auth
+    // hostRewrite
+    // autoRewrite
+    // protocolRewrite
+    // headers
+
 
 };
 

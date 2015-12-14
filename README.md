@@ -2,11 +2,12 @@
 
 [![Build Status](https://img.shields.io/travis/chimurai/http-proxy-middleware/master.svg?style=flat-square)](https://travis-ci.org/chimurai/http-proxy-middleware)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square)](https://coveralls.io/r/chimurai/http-proxy-middleware)
-[![Codacy](https://img.shields.io/codacy/43dc1adc5e4b490ca84a1f447c13795a.svg?style=flat-square)](https://www.codacy.com/app/chimurai/http-proxy-middleware/dashboard)
 [![dependency Status](https://img.shields.io/david/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=dependencies)
 [![devDependency Status](https://img.shields.io/david/dev/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=devDependencies)
 
-The one-liner node.js proxy middleware for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express) and [browser-sync](https://github.com/BrowserSync/browser-sync)
+Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express) and [browser-sync](https://github.com/BrowserSync/browser-sync).
+
+Powered by Nodejitsu's popular and community hardened [http-proxy](https://github.com/nodejitsu/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy)
 
 ## Install
 
@@ -243,7 +244,7 @@ Undocumented options are provided by the underlying http-proxy
 
 ## Recipes
 
-View [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master/recipes).
+View the [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master/recipes) for common use cases.
 
 ## More Examples
 
@@ -255,7 +256,7 @@ $ cd http-proxy-middleware
 $ npm install
 ```
 
-  Then run whichever example you want:
+  Run the example:
 
 ```bash
 $ node examples/connect
@@ -299,22 +300,3 @@ $ npm run cover
 The MIT License (MIT)
 
 Copyright (c) 2015 Steven Chim
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
