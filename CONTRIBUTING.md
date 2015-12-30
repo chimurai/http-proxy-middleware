@@ -18,7 +18,7 @@ Tips on how to ask: http://stackoverflow.com/help/how-to-ask
 
 If you think you've found an issue, please submit it to the [Github issue tracker](https://github.com/chimurai/http-proxy-middleware/issues).
 
-"*It doesn't work*" is not very useful for anyone.
+"*[It doesn't work](https://goo.gl/GzkkTg)*" is not very useful for anyone.
 A good issue report should have a well described **problem description** and proxy **configuration**. A great issue report includes a **minimal example**.
 
 Properly format your code example for easier reading: [Code and Syntax Highlighting](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#code-and-syntax-highlighting).
