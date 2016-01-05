@@ -30,21 +30,21 @@
   },
   "homepage": "https://github.com/chimurai/http-proxy-middleware",
   "devDependencies": {
-    "browser-sync": "^2.8.2",
-    "chai": "^3.2.0",
+    "browser-sync": "^2.11.0",
+    "chai": "^3.4.1",
     "connect": "^3.4.0",
-    "coveralls": "^2.11.4",
+    "coveralls": "^2.11.6",
     "express": "^4.13.3",
-    "istanbul": "^0.3.19",
+    "istanbul": "^0.4.1",
     "istanbul-coveralls": "^1.0.3",
-    "mocha": "^2.3.0",
-    "mocha-lcov-reporter": "0.0.2",
-    "ws": "^0.8.0"
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "1.0.0",
+    "ws": "^1.0.1"
   },
   "dependencies": {
-    "http-proxy": "^1.11.2",
-    "is-glob": "^2.0.0",
+    "http-proxy": "^1.12.0",
+    "is-glob": "^2.0.1",
     "lodash": "^3.10.1",
-    "micromatch": "^2.2.0"
+    "micromatch": "^2.3.7"
   }
 }
