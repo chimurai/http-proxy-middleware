@@ -13,6 +13,7 @@
     "url": "https://github.com/chimurai/http-proxy-middleware.git"
   },
   "keywords": [
+    "reverse",
     "proxy",
     "middleware",
     "http",
@@ -21,7 +22,10 @@
     "express",
     "browser-sync",
     "gulp",
-    "websocket"
+    "grunt-contrib-connect",
+    "websocket",
+    "ws",
+    "cors"
   ],
   "author": "Steven Chim",
   "license": "MIT",
