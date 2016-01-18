@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.9.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.9.1)
+- fix server crash when socket error not handled correctly.
+
 ## [v0.9.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.9.0)
 - support subscribing to http-proxy `proxyReq` event ([trbngr](https://github.com/trbngr))
 - add `logLevel` and `logProvider` support
