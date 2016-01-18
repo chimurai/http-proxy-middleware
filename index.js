@@ -110,8 +110,10 @@ var httpProxyMiddleware = function (context, opts) {
     }
 
     function proxyErrorLogger (err, req, res) {
+        var hostname = (req.hostname || req.host) || (req.headers && req.headers.host) // (node0.10 || node 4/5) || (websocket)
         var targetUri = proxyOptions.target.host + req.url;
-        logger.error('[HPM] Proxy error: %s. %s -> "%s"', err.code, req.hostname, targetUri);
+
+        logger.error('[HPM] Proxy error: %s. %s -> "%s"', err.code, hostname, targetUri);
     }
 
 };
