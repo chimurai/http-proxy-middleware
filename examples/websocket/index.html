@@ -29,7 +29,7 @@
     <fieldset id="configuration">
         <p>
             <label for="location">location:</label>
-            <input id="location" type="text" disabled="disabled" value="ws://localhost:3000">
+            <input id="location" type="text" value="ws://localhost:3000">
             <button id="connect">connect</button>
             <button id="disconnect" disabled="disabled">disconnect</button>
         </p>
@@ -66,7 +66,7 @@
             disconnect.disabled = false;
             messaging.disabled = false;
 
-            socket = new WebSocket('ws://localhost:3000');
+            socket = new WebSocket(location.value);
             socket.onopen    = function () { log('CONNECTED'); };
             socket.onclose   = function () { log('DISCONNECTED'); };
             socket.onerror   = function () { log('SOCKET ERROR OCCURED'); };
