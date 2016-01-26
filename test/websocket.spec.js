@@ -106,12 +106,40 @@ describe('WebSocket proxy', function () {
         });
     });
 
+    describe('with proxyTable and pathRewrite', function () {
+
+        beforeEach(function () {
+            proxyServer.close();
+            // override
+            proxy = proxyMiddleware('ws://notworkinghost:6789', {proxyTable: {'/socket': 'ws://localhost:8000'}, pathRewrite: {'^/socket' : ''}});
+            proxyServer = createServer(3000, proxy);
+        });
+
+        beforeEach(function (done) {
+            proxyServer.on('upgrade', proxy.upgrade);
+
+            ws = new WebSocket('ws://localhost:3000/socket');
+
+            ws.on('message', function incoming(message) {
+                responseMessage = message;
+                done();
+            });
+
+            ws.on('open', function open() {
+              ws.send('foobar');
+            });
+        });
+
+        it('should proxy to path', function () {
+            expect(responseMessage).to.equal('foobar');
+        });
+    });
+
     afterEach(function () {
         proxyServer.close();
         wss.close();
         ws = null;
     });
-
 });
 
 function createServer (portNumber, middleware) {
