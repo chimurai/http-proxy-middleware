@@ -1,5 +1,6 @@
 var expect = require('chai').expect;
 var Logger = require('../lib/logger');
+var getArrow = require('../lib/logger').getArrow;
 
 describe('Logger', function () {
     var logger;
@@ -209,8 +210,51 @@ describe('Logger', function () {
 
     });
 
-
-
 });
 
 
+describe('getArrow', function () {
+    var arrow;
+    // scenario = [originalPath, newPath, originalTarget, newTarget]
+
+    describe('default arrow', function () {
+        beforeEach(function () {
+            arrow = getArrow('/api', '/api', 'localhost:1337', 'localhost:1337');
+        });
+
+        it('should return arrow:  "->"', function () {
+            expect(arrow).to.equal('->');
+        });
+    });
+
+    describe('"pathRewrite" arrow', function () {
+        beforeEach(function () {
+            arrow = getArrow('/api', '/rest', 'localhost:1337', 'localhost:1337');
+        });
+
+        it('should return arrow:  "~>"', function () {
+            expect(arrow).to.equal('~>');
+        });
+    });
+
+    describe('"proxyTable" arrow', function () {
+        beforeEach(function () {
+            arrow = getArrow('/api', '/api', 'localhost:1337', 'localhost:8888');
+        });
+
+        it('should return arrow:  "=>"', function () {
+            expect(arrow).to.equal('=>');
+        });
+    });
+
+    describe('"pathRewrite" + "proxyTable" arrow', function () {
+        beforeEach(function () {
+            arrow = getArrow('/api', '/rest', 'localhost:1337', 'localhost:8888');
+        });
+
+        it('should return arrow:  "≈>"', function () {
+            expect(arrow).to.equal('≈>');
+        });
+    });
+
+});
