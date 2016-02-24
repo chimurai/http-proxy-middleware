@@ -6,6 +6,7 @@ var contextMatcher = require('./lib/context-matcher');
 var PathRewriter   = require('./lib/path-rewriter');
 var ProxyTable     = require('./lib/proxy-table');
 var logger         = require('./lib/logger').getInstance();
+var getArrow       = require('./lib/logger').getArrow;
 
 var httpProxyMiddleware = function (context, opts) {
     var isWsUpgradeListened = false;
@@ -56,13 +57,8 @@ var httpProxyMiddleware = function (context, opts) {
         }
 
         if (contextMatcher.match(config.context, req.url)) {
-            logger.debug('[HPM] Context match: "%s" -> "%s"', config.context, req.url);
-
-            var activeProxyOptions = __prepareProxyRequest(req);
-
-            logger.debug('[HPM] Proxying "%s": "%s" -> "%s"', req.url, req.hostname, activeProxyOptions.target);
+            var activeProxyOptions = prepareProxyRequest(req);
             proxy.web(req, res, activeProxyOptions);
-
         } else {
             next();
         }
@@ -84,9 +80,7 @@ var httpProxyMiddleware = function (context, opts) {
 
     function handleUpgrade (req, socket, head) {
         if (contextMatcher.match(config.context, req.url)) {
-
-            var activeProxyOptions = __prepareProxyRequest(req);
-
+            var activeProxyOptions = prepareProxyRequest(req);
             proxy.ws(req, socket, head, activeProxyOptions);
             logger.info('[HPM] Upgrading to WebSocket');
         }
@@ -98,12 +92,19 @@ var httpProxyMiddleware = function (context, opts) {
           ProxyTable uses original path for routing;
           NOT the modified path, after it has been rewritten by pathRewrite
      */
-    function __prepareProxyRequest(req) {
-        // apply option.proxyTable
-        var alteredProxyOptions = __applyProxyTableOption(req, proxyOptions);
+    function prepareProxyRequest(req) {
+        // store uri before it gets rewritten for logging
+        var originalPath = req.url;
 
-        // apply option.pathRewrite
+        // apply apply option.proxyTable & option.pathRewrite
+        var alteredProxyOptions = __applyProxyTableOption(req, proxyOptions);
         __applyPathRewrite(req, pathRewriter);
+
+        // debug logging for both http(s) and websockets
+        if (proxyOptions.logLevel === 'debug') {
+            var arrow = getArrow(originalPath, req.url, proxyOptions.target, alteredProxyOptions.target);
+            logger.debug('[HPM] %s %s %s %s', req.method, originalPath, arrow, alteredProxyOptions.target);
+        }
 
         return alteredProxyOptions;
     }
@@ -139,7 +140,7 @@ var httpProxyMiddleware = function (context, opts) {
         var hostname = (req.hostname || req.host) || (req.headers && req.headers.host) // (node0.10 || node 4/5) || (websocket)
         var targetUri = (proxyOptions.target.host || proxyOptions.target) + req.url;
 
-        logger.error('[HPM] Proxy error: %s. %s -> "%s"', err.code, hostname, targetUri);
+        logger.error('[HPM] PROXY ERROR: %s. %s -> %s', err.code, hostname, targetUri);
     }
 
 };
