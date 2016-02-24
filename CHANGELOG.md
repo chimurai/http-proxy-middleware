@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.11.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.11.0)
+- improved logging
+
+## [v0.10.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.10.0)
+- feat(proxyTable) - added proxyTable support for WebSockets.
+- fixed(proxyTable) - ensure original path (not rewritten path) is being used when `proxyTable` is used in conjunction with `pathRewrite`.
+
 ## [v0.9.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.9.1)
 - fix server crash when socket error not handled correctly.
 
