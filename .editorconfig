@@ -5,14 +5,14 @@ root = true
 [*]
 charset = utf-8
 end_of_line = lf
+indent_style = space
+indent_size = 4
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[*.{js,md}]
-indent_style = space
-indent_size = 4
+[*.md]
+trim_trailing_whitespace = false
 
 # Matches the exact files either package.json or .travis.yml
 [{package.json,.travis.yml}]
-indent_style = space
 indent_size = 2

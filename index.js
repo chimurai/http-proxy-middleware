@@ -8,7 +8,7 @@ var ProxyTable     = require('./lib/proxy-table');
 var logger         = require('./lib/logger').getInstance();
 var getArrow       = require('./lib/logger').getArrow;
 
-var httpProxyMiddleware = function (context, opts) {
+var httpProxyMiddleware = function(context, opts) {
     var isWsUpgradeListened = false;
     var config              = configFactory.createConfig(context, opts);
     var proxyOptions        = config.options;
@@ -36,21 +36,21 @@ var httpProxyMiddleware = function (context, opts) {
     proxy.on('error', proxyErrorLogger);
 
     // Listen for the `close` event on `proxy`.
-    proxy.on('close', function (req, socket, head) {
+    proxy.on('close', function(req, socket, head) {
         // view disconnected websocket connections
         logger.info('[HPM] Client disconnected');
     });
 
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
-    middleware.upgrade = function (req, socket, head) {
+    middleware.upgrade = function(req, socket, head) {
         handleUpgrade(req, socket, head);
         isWsUpgradeListened = true;
     };
 
     return middleware;
 
-    function middleware (req, res, next) {
+    function middleware(req, res, next) {
         // https://github.com/chimurai/http-proxy-middleware/issues/17
         if (req.baseUrl) {
             req.url = req.originalUrl;
@@ -68,7 +68,7 @@ var httpProxyMiddleware = function (context, opts) {
         }
     }
 
-    function catchUpgradeRequest (server) {
+    function catchUpgradeRequest(server) {
         // make sure only 1 handle listens to server's upgrade request.
         if (isWsUpgradeListened === true) {
             return;
@@ -78,7 +78,7 @@ var httpProxyMiddleware = function (context, opts) {
         isWsUpgradeListened = true;
     }
 
-    function handleUpgrade (req, socket, head) {
+    function handleUpgrade(req, socket, head) {
         if (contextMatcher.match(config.context, req.url)) {
             var activeProxyOptions = prepareProxyRequest(req);
             proxy.ws(req, socket, head, activeProxyOptions);
@@ -111,7 +111,7 @@ var httpProxyMiddleware = function (context, opts) {
 
     // Modify option.target when proxyTable present.
     // return altered options
-    function __applyProxyTableOption (req) {
+    function __applyProxyTableOption(req) {
         var result = proxyOptions;
 
         if (proxyOptions.proxyTable) {
@@ -122,13 +122,13 @@ var httpProxyMiddleware = function (context, opts) {
     }
 
     // rewrite path
-    function __applyPathRewrite (req) {
+    function __applyPathRewrite(req) {
         if (pathRewriter) {
             req.url = pathRewriter(req.url);
         }
     }
 
-    function getProxyErrorHandler () {
+    function getProxyErrorHandler() {
         if (_.isFunction(proxyOptions.onError)) {
             return proxyOptions.onError;   // custom error listener
         }
@@ -136,8 +136,8 @@ var httpProxyMiddleware = function (context, opts) {
         return handlers.proxyError;       // otherwise fall back to default
     }
 
-    function proxyErrorLogger (err, req, res) {
-        var hostname = (req.hostname || req.host) || (req.headers && req.headers.host) // (node0.10 || node 4/5) || (websocket)
+    function proxyErrorLogger(err, req, res) {
+        var hostname = (req.hostname || req.host) || (req.headers && req.headers.host); // (node0.10 || node 4/5) || (websocket)
         var targetUri = (proxyOptions.target.host || proxyOptions.target) + req.url;
 
         logger.error('[HPM] PROXY ERROR: %s. %s -> %s', err.code, hostname, targetUri);

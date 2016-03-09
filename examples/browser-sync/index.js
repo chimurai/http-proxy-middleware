@@ -14,11 +14,11 @@ var proxy = proxyMiddleware('/api', {
 
 browserSync.init({
     server: {
-        baseDir: "./",
+        baseDir: './',
         port: 3000,
         middleware: [proxy],         // add the proxy to browser-sync
     },
-    startPath: "/api"
+    startPath: '/api'
 });
 
 console.log('listening on port 3000');
