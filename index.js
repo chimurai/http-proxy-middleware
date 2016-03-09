@@ -19,27 +19,11 @@ var httpProxyMiddleware = function(context, opts) {
 
     var pathRewriter = PathRewriter.create(proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
-    // Custom listener for the `proxyRes` event on `proxy`.
-    if (_.isFunction(proxyOptions.onProxyRes)) {
-        proxy.on('proxyRes', proxyOptions.onProxyRes);
-    }
+    // attach handler to http-proxy events
+    handlers.init(proxy, proxyOptions);
 
-    // Custom listener for the `proxyReq` event on `proxy`.
-    if (_.isFunction(proxyOptions.onProxyReq)) {
-        proxy.on('proxyReq', proxyOptions.onProxyReq);
-    }
-
-    // Custom listener for the `error` event on `proxy`.
-    var onProxyError = getProxyErrorHandler();
-    // handle error and close connection properly
-    proxy.on('error', onProxyError);
-    proxy.on('error', proxyErrorLogger);
-
-    // Listen for the `close` event on `proxy`.
-    proxy.on('close', function(req, socket, head) {
-        // view disconnected websocket connections
-        logger.info('[HPM] Client disconnected');
-    });
+    // log errors for debug purpose
+    proxy.on('error', logError);
 
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
@@ -128,15 +112,7 @@ var httpProxyMiddleware = function(context, opts) {
         }
     }
 
-    function getProxyErrorHandler() {
-        if (_.isFunction(proxyOptions.onError)) {
-            return proxyOptions.onError;   // custom error listener
-        }
-
-        return handlers.proxyError;       // otherwise fall back to default
-    }
-
-    function proxyErrorLogger(err, req, res) {
+    function logError(err, req, res) {
         var hostname = (req.hostname || req.host) || (req.headers && req.headers.host); // (node0.10 || node 4/5) || (websocket)
         var targetUri = (proxyOptions.target.host || proxyOptions.target) + req.url;
 
