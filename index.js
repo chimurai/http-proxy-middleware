@@ -1,4 +1,3 @@
-var _              = require('lodash');
 var httpProxy      = require('http-proxy');
 var configFactory  = require('./lib/config-factory');
 var handlers       = require('./lib/handlers');
