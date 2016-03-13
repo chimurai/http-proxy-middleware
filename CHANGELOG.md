@@ -1,7 +1,7 @@
 # Changelog
 
 ## [v0.12.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.12.0)
-- add option `onProxyReqWS` (subscribe to http-proxy `proxyReqWs` event)
+- add option `onProxyReqWs` (subscribe to http-proxy `proxyReqWs` event)
 - add option `onOpen` (subscribe to http-proxy `open` event)
 - add option `onClose` (subscribe to http-proxy `close` event)
 
