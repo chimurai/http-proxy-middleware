@@ -191,7 +191,7 @@ var server = app.listen(3000);
     }
     ```
 
-*  **option.onError**: function, subscribe to http-proxy's error event for custom error handling.
+*  **option.onError**: function, subscribe to http-proxy's `error` event for custom error handling.
     ```javascript
     function onError(err, req, res) {
         res.writeHead(500, {
@@ -201,7 +201,7 @@ var server = app.listen(3000);
     }
     ```
 
-*  **option.onProxyRes**: function, subscribe to http-proxy's proxyRes event.
+*  **option.onProxyRes**: function, subscribe to http-proxy's `proxyRes` event.
     ```javascript
     function onProxyRes(proxyRes, req, res) {
         proxyRes.headers['x-added'] = 'foobar';     // add new header to response
@@ -209,12 +209,36 @@ var server = app.listen(3000);
     }
     ```
 
-*  **option.onProxyReq**: function, subscribe to http-proxy's proxyReq event.
+*  **option.onProxyReq**: function, subscribe to http-proxy's `proxyReq` event.
     ```javascript
     function onProxyReq(proxyReq, req, res) {
         // add custom header to request
         proxyReq.setHeader('x-added', 'foobar');
         // or log the req
+    }
+    ```
+
+*  **option.onProxyReqWs**: function, subscribe to http-proxy's `proxyReqWs` event.
+    ```javascript
+    function onProxyReqWs(proxyReq, req, socket, options, head) {
+        // add custom header
+        proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
+    }
+    ```
+
+*  **option.onOpen**: function, subscribe to http-proxy's `open` event.
+    ```javascript
+    function onOpen(proxySocket) {
+        // listen for messages coming FROM the target here
+        proxySocket.on('data', hybiParseAndLogMessage);
+    }
+    ```
+
+*  **option.onClose**: function, subscribe to http-proxy's `close` event.
+    ```javascript
+    function onClose(res, socket, head) {
+        // view disconnected websocket connections
+        console.log('Client disconnected');
     }
     ```
 
@@ -238,9 +262,7 @@ The following options are provided by the underlying [http-proxy](https://www.np
 *  **option.hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 *  **option.autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
 *  **option.protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
-
-Undocumented options are provided by the underlying http-proxy
-*  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}`) [source](https://github.com/nodejitsu/node-http-proxy/blob/master/examples/http/proxy-http-to-https.js#L41)
+*  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}`)
 
 ## Recipes
 
