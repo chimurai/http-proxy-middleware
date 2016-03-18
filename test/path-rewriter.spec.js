@@ -4,10 +4,12 @@ var pathRewriter = require('../lib/path-rewriter');
 describe('Path rewriting', function() {
     var rewriter;
     var result;
+    var config;
 
     describe('Configuration and usage', function() {
+
         beforeEach(function() {
-            var config = {
+            config = {
                 '^/api/old': '/api/new',
                 '^/remove': '',
                 'invalid': 'path/new',
@@ -15,6 +17,9 @@ describe('Path rewriting', function() {
                 '/some/specific/path': '/awe/some/specific/path',
                 '/some': '/awe/some'
             };
+        });
+
+        beforeEach(function() {
             rewriter = pathRewriter.create(config);
         });
 
@@ -48,7 +53,24 @@ describe('Path rewriting', function() {
             result = rewriter('/some/specific/path/bar.json');
             expect(result).to.equal('/awe/some/specific/path/bar.json');
         });
+    });
 
+    describe('add base path to requests', function() {
+
+        beforeEach(function() {
+            config = {
+                '^/': '/extra/base/path/'
+            };
+        });
+
+        beforeEach(function() {
+            rewriter = pathRewriter.create(config);
+        });
+
+        it('should add base path to requests', function() {
+            result = rewriter('/api/books/123');
+            expect(result).to.equal('/extra/base/path/api/books/123');
+        });
     });
 
     describe('Invalid configuration', function() {

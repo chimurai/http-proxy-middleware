@@ -58,7 +58,8 @@ var options = {
         changeOrigin: true,               // needed for virtual hosted sites
         ws: true,                         // proxy websockets
         pathRewrite: {
-            '^/old/api' : '/new/api'      // rewrite paths
+            '^/old/api' : '/new/api',     // rewrite path
+            '^/remove/api' : '/api'       // remove path
         },
         proxyTable: {
             // when request.headers.host == 'dev.localhost:3000',
@@ -148,15 +149,19 @@ var server = app.listen(3000);
 
 *  **option.pathRewrite**: object, rewrite target's url path. Object-keys will be used as _RegExp_ to match paths.
     ```javascript
-    {
-        "^/old/api" : "/new/api",    // rewrite path
-        "^/remove/api" : ""          // remove path
-    }
+    // rewrite path
+    pathRewrite: {"^/old/api" : "/new/api"}
+    
+    // remove path
+    pathRewrite: {"^/remove/api" : ""}
+    
+    // add base path
+    pathRewrite: {"^/" : "/basepath/"}
     ```
 
 * **option.proxyTable**: object, re-target `option.target` based on the request header `host` parameter. `host` can be used in conjunction with `path`. Only one instance of the proxy will be used. The order of the configuration matters.
     ```javascript
-    {
+    proxyTable: {
         "integration.localhost:3000" : "http://localhost:8001",    // host only
         "staging.localhost:3000"     : "http://localhost:8002",    // host only
         "localhost:3000/api"         : "http://localhost:8003",    // host + path
