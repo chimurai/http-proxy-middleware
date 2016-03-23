@@ -39,7 +39,7 @@ var httpProxyMiddleware = function(context, opts) {
             req.url = req.originalUrl;
         }
 
-        if (contextMatcher.match(config.context, req.url)) {
+        if (contextMatcher.match(config.context, req.url, req)) {
             var activeProxyOptions = prepareProxyRequest(req);
             proxy.web(req, res, activeProxyOptions);
         } else {
@@ -62,7 +62,7 @@ var httpProxyMiddleware = function(context, opts) {
     }
 
     function handleUpgrade(req, socket, head) {
-        if (contextMatcher.match(config.context, req.url)) {
+        if (contextMatcher.match(config.context, req.url, req)) {
             var activeProxyOptions = prepareProxyRequest(req);
             proxy.ws(req, socket, head, activeProxyOptions);
             logger.info('[HPM] Upgrading to WebSocket');

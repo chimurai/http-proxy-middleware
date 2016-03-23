@@ -85,6 +85,60 @@ describe('http-proxy-middleware in actual server', function() {
         });
     });
 
+    describe('custom context matcher/filter', function() {
+        var proxyServer, targetServer;
+        var targetHeaders;
+        var targetUrl;
+        var responseBody;
+
+        var filterPath, filterReq;
+
+        beforeEach(function(done) {
+            var filter = function(path, req) {
+                filterPath = path;
+                filterReq = req;
+                return true;
+            };
+
+            var mw_proxy = proxyMiddleware(filter, {target: 'http://localhost:8000'});
+
+            var mw_target = function(req, res, next) {
+                targetUrl     = req.url;                                  // store target url.
+                targetHeaders = req.headers;                              // store target headers.
+                res.write('HELLO WEB');                                   // respond with 'HELLO WEB'
+                res.end();
+            };
+
+            proxyServer = createServer(3000, mw_proxy);
+            targetServer = createServer(8000, mw_target);
+
+            http.get('http://localhost:3000/api/b/c/d', function(res) {
+                res.on('data', function(chunk) {
+                    responseBody = chunk.toString();
+                    done();
+                });
+            });
+        });
+
+        afterEach(function() {
+            proxyServer.close();
+            targetServer.close();
+        });
+
+        it('should have response body: "HELLO WEB"', function() {
+            expect(responseBody).to.equal('HELLO WEB');
+        });
+
+        it('should provide the url path in the first argument', function() {
+            expect(filterPath).to.equal('/api/b/c/d');
+        });
+
+        it('should provide the req object in the second argument', function() {
+            expect(filterReq.method).to.equal('GET');
+        });
+    });
+
+
     describe('multi path', function() {
         var proxyServer, targetServer;
         var targetHeaders;

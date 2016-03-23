@@ -94,6 +94,7 @@ Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986
     - `['/api', '/ajax', '/someotherpath']`
 
 * **wildcard path matching**
+    
     For fine-grained control you can use wildcard matching. Glob pattern matching is done by _micromatch_. Visit [micromatch](https://www.npmjs.com/package/micromatch) or [glob](https://www.npmjs.com/package/glob) for more globbing examples.
     - `'**'` matches any path, all requests will be proxied.
     - `'**/*.html'` matches any path which ends with `.html`
@@ -101,6 +102,17 @@ Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986
     - `'/api/**/*.html'` matches requests ending with `.html` in the path of `/api`
     - `['/api/**', '/ajax/**']` combine multiple patterns
     - `['/api/**', '!**/bad.json']` exclusion
+
+* **custom matching**
+    
+    For full control you can provide a custom filter function to determine which requests should be proxied or not.
+    ```javascript
+    var filter = function (path, req) {
+        return (path.match('^/api') && req.method === 'GET');
+    };
+
+    var apiProxy = proxyMiddleware(filter, {target: 'http://www.example.org'})
+    ```
 
 ## Shorthand
 
