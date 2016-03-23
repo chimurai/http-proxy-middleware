@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.13.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.13.0)
+- feat(context): custom context matcher; when simple `path` matching is not sufficient.
+
 ## [v0.12.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.12.0)
 - add option `onProxyReqWs` (subscribe to http-proxy `proxyReqWs` event)
 - add option `onOpen` (subscribe to http-proxy `open` event)
