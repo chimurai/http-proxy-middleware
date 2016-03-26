@@ -10,7 +10,7 @@ http-proxy-middleware uses Nodejitsu's [http-proxy](https://github.com/nodejitsu
 
 
 ```javascript
-var proxyMiddleware = require("http-proxy-middleware");
+var proxy = require("http-proxy-middleware");
 var winston = require('winston');
 
 /**
@@ -44,7 +44,8 @@ var options = {
 
     // re-target based on the request's host header and/or path
     proxyTable: {
-      // <request>                   :  <new target>
+      // host[/path]                 :  <new target>
+      // /path                       :  <new target>
         'integration.localhost:8000' : 'http://localhost:8001',  // host only
         'staging.localhost:8000'     : 'http://localhost:8002',  // host only
         'localhost:8000/api'         : 'http://localhost:8003',  // host + path
@@ -100,11 +101,10 @@ var options = {
     // protocolRewrite
     // headers
 
-
 };
 
 /**
  * Create the proxy middleware, so it can be used in a server.
  */
-var proxy = proxyMiddleware(context, options);
+var apiProxy = proxy(context, options);
 ```

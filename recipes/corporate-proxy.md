@@ -6,7 +6,7 @@ Provide a custom `http.agent` with [https-proxy-agent](https://github.com/TooTal
 
 ```javascript
 var HttpsProxyAgent = require('https-proxy-agent');
-var proxyMiddleware = require("http-proxy-middleware");
+var proxy = require("http-proxy-middleware");
 
 // corporate proxy to connect to
 var proxyServer = process.env.HTTPS_PROXY ||
@@ -17,5 +17,5 @@ var options = {
     agent: new HttpsProxyAgent(proxyServer)
 };
 
-var proxy = proxyMiddleware('/api', options);
+var apiProxy = proxy('/api', options);
 ```

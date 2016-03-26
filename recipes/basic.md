@@ -3,9 +3,9 @@
 This example will create a basic proxy middleware.
 
 ```javascript
-var proxyMiddleware = require("http-proxy-middleware");
+var proxy = require("http-proxy-middleware");
 
-var proxy = proxyMiddleware('/api', {target: 'http://localhost:3000'});
+var apiProxy = proxy('/api', {target: 'http://localhost:3000'});
 //                          \____/  \________________________________/
 //                            |                     |
 //                          context              options

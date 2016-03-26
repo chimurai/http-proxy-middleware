@@ -7,7 +7,7 @@ Use the Proxy Table to proxy requests to a different target based on:
 
 ```javascript
 var express = require('express');
-var proxyMiddleware = require("http-proxy-middleware");
+var proxy = require("http-proxy-middleware");
 
 var proxyTable = {
     "integration.localhost:3000" : "http://localhost:8001",    // host only
@@ -21,10 +21,10 @@ var options = {
     proxyTable: proxyTable
 };
 
-var proxy = proxyMiddleware('/', options);
+var myProxy = proxy('/', options);
 
 var app = express();
-app.use(proxy);                      // add the proxy to express
+app.use(myProxy);                      // add the proxy to express
 
 app.listen(3000);
 ```
