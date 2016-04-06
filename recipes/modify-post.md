@@ -1,10 +1,12 @@
-## Modify Post Parameters Prior to Forwarding to Proxy Target:
+##Modify Post Parameters:
 The code example below illustrates how to modify POST body data prior to forwarding to the proxy target.
 Key to this example is the *"OnProxyReq"* event handler  that creates a new POST body that can be manipulated to format the POST data as required.  For example: inject new POST parameters that should only be visible server side.
 
 This example uses the *"body-parser"* module in the main app to create a req.body object with the decoded POST parameters.   Side note - the code below will allow *"http-proxy-middleware"* to work with *"body-parser"*.
 
-Since this only modifys the request body stream the original POST body parameters remain in tact, so any POST data changes will not be sent back in the resonse to the client.
+Since this only modifys the request body stream the original POST body parameters remain in tact, so any POST data changes will not be sent back in the response to the client.
+
+## Example:
 
     'use strict';
     
