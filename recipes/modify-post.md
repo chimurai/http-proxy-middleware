@@ -69,6 +69,6 @@ Since this only modifys the request body stream the original POST body parameter
         res.render('index', { title: 'Node.js Express Proxy Test' });
     });
     
-    router.all('/document', proxy );
+    router.all('/docs', proxy );
     
     module.exports = router;
