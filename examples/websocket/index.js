@@ -1,33 +1,35 @@
 /**
  * Module dependencies.
  */
-var express         = require('../../node_modules/express/index'); // require('express');
-var proxyMiddleware = require('../../index');                      // require('http-proxy-middleware');
+var express = require('express');
+var proxy = require('../../index'); // require('http-proxy-middleware');
 
-// configure proxy middleware
-// context: '/' will proxy all requests
-var proxy = proxyMiddleware('/', {
+/**
+ * Configure proxy middleware
+ */
+var wsProxy = proxy('/', {
                 target: 'http://echo.websocket.org',
                 // pathRewrite: {
                 //  '^/websocket' : '/socket',          // rewrite path.
                 //  '^/removepath' : ''                 // remove path.
                 // },
                 changeOrigin: true,                     // for vhosted sites, changes host header to match to target's host
-                ws: true                                // enable websocket proxy
-
+                ws: true,                               // enable websocket proxy
+                logLevel: 'debug'
             });
 
 var app = express();
 app.use('/', express.static(__dirname));                // demo page
-app.use(proxy);                                         // add the proxy to express
+app.use(wsProxy);                                       // add the proxy to express
 
 var server = app.listen(3000);
-server.on('upgrade', proxy.upgrade);                    // optional: upgrade externally
+server.on('upgrade', wsProxy.upgrade);                  // optional: upgrade externally
 
-console.log('listening on port 3000');
-console.log('try:');
-console.log('  http://localhost:3000 for a demo');
-console.log('  ws://localhost:3000 requests will be proxied to ws://echo.websocket.org');
+
+console.log('[DEMO] Server: listening on port 3000');
+console.log('[DEMO] Opening: http://localhost:3000');
+
+require('open')('http://localhost:3000');
 
 /**
  * Example:

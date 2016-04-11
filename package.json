@@ -43,6 +43,7 @@
     "istanbul-coveralls": "^1.0.3",
     "mocha": "^2.3.4",
     "mocha-lcov-reporter": "1.2.0",
+    "open": "0.0.5",
     "ws": "^1.0.1"
   },
   "dependencies": {

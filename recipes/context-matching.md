@@ -1,5 +1,19 @@
 # Context matching
 
+Determine which requests should be proxied. `http-proxy-middleware` offers several ways to do this:
+
+<!-- MarkdownTOC autolink=true bracket=round -->
+
+- [Path](#path)
+- [Multi Path](#multi-path)
+- [Wildcard](#wildcard)
+- [Multi Wildcard](#multi-wildcard)
+- [Wildcard / Exclusion](#wildcard--exclusion)
+- [Custom filtering](#custom-filtering)
+
+<!-- /MarkdownTOC -->
+
+
 ## Path
 
 This example will create a basic proxy.

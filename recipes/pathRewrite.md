@@ -1,10 +1,22 @@
 # pathRewrite
 
-Rewrite paths before requests are send to the target.
+Modify request paths before requests are send to the target.
 
-## Path rewrite
+<!-- MarkdownTOC autolink=true bracket=round -->
+
+- [rewrite paths](#rewrite-paths)
+- [remove paths](#remove-paths)
+- [add paths](#add-paths)
+
+<!-- /MarkdownTOC -->
+
+
+## rewrite paths
+
+Rewrite paths
+
 ```javascript
-var proxyMiddleware = require("http-proxy-middleware");
+var proxy = require("http-proxy-middleware");
 
 var options = {
     target: 'http://localhost:3000',
@@ -13,14 +25,17 @@ var options = {
     }
 };
 
-var proxy = proxyMiddleware('/api', options);
+var apiProxy = proxy('/api', options);
 
 // `/old/api/foo/bar` -> `http://localhost:3000/new/api/foo/bar`
 ```
 
-## Remove base path 
+## remove paths
+
+Remove base path
+
 ```javascript
-var proxyMiddleware = require("http-proxy-middleware");
+var proxy = require("http-proxy-middleware");
 
 var options = {
     target: 'http://localhost:3000',
@@ -29,14 +44,17 @@ var options = {
     }
 };
 
-var proxy = proxyMiddleware('/api', options);
+var apiProxy = proxy('/api', options);
 
 // `/remove/api/lorum/ipsum` -> `http://localhost:3000/lorum/ipsum`
 ```
 
-## Add base path 
+## add paths
+
+Add base path 
+
 ```javascript
-var proxyMiddleware = require("http-proxy-middleware");
+var proxy = require("http-proxy-middleware");
 
 var options = {
     target: 'http://localhost:3000',
@@ -45,7 +63,7 @@ var options = {
     }
 };
 
-var proxy = proxyMiddleware('/api', options);
+var apiProxy = proxy('/api', options);
 
 // `/api/lorum/ipsum` -> `http://localhost:3000/extra/api/lorum/ipsum`
 ```

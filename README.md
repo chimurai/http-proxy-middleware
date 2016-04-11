@@ -3,11 +3,31 @@
 [![Build Status](https://img.shields.io/travis/chimurai/http-proxy-middleware/master.svg?style=flat-square)](https://travis-ci.org/chimurai/http-proxy-middleware)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square)](https://coveralls.io/r/chimurai/http-proxy-middleware)
 [![dependency Status](https://img.shields.io/david/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=dependencies)
-[![devDependency Status](https://img.shields.io/david/dev/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=devDependencies)
 
-Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express) and [browser-sync](https://github.com/BrowserSync/browser-sync).
+Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express), [browser-sync](https://github.com/BrowserSync/browser-sync) and [many more](#compatible-servers).
 
 Powered by the popular Nodejitsu [`http-proxy`](https://github.com/nodejitsu/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy)
+
+## Table of Contents
+
+<!-- MarkdownTOC autolink=true bracket=round depth=2 -->
+
+- [Install](#install)
+- [Core concept](#core-concept)
+- [Example](#example)
+- [Context matching](#context-matching)
+- [Shorthand](#shorthand)
+- [WebSocket](#websocket)
+- [Options](#options)
+- [Working examples](#working-examples)
+- [Recipes](#recipes)
+- [Compatible servers](#compatible-servers)
+- [Tests](#tests)
+- [Changelog](#changelog)
+- [License](#license)
+
+<!-- /MarkdownTOC -->
+
 
 ## Install
 
@@ -19,38 +39,39 @@ $ npm install --save-dev http-proxy-middleware
 
 Configure the proxy middleware.
 ```javascript
-var proxyMiddleware = require('http-proxy-middleware');
+var proxy = require('http-proxy-middleware');
 
-var proxy = proxyMiddleware('/api', {target: 'http://www.example.org'});
-//                          \____/  \________________________________/
-//                            |                     |
-//                          context              options
+var apiProxy = proxy('/api', {target: 'http://www.example.org'});
+//                   \____/   \_____________________________/
+//                     |                    |
+//                   context             options
 
-// 'proxy' is now ready to be used in a server.
+// 'apiProxy' is now ready to be used as middleware in a server.
 ```
 * **context**: matches provided context against request-urls' **path**.
     Matching requests will be proxied to the target host.
     Example: `'/api'` or `['/api', '/ajax']`. (more about [context matching](#context-matching))
-* **options.target**: target host to proxy to.
-    Check out available [proxy middleware options](#options).
+* **options.target**: target host to proxy to. (full list of [proxy middleware options](#options))
 
 ``` javascript
 // shorthand syntax for the example above:
-var proxy = proxyMiddleware('http://www.example.org/api');
+var apiProxy = proxy('http://www.example.org/api');
 
 ```
 More about the [shorthand configuration](#shorthand).
 
 ## Example
 
-An example with express server.
+An example with `express` server.
+
 ```javascript
 // include dependencies
 var express = require('express');
-var proxyMiddleware = require('http-proxy-middleware');
+var proxy = require('http-proxy-middleware');
 
 // configure proxy middleware context
 var context = '/api';                     // requests with this path will be proxied
+                                          // use Array for multipath: ['/api', '/rest']
 
 // configure proxy middleware options
 var options = {
@@ -69,21 +90,19 @@ var options = {
     };
 
 // create the proxy
-var proxy = proxyMiddleware(context, options);
+var apiProxy = proxy(context, options);
 
-// use the configured `proxy` in web server
+// use the configured `apiProxy` in web server
 var app = express();
-    app.use(proxy);
+    app.use(apiProxy);
     app.listen(3000);
 ```
-
-Check out [working  examples](#more-examples).
 
 **Tip:** For [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based), you'll need to use the option `changeOrigin` and set it to `true`.
 
 ## Context matching
 
-http-proxy-middleware offers several ways to decide which requests should be proxied.
+`http-proxy-middleware` offers several ways to decide which requests should be proxied.
 Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986#section-3) will be used for context matching .
 
 * **path matching**
@@ -111,7 +130,7 @@ Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986
         return (path.match('^/api') && req.method === 'GET');
     };
 
-    var apiProxy = proxyMiddleware(filter, {target: 'http://www.example.org'})
+    var apiProxy = proxy(filter, {target: 'http://www.example.org'})
     ```
 
 ## Shorthand
@@ -119,42 +138,42 @@ Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986
 Use the shorthand syntax when verbose configuration is not needed. The `context` and `option.target` will be automatically configured when shorthand is used. Options can still be used if needed.
 
 ```javascript
-proxyMiddleware('http://www.example.org:8000/api');
-// proxyMiddleware('/api', {target: 'http://www.example.org:8000'});
+proxy('http://www.example.org:8000/api');
+// proxy('/api', {target: 'http://www.example.org:8000'});
 
 
-proxyMiddleware('http://www.example.org:8000/api/books/*/**.json');
-// proxyMiddleware('/api/books/*/**.json', {target: 'http://www.example.org:8000'});
+proxy('http://www.example.org:8000/api/books/*/**.json');
+// proxy('/api/books/*/**.json', {target: 'http://www.example.org:8000'});
 
 
-proxyMiddleware('http://www.example.org:8000/api', {changeOrigin:true});
-// proxyMiddleware('/api', {target: 'http://www.example.org:8000', changeOrigin: true});
+proxy('http://www.example.org:8000/api', {changeOrigin:true});
+// proxy('/api', {target: 'http://www.example.org:8000', changeOrigin: true});
 ```
 
 ## WebSocket
 
 ```javascript
 // verbose api
-proxyMiddleware('/', {target:'http://echo.websocket.org', ws:true});
+proxy('/', {target:'http://echo.websocket.org', ws:true});
 
 // shorthand
-proxyMiddleware('http://echo.websocket.org', {ws:true});
+proxy('http://echo.websocket.org', {ws:true});
 
 // shorter shorthand
-proxyMiddleware('ws://echo.websocket.org');
+proxy('ws://echo.websocket.org');
 ```
 
 ### External WebSocket upgrade
 
 In the previous WebSocket examples, http-proxy-middleware relies on a initial http request in order to listen to the http `upgrade` event. If you need to proxy WebSockets without the initial http request, you can subscribe to the server's http `upgrade` event manually.
 ```javascript
-var proxy = proxyMiddleware('ws://echo.websocket.org', {changeOrigin:true});
+var wsProxy = proxy('ws://echo.websocket.org', {changeOrigin:true});
 
 var app = express();
-    app.use(proxy);
+    app.use(wsProxy);
 
 var server = app.listen(3000);
-    server.on('upgrade', proxy.upgrade);    // <-- subscribe to http 'upgrade'
+    server.on('upgrade', wsProxy.upgrade);  // <-- subscribe to http 'upgrade'
 ```
 
 ## Options
@@ -174,14 +193,14 @@ var server = app.listen(3000);
 * **option.proxyTable**: object, re-target `option.target` based on the request header `host` parameter. `host` can be used in conjunction with `path`. Only one instance of the proxy will be used. The order of the configuration matters.
     ```javascript
     proxyTable: {
-        "integration.localhost:3000" : "http://localhost:8001",    // host only
-        "staging.localhost:3000"     : "http://localhost:8002",    // host only
-        "localhost:3000/api"         : "http://localhost:8003",    // host + path
-        "/rest"                      : "http://localhost:8004"     // path only
+        "integration.localhost:3000" : "http://localhost:8001",  // host only
+        "staging.localhost:3000"     : "http://localhost:8002",  // host only
+        "localhost:3000/api"         : "http://localhost:8003",  // host + path
+        "/rest"                      : "http://localhost:8004"   // path only
     }
     ```
 
-*  **option.logLevel**: string, ['debug', 'info', 'warn', 'error', 'silent']. Default: 'info'
+*  **option.logLevel**: string, ['debug', 'info', 'warn', 'error', 'silent']. Default: `'info'`
 
 *  **option.logProvider**: function, modify or replace log provider. Default: `console`.
     ```javascript
@@ -270,7 +289,7 @@ The following options are provided by the underlying [http-proxy](https://www.np
 *  **option.ws**: true/false: if you want to proxy websockets
 *  **option.xfwd**: true/false, adds x-forward headers
 *  **option.secure**: true/false, if you want to verify the SSL Certs
-*  **option.toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
+*  **option.toProxy**: true/false, passes the absolute URL as the `path` (useful for proxying to proxies)
 *  **option.prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path>
 *  **option.ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request>
 *  **option.localAddress** : Local interface string to bind for outgoing connections
@@ -281,50 +300,52 @@ The following options are provided by the underlying [http-proxy](https://www.np
 *  **option.protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
 *  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}`)
 
+## Working examples
+
+View and play around with [working examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples).
+
+* Browser-Sync ([exampe source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync/index.js))
+* express ([exampe source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express/index.js))
+* connect ([exampe source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect/index.js))
+* WebSocket ([exampe source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/websocket/index.js))
+
 ## Recipes
 
 View the [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master/recipes) for common use cases.
 
-## More Examples
-
-  To run and view the [proxy examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples), clone the http-proxy-middleware repo and install the dependencies:
-
-```bash
-$ git clone https://github.com/chimurai/http-proxy-middleware.git
-$ cd http-proxy-middleware
-$ npm install
-```
-
-  Run the example:
-
-```bash
-$ node examples/connect
-```
-
-  Or just explore the proxy examples' sources:
-* `examples/connect` - [connect proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect/index.js)
-* `examples/express` - [express proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express/index.js)
-* `examples/browser-sync` - [browser-sync proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/browser-sync/index.js)
-* `examples/websocket` - [websocket proxy example](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/websocket/index.js) with express
-
 ## Compatible servers
 
-http-proxy-middleware is compatible with the following servers:
+`http-proxy-middleware` is compatible with the following servers:
 * [connect](https://www.npmjs.com/package/connect)
 * [express](https://www.npmjs.com/package/express)
 * [browser-sync](https://www.npmjs.com/package/browser-sync)
+* [lite-server](https://www.npmjs.com/package/lite-server)
+* [grunt-contrib-connect](https://www.npmjs.com/package/grunt-contrib-connect)
+* [grunt-browser-sync](https://www.npmjs.com/package/grunt-browser-sync)
+* [gulp-connect](https://www.npmjs.com/package/gulp-connect)
+* [gulp-webserver](https://www.npmjs.com/package/gulp-webserver)
+
+Sample implementations can be found in the [server recipes](https://github.com/chimurai/http-proxy-middleware/tree/master/recipes/servers.md).
 
 ## Tests
 
-  To run the test suite, first install the dependencies, then run:
+Run the test suite:
 
 ```bash
 # install dependencies
 $ npm install
+```
 
+unit testing
+
+```bash
 # unit tests
 $ npm test
+```
 
+coverage
+
+```bash
 # code coverage
 $ npm run cover
 ```
@@ -338,4 +359,4 @@ $ npm run cover
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Steven Chim
+Copyright (c) 2015-2016 Steven Chim
