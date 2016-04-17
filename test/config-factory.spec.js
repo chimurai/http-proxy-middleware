@@ -3,103 +3,120 @@ var configFactory = require('../lib/config-factory');
 
 describe('configFactory', function() {
     var result;
+    var createConfig = configFactory.createConfig;
 
     describe('createConfig()', function() {
 
-        describe('classic api', function() {
+        describe('classic config', function() {
             var context = '/api';
             var options = {target: 'http://www.example.org'};
 
             beforeEach(function() {
-                result = configFactory.createConfig(context, options);
+                result = createConfig(context, options);
             });
 
-            it('should return on config object', function() {
+            it('should return config object', function() {
                 expect(result).to.have.all.keys('context', 'options');
             });
 
-            it('should return on config object with context', function() {
+            it('should return config object with context', function() {
                 expect(result.context).to.equal(context);
             });
 
-            it('should return on config object with options', function() {
+            it('should return config object with options', function() {
                 expect(result.options).to.deep.equal(options);
             });
         });
 
-        describe('shorthand api', function() {
+        describe('shorthand String', function() {
+            describe('shorthand String config', function() {
+                beforeEach(function() {
+                    result = createConfig('http://www.example.org:8000/api');
+                });
+
+                it('should return config object', function() {
+                    expect(result).to.have.all.keys('context', 'options');
+                });
+
+                it('should return config object with context', function() {
+                    expect(result.context).to.equal('/api');
+                });
+
+                it('should return config object with options', function() {
+                    expect(result.options).to.deep.equal({target: 'http://www.example.org:8000'});
+                });
+            });
+
+            describe('shorthand String config for whole domain', function() {
+                beforeEach(function() {
+                    result = createConfig('http://www.example.org:8000');
+                });
+
+                it('should return config object with context', function() {
+                    expect(result.context).to.equal('/');
+                });
+            });
+
+            describe('shorthand String config for websocket url', function() {
+                beforeEach(function() {
+                    result = createConfig('ws://www.example.org:8000');
+                });
+
+                it('should return config object with context', function() {
+                    expect(result.context).to.equal('/');
+                });
+
+                it('should return options with ws = true', function() {
+                    expect(result.options.ws).to.equal(true);
+                });
+            });
+
+            describe('shorthand String config for secure websocket url', function() {
+                beforeEach(function() {
+                    result = createConfig('wss://www.example.org:8000');
+                });
+
+                it('should return config object with context', function() {
+                    expect(result.context).to.equal('/');
+                });
+
+                it('should return options with ws = true', function() {
+                    expect(result.options.ws).to.equal(true);
+                });
+            });
+
+            describe('shorthand String config with globbing', function() {
+                beforeEach(function() {
+                    result = createConfig('http://www.example.org:8000/api/*.json');
+                });
+
+                it('should return config object with context', function() {
+                    expect(result.context).to.equal('/api/*.json');
+                });
+            });
+
+            describe('shorthand String config with options', function() {
+                beforeEach(function() {
+                    result = createConfig('http://www.example.org:8000/api', {changeOrigin: true});
+                });
+
+                it('should return config object with additional options', function() {
+                    expect(result.options).to.deep.equal({target: 'http://www.example.org:8000', changeOrigin: true});
+                });
+            });
+        });
+
+        describe('shorthand Object config', function() {
             beforeEach(function() {
-                result = configFactory.createConfig('http://www.example.org:8000/api');
+                result = createConfig({target: 'http://www.example.org:8000'});
             });
 
-            it('should return on config object', function() {
-                expect(result).to.have.all.keys('context', 'options');
+            it('should set the proxy path to everything', function() {
+                expect(result.context).to.equal('/');
             });
 
-            it('should return on config object with context', function() {
-                expect(result.context).to.equal('/api');
-            });
-
-            it('should return on config object with options', function() {
+            it('should return config object', function() {
                 expect(result.options).to.deep.equal({target: 'http://www.example.org:8000'});
-            });
-        });
-
-        describe('shorthand api for whole domain', function() {
-            beforeEach(function() {
-                result = configFactory.createConfig('http://www.example.org:8000');
-            });
-
-            it('should return on config object with context', function() {
-                expect(result.context).to.equal('/');
-            });
-        });
-
-        describe('shorthand api for websocket url', function() {
-            beforeEach(function() {
-                result = configFactory.createConfig('ws://www.example.org:8000');
-            });
-
-            it('should return on config object with context', function() {
-                expect(result.context).to.equal('/');
-            });
-
-            it('should return on options with ws = true', function() {
-                expect(result.options.ws).to.equal(true);
-            });
-        });
-
-        describe('shorthand api for secure websocket url', function() {
-            beforeEach(function() {
-                result = configFactory.createConfig('wss://www.example.org:8000');
-            });
-
-            it('should return on config object with context', function() {
-                expect(result.context).to.equal('/');
-            });
-
-            it('should return on options with ws = true', function() {
-                expect(result.options.ws).to.equal(true);
-            });
-        });
-
-        describe('shorthand api with globbing', function() {
-            beforeEach(function() {
-                result = configFactory.createConfig('http://www.example.org:8000/api/*.json');
-            });
-
-            it('should return on config object with context', function() {
-                expect(result.context).to.equal('/api/*.json');
-            });
-        });
-
-        describe('shorthand api with options', function() {
-            beforeEach(function() {
-                result = configFactory.createConfig('http://www.example.org:8000/api', {changeOrigin: true});
-            });
-
-            it('should return on config object with additional options', function() {
-                expect(result.options).to.deep.equal({target: 'http://www.example.org:8000', changeOrigin: true});
             });
         });
 
@@ -107,7 +124,7 @@ describe('configFactory', function() {
             var fn;
             beforeEach(function() {
                 fn = function() {
-                    configFactory.createConfig('/api');
+                    createConfig('/api');
                 };
             });
 
@@ -119,7 +136,7 @@ describe('configFactory', function() {
         describe('faulty config. mixing classic with shorthand', function() {
             var fn;
             beforeEach(function() {
-                result = configFactory.createConfig('http://localhost:3000/api', {target: 'http://localhost:8000'});
+                result = createConfig('http://localhost:3000/api', {target: 'http://localhost:8000'});
             });
 
             it('should use the target in the configuration as target', function() {

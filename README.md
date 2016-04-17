@@ -38,6 +38,7 @@ $ npm install --save-dev http-proxy-middleware
 ## Core concept
 
 Configure the proxy middleware.
+
 ```javascript
 var proxy = require('http-proxy-middleware');
 
@@ -150,6 +151,19 @@ proxy('http://www.example.org:8000/api', {changeOrigin:true});
 // proxy('/api', {target: 'http://www.example.org:8000', changeOrigin: true});
 ```
 
+### app.use(path, proxy)
+
+If you want to use the server's `app.use` `path` parameter to match requests; 
+
+Create and mount the proxy without the http-proxy-middleware `context` parameter:
+```javascript
+app.use('/api', proxy({target:'http://www.example.org', changeOrigin:true}));
+```
+
+`app.use` documentation:
+* express: http://expressjs.com/en/4x/api.html#app.use
+* connect: https://github.com/senchalabs/connect#mount-middleware
+
 ## WebSocket
 
 ```javascript
@@ -227,6 +241,9 @@ var server = app.listen(3000);
     }
     ```
 
+### Events
+Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#listening-for-proxy-events):
+
 *  **option.onError**: function, subscribe to http-proxy's `error` event for custom error handling.
     ```javascript
     function onError(err, req, res) {
@@ -280,7 +297,9 @@ var server = app.listen(3000);
 
 * (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
 
-The following options are provided by the underlying [http-proxy](https://www.npmjs.com/package/http-proxy).
+### http-proxy options
+
+The following options are provided by the underlying [http-proxy](https://github.com/nodejitsu/node-http-proxy#options).
 
 *  **option.target**: url string to be parsed with the url module
 *  **option.forward**: url string to be parsed with the url module
