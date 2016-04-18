@@ -20,7 +20,7 @@ describe('context matching', function() {
 
             var middleware;
 
-            var mockReq = {url: '/foo/bar'};
+            var mockReq = {url: '/foo/bar', originalUrl: '/foo/bar'};
             var mockRes = {};
             var mockNext = function() {
                 // mockNext will be called when request is not proxied

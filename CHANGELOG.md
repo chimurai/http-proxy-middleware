@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.x.x](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.x.x)
+- feat(proxy): support proxy creation without context.
+- fix(connect mounting): use connect's `path` configuration to mount proxy.
+
 ## [v0.13.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.13.0)
 - feat(context): custom context matcher; when simple `path` matching is not sufficient.
 
