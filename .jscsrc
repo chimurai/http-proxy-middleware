@@ -1,4 +1,8 @@
 {
     "preset": "google",
-    "validateIndentation": 4
+    "validateIndentation": 4,
+    "maximumLineLength": {
+        "value": 120,
+        "allExcept": ["comments", "regex"]
+    },
 }
