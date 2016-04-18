@@ -35,9 +35,7 @@ var httpProxyMiddleware = function(context, opts) {
 
     function middleware(req, res, next) {
         // https://github.com/chimurai/http-proxy-middleware/issues/17
-        if (req.baseUrl) {
-            req.url = req.originalUrl;
-        }
+        req.url = req.originalUrl;
 
         if (contextMatcher.match(config.context, req.url, req)) {
             var activeProxyOptions = prepareProxyRequest(req);
