@@ -77,7 +77,9 @@ var httpProxyMiddleware = function(context, opts) {
         // store uri before it gets rewritten for logging
         var originalPath = req.url;
 
-        // apply apply option.proxyTable & option.pathRewrite
+        // Apply in order:
+        // 1. option.proxyTable
+        // 2. option.pathRewrite
         var alteredProxyOptions = __applyProxyTableOption(req, proxyOptions);
         __applyPathRewrite(req, pathRewriter);
 
@@ -105,7 +107,13 @@ var httpProxyMiddleware = function(context, opts) {
     // rewrite path
     function __applyPathRewrite(req) {
         if (pathRewriter) {
-            req.url = pathRewriter(req.url);
+            var path = pathRewriter(req.url);
+
+            if (path) {
+                req.url =  path;
+            } else {
+                logger.info('[HPM] pathRewrite: No rewritten path found. (%s)', req.url);
+            }
         }
     }
 

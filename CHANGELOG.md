@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.x.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.x.0)
+- feat(pathRewrite): support for custom pathRewrite function.
+
 ## [v0.14.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.14.0)
 - feat(proxy): support proxy creation without context.
 - fix(connect mounting): use connect's `path` configuration to mount proxy.

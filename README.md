@@ -192,7 +192,7 @@ var server = app.listen(3000);
 
 ## Options
 
-*  **option.pathRewrite**: object, rewrite target's url path. Object-keys will be used as _RegExp_ to match paths.
+*  **option.pathRewrite**: object/function, rewrite target's url path. Object-keys will be used as _RegExp_ to match paths.
     ```javascript
     // rewrite path
     pathRewrite: {"^/old/api" : "/new/api"}
@@ -202,6 +202,9 @@ var server = app.listen(3000);
     
     // add base path
     pathRewrite: {"^/" : "/basepath/"}
+
+    // custom rewriting
+    pathRewrite: function (path) { return path.replace('/api', '/base/api') }
     ```
 
 * **option.proxyTable**: object, re-target `option.target` based on the request header `host` parameter. `host` can be used in conjunction with `path`. Only one instance of the proxy will be used. The order of the configuration matters.

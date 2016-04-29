@@ -6,7 +6,7 @@ describe('Path rewriting', function() {
     var result;
     var config;
 
-    describe('Configuration and usage', function() {
+    describe('Rewrite rules configuration and usage', function() {
 
         beforeEach(function() {
             config = {
@@ -55,7 +55,7 @@ describe('Path rewriting', function() {
         });
     });
 
-    describe('add base path to requests', function() {
+    describe('Rewrite rule: add base path to requests', function() {
 
         beforeEach(function() {
             config = {
@@ -70,6 +70,39 @@ describe('Path rewriting', function() {
         it('should add base path to requests', function() {
             result = rewriter('/api/books/123');
             expect(result).to.equal('/extra/base/path/api/books/123');
+        });
+    });
+
+    describe('Rewrite function', function() {
+        var rewriter;
+
+        beforeEach(function() {
+            rewriter = function(fn) {
+                var rewriteFn = pathRewriter.create(fn);
+                var requestPath = '/123/456';
+                return rewriteFn(requestPath);
+            };
+        });
+
+        it('should return unmodified path', function() {
+            var rewriteFn = function(path) {
+                return path;
+            };
+            expect(rewriter(rewriteFn)).to.equal('/123/456');
+        });
+
+        it('should return alternative path', function() {
+            var rewriteFn = function(path) {
+                return '/foo/bar';
+            };
+            expect(rewriter(rewriteFn)).to.equal('/foo/bar');
+        });
+
+        it('should return replaced path', function() {
+            var rewriteFn = function(path) {
+                return path.replace('/456', '/789');
+            };
+            expect(rewriter(rewriteFn)).to.equal('/123/789');
         });
     });
 
@@ -93,13 +126,16 @@ describe('Path rewriting', function() {
         it('should throw when bad config is provided', function() {
             expect(badFn(123)).to.throw(Error);
             expect(badFn('abc')).to.throw(Error);
-            expect(badFn(function() {})).to.throw(Error);
             expect(badFn([])).to.throw(Error);
             expect(badFn([1,2,3])).to.throw(Error);
         });
 
         it('should not throw when empty Object config is provided', function() {
             expect(badFn({})).to.not.throw(Error);
+        });
+
+        it('should not throw when function config is provided', function() {
+            expect(badFn(function() {})).to.not.throw(Error);
         });
 
     });
