@@ -7,6 +7,7 @@ Modify request paths before requests are send to the target.
 - [rewrite paths](#rewrite-paths)
 - [remove paths](#remove-paths)
 - [add paths](#add-paths)
+- [custom rewrite function](#custom-rewrite-function)
 
 <!-- /MarkdownTOC -->
 
@@ -66,4 +67,26 @@ var options = {
 var apiProxy = proxy('/api', options);
 
 // `/api/lorum/ipsum` -> `http://localhost:3000/extra/api/lorum/ipsum`
+```
+
+## custom rewrite function
+
+Implement you own path rewrite logic.
+When rewrite function is not return a path (undefined), the original path will be used.
+
+```javascript
+var proxy = require("http-proxy-middleware");
+
+var rewriteFn = function (path) {
+    return path.replace('/api/foo', '/api/bar');
+}
+
+var options = {
+    target: 'http://localhost:3000',
+    pathRewrite: rewriteFn
+};
+
+var apiProxy = proxy('/api', options);
+
+// `/api/foo/lorum/ipsum` -> `http://localhost:3000/api/bar/lorum/ipsum`
 ```
