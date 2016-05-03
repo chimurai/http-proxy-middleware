@@ -25,7 +25,6 @@ app.use(wsProxy);                                       // add the proxy to expr
 var server = app.listen(3000);
 server.on('upgrade', wsProxy.upgrade);                  // optional: upgrade externally
 
-
 console.log('[DEMO] Server: listening on port 3000');
 console.log('[DEMO] Opening: http://localhost:3000');
 

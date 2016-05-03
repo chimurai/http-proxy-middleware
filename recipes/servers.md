@@ -86,7 +86,7 @@ http.createServer(app).listen(3000);
 ## lite-server
 
 https://github.com/johnpapa/lite-server
-[![GitHub stars](https://img.shields.io/github/stars/johnpapa/lite-server.svg?style=social&label=Star)](https://github.com/johnpapa/lite-server)
+[![GitHub stars](https://img.shields.io/github/stars/johnpapa/lite-server.svg?style=social&label=Star)](https://github.com/johnpapa/lite-server) ([example source](https://github.com/johnpapa/lite-server/issues/61#issuecomment-205997607))
 
 File: `bs-config.js`
 

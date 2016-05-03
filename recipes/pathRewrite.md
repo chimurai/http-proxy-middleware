@@ -72,7 +72,8 @@ var apiProxy = proxy('/api', options);
 ## custom rewrite function
 
 Implement you own path rewrite logic.
-When rewrite function is not return a path (undefined), the original path will be used.
+
+The unmodified path will be used, when rewrite function returns `undefined`
 
 ```javascript
 var proxy = require("http-proxy-middleware");
