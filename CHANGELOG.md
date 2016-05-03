@@ -1,6 +1,6 @@
 # Changelog
 
-## [v0.x.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.x.0)
+## [v0.15.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.15.0)
 - feat(pathRewrite): support for custom pathRewrite function.
 
 ## [v0.14.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.14.0)
