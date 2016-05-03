@@ -7,7 +7,7 @@ var proxy = require('../../index'); // require('http-proxy-middleware');
 /**
  * Configure proxy middleware
  */
-var chuckNorrisApiProxy = proxy('/jokes', {
+var ChuckNorrisProxy = proxy('/jokes', {
     target: 'http://api.icndb.com',
     changeOrigin: true,             // for vhosted sites, changes host header to match to target's host
     logLevel: 'debug'
@@ -18,7 +18,7 @@ var app = express();
 /**
  * Add the proxy to express
  */
-app.use(chuckNorrisApiProxy);
+app.use(ChuckNorrisProxy);
 
 app.listen(3000);
 
