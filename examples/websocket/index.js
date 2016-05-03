@@ -28,7 +28,7 @@ server.on('upgrade', wsProxy.upgrade);                  // optional: upgrade ext
 console.log('[DEMO] Server: listening on port 3000');
 console.log('[DEMO] Opening: http://localhost:3000');
 
-require('open')('http://localhost:3000');
+require('opn')('http://localhost:3000');
 
 /**
  * Example:

@@ -25,4 +25,4 @@ app.listen(3000);
 console.log('[DEMO] Server: listening on port 3000');
 console.log('[DEMO] Opening: http://localhost:3000/api');
 
-require('open')('http://localhost:3000/jokes/random/5?limitTo=[nerdy]');
+require('opn')('http://localhost:3000/jokes/random/5?limitTo=[nerdy]');
