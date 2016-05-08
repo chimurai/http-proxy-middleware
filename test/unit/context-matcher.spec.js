@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var contextMatcher = require('../lib/context-matcher');
+var contextMatcher = require('../../lib/context-matcher');
 
 describe('Context Matching', function() {
 

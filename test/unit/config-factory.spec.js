@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var configFactory = require('../lib/config-factory');
+var configFactory = require('../../lib/config-factory');
 
 describe('configFactory', function() {
     var result;

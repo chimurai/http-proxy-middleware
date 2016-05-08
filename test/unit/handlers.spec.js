@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var handlers =  require('../lib/handlers');
+var handlers =  require('../../lib/handlers');
 
 describe('handlers factory', function() {
     var handlersMap;

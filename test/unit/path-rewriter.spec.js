@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var pathRewriter = require('../lib/path-rewriter');
+var pathRewriter = require('../../lib/path-rewriter');
 
 describe('Path rewriting', function() {
     var rewriter;

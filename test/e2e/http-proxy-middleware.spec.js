@@ -1,5 +1,5 @@
 var expect          = require('chai').expect;
-var proxyMiddleware = require('../index');
+var proxyMiddleware = require('../../index');
 var http            = require('http');
 var express         = require('express');
 
