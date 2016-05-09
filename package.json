@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --recursive --colors --reporter spec",
-    "cover": "rm -rf coverage && istanbul cover ./node_modules/mocha/bin/_mocha",
-    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && istanbul-coveralls && rm -rf coverage"
+    "cover": "rm -rf coverage && istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --recursive --reporter spec && istanbul-coveralls && rm -rf coverage"
   },
   "repository": {
     "type": "git",
