@@ -81,7 +81,7 @@ var httpProxyMiddleware = function(context, opts) {
         // 1. option.proxyTable
         // 2. option.pathRewrite
         var alteredProxyOptions = __applyProxyTableOption(req, proxyOptions);
-        __applyPathRewrite(req, pathRewriter);
+        __applyPathRewrite(pathRewriter, req);
 
         // debug logging for both http(s) and websockets
         if (proxyOptions.logLevel === 'debug') {
@@ -105,9 +105,9 @@ var httpProxyMiddleware = function(context, opts) {
     }
 
     // rewrite path
-    function __applyPathRewrite(req) {
+    function __applyPathRewrite(pathRewriter, req) {
         if (pathRewriter) {
-            var path = pathRewriter(req.url);
+            var path = pathRewriter(req.url, req);
 
             if (path) {
                 req.url =  path;

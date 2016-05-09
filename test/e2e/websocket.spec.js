@@ -1,11 +1,18 @@
+var utils           = require('./_utils');
 var expect          = require('chai').expect;
-var proxyMiddleware = require('../../index');
 var http            = require('http');
-var express         = require('express');
 var WebSocket       = require('ws');
 var WebSocketServer = require('ws').Server;
 
-describe('WebSocket proxy', function() {
+describe('E2E WebSocket proxy', function() {
+    var createServer;
+    var proxyMiddleware;
+
+    beforeEach(function() {
+        createServer = utils.createServer;
+        proxyMiddleware = utils.proxyMiddleware;
+    });
+
     var proxyServer, ws, wss;
     var targetHeaders;
     var responseMessage;
@@ -141,15 +148,3 @@ describe('WebSocket proxy', function() {
         ws = null;
     });
 });
-
-function createServer(portNumber, middleware) {
-    var app = express();
-
-    if (middleware) {
-        app.use(middleware);
-    }
-
-    var server = app.listen(portNumber);
-
-    return server;
-}

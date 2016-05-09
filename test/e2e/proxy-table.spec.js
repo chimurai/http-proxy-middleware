@@ -1,11 +1,17 @@
+var utils           = require('./_utils');
 var expect          = require('chai').expect;
-var proxyMiddleware = require('../../index');
 var ProxyTable      = require('../../lib/proxy-table');
 var http            = require('http');
-var express         = require('express');
 var _               = require('lodash');
 
-describe('Proxy Table', function() {
+describe('E2E proxyTable', function() {
+    var createServer;
+    var proxyMiddleware;
+
+    beforeEach(function() {
+        createServer = utils.createServer;
+        proxyMiddleware = utils.proxyMiddleware;
+    });
 
     describe('in actual server', function() {
         var proxyServer, targetServerA, targetServerB, targetServerC;
@@ -208,15 +214,3 @@ describe('Proxy Table', function() {
     });
 
 });
-
-function createServer(portNumber, middleware) {
-    var app = express();
-
-    if (middleware) {
-        app.use(middleware);
-    }
-
-    var server = app.listen(portNumber);
-
-    return server;
-}

@@ -176,7 +176,7 @@ Providing an alternative way to decide which requests should be proxied; In case
     pathRewrite: {'^/' : '/basepath/'}
 
     // custom rewriting
-    pathRewrite: function (path) { return path.replace('/api', '/base/api') }
+    pathRewrite: function (path, req) { return path.replace('/api', '/base/api') }
     ```
 
 * **option.proxyTable**: object, re-target `option.target` based on the request header `host` parameter. `host` can be used in conjunction with `path`. Only one instance of the proxy will be used. The order of the configuration matters.

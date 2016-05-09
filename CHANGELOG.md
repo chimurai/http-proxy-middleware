@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.15.x](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.15.x)
+- feat(pathRewrite): expose `req` object to pathRewrite function.
+
 ## [v0.15.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.15.0)
 - feat(pathRewrite): support for custom pathRewrite function.
 

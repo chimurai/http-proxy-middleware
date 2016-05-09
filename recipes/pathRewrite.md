@@ -78,7 +78,7 @@ The unmodified path will be used, when rewrite function returns `undefined`
 ```javascript
 var proxy = require("http-proxy-middleware");
 
-var rewriteFn = function (path) {
+var rewriteFn = function (path, req) {
     return path.replace('/api/foo', '/api/bar');
 }
 
