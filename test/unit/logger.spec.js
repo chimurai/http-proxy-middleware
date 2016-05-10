@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
-var Logger = require('../../lib/logger');
-var getArrow = require('../../lib/logger').getArrow;
+var Logger = require('./_libs').Logger;
+var getArrow = Logger.getArrow;
 
 describe('Logger', function() {
     var logger;
