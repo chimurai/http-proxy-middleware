@@ -2,6 +2,7 @@
 
 ## [v0.15.x](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.15.x)
 - feat(pathRewrite): expose `req` object to pathRewrite function.
+- fix(websocket): fixes websocket upgrade when both config.ws and external .upgrade() are used.
 
 ## [v0.15.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.15.0)
 - feat(pathRewrite): support for custom pathRewrite function.
