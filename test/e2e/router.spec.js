@@ -2,7 +2,7 @@ var utils           = require('./_utils');
 var expect          = require('chai').expect;
 var http            = require('http');
 
-describe('E2E proxyTable', function() {
+describe('E2E router', function() {
     var createServer;
     var proxyMiddleware;
 
@@ -33,7 +33,7 @@ describe('E2E proxyTable', function() {
 
             proxyServer = createServer(6000, proxyMiddleware('/', {
                 target: 'http://localhost:6001',
-                proxyTable: {
+                router: {
                     'alpha.localhost:6000': 'http://localhost:6001',
                     'beta.localhost:6000': 'http://localhost:6002',
                     'localhost:6000/api': 'http://localhost:6003'
@@ -59,7 +59,7 @@ describe('E2E proxyTable', function() {
             });
         });
 
-        it('should proxy to proxyTable: "alpha.localhost"', function(done) {
+        it('should proxy when host is "alpha.localhost"', function(done) {
             var options = {hostname: 'localhost', port: 6000, path: '/'};
             options.headers = {host: 'alpha.localhost:6000'};
             http.get(options, function(res) {
@@ -71,7 +71,7 @@ describe('E2E proxyTable', function() {
             });
         });
 
-        it('should proxy to proxyTable: "beta.localhost"', function(done) {
+        it('should proxy when host is "beta.localhost"', function(done) {
             var options = {hostname: 'localhost', port: 6000, path: '/'};
             options.headers = {host: 'beta.localhost:6000'};
             http.get(options, function(res) {
@@ -83,7 +83,7 @@ describe('E2E proxyTable', function() {
             });
         });
 
-        it('should proxy to proxyTable with path config: "localhost:6000/api"', function(done) {
+        it('should proxy with host & path config: "localhost:6000/api"', function(done) {
             var options = {hostname: 'localhost', port: 6000, path: '/api'};
             http.get(options, function(res) {
                 res.on('data', function(chunk) {
