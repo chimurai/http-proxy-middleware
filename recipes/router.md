@@ -1,6 +1,45 @@
-# proxyTable
+# router
 
-Use the Proxy Table to proxy requests to a different target based on:
+Allows you to route to a different `target` by using a table of a custom function.
+
+<!-- MarkdownTOC autolink=true bracket=round -->
+
+- [Custom router function](#custom-router-function)
+- [Proxy Table](#proxy-table)
+
+<!-- /MarkdownTOC -->
+
+
+## Custom router function
+
+Write your own router to dynamically route to a different `target`.
+The `req` object is provided to retrieve contextual data.
+
+```javascript
+var express = require('express');
+var proxy = require("http-proxy-middleware");
+
+var customRouter = function(req) {
+    return 'http://www.example.org'    // protocol + host
+};
+
+var options = {
+    target: 'http://localhost:8000',
+    router: customRouter
+};
+
+var myProxy = proxy(options);
+
+var app = express();
+app.use(myProxy);                      // add the proxy to express
+
+app.listen(3000);
+```
+
+
+## Proxy Table
+
+Use a Proxy Table to proxy requests to a different `target` based on:
 * Host [HTTP header](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields).
 * Request path
 * Host HTTP header + path
@@ -18,10 +57,10 @@ var proxyTable = {
 
 var options = {
     target: 'http://localhost:8000',
-    proxyTable: proxyTable
+    router: proxyTable
 };
 
-var myProxy = proxy('/', options);
+var myProxy = proxy(options);
 
 var app = express();
 app.use(myProxy);                      // add the proxy to express
@@ -29,7 +68,7 @@ app.use(myProxy);                      // add the proxy to express
 app.listen(3000);
 ```
 
-## Example
+### Example
 
 In the example above; all requests will be proxied to `http://localhost:8000`.
 
