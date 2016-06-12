@@ -43,7 +43,7 @@ var options = {
     },
 
     // re-target based on the request's host header and/or path
-    proxyTable: {
+    router: {
       // host[/path]                 :  <new target>
       // /path                       :  <new target>
         'integration.localhost:8000' : 'http://localhost:8001',  // host only

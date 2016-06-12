@@ -179,13 +179,20 @@ Providing an alternative way to decide which requests should be proxied; In case
     pathRewrite: function (path, req) { return path.replace('/api', '/base/api') }
     ```
 
-* **option.proxyTable**: object, re-target `option.target` based on the request header `host` parameter. `host` can be used in conjunction with `path`. Only one instance of the proxy will be used. The order of the configuration matters.
+* **option.router**: object/function, re-target `option.target` for specific requests.
     ```javascript
-    proxyTable: {
+    // Use `host` and/or `path` to match requests. First match will be used.
+    // The order of the configuration matters.
+    router: {
         'integration.localhost:3000' : 'http://localhost:8001',  // host only
         'staging.localhost:3000'     : 'http://localhost:8002',  // host only
         'localhost:3000/api'         : 'http://localhost:8003',  // host + path
         '/rest'                      : 'http://localhost:8004'   // path only
+    }
+
+    // Custom router function
+    router: function(req) {
+        return 'http://localhost:8004';
     }
     ```
 
@@ -216,6 +223,7 @@ Providing an alternative way to decide which requests should be proxied; In case
     }
     ```
 * (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
+* (DEPRECATED) **option.proxyTable**: Use `option.router` instead.
 
 
 ### http-proxy events
