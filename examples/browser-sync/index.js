@@ -7,8 +7,8 @@ var proxy = require('../../index'); // require('http-proxy-middleware');
 /**
  * Configure proxy middleware
  */
-var ChuckNorrisProxy = proxy('/jokes', {
-    target: 'http://api.icndb.com',
+var jsonPlaceholderProxy = proxy('/users', {
+    target: 'http://jsonplaceholder.typicode.com',
     changeOrigin: true,             // for vhosted sites, changes host header to match to target's host
     logLevel: 'debug'
 });
@@ -20,10 +20,10 @@ browserSync.init({
     server: {
         baseDir: './',
         port: 3000,
-        middleware: [ChuckNorrisProxy],
+        middleware: [jsonPlaceholderProxy],
     },
-    startPath: '/jokes/random/5?limitTo=[nerdy]'
+    startPath: '/users'
 });
 
 console.log('[DEMO] Server: listening on port 3000');
-console.log('[DEMO] Opening: http://localhost:3000/jokes/random/5?limitTo=[nerdy]');
+console.log('[DEMO] Opening: http://localhost:3000/users');
