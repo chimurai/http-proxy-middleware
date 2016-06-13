@@ -1,8 +1,8 @@
 # Changelog
 
-## [develop](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.16.0)
+## [v0.16.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.16.0)
+- deprecated(proxyTable): renamed `proxyTable` to `router`.
 - feat(router): support for custom `router` function.
-- feat(router): deprecate and renamed `proxyTable` option to `router`.
 
 ## [v0.15.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.15.2)
 - fix(websocket): fixes websocket upgrade.
