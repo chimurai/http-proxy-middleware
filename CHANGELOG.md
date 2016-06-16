@@ -1,5 +1,8 @@
 # Changelog
 
+## [develop](https://github.com/chimurai/http-proxy-middleware/releases/tag/develop)
+- fix(context matching): Use [RFC 3986 path](https://tools.ietf.org/html/rfc3986#section-3.3) in context matching. (excludes query parameters)
+
 ## [v0.16.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.16.0)
 - deprecated(proxyTable): renamed `proxyTable` to `router`.
 - feat(router): support for custom `router` function.
