@@ -127,10 +127,20 @@ var app = express();
 
 ## Context matching
 
-Providing an alternative way to decide which requests should be proxied; In case you are not able to use the server's [`path` parameter](http://expressjs.com/en/4x/api.html#app.use) to mount the proxy or when you need more flexibility. Request URL's [ _path-absolute_ and _query_](https://tools.ietf.org/html/rfc3986#section-3) will be used for context matching.
+Providing an alternative way to decide which requests should be proxied; In case you are not able to use the server's [`path` parameter](http://expressjs.com/en/4x/api.html#app.use) to mount the proxy or when you need more flexibility.
+
+The [RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is be used for context matching.
+
+```
+         foo://example.com:8042/over/there?name=ferret#nose
+         \_/   \______________/\_________/ \_________/ \__/
+          |           |            |            |        |
+       scheme     authority       path        query   fragment
+```
 
 * **path matching**
-    - `proxy({...})` or `proxy('/', {...})` - matches any path, all requests will be proxied.
+    - `proxy({...})` - matches any path, all requests will be proxied.
+    - `proxy('/', {...})` - matches any path, all requests will be proxied.
     - `proxy('/api', {...})` - matches paths starting with `/api`
 
 * **multiple path matching**
@@ -153,8 +163,8 @@ Providing an alternative way to decide which requests should be proxied; In case
     /**
      * @return {Boolean}
      */
-    var filter = function (path, req) {
-        return (path.match('^/api') && req.method === 'GET');
+    var filter = function (pathname, req) {
+        return (pathname.match('^/api') && req.method === 'GET');
     };
 
     var apiProxy = proxy(filter, {target: 'http://www.example.org'})

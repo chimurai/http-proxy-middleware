@@ -111,9 +111,9 @@ describe('Context Matching', function() {
                     expect(contextMatcher.match(pattern, 'http://localhost/some/path/index.html')).to.be.false;
                 });
 
-                it('should only match .php files with query params', function() {
-                    expect(contextMatcher.match('/**/*.php', 'http://localhost/a/b/c.php?d=e&e=f')).to.be.false;
-                    expect(contextMatcher.match('/**/*.php?*', 'http://localhost/a/b/c.php?d=e&e=f')).to.be.true;
+                it('should ignore query params', function() {
+                    expect(contextMatcher.match('/**/*.php', 'http://localhost/a/b/c.php?d=e&e=f')).to.be.true;
+                    expect(contextMatcher.match('/**/*.php?*', 'http://localhost/a/b/c.php?d=e&e=f')).to.be.false;
                 });
 
                 it('should only match any file in root path', function() {
