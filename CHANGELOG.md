@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.18.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.18.0)
+- fix(Express sub Router): 404 on non-proxy routes  ([#94](https://github.com/chimurai/http-proxy-middleware/issues/94))
+
 ## [v0.17.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.17.0)
 - fix(context matching): Use [RFC 3986 path](https://tools.ietf.org/html/rfc3986#section-3.3) in context matching. (excludes query parameters)
 
