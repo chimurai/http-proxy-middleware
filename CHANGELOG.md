@@ -1,6 +1,6 @@
 # Changelog
 
-## [v0.18.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.18.0)
+## [v0.17.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.17.1)
 - fix(Express sub Router): 404 on non-proxy routes  ([#94](https://github.com/chimurai/http-proxy-middleware/issues/94))
 
 ## [v0.17.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.17.0)
