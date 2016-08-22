@@ -110,7 +110,7 @@ var options = {
             '^/old/api' : '/new/api',     // rewrite path
             '^/remove/api' : '/api'       // remove path
         },
-        proxyTable: {
+        router: {
             // when request.headers.host == 'dev.localhost:3000',
             // override target 'http://www.example.org' to 'http://localhost:8000'
             'dev.localhost:3000' : 'http://localhost:8000'

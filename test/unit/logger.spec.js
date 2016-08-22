@@ -236,7 +236,7 @@ describe('getArrow', function() {
         });
     });
 
-    describe('"proxyTable" arrow', function() {
+    describe('"router" arrow', function() {
         beforeEach(function() {
             arrow = getArrow('/api', '/api', 'localhost:1337', 'localhost:8888');
         });
@@ -246,7 +246,7 @@ describe('getArrow', function() {
         });
     });
 
-    describe('"pathRewrite" + "proxyTable" arrow', function() {
+    describe('"pathRewrite" + "router" arrow', function() {
         beforeEach(function() {
             arrow = getArrow('/api', '/rest', 'localhost:1337', 'localhost:8888');
         });

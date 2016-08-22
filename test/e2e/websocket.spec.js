@@ -113,12 +113,12 @@ describe('E2E WebSocket proxy', function() {
         });
     });
 
-    describe('with proxyTable and pathRewrite', function() {
+    describe('with router and pathRewrite', function() {
 
         beforeEach(function() {
             proxyServer.close();
             // override
-            proxy = proxyMiddleware('ws://notworkinghost:6789', {proxyTable: {'/socket': 'ws://localhost:8000'}, pathRewrite: {'^/socket': ''}});
+            proxy = proxyMiddleware('ws://notworkinghost:6789', {router: {'/socket': 'ws://localhost:8000'}, pathRewrite: {'^/socket': ''}});
             proxyServer = createServer(3000, proxy);
         });
 
