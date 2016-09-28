@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.17.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.17.2)
+- feat(logging): improve error message & add link to Node errors page. ([#106](https://github.com/chimurai/http-proxy-middleware/pull/106)) ([cloudmu](https://github.com/cloudmu))
+- feat(pathRewrite): path can be empty string. ([#110](https://github.com/chimurai/http-proxy-middleware/pull/110)) ([sunnylqm](https://github.com/sunnylqm))
+- bug(websocket): memory leak when option 'ws:true' is used. ([#114](https://github.com/chimurai/http-proxy-middleware/pull/114)) ([julbra](https://github.com/julbra))
+- chore(package.json): reduce package size. ([#109](https://github.com/chimurai/http-proxy-middleware/pull/109))
+
 ## [v0.17.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.17.1)
 - fix(Express sub Router): 404 on non-proxy routes  ([#94](https://github.com/chimurai/http-proxy-middleware/issues/94))
 
