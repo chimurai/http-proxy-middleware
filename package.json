@@ -52,9 +52,9 @@
     "ws": "^1.1.1"
   },
   "dependencies": {
-    "http-proxy": "^1.14.0",
-    "is-glob": "^2.0.1",
-    "lodash": "^4.14.2",
+    "http-proxy": "^1.15.1",
+    "is-glob": "^3.0.0",
+    "lodash": "^4.16.2",
     "micromatch": "^2.3.11"
   }
 }
