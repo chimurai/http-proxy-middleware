@@ -38,8 +38,8 @@ var options = {
 
     // rewrite paths
     pathRewrite: {
-        '^/old/api': '/new/api',    // rewrite path
-        '^/remove/api': ''          // remove path
+        '^/api/old-path' : '/api/new-path',     // rewrite path
+        '^/api/remove/path' : '/path'           // remove base path
     },
 
     // re-target based on the request's host header and/or path

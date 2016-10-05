@@ -107,8 +107,8 @@ var options = {
         changeOrigin: true,               // needed for virtual hosted sites
         ws: true,                         // proxy websockets
         pathRewrite: {
-            '^/old/api' : '/new/api',     // rewrite path
-            '^/remove/api' : '/api'       // remove path
+            '^/api/old-path' : '/api/new-path',     // rewrite path
+            '^/api/remove/path' : '/path'           // remove base path
         },
         router: {
             // when request.headers.host == 'dev.localhost:3000',
