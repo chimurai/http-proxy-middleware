@@ -17,13 +17,13 @@ Modify request paths before requests are send to the target.
 Rewrite paths
 
 ```javascript
-var proxy = require("http-proxy-middleware");
+var proxy = require('http-proxy-middleware');
 
 var options = {
     target: 'http://localhost:3000',
     pathRewrite: {
-        "^/old/api" : "/new/api"    // rewrite path
-    }
+        '^/api/old-path' : '/api/new-path',     // rewrite path
+    },
 };
 
 var apiProxy = proxy('/api', options);
@@ -36,18 +36,18 @@ var apiProxy = proxy('/api', options);
 Remove base path
 
 ```javascript
-var proxy = require("http-proxy-middleware");
+var proxy = require('http-proxy-middleware');
 
 var options = {
     target: 'http://localhost:3000',
     pathRewrite: {
-        "^/remove/api" : ""          // remove base path
+       '^/api/' : '/'          // remove base path
     }
 };
 
 var apiProxy = proxy('/api', options);
 
-// `/remove/api/lorum/ipsum` -> `http://localhost:3000/lorum/ipsum`
+// `/api/lorum/ipsum` -> `http://localhost:3000/lorum/ipsum`
 ```
 
 ## add paths
@@ -55,12 +55,12 @@ var apiProxy = proxy('/api', options);
 Add base path 
 
 ```javascript
-var proxy = require("http-proxy-middleware");
+var proxy = require('http-proxy-middleware');
 
 var options = {
     target: 'http://localhost:3000',
     pathRewrite: {
-        "^/" : "/extra/"          // add base path
+        '^/' : '/extra/'          // add base path
     }
 };
 
@@ -76,7 +76,7 @@ Implement you own path rewrite logic.
 The unmodified path will be used, when rewrite function returns `undefined`
 
 ```javascript
-var proxy = require("http-proxy-middleware");
+var proxy = require('http-proxy-middleware');
 
 var rewriteFn = function (path, req) {
     return path.replace('/api/foo', '/api/bar');
