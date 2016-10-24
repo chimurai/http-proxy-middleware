@@ -48,7 +48,7 @@ var onProxyReqWs = function (proxyReq, req, socket, options, head) {
     proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
 };
 
-var options = {target:'http://localhost:3000', onProxyReq: onProxyReqWs};
+var options = {target:'http://localhost:3000', onProxyReqWs: onProxyReqWs};
 
 var apiProxy = proxy('/api', options);
 ```
