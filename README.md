@@ -304,15 +304,29 @@ The following options are provided by the underlying [http-proxy](https://github
 *  **option.xfwd**: true/false, adds x-forward headers
 *  **option.secure**: true/false, if you want to verify the SSL Certs
 *  **option.toProxy**: true/false, passes the absolute URL as the `path` (useful for proxying to proxies)
-*  **option.prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path>
-*  **option.ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request>
+*  **option.prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path
+*  **option.ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request (note: you will have to append / manually if required).
 *  **option.localAddress** : Local interface string to bind for outgoing connections
-*  **option.changeOrigin**: true/false, adds host to request header.
+*  **option.changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
 *  **option.auth** : Basic authentication i.e. 'user:password' to compute an Authorization header.
 *  **option.hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 *  **option.autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
 *  **option.protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
+*  **option.cookieDomainRewrite**: rewrites domain of `set-cookie` headers. Possible values:
+   * `false` (default): disable cookie rewriting
+   * String: new domain, for example `cookieDomainRewrite: "new.domain"`. To remove the domain, use `cookieDomainRewrite: ""`.
+   * Object: mapping of domains to new domains, use `"*"` to match all domains.  
+     For example keep one domain unchanged, rewrite one domain and remove other domains:
+     ```
+     cookieDomainRewrite: {
+       "unchanged.domain": "unchanged.domain",
+       "old.domain": "new.domain",
+       "*": ""
+     }
+     ```
 *  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}`)
+*  **option.proxyTimeout**: timeout (in millis) when proxy receives no response from target
+
 
 
 ## Shorthand
