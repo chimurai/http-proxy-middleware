@@ -101,9 +101,21 @@ describe('default proxy error handler', function() {
         errorMessage = undefined;
     });
 
-    it('should set the http status code to: 500', function() {
-        proxyError(mockError, mockReq, mockRes, proxyOptions);
-        expect(httpErrorCode).to.equal(500);
+    var codes = [
+      ['HPE_INVALID_FOO', 502],
+      ['HPE_INVALID_BAR', 502],
+      ['ECONNREFUSED', 504],
+      ['ENOTFOUND', 504],
+      ['ECONNREFUSED', 504],
+      ['any', 500],
+    ];
+    codes.forEach(function(item) {
+      var msg = item[0];
+      var code = item[1];
+      it('should set the http status code for ' + msg + ' to: ' + code, function() {
+        proxyError({ code: msg }, mockReq, mockRes, proxyOptions);
+        expect(httpErrorCode).to.equal(code);
+      });
     });
 
     it('should end the response and return error message', function() {

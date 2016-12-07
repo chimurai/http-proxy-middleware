@@ -395,7 +395,7 @@ describe('E2E http-proxy-middleware', function() {
                 });
 
                 it('should handle errors when host is not reachable', function() {
-                    expect(response.statusCode).to.equal(500);
+                    expect(response.statusCode).to.equal(504);
                 });
             });
 
