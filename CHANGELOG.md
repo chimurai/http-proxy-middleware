@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.17.3](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.17.3)
+- fix(onError): improve default proxy error handling. http status codes (504, 502 and 500). ([#132](https://github.com/chimurai/http-proxy-middleware/pull/132)) ([graingert](https://github.com/graingert))
+
 ## [v0.17.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.17.2)
 - feat(logging): improve error message & add link to Node errors page. ([#106](https://github.com/chimurai/http-proxy-middleware/pull/106)) ([cloudmu](https://github.com/cloudmu))
 - feat(pathRewrite): path can be empty string. ([#110](https://github.com/chimurai/http-proxy-middleware/pull/110)) ([sunnylqm](https://github.com/sunnylqm))
