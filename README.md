@@ -157,6 +157,8 @@ The [RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is be use
     - `proxy(['/api/**', '/ajax/**'], {...})` combine multiple patterns
     - `proxy(['/api/**', '!**/bad.json'], {...})` exclusion
 
+    **Note**: In multiple path matching, you cannot use string paths and wildcard paths together.
+    
 * **custom matching**
     
     For full control you can provide a custom function to determine which requests should be proxied or not.
