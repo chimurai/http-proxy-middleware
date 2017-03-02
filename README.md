@@ -31,7 +31,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 
 ## Table of Contents
 
-<!-- MarkdownTOC autolink=true bracket=round depth=3 -->
+<!-- MarkdownTOC autolink=true bracket=round depth=2 -->
 
 - [Install](#install)
 - [Core concept](#core-concept)
@@ -444,4 +444,4 @@ $ npm run cover
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2016 Steven Chim
+Copyright (c) 2015-2017 Steven Chim

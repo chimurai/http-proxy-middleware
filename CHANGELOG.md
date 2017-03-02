@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.17.4](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.17.4)
+- fix(ntlm authentication): fixed bug preventing proxying with ntlm authentication. ([#132](https://github.com/chimurai/http-proxy-middleware/pull/149)) (Thanks: [EladBezalel](https://github.com/EladBezalel), [oshri551](https://github.com/oshri551))
+
+
 ## [v0.17.3](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.17.3)
 - fix(onError): improve default proxy error handling. http status codes (504, 502 and 500). ([#132](https://github.com/chimurai/http-proxy-middleware/pull/132)) ([graingert](https://github.com/graingert))
 
