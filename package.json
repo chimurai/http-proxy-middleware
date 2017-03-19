@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "clean": "rm -rf coverage",
-    "test": "mocha --recursive --colors --reporter spec",
+    "lint": "node test/lint.js",
+    "test": "npm run lint && mocha --recursive --colors --reporter spec",
     "cover": "npm run clean && istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive",
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --recursive --reporter spec && istanbul-coveralls && npm run clean"
   },
@@ -49,6 +50,7 @@
     "mocha": "^3.2.0",
     "mocha-lcov-reporter": "1.2.0",
     "opn": "^4.0.2",
+    "standard": "^10.0.2",
     "ws": "^1.1.1"
   },
   "dependencies": {
@@ -56,5 +58,8 @@
     "is-glob": "^3.1.0",
     "lodash": "^4.17.2",
     "micromatch": "^2.3.11"
+  },
+  "standard": {
+    "env": [ "mocha" ]
   }
 }
