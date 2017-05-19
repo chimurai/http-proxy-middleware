@@ -130,7 +130,7 @@ var app = express();
 
 Providing an alternative way to decide which requests should be proxied; In case you are not able to use the server's [`path` parameter](http://expressjs.com/en/4x/api.html#app.use) to mount the proxy or when you need more flexibility.
 
-The [RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is be used for context matching.
+The [RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is to be used for context matching.
 
 ```
          foo://example.com:8042/over/there?name=ferret#nose
