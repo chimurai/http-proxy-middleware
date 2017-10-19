@@ -258,7 +258,7 @@ describe('E2E http-proxy-middleware', function () {
       var responseB
 
       beforeEach(function () {
-        var mwProxy = proxyMiddleware(['/**.html', '!**.json'], {target: 'http://localhost:8000'})
+        var mwProxy = proxyMiddleware(['**/*.html', '!**.json'], {target: 'http://localhost:8000'})
 
         var mwTarget = function (req, res, next) {
           res.write(req.url)                                       // respond with req.url
