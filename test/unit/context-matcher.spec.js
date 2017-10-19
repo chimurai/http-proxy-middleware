@@ -94,17 +94,15 @@ describe('Context Matching', function () {
           expect(contextMatcher.match('**/*', url)).to.be.true
           expect(contextMatcher.match('**/*.*', url)).to.be.true
           expect(contextMatcher.match('/**', url)).to.be.true
-          expect(contextMatcher.match('/**.*', url)).to.be.true
           expect(contextMatcher.match('/**/*', url)).to.be.true
           expect(contextMatcher.match('/**/*.*', url)).to.be.true
         })
 
         it('should only match .html files', function () {
           expect(contextMatcher.match('**/*.html', url)).to.be.true
-          expect(contextMatcher.match('/**.html', url)).to.be.true
           expect(contextMatcher.match('/**/*.html', url)).to.be.true
-          expect(contextMatcher.match('/**.htm', url)).to.be.false
-          expect(contextMatcher.match('/**.jpg', url)).to.be.false
+          expect(contextMatcher.match('/*.htm', url)).to.be.false
+          expect(contextMatcher.match('/*.jpg', url)).to.be.false
         })
 
         it('should only match .html under root path', function () {
@@ -149,7 +147,7 @@ describe('Context Matching', function () {
           expect(contextMatcher.match(pattern, 'http://localhost/rest/foo/bar.json')).to.be.false
         })
         it('should return true when both file extensions pattern match', function () {
-          var pattern = ['/**.html', '/**.jpeg']
+          var pattern = ['/**/*.html', '/**/*.jpeg']
           expect(contextMatcher.match(pattern, 'http://localhost/api/foo/bar.html')).to.be.true
           expect(contextMatcher.match(pattern, 'http://localhost/api/foo/bar.jpeg')).to.be.true
           expect(contextMatcher.match(pattern, 'http://localhost/api/foo/bar.gif')).to.be.false
