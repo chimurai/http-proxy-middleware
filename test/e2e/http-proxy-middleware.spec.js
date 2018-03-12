@@ -59,9 +59,9 @@ describe('E2E http-proxy-middleware', function () {
         var mwProxy = proxyMiddleware('/api', {target: 'http://localhost:8000'})
 
         var mwTarget = function (req, res, next) {
-          targetUrl = req.url                                  // store target url.
-          targetHeaders = req.headers                              // store target headers.
-          res.write('HELLO WEB')                                   // respond with 'HELLO WEB'
+          targetUrl = req.url // store target url.
+          targetHeaders = req.headers // store target headers.
+          res.write('HELLO WEB') // respond with 'HELLO WEB'
           res.end()
         }
 
@@ -110,7 +110,7 @@ describe('E2E http-proxy-middleware', function () {
         var mwProxy = proxyMiddleware(filter, {target: 'http://localhost:8000'})
 
         var mwTarget = function (req, res, next) {
-          res.write('HELLO WEB')                                   // respond with 'HELLO WEB'
+          res.write('HELLO WEB') // respond with 'HELLO WEB'
           res.end()
         }
 
@@ -151,7 +151,7 @@ describe('E2E http-proxy-middleware', function () {
         var mwProxy = proxyMiddleware(['/api', '/ajax'], {target: 'http://localhost:8000'})
 
         var mwTarget = function (req, res, next) {
-          res.write(req.url)                                       // respond with req.url
+          res.write(req.url) // respond with req.url
           res.end()
         }
 
@@ -223,7 +223,7 @@ describe('E2E http-proxy-middleware', function () {
         var mwProxy = proxyMiddleware('/api/**', {target: 'http://localhost:8000'})
 
         var mwTarget = function (req, res, next) {
-          res.write(req.url)                                       // respond with req.url
+          res.write(req.url) // respond with req.url
           res.end()
         }
 
@@ -261,7 +261,7 @@ describe('E2E http-proxy-middleware', function () {
         var mwProxy = proxyMiddleware(['**/*.html', '!**.json'], {target: 'http://localhost:8000'})
 
         var mwTarget = function (req, res, next) {
-          res.write(req.url)                                       // respond with req.url
+          res.write(req.url) // respond with req.url
           res.end()
         }
 
@@ -369,7 +369,7 @@ describe('E2E http-proxy-middleware', function () {
 
       describe('default', function () {
         beforeEach(function (done) {
-          var mwProxy = proxyMiddleware('/api', {target: 'http://localhost:666'})  // unreachable host on port:666
+          var mwProxy = proxyMiddleware('/api', {target: 'http://localhost:666'}) // unreachable host on port:666
           var mwTarget = function (req, res, next) { next() }
 
           proxyServer = createServer(3000, mwProxy)
@@ -395,12 +395,12 @@ describe('E2E http-proxy-middleware', function () {
         beforeEach(function (done) {
           var customOnError = function (err, req, res) {
             if (err) {
-              res.writeHead(418)        // different error code
-              res.end('I\'m a teapot')  // no response body
+              res.writeHead(418) // different error code
+              res.end('I\'m a teapot') // no response body
             }
           }
 
-          var mwProxy = proxyMiddleware('/api', {target: 'http://localhost:666', onError: customOnError})  // unreachable host on port:666
+          var mwProxy = proxyMiddleware('/api', {target: 'http://localhost:666', onError: customOnError}) // unreachable host on port:666
           var mwTarget = function (req, res, next) { next() }
 
           proxyServer = createServer(3000, mwProxy)
@@ -436,7 +436,7 @@ describe('E2E http-proxy-middleware', function () {
 
       beforeEach(function (done) {
         var fnOnProxyRes = function (proxyRes, req, res) {
-          proxyRes.headers['x-added'] = 'foobar'                        // add custom header to response
+          proxyRes.headers['x-added'] = 'foobar' // add custom header to response
           delete proxyRes.headers['x-removed']
         }
 
@@ -446,7 +446,7 @@ describe('E2E http-proxy-middleware', function () {
         })
         var mwTarget = function (req, res, next) {
           res.setHeader('x-removed', 'remove-header')
-          res.write(req.url)                                       // respond with req.url
+          res.write(req.url) // respond with req.url
           res.end()
         }
 
@@ -481,7 +481,7 @@ describe('E2E http-proxy-middleware', function () {
 
       beforeEach(function (done) {
         var fnOnProxyReq = function (proxyReq, req, res) {
-          proxyReq.setHeader('x-added', 'foobar')                // add custom header to request
+          proxyReq.setHeader('x-added', 'foobar') // add custom header to request
         }
 
         var mwProxy = proxyMiddleware('/api', {
@@ -491,7 +491,7 @@ describe('E2E http-proxy-middleware', function () {
 
         var mwTarget = function (req, res, next) {
           receivedRequest = req
-          res.write(req.url)                                       // respond with req.url
+          res.write(req.url) // respond with req.url
           res.end()
         }
 
@@ -526,7 +526,7 @@ describe('E2E http-proxy-middleware', function () {
           }
         })
         var mwTarget = function (req, res, next) {
-          res.write(req.url)                                       // respond with req.url
+          res.write(req.url) // respond with req.url
           res.end()
         }
 
@@ -558,7 +558,7 @@ describe('E2E http-proxy-middleware', function () {
       beforeEach(function (done) {
         var mwProxy = proxyMiddleware('http://localhost:8000/api')
         var mwTarget = function (req, res, next) {
-          res.write(req.url)                                       // respond with req.url
+          res.write(req.url) // respond with req.url
           res.end()
         }
 
@@ -590,7 +590,7 @@ describe('E2E http-proxy-middleware', function () {
       beforeEach(function (done) {
         var mwProxy = proxyMiddleware('http://localhost:8000')
         var mwTarget = function (req, res, next) {
-          res.write(req.url)                                       // respond with req.url
+          res.write(req.url) // respond with req.url
           res.end()
         }
 
@@ -633,7 +633,7 @@ describe('E2E http-proxy-middleware', function () {
           }
         })
         var mwTarget = function (req, res, next) {
-          res.write(req.url)                                       // respond with req.url
+          res.write(req.url) // respond with req.url
           res.end()
         }
 

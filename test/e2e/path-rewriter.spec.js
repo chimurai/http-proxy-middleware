@@ -17,9 +17,9 @@ describe('E2E pathRewrite', function () {
   beforeEach(function () {
     targetData = {}
     targetMiddleware = function (req, res, next) {
-      targetData.url = req.url               // store target url.
-      targetData.headers = req.headers           // store target headers.
-      res.write(req.url)                         // respond with target url.
+      targetData.url = req.url // store target url.
+      targetData.headers = req.headers // store target headers.
+      res.write(req.url) // respond with target url.
       res.end()
     }
   })
