@@ -30,7 +30,7 @@ describe('E2E WebSocket proxy', function () {
 
     wss.on('connection', function connection (ws) {
       ws.on('message', function incoming (message) {
-        ws.send(message)   // echo received message
+        ws.send(message) // echo received message
       })
     })
   })

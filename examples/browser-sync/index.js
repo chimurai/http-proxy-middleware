@@ -9,7 +9,7 @@ var proxy = require('../../index') // require('http-proxy-middleware');
  */
 var jsonPlaceholderProxy = proxy('/users', {
   target: 'http://jsonplaceholder.typicode.com',
-  changeOrigin: true,             // for vhosted sites, changes host header to match to target's host
+  changeOrigin: true, // for vhosted sites, changes host header to match to target's host
   logLevel: 'debug'
 })
 
