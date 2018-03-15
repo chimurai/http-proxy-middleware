@@ -308,7 +308,7 @@ The following options are provided by the underlying [http-proxy](https://github
 *  **option.prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path
 *  **option.ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request (note: you will have to append / manually if required).
 *  **option.localAddress** : Local interface string to bind for outgoing connections
-*  **option.changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
+*  **option.changeOrigin**: true/false, Default: false - changes host header to match the target URL
 *  **option.auth** : Basic authentication i.e. 'user:password' to compute an Authorization header.
 *  **option.hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 *  **option.autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
