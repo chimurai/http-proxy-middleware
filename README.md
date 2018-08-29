@@ -309,6 +309,7 @@ The following options are provided by the underlying [http-proxy](https://github
 *  **option.ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request (note: you will have to append / manually if required).
 *  **option.localAddress** : Local interface string to bind for outgoing connections
 *  **option.changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
+*  **option.preserveHeaderKeyCase**: true/false, Default: false - specify whether you want to keep letter case of response header key
 *  **option.auth** : Basic authentication i.e. 'user:password' to compute an Authorization header.
 *  **option.hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 *  **option.autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
@@ -325,8 +326,41 @@ The following options are provided by the underlying [http-proxy](https://github
        "*": ""
      }
      ```
+*  **option.cookiePathRewrite**: rewrites path of `set-cookie` headers. Possible values:
+   * `false` (default): disable cookie rewriting
+   * String: new path, for example `cookiePathRewrite: "/newPath/"`. To remove the path, use `cookiePathRewrite: ""`. To set path to root use `cookiePathRewrite: "/"`.
+   * Object: mapping of paths to new paths, use `"*"` to match all paths.
+     For example, to keep one path unchanged, rewrite one path and remove other paths:
+     ```
+     cookiePathRewrite: {
+       "/unchanged.path/": "/unchanged.path/",
+       "/old.path/": "/new.path/",
+       "*": ""
+     }
+     ```
 *  **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}`)
 *  **option.proxyTimeout**: timeout (in millis) when proxy receives no response from target
+*  **option.timeout**: timeout (in millis) for incoming requests
+*  **option.followRedirects**: true/false, Default: false - specify whether you want to follow redirects
+*  **option.selfHandleResponse** true/false, if set to true, none of the webOutgoing passes are called and it's your responsibility to appropriately return the response by listening and acting on the `proxyRes` event
+*  **option.buffer**: stream of data to send as the request body.  Maybe you have some middleware that consumes the request stream before proxying it on e.g.  If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
+
+    ```
+    'use strict';
+
+    const streamify = require('stream-array');
+    const HttpProxy = require('http-proxy');
+    const proxy = new HttpProxy();
+
+    module.exports = (req, res, next) => {
+
+      proxy.web(req, res, {
+        target: 'http://localhost:4003/',
+        buffer: streamify(req.rawBody)
+      }, next);
+
+    };
+    ```
 
 
 
