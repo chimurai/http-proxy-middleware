@@ -10,9 +10,6 @@ If you have questions about http-proxy-middle usage; Please check if your questi
 
 Since Nodejitsu's `http-proxy` is providing the actual proxy functionality; You might find your answer in their [documentation](https://github.com/nodejitsu/node-http-proxy), [issue archive](https://github.com/nodejitsu/node-http-proxy/issues?utf8=%E2%9C%93&q=is%3Aissue) or [examples](https://github.com/nodejitsu/node-http-proxy/tree/master/examples).
 
-Feel free to [ask a question](https://github.com/chimurai/http-proxy-middleware/issues) if the above resources didn't answer your question.
-
-Tips on how to ask: http://stackoverflow.com/help/how-to-ask
 
 ## Report Issues
 
