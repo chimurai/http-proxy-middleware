@@ -30,10 +30,10 @@ describe('Usage in Express', function () {
       /**
        * Mount proxy without 'path' in sub route
        */
-      var proxyConfig = {target: 'http://jsonplaceholder.typicode.com', changeOrigin: true, logLevel: 'silent'}
+      var proxyConfig = { target: 'http://jsonplaceholder.typicode.com', changeOrigin: true, logLevel: 'silent' }
       sub.use(proxy(filter, proxyConfig))
 
-      sub.get('/hello', jsonMiddleware({'content': 'foobar'}))
+      sub.get('/hello', jsonMiddleware({ 'content': 'foobar' }))
 
       // configure sub route on /sub junction
       app.use('/sub', sub)

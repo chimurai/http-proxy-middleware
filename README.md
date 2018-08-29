@@ -474,4 +474,4 @@ $ npm run cover
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2017 Steven Chim
+Copyright (c) 2015-2018 Steven Chim
