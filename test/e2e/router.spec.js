@@ -50,7 +50,7 @@ describe('E2E router', function () {
     })
 
     it('should proxy to: "localhost:6003/api"', function (done) {
-      var options = {hostname: 'localhost', port: 6000, path: '/api'}
+      var options = { hostname: 'localhost', port: 6000, path: '/api' }
       http.get(options, function (res) {
         res.on('data', function (chunk) {
           var responseBody = chunk.toString()
@@ -88,8 +88,8 @@ describe('E2E router', function () {
     })
 
     it('should proxy when host is "alpha.localhost"', function (done) {
-      var options = {hostname: 'localhost', port: 6000, path: '/'}
-      options.headers = {host: 'alpha.localhost:6000'}
+      var options = { hostname: 'localhost', port: 6000, path: '/' }
+      options.headers = { host: 'alpha.localhost:6000' }
       http.get(options, function (res) {
         res.on('data', function (chunk) {
           var responseBody = chunk.toString()
@@ -100,8 +100,8 @@ describe('E2E router', function () {
     })
 
     it('should proxy when host is "beta.localhost"', function (done) {
-      var options = {hostname: 'localhost', port: 6000, path: '/'}
-      options.headers = {host: 'beta.localhost:6000'}
+      var options = { hostname: 'localhost', port: 6000, path: '/' }
+      options.headers = { host: 'beta.localhost:6000' }
       http.get(options, function (res) {
         res.on('data', function (chunk) {
           var responseBody = chunk.toString()
@@ -112,7 +112,7 @@ describe('E2E router', function () {
     })
 
     it('should proxy with host & path config: "localhost:6000/api"', function (done) {
-      var options = {hostname: 'localhost', port: 6000, path: '/api'}
+      var options = { hostname: 'localhost', port: 6000, path: '/api' }
       http.get(options, function (res) {
         res.on('data', function (chunk) {
           var responseBody = chunk.toString()

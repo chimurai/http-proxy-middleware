@@ -8,7 +8,7 @@ describe('configFactory', function () {
   describe('createConfig()', function () {
     describe('classic config', function () {
       var context = '/api'
-      var options = {target: 'http://www.example.org'}
+      var options = { target: 'http://www.example.org' }
 
       beforeEach(function () {
         result = createConfig(context, options)
@@ -42,7 +42,7 @@ describe('configFactory', function () {
         })
 
         it('should return config object with options', function () {
-          expect(result.options).to.deep.equal({target: 'http://www.example.org:8000'})
+          expect(result.options).to.deep.equal({ target: 'http://www.example.org:8000' })
         })
       })
 
@@ -96,18 +96,18 @@ describe('configFactory', function () {
 
       describe('shorthand String config with options', function () {
         beforeEach(function () {
-          result = createConfig('http://www.example.org:8000/api', {changeOrigin: true})
+          result = createConfig('http://www.example.org:8000/api', { changeOrigin: true })
         })
 
         it('should return config object with additional options', function () {
-          expect(result.options).to.deep.equal({target: 'http://www.example.org:8000', changeOrigin: true})
+          expect(result.options).to.deep.equal({ target: 'http://www.example.org:8000', changeOrigin: true })
         })
       })
     })
 
     describe('shorthand Object config', function () {
       beforeEach(function () {
-        result = createConfig({target: 'http://www.example.org:8000'})
+        result = createConfig({ target: 'http://www.example.org:8000' })
       })
 
       it('should set the proxy path to everything', function () {
@@ -115,7 +115,7 @@ describe('configFactory', function () {
       })
 
       it('should return config object', function () {
-        expect(result.options).to.deep.equal({target: 'http://www.example.org:8000'})
+        expect(result.options).to.deep.equal({ target: 'http://www.example.org:8000' })
       })
     })
 
@@ -135,7 +135,7 @@ describe('configFactory', function () {
 
     describe('faulty config. mixing classic with shorthand', function () {
       beforeEach(function () {
-        result = createConfig('http://localhost:3000/api', {target: 'http://localhost:8000'})
+        result = createConfig('http://localhost:3000/api', { target: 'http://localhost:8000' })
       })
 
       it('should use the target in the configuration as target', function () {

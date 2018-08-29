@@ -21,12 +21,12 @@ describe('E2E WebSocket proxy', function () {
     proxy = proxyMiddleware('/', {
       target: 'http://localhost:8000',
       ws: true,
-      pathRewrite: {'^/socket': ''}
+      pathRewrite: { '^/socket': '' }
     })
 
     proxyServer = createServer(3000, proxy)
 
-    wss = new WebSocketServer({port: 8000})
+    wss = new WebSocketServer({ port: 8000 })
 
     wss.on('connection', function connection (ws) {
       ws.on('message', function incoming (message) {
@@ -87,7 +87,7 @@ describe('E2E WebSocket proxy', function () {
     beforeEach(function () {
       proxyServer.close()
       // override
-      proxy = proxyMiddleware('ws://localhost:8000', {pathRewrite: {'^/socket': ''}})
+      proxy = proxyMiddleware('ws://localhost:8000', { pathRewrite: { '^/socket': '' } })
       proxyServer = createServer(3000, proxy)
     })
 
@@ -115,7 +115,7 @@ describe('E2E WebSocket proxy', function () {
     beforeEach(function () {
       proxyServer.close()
       // override
-      proxy = proxyMiddleware('ws://notworkinghost:6789', {router: {'/socket': 'ws://localhost:8000'}, pathRewrite: {'^/socket': ''}})
+      proxy = proxyMiddleware('ws://notworkinghost:6789', { router: { '/socket': 'ws://localhost:8000' }, pathRewrite: { '^/socket': '' } })
       proxyServer = createServer(3000, proxy)
     })
 

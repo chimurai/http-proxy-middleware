@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.19.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.19.0)
+- feat(http-proxy): bump to v1.17.0 ([#261](https://github.com/chimurai/http-proxy-middleware/pull/261))
+
 ## [v0.18.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.18.0)
 - fix(vulnerability): update micromatch to v3.x ([npm:braces:20180219](https://snyk.io/test/npm/http-proxy-middleware?tab=issues&severity=high&severity=medium&severity=low#npm:braces:20180219
 ))
