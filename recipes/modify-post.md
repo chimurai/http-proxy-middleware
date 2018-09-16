@@ -1,4 +1,4 @@
-##Modify Post Parameters:
+## Modify Post Parameters:
 The code example below illustrates how to modify POST body data prior to forwarding to the proxy target.
 Key to this example is the *"OnProxyReq"* event handler  that creates a new POST body that can be manipulated to format the POST data as required.  For example: inject new POST parameters that should only be visible server side.
 
