@@ -86,7 +86,7 @@ http.createServer(app).listen(3000);
 ## lite-server
 
 https://github.com/johnpapa/lite-server
-[![GitHub stars](https://img.shields.io/github/stars/johnpapa/lite-server.svg?style=social&label=Star)](https://github.com/johnpapa/lite-server) ([example source](https://github.com/johnpapa/lite-server/issues/61#issuecomment-205997607))
+[![GitHub stars](https://img.shields.io/github/stars/johnpapa/lite-server.svg?style=social&label=Star)](https://github.com/johnpapa/lite-server)
 
 File: `bs-config.js`
 
@@ -100,8 +100,11 @@ var apiProxy = proxy('/api', {
 
 module.exports = {
     server: {
+        // Start from key `10` in order to NOT overwrite the default 2 middleware provided
+        // by `lite-server` or any future ones that might be added.
+        // Reference: https://github.com/johnpapa/lite-server/blob/master/lib/config-defaults.js#L16
         middleware: {
-            1: apiProxy
+            10: apiProxy
         }
     }
 };
