@@ -10,7 +10,7 @@
   If you answered "Yes":
 
     If this is a question on troubleshooting your setup; Stack Overflow would be a better place to ask for help.
-   
+
     Please check if your question hasn't been already asked/answered on:
     - Stack Overflow: http://stackoverflow.com
     - Issue archive: https://github.com/chimurai/http-proxy-middleware/issues
@@ -29,17 +29,16 @@
     You may delete this part of template.
 -->
 
-
 ### Is this a bug report?
 
 (write your answer here)
 
 <!--
   If you answered "Yes":
-  
+
     Please note that your issue will be fixed much faster if you spend about
     half an hour preparing it, including the exact reproduction steps and a demo.
-    
+
     If you're in a hurry or don't feel confident, it's fine to report bugs with
     less details, but this makes it less likely they'll get fixed soon.
 
@@ -50,14 +49,13 @@
     If this is a question or a discussion, you may delete this part of template.
 -->
 
-
 ### Is this a feature request?
 
 (write your answer here)
 
 <!--
   If you answered "Yes":
-  
+
     Please explain what the motivation and/or use-case is for the feature?
 
   If you answered "No":
@@ -74,20 +72,18 @@
 
 (Write your steps here:)
 
-1. 
-2. 
-3. 
-
+1. 2. 3.
 
 ### Expected behavior
+
 <!--
   How did you expect the http-proxy-middleware to behave?
 -->
 
 (Write what you thought would happen.)
 
-
 ### Actual behavior
+
 <!--
   Did something go wrong?
   Is something broken, or not behaving as you expected?
@@ -96,21 +92,25 @@
 (Write what happened.)
 
 ### Setup
+
 <!--
   Describe how your http-proxy-middleware setup looks like.
   If possible; describe the setup of the target server and the client used to make the request.
 -->
 
-* http-proxy-middleware: _version_
-* http-proxy-middleware configuration
-* server: _connect/express/browser-sync..._ + _version_
-* other relevant modules
+- http-proxy-middleware: _version_
+- http-proxy-middleware configuration
+- server: _connect/express/browser-sync..._ + _version_
+- other relevant modules
 
 #### client info
+
 <!--
   Describe which OS / client software you used to make the request
 -->
+
 #### target server info
+
 <!--
   Describe the server; which is configured in http-proxy-middleware's <target>
 -->

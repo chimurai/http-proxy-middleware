@@ -10,12 +10,11 @@ If you have questions about http-proxy-middle usage; Please check if your questi
 
 Since Nodejitsu's `http-proxy` is providing the actual proxy functionality; You might find your answer in their [documentation](https://github.com/nodejitsu/node-http-proxy), [issue archive](https://github.com/nodejitsu/node-http-proxy/issues?utf8=%E2%9C%93&q=is%3Aissue) or [examples](https://github.com/nodejitsu/node-http-proxy/tree/master/examples).
 
-
 ## Report Issues
 
 If you think you've found an issue, please submit it to the [Github issue tracker](https://github.com/chimurai/http-proxy-middleware/issues).
 
-"*[It doesn't work](https://goo.gl/GzkkTg)*" is not very useful for anyone.
+"_[It doesn't work](https://goo.gl/GzkkTg)_" is not very useful for anyone.
 A good issue report should have a well described **problem description** and proxy **configuration**. A great issue report includes a **minimal example**.
 
 Properly format your code example for easier reading: [Code and Syntax Highlighting](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#code-and-syntax-highlighting).
@@ -37,9 +36,9 @@ The quality of your issue report will determine how quickly and deeply we'll del
 It might be useful to provide server information in which http-proxy-middleware is used and the target server information to which requests are being proxied.
 
 - server + version (express, connect, browser-sync, etc...)
-    + server port number
+  - server port number
 - target server
-    + target server port number
+  - target server port number
 
 ### Minimal example
 
