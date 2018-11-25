@@ -158,6 +158,8 @@ Providing an alternative way to decide which requests should be proxied; In case
     - `proxy(['/api/**', '/ajax/**'], {...})` combine multiple patterns
     - `proxy(['/api/**', '!**/bad.json'], {...})` exclusion
 
+    **Note**: In multiple path matching, you cannot use string paths and wildcard paths together.
+    
 * **custom matching**
     
     For full control you can provide a custom function to determine which requests should be proxied or not.
