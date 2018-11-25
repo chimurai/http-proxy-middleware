@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.19.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.19.1)
+
+- fix(log): handle case when error code is missing ([#303](https://github.com/chimurai/http-proxy-middleware/pull/303))
+
 ## [v0.19.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.19.0)
 
 - feat(http-proxy): bump to v1.17.0 ([#261](https://github.com/chimurai/http-proxy-middleware/pull/261))
