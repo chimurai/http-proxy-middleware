@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-expressions */
-// https://github.com/feross/standard/issues/690#issuecomment-278533482
-
 var expect = require('chai').expect
 var Logger = require('./_libs').Logger
 var getArrow = Logger.getArrow

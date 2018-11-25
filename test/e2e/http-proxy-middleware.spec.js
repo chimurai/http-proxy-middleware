@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-expressions */
-// https://github.com/feross/standard/issues/690#issuecomment-278533482
-
 var utils = require('./_utils')
 var expect = require('chai').expect
 var http = require('http')
