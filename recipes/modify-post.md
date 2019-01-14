@@ -5,7 +5,7 @@ Key to this example is the _"OnProxyReq"_ event handler that creates a new POST 
 
 This example uses the _"body-parser"_ module in the main app to create a req.body object with the decoded POST parameters. Side note - the code below will allow _"http-proxy-middleware"_ to work with _"body-parser"_.
 
-Since this only modifys the request body stream the original POST body parameters remain in tact, so any POST data changes will not be sent back in the response to the client.
+Since this only modifies the request body stream the original POST body parameters remain in tact, so any POST data changes will not be sent back in the response to the client.
 
 ## Example:
 
