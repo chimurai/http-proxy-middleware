@@ -333,7 +333,7 @@ The following options are provided by the underlying [http-proxy](https://github
 - **option.cookieDomainRewrite**: rewrites domain of `set-cookie` headers. Possible values:
   - `false` (default): disable cookie rewriting
   - String: new domain, for example `cookieDomainRewrite: "new.domain"`. To remove the domain, use `cookieDomainRewrite: ""`.
-  - Object: mapping of domains to new domains, use `"*"` to match all domains.  
+  - Object: mapping of domains to new domains, use `"*"` to match all domains.
     For example keep one domain unchanged, rewrite one domain and remove other domains:
     ```
     cookieDomainRewrite: {
@@ -486,6 +486,10 @@ $ yarn test
 # code coverage
 $ yarn cover
 ```
+
+Or run the test suite automatically in Gitpod, a free online dev environment for GitHub:
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io#https://github.com/chimurai/http-proxy-middleware/tree/master/test/unit)
 
 ## Changelog
 
