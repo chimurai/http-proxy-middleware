@@ -8,12 +8,15 @@
     "lib"
   ],
   "scripts": {
-    "clean": "rm -rf coverage",
+    "clean": "rm -rf coverage && rm -rf .nyc_output",
     "lint": "prettier \"**/*.{js,md}\" --list-different",
     "lint:fix": "prettier \"**/*.{js,md}\" --write",
-    "test": "npm run lint && mocha --recursive --colors --reporter spec",
-    "cover": "npm run clean && istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive",
-    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --recursive --reporter spec && istanbul-coveralls && npm run clean"
+    "pretest": "npm run lint",
+    "test": "mocha --recursive --colors",
+    "precover": "npm run clean",
+    "cover": "nyc npm run test && nyc report --reporter=html",
+    "coveralls": "npm run cover && nyc report --reporter=text-lcov | coveralls",
+    "postcoveralls": "npm run clean"
   },
   "repository": {
     "type": "git",
@@ -46,13 +49,11 @@
     "browser-sync": "^2.26.3",
     "chai": "^4.2.0",
     "connect": "^3.6.6",
-    "coveralls": "^3.0.2",
+    "coveralls": "^3.0.3",
     "express": "^4.16.4",
     "husky": "^1.2.0",
-    "istanbul": "^0.4.5",
-    "istanbul-coveralls": "^1.0.3",
-    "mocha": "^5.2.0",
-    "mocha-lcov-reporter": "1.3.0",
+    "mocha": "^6.0.1",
+    "nyc": "^13.3.0",
     "opn": "^5.4.0",
     "precise-commits": "^1.0.2",
     "prettier": "^1.15.2",
