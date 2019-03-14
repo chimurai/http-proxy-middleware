@@ -6,7 +6,7 @@ module.exports = {
   proxyMiddleware: proxyMiddleware
 }
 
-function createServer (portNumber, middleware, path) {
+function createServer(portNumber, middleware, path) {
   var app = express()
 
   if (middleware && path) {
