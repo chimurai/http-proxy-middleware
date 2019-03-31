@@ -12,7 +12,6 @@
     "lint:prettier": "prettier --check \"**/*.{js,ts,md}\"",
     "lint:tslint": "yarn tslint -c tslint.json '{lib,test}/**/*.ts'",
     "lint:fix": "prettier --write \"**/*.{js,ts,md}\"",
-    "prebuild": "yarn lint",
     "build": "tsc",
     "pretest": "yarn build",
     "test": "jest --runInBand",
