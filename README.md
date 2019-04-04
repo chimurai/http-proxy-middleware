@@ -3,7 +3,7 @@
 [![Build Status](https://img.shields.io/travis/chimurai/http-proxy-middleware/master.svg?style=flat-square)](https://travis-ci.org/chimurai/http-proxy-middleware)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square)](https://coveralls.io/r/chimurai/http-proxy-middleware)
 [![dependency Status](https://img.shields.io/david/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=dependencies)
-[![dependency Status](https://snyk.io/test/npm/http-proxy-middleware/badge.svg)](https://snyk.io/test/npm/http-proxy-middleware)
+[![dependency Status](https://snyk.io/test/npm/http-proxy-middleware/badge.svg?style=flat-square)](https://snyk.io/test/npm/http-proxy-middleware)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express), [browser-sync](https://github.com/BrowserSync/browser-sync) and [many more](#compatible-servers).
@@ -15,13 +15,16 @@ Powered by the popular Nodejitsu [`http-proxy`](https://github.com/nodejitsu/nod
 Proxy `/api` requests to `http://www.example.org`
 
 ```javascript
-var express = require('express')
-var proxy = require('http-proxy-middleware')
+var express = require('express');
+var proxy = require('http-proxy-middleware');
 
-var app = express()
+var app = express();
 
-app.use('/api', proxy({ target: 'http://www.example.org', changeOrigin: true }))
-app.listen(3000)
+app.use(
+  '/api',
+  proxy({ target: 'http://www.example.org', changeOrigin: true })
+);
+app.listen(3000);
 
 // http://localhost:3000/api/foo/bar -> http://www.example.org/api/foo/bar
 ```
@@ -68,9 +71,9 @@ Proxy middleware configuration.
 #### proxy([context,] config)
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api', { target: 'http://www.example.org' })
+var apiProxy = proxy('/api', { target: 'http://www.example.org' });
 //                   \____/   \_____________________________/
 //                     |                    |
 //                   context             options
@@ -88,7 +91,7 @@ var apiProxy = proxy('/api', { target: 'http://www.example.org' })
 
 ```javascript
 // shorthand syntax for the example above:
-var apiProxy = proxy('http://www.example.org/api')
+var apiProxy = proxy('http://www.example.org/api');
 ```
 
 More about the [shorthand configuration](#shorthand).
@@ -99,8 +102,8 @@ An example with `express` server.
 
 ```javascript
 // include dependencies
-var express = require('express')
-var proxy = require('http-proxy-middleware')
+var express = require('express');
+var proxy = require('http-proxy-middleware');
 
 // proxy middleware options
 var options = {
@@ -116,15 +119,15 @@ var options = {
     // override target 'http://www.example.org' to 'http://localhost:8000'
     'dev.localhost:3000': 'http://localhost:8000'
   }
-}
+};
 
 // create the proxy (without context)
-var exampleProxy = proxy(options)
+var exampleProxy = proxy(options);
 
 // mount `exampleProxy` in web server
-var app = express()
-app.use('/api', exampleProxy)
-app.listen(3000)
+var app = express();
+app.use('/api', exampleProxy);
+app.listen(3000);
 ```
 
 ## Context matching
@@ -172,10 +175,10 @@ Providing an alternative way to decide which requests should be proxied; In case
    * @return {Boolean}
    */
   var filter = function(pathname, req) {
-    return pathname.match('^/api') && req.method === 'GET'
-  }
+    return pathname.match('^/api') && req.method === 'GET';
+  };
 
-  var apiProxy = proxy(filter, { target: 'http://www.example.org' })
+  var apiProxy = proxy(filter, { target: 'http://www.example.org' });
   ```
 
 ## Options
@@ -224,14 +227,14 @@ Providing an alternative way to decide which requests should be proxied; In case
   // simple replace
   function logProvider(provider) {
     // replace the default console log provider.
-    return require('winston')
+    return require('winston');
   }
   ```
 
   ```javascript
   // verbose replacement
   function logProvider(provider) {
-    var logger = new (require('winston')).Logger()
+    var logger = new (require('winston')).Logger();
 
     var myCustomProvider = {
       log: logger.log,
@@ -239,8 +242,8 @@ Providing an alternative way to decide which requests should be proxied; In case
       info: logger.info,
       warn: logger.warn,
       error: logger.error
-    }
-    return myCustomProvider
+    };
+    return myCustomProvider;
   }
   ```
 
@@ -257,10 +260,10 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   function onError(err, req, res) {
     res.writeHead(500, {
       'Content-Type': 'text/plain'
-    })
+    });
     res.end(
       'Something went wrong. And we are reporting a custom error message.'
-    )
+    );
   }
   ```
 
@@ -268,8 +271,8 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
 
   ```javascript
   function onProxyRes(proxyRes, req, res) {
-    proxyRes.headers['x-added'] = 'foobar' // add new header to response
-    delete proxyRes.headers['x-removed'] // remove header from response
+    proxyRes.headers['x-added'] = 'foobar'; // add new header to response
+    delete proxyRes.headers['x-removed']; // remove header from response
   }
   ```
 
@@ -278,7 +281,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   ```javascript
   function onProxyReq(proxyReq, req, res) {
     // add custom header to request
-    proxyReq.setHeader('x-added', 'foobar')
+    proxyReq.setHeader('x-added', 'foobar');
     // or log the req
   }
   ```
@@ -288,7 +291,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   ```javascript
   function onProxyReqWs(proxyReq, req, socket, options, head) {
     // add custom header
-    proxyReq.setHeader('X-Special-Proxy-Header', 'foobar')
+    proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
   }
   ```
 
@@ -297,7 +300,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   ```javascript
   function onOpen(proxySocket) {
     // listen for messages coming FROM the target here
-    proxySocket.on('data', hybiParseAndLogMessage)
+    proxySocket.on('data', hybiParseAndLogMessage);
   }
   ```
 
@@ -305,7 +308,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   ```javascript
   function onClose(res, socket, head) {
     // view disconnected websocket connections
-    console.log('Client disconnected')
+    console.log('Client disconnected');
   }
   ```
 
@@ -383,13 +386,13 @@ The following options are provided by the underlying [http-proxy](https://github
 Use the shorthand syntax when verbose configuration is not needed. The `context` and `option.target` will be automatically configured when shorthand is used. Options can still be used if needed.
 
 ```javascript
-proxy('http://www.example.org:8000/api')
+proxy('http://www.example.org:8000/api');
 // proxy('/api', {target: 'http://www.example.org:8000'});
 
-proxy('http://www.example.org:8000/api/books/*/**.json')
+proxy('http://www.example.org:8000/api/books/*/**.json');
 // proxy('/api/books/*/**.json', {target: 'http://www.example.org:8000'});
 
-proxy('http://www.example.org:8000/api', { changeOrigin: true })
+proxy('http://www.example.org:8000/api', { changeOrigin: true });
 // proxy('/api', {target: 'http://www.example.org:8000', changeOrigin: true});
 ```
 
@@ -399,7 +402,10 @@ If you want to use the server's `app.use` `path` parameter to match requests;
 Create and mount the proxy without the http-proxy-middleware `context` parameter:
 
 ```javascript
-app.use('/api', proxy({ target: 'http://www.example.org', changeOrigin: true }))
+app.use(
+  '/api',
+  proxy({ target: 'http://www.example.org', changeOrigin: true })
+);
 ```
 
 `app.use` documentation:
@@ -411,13 +417,13 @@ app.use('/api', proxy({ target: 'http://www.example.org', changeOrigin: true }))
 
 ```javascript
 // verbose api
-proxy('/', { target: 'http://echo.websocket.org', ws: true })
+proxy('/', { target: 'http://echo.websocket.org', ws: true });
 
 // shorthand
-proxy('http://echo.websocket.org', { ws: true })
+proxy('http://echo.websocket.org', { ws: true });
 
 // shorter shorthand
-proxy('ws://echo.websocket.org')
+proxy('ws://echo.websocket.org');
 ```
 
 ### External WebSocket upgrade
@@ -425,13 +431,13 @@ proxy('ws://echo.websocket.org')
 In the previous WebSocket examples, http-proxy-middleware relies on a initial http request in order to listen to the http `upgrade` event. If you need to proxy WebSockets without the initial http request, you can subscribe to the server's http `upgrade` event manually.
 
 ```javascript
-var wsProxy = proxy('ws://echo.websocket.org', { changeOrigin: true })
+var wsProxy = proxy('ws://echo.websocket.org', { changeOrigin: true });
 
-var app = express()
-app.use(wsProxy)
+var app = express();
+app.use(wsProxy);
 
-var server = app.listen(3000)
-server.on('upgrade', wsProxy.upgrade) // <-- subscribe to http 'upgrade'
+var server = app.listen(3000);
+server.on('upgrade', wsProxy.upgrade); // <-- subscribe to http 'upgrade'
 ```
 
 ## Working examples
@@ -468,16 +474,20 @@ Run the test suite:
 
 ```bash
 # install dependencies
-$ npm install
+$ yarn
 
 # linting
-$ npm run lint
+$ yarn lint
+$ yarn lint:fix
+
+# building (compile typescript to js)
+$ yarn build
 
 # unit tests
-$ npm test
+$ yarn test
 
 # code coverage
-$ npm run cover
+$ yarn cover
 ```
 
 ## Changelog
@@ -488,4 +498,4 @@ $ npm run cover
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2018 Steven Chim
+Copyright (c) 2015-2019 Steven Chim

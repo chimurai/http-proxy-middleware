@@ -23,13 +23,13 @@ https://github.com/BrowserSync/browser-sync
 [![GitHub stars](https://img.shields.io/github/stars/BrowserSync/browser-sync.svg?style=social&label=Star)](https://github.com/BrowserSync/browser-sync)
 
 ```javascript
-var browserSync = require('browser-sync').create()
-var proxy = require('http-proxy-middleware')
+var browserSync = require('browser-sync').create();
+var proxy = require('http-proxy-middleware');
 
 var apiProxy = proxy('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
-})
+});
 
 browserSync.init({
   server: {
@@ -38,7 +38,7 @@ browserSync.init({
     middleware: [apiProxy]
   },
   startPath: '/api'
-})
+});
 ```
 
 ## Express
@@ -47,18 +47,18 @@ https://github.com/expressjs/express
 [![GitHub stars](https://img.shields.io/github/stars/expressjs/express.svg?style=social&label=Star)](https://github.com/expressjs/express)
 
 ```javascript
-var express = require('express')
-var proxy = require('http-proxy-middleware')
+var express = require('express');
+var proxy = require('http-proxy-middleware');
 
 var apiProxy = proxy('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
-})
+});
 
-var app = express()
+var app = express();
 
-app.use(apiProxy)
-app.listen(3000)
+app.use(apiProxy);
+app.listen(3000);
 ```
 
 ## Connect
@@ -67,19 +67,19 @@ https://github.com/senchalabs/connect
 [![GitHub stars](https://img.shields.io/github/stars/senchalabs/connect.svg?style=social&label=Star)](https://github.com/senchalabs/connect)
 
 ```javascript
-var http = require('http')
-var connect = require('connect')
-var proxy = require('http-proxy-middleware')
+var http = require('http');
+var connect = require('connect');
+var proxy = require('http-proxy-middleware');
 
 var apiProxy = proxy('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
-})
+});
 
-var app = connect()
-app.use(apiProxy)
+var app = connect();
+app.use(apiProxy);
 
-http.createServer(app).listen(3000)
+http.createServer(app).listen(3000);
 ```
 
 ## lite-server
@@ -90,12 +90,12 @@ https://github.com/johnpapa/lite-server
 File: `bs-config.js`
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
 var apiProxy = proxy('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
-})
+});
 
 module.exports = {
   server: {
@@ -106,7 +106,7 @@ module.exports = {
       10: apiProxy
     }
   }
-}
+};
 ```
 
 ## grunt-contrib-connect
@@ -117,12 +117,12 @@ https://github.com/gruntjs/grunt-contrib-connect
 As an `Array`:
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
 var apiProxy = proxy('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
-})
+});
 
 grunt.initConfig({
   connect: {
@@ -132,18 +132,18 @@ grunt.initConfig({
       }
     }
   }
-})
+});
 ```
 
 As a `function`:
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
 var apiProxy = proxy('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
-})
+});
 
 grunt.initConfig({
   connect: {
@@ -151,14 +151,14 @@ grunt.initConfig({
       options: {
         middleware: function(connect, options, middlewares) {
           // inject a custom middleware into the array of default middlewares
-          middlewares.unshift(apiProxy)
+          middlewares.unshift(apiProxy);
 
-          return middlewares
+          return middlewares;
         }
       }
     }
   }
-})
+});
 ```
 
 ## grunt-browser-sync
@@ -167,12 +167,12 @@ https://github.com/BrowserSync/grunt-browser-sync
 [![GitHub stars](https://img.shields.io/github/stars/BrowserSync/grunt-browser-sync.svg?style=social&label=Star)](https://github.com/BrowserSync/grunt-browser-sync)
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
 var apiProxy = proxy('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
-})
+});
 
 grunt.initConfig({
   // BrowserSync Task
@@ -188,7 +188,7 @@ grunt.initConfig({
       }
     }
   }
-})
+});
 ```
 
 ## gulp-connect
@@ -197,9 +197,9 @@ https://github.com/avevlad/gulp-connect
 [![GitHub stars](https://img.shields.io/github/stars/avevlad/gulp-connect.svg?style=social&label=Star)](https://github.com/avevlad/gulp-connect)
 
 ```javascript
-var gulp = require('gulp')
-var connect = require('gulp-connect')
-var proxy = require('http-proxy-middleware')
+var gulp = require('gulp');
+var connect = require('gulp-connect');
+var proxy = require('http-proxy-middleware');
 
 gulp.task('connect', function() {
   connect.server({
@@ -208,14 +208,14 @@ gulp.task('connect', function() {
       var apiProxy = proxy('/api', {
         target: 'http://www.example.org',
         changeOrigin: true // for vhosted sites
-      })
+      });
 
-      return [apiProxy]
+      return [apiProxy];
     }
-  })
-})
+  });
+});
 
-gulp.task('default', ['connect'])
+gulp.task('default', ['connect']);
 ```
 
 ## gulp-webserver
@@ -224,15 +224,15 @@ https://github.com/schickling/gulp-webserver
 [![GitHub stars](https://img.shields.io/github/stars/schickling/gulp-webserver.svg?style=social&label=Star)](https://github.com/schickling/gulp-webserver)
 
 ```javascript
-var gulp = require('gulp')
-var webserver = require('gulp-webserver')
-var proxy = require('http-proxy-middleware')
+var gulp = require('gulp');
+var webserver = require('gulp-webserver');
+var proxy = require('http-proxy-middleware');
 
 gulp.task('webserver', function() {
   var apiProxy = proxy('/api', {
     target: 'http://www.example.org',
     changeOrigin: true // for vhosted sites
-  })
+  });
 
   gulp.src('app').pipe(
     webserver({
@@ -241,8 +241,8 @@ gulp.task('webserver', function() {
       open: true,
       middleware: [apiProxy]
     })
-  )
-})
+  );
+});
 
-gulp.task('default', ['webserver'])
+gulp.task('default', ['webserver']);
 ```

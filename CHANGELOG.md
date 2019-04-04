@@ -1,5 +1,10 @@
 # Changelog
 
+## next
+
+- refactor: migrate to typescript ([#328](https://github.com/chimurai/http-proxy-middleware/pull/328))
+- feat(middleware): Promise / async support ([#328](https://github.com/chimurai/http-proxy-middleware/pull/328/files#diff-7890bfeb41abb0fc0ef2670749c84077R50))
+
 ## [v0.19.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.19.1)
 
 - fix(log): handle case when error code is missing ([#303](https://github.com/chimurai/http-proxy-middleware/pull/303))
