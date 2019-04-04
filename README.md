@@ -247,9 +247,6 @@ Providing an alternative way to decide which requests should be proxied; In case
   }
   ```
 
-- (DEPRECATED) **option.proxyHost**: Use `option.changeOrigin = true` instead.
-- (DEPRECATED) **option.proxyTable**: Use `option.router` instead.
-
 ### http-proxy events
 
 Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#listening-for-proxy-events):
