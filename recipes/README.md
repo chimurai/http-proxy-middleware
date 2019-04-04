@@ -9,13 +9,13 @@ Overview of `http-proxy-middleware` specific options.
 http-proxy-middleware uses Nodejitsu's [http-proxy](https://github.com/nodejitsu/node-http-proxy) to do the actual proxying. All of its [options](https://github.com/nodejitsu/node-http-proxy#options) are exposed via http-proxy-middleware's configuration object.
 
 ```javascript
-var proxy = require('http-proxy-middleware')
-var winston = require('winston')
+var proxy = require('http-proxy-middleware');
+var winston = require('winston');
 
 /**
  * Context matching: decide which path(s) should be proxied. (wildcards supported)
  **/
-var context = '/api'
+var context = '/api';
 
 /**
  * Proxy options
@@ -57,25 +57,25 @@ var options = {
   // use a different lib for logging;
   // i.e., write logs to file or server
   logProvider: function(provider) {
-    return winston
+    return winston;
   },
 
   // subscribe to http-proxy's error event
   onError: function onError(err, req, res) {
-    res.writeHead(500, { 'Content-Type': 'text/plain' })
-    res.end('Something went wrong.')
+    res.writeHead(500, { 'Content-Type': 'text/plain' });
+    res.end('Something went wrong.');
   },
 
   // subscribe to http-proxy's proxyRes event
   onProxyRes: function(proxyRes, req, res) {
-    proxyRes.headers['x-added'] = 'foobar'
-    delete proxyRes.headers['x-removed']
+    proxyRes.headers['x-added'] = 'foobar';
+    delete proxyRes.headers['x-removed'];
   },
 
   // subscribe to http-proxy's proxyReq event
   onProxyReq: function(proxyReq, req, res) {
     // add custom header to request
-    proxyReq.setHeader('x-powered-by', 'foobar')
+    proxyReq.setHeader('x-powered-by', 'foobar');
   }
 
   /**
@@ -99,10 +99,10 @@ var options = {
   // autoRewrite
   // protocolRewrite
   // headers
-}
+};
 
 /**
  * Create the proxy middleware, so it can be used in a server.
  */
-var apiProxy = proxy(context, options)
+var apiProxy = proxy(context, options);
 ```

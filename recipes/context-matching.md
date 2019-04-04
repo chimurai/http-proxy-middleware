@@ -31,9 +31,9 @@ The [RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is used f
 This will match paths starting with `/api`
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api', { target: 'http://localhost:3000' })
+var apiProxy = proxy('/api', { target: 'http://localhost:3000' });
 
 // `/api/foo/bar` -> `http://localhost:3000/api/foo/bar`
 ```
@@ -43,9 +43,9 @@ var apiProxy = proxy('/api', { target: 'http://localhost:3000' })
 This will match paths starting with `/api` or `/rest`
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
-var apiProxy = proxy(['/api', '/rest'], { target: 'http://localhost:3000' })
+var apiProxy = proxy(['/api', '/rest'], { target: 'http://localhost:3000' });
 
 // `/api/foo/bar` -> `http://localhost:3000/api/foo/bar`
 // `/rest/lorum/ipsum` -> `http://localhost:3000/rest/lorum/ipsum`
@@ -56,9 +56,9 @@ var apiProxy = proxy(['/api', '/rest'], { target: 'http://localhost:3000' })
 This will match paths starting with `/api/` and should also end with `.json`
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api/**/*.json', { target: 'http://localhost:3000' })
+var apiProxy = proxy('/api/**/*.json', { target: 'http://localhost:3000' });
 ```
 
 ## Multi Wildcard
@@ -66,11 +66,11 @@ var apiProxy = proxy('/api/**/*.json', { target: 'http://localhost:3000' })
 Multiple wildcards can be used.
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
 var apiProxy = proxy(['/api/**/*.json', '/rest/**'], {
   target: 'http://localhost:3000'
-})
+});
 ```
 
 ## Wildcard / Exclusion
@@ -78,11 +78,11 @@ var apiProxy = proxy(['/api/**/*.json', '/rest/**'], {
 This example will create a proxy with wildcard context matching.
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
 var apiProxy = proxy(['foo/*.js', '!bar.js'], {
   target: 'http://localhost:3000'
-})
+});
 ```
 
 ## Custom filtering
@@ -91,11 +91,11 @@ Write your custom context matching function to have full control on the matching
 The request `pathname` and `req` object are provided to determine which requests should be proxied or not.
 
 ```javascript
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
 
 var filter = function(pathname, req) {
-  return pathname.match('^/api') && req.method === 'GET'
-}
+  return pathname.match('^/api') && req.method === 'GET';
+};
 
-var apiProxy = proxy(filter, { target: 'http://localhost:3000' })
+var apiProxy = proxy(filter, { target: 'http://localhost:3000' });
 ```
