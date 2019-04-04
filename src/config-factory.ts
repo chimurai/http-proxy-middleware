@@ -41,12 +41,6 @@ export function createConfig(context, opts?) {
     throw new Error(ERRORS.ERR_CONFIG_FACTORY_TARGET_MISSING);
   }
 
-  // Legacy option.proxyHost
-  config.options = mapLegacyProxyHostOption(config.options);
-
-  // Legacy option.proxyTable > option.router
-  config.options = mapLegacyProxyTableOption(config.options);
-
   return config;
 }
 
@@ -80,40 +74,6 @@ function isStringShortHand(context) {
  */
 function isContextless(context, opts) {
   return _.isPlainObject(context) && _.isEmpty(opts);
-}
-
-function mapLegacyProxyHostOption(options) {
-  // set options.headers.host when option.proxyHost is provided
-  if (options.proxyHost) {
-    logger.warn('*************************************');
-    logger.warn('[HPM] Deprecated "option.proxyHost"');
-    logger.warn(
-      '      Use "option.changeOrigin" or "option.headers.host" instead'
-    );
-    logger.warn('      "option.proxyHost" will be removed in future release.');
-    logger.warn('*************************************');
-
-    options.headers = options.headers || {};
-    options.headers.host = options.proxyHost;
-  }
-
-  return options;
-}
-
-// Warn deprecated proxyTable api usage
-function mapLegacyProxyTableOption(options) {
-  if (options.proxyTable) {
-    logger.warn('*************************************');
-    logger.warn('[HPM] Deprecated "option.proxyTable"');
-    logger.warn('      Use "option.router" instead');
-    logger.warn('      "option.proxyTable" will be removed in future release.');
-    logger.warn('*************************************');
-
-    options.router = _.clone(options.proxyTable);
-    _.omit(options, 'proxyTable');
-  }
-
-  return options;
 }
 
 function configureLogger(options) {

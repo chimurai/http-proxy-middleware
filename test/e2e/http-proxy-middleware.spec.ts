@@ -348,40 +348,6 @@ describe('E2E http-proxy-middleware', () => {
       });
     });
 
-    describe('legacy option.proxyHost', () => {
-      let proxyServer;
-      let targetServer;
-      let targetHeaders;
-
-      beforeEach(done => {
-        const mwProxy = proxyMiddleware('/api', {
-          target: 'http://localhost:8000',
-          proxyHost: 'foobar.dev'
-        });
-
-        const mwTarget = (req, res, next) => {
-          targetHeaders = req.headers;
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
-
-        http.get('http://localhost:3000/api/', res => {
-          done();
-        });
-      });
-
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
-
-      it('should proxy host header to target server', () => {
-        expect(targetHeaders.host).toBe('foobar.dev');
-      });
-    });
-
     describe('option.onError - Error handling', () => {
       let proxyServer;
       let targetServer;
