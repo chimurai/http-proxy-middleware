@@ -2,6 +2,7 @@
 
 ## next
 
+- chore: drop node 6 (BREAKING CHANGE)
 - chore: update to micromatch@4 ([BREAKING CHANGE](https://github.com/micromatch/micromatch/blob/master/CHANGELOG.md#400---2019-03-20))
 - chore: update dev dependencies
 - refactor: migrate to typescript ([#328](https://github.com/chimurai/http-proxy-middleware/pull/328))
