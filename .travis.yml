@@ -1,3 +1,4 @@
+dist: xenial
 sudo: false
 language: node_js
 node_js:
@@ -5,9 +6,6 @@ node_js:
 - '10'
 - '8'
 - '6'
-before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.15.2
-  - export PATH=$HOME/.yarn/bin:$PATH
 cache: yarn
 stages:
   - lint
