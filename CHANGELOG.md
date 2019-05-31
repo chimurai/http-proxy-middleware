@@ -2,6 +2,9 @@
 
 ## next
 
+- chore: drop node 6 (BREAKING CHANGE)
+- chore: update to micromatch@4 ([BREAKING CHANGE](https://github.com/micromatch/micromatch/blob/master/CHANGELOG.md#400---2019-03-20))
+- chore: update dev dependencies
 - refactor: migrate to typescript ([#328](https://github.com/chimurai/http-proxy-middleware/pull/328))
 - feat(middleware): Promise / async support ([#328](https://github.com/chimurai/http-proxy-middleware/pull/328/files#diff-7890bfeb41abb0fc0ef2670749c84077R50))
 - refactor: remove legacy options `proxyHost` and `proxyTable` (BREAKING CHANGE)

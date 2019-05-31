@@ -25,4 +25,4 @@ app.listen(3000);
 console.log('[DEMO] Server: listening on port 3000');
 console.log('[DEMO] Opening: http://localhost:3000/users');
 
-require('opn')('http://localhost:3000/users');
+require('open')('http://localhost:3000/users');
