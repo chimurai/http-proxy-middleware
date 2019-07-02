@@ -53,23 +53,29 @@ function defaultErrorHandler(err, req, res) {
   const host = req.headers && req.headers.host;
   const code = err.code;
 
-  if (res.writeHead && !res.headersSent) {
-    if (/HPE_INVALID/.test(code)) {
-      res.writeHead(502);
-    } else {
-      switch (code) {
-        case 'ECONNRESET':
-        case 'ENOTFOUND':
-        case 'ECONNREFUSED':
-          res.writeHead(504);
-          break;
-        default:
-          res.writeHead(500);
+  try {
+    if (res.writeHead && !res.headersSent) {
+      if (/HPE_INVALID/.test(code)) {
+        res.writeHead(502);
+      } else {
+        switch (code) {
+          case 'ECONNRESET':
+          case 'ENOTFOUND':
+          case 'ECONNREFUSED':
+            res.writeHead(504);
+            break;
+          default:
+            res.writeHead(500);
+        }
       }
     }
-  }
 
-  res.end('Error occured while trying to proxy to: ' + host + req.url);
+    res.end('Error occured while trying to proxy to: ' + host + req.url);
+  } catch(e) {
+    if(e.code !== 'EPIPE') {
+      logger.error(e);
+    }
+  }
 }
 
 function logClose(req, socket, head) {
