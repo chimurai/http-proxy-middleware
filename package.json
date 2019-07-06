@@ -19,7 +19,9 @@
     "cover": "jest --runInBand --coverage",
     "precoveralls": "yarn clean && npm run build",
     "coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls",
-    "postcoveralls": "yarn clean"
+    "postcoveralls": "yarn clean",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -74,7 +76,8 @@
     "http-proxy": "^1.17.0",
     "is-glob": "^4.0.1",
     "lodash": "^4.17.11",
-    "micromatch": "^4.0.2"
+    "micromatch": "^4.0.2",
+    "snyk": "^1.192.3"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -88,5 +91,6 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
-  }
+  },
+  "snyk": true
 }
