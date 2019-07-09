@@ -53,6 +53,11 @@ function defaultErrorHandler(err, req, res) {
   const host = req.headers && req.headers.host;
   const code = err.code;
 
+  function endErrorHandler(e) {
+    if (e && e.code !== 'EPIPE') {
+      logger.error(err);
+    }
+  }
   try {
     if (res.writeHead && !res.headersSent) {
       if (/HPE_INVALID/.test(code)) {
@@ -70,11 +75,12 @@ function defaultErrorHandler(err, req, res) {
       }
     }
 
-    res.end('Error occured while trying to proxy to: ' + host + req.url);
-  } catch(e) {
-    if(e.code !== 'EPIPE') {
-      logger.error(e);
-    }
+    res.end(
+      'Error occured while trying to proxy to: ' + host + req.url,
+      endErrorHandler
+    );
+  } catch (e) {
+    endErrorHandler(e);
   }
 }
 
