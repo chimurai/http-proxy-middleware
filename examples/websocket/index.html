@@ -30,15 +30,15 @@
         <p>
             <label for="location">location:</label>
             <input id="location" type="text" value="ws://localhost:3000">
-            <button id="connect">connect</button>
-            <button id="disconnect" disabled="disabled">disconnect</button>
+            <button id="connectBtn">connect</button>
+            <button id="disconnectBtn" disabled="disabled">disconnect</button>
         </p>
     </fieldset>
     <fieldset id="messaging" disabled="disabled">
         <p>
             <label for="message">message:</label>
             <input type="text" id="message" value="Hello WebSocket">
-            <button id="send">send</button>
+            <button id="sendBtn">send</button>
         </p>
         <p>
             <label for="logger">log:</label>
@@ -49,44 +49,61 @@
     <script>
     window.onload = function () {
         // elements
-        var configuration = document.getElementById('configuration');
-        var location      = document.getElementById('location');
-        var connect       = document.getElementById('connect');
-        var disconnect    = document.getElementById('disconnect');
-        var messaging     = document.getElementById('messaging');
-        var message       = document.getElementById('message');
-        var send          = document.getElementById('send');
-        var logger        = document.getElementById('logger');
+        const configuration = document.getElementById('configuration');
+        const location      = document.getElementById('location');
+        const connectBtn    = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const messaging     = document.getElementById('messaging');
+        const message       = document.getElementById('message');
+        const sendBtn       = document.getElementById('sendBtn');
+        const logger        = document.getElementById('logger');
 
         // ws
-        var socket;
+        let socket;
 
-        connect.onclick = function () {
-            connect.disabled = true;
-            disconnect.disabled = false;
-            messaging.disabled = false;
+        connectBtn.onclick = () => { connect(); }
+        disconnectBtn.onclick = () => { disconnect(); }
+        sendBtn.onclick = () => { sendMessage(message.value); }
 
-            socket = new WebSocket(location.value);
-            socket.onopen    = function () { log('CONNECTED'); };
-            socket.onclose   = function () { log('DISCONNECTED'); };
-            socket.onerror   = function () { log('SOCKET ERROR OCCURED'); };
-            socket.onmessage = function (msg) { log('RECEIVED:' + msg.data); };
+        function connect() {
+          setupSocket(location.value);
         }
 
-        disconnect.onclick = function () {
-            connect.disabled = false;
-            disconnect.disabled = true;
-            messaging.disabled = true;
-            socket.close();
+        function disconnect() {
+          socket.close();
+          socket = undefined;
         }
 
-        send.onclick = function () {
-            log('SEND: ' + message.value);
-            socket.send(message.value);
+        function sendMessage(val) {
+          log('SEND: ' + val);
+          socket.send(val);
         };
 
+        function setupSocket(url) {
+          socket = new WebSocket(url);
+          socket.addEventListener('open', () => {
+            log('CONNECTED');
+            toggleControls();
+          })
+          socket.addEventListener('close', () => {
+            log('DISCONNECTED');
+            toggleControls()
+          })
+          socket.addEventListener('error', () => { log('SOCKET ERROR OCCURED'); })
+          socket.addEventListener('message', (msg) => { log('RECEIVED:' + msg.data); })
+        }
+
         function log (message) {
-            logger.value = logger.value + message + '\n'
+          logger.value = logger.value + message + '\n';
+          logger.scrollTop = logger.scrollHeight; // scroll to bottom
+        }
+
+        function toggleControls() {
+          [connectBtn, disconnectBtn, messaging].forEach(el => toggleEnabled(el))
+        }
+
+        function toggleEnabled(el) {
+          el.disabled = (el.disabled) ? false : true;
         }
 
     }
