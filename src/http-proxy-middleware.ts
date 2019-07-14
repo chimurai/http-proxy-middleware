@@ -22,9 +22,7 @@ export class HttpProxyMiddleware {
     // create proxy
     this.proxy = httpProxy.createProxyServer({});
     this.logger.info(
-      `[HPM] Proxy created: ${this.config.context}  -> ${
-        this.proxyOptions.target
-      }`
+      `[HPM] Proxy created: ${this.config.context}  -> ${this.proxyOptions.target}`
     );
 
     this.pathRewriter = PathRewriter.createPathRewriter(

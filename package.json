@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rm -rf coverage",
+    "clean": "rm -rf dist && rm -rf coverage",
     "lint": "yarn lint:prettier && yarn lint:tslint",
     "lint:prettier": "prettier --check \"**/*.{js,ts,md}\"",
     "lint:tslint": "yarn tslint -c tslint.json '{lib,test}/**/*.ts'",
@@ -20,7 +20,7 @@
     "precoveralls": "yarn clean && yarn build",
     "coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls",
     "postcoveralls": "yarn clean",
-    "prepublish": "yarn build"
+    "prepare": "yarn clean && yarn build"
   },
   "repository": {
     "type": "git",
