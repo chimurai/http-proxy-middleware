@@ -1,7 +1,8 @@
 # Changelog
 
-## next
+## [v0.20.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.20.0)
 
+- fix(ws): concurrent websocket requests do not get upgraded ([#335](https://github.com/chimurai/http-proxy-middleware/issues/335))
 - chore: drop node 6 (BREAKING CHANGE)
 - chore: update to micromatch@4 ([BREAKING CHANGE](https://github.com/micromatch/micromatch/blob/master/CHANGELOG.md#400---2019-03-20))
 - chore: update dev dependencies
