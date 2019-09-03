@@ -60,10 +60,12 @@ export class HttpProxyMiddleware {
   };
 
   private catchUpgradeRequest = server => {
-    server.on('upgrade', this.handleUpgrade);
-    // prevent duplicate upgrade handling;
-    // in case external upgrade is also configured
-    this.wsInternalSubscribed = true;
+    if (!this.wsInternalSubscribed) {
+      server.on('upgrade', this.handleUpgrade);
+      // prevent duplicate upgrade handling;
+      // in case external upgrade is also configured
+      this.wsInternalSubscribed = true;
+    }
   };
 
   private handleUpgrade = (req, socket, head) => {

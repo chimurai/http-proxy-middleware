@@ -67,11 +67,13 @@
 
         function connect() {
           setupSocket(location.value);
+          toggleControls();
         }
 
         function disconnect() {
           socket.close();
           socket = undefined;
+          toggleControls();
         }
 
         function sendMessage(val) {
@@ -83,11 +85,9 @@
           socket = new WebSocket(url);
           socket.addEventListener('open', () => {
             log('CONNECTED');
-            toggleControls();
           })
           socket.addEventListener('close', () => {
             log('DISCONNECTED');
-            toggleControls()
           })
           socket.addEventListener('error', () => { log('SOCKET ERROR OCCURED'); })
           socket.addEventListener('message', (msg) => { log('RECEIVED:' + msg.data); })
