@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { ERRORS } from './errors';
 import { getInstance } from './logger';
 const logger = getInstance();

@@ -5,6 +5,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2015",
+    "declaration": true,
+    "esModuleInterop": true
   },
   "include": ["./src"]
 }

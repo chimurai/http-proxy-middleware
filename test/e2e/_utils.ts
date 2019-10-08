@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 // tslint:disable-next-line: no-var-requires
 export const proxyMiddleware = require('../../dist/index');

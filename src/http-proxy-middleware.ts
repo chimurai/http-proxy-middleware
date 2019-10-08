@@ -1,21 +1,23 @@
-import * as httpProxy from 'http-proxy';
-import * as _ from 'lodash';
+import express from 'express';
+import httpProxy from 'http-proxy';
+import _ from 'lodash';
 import { createConfig } from './config-factory';
 import * as contextMatcher from './context-matcher';
 import * as handlers from './handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
+import { Filter, IRequest, IRequestHandler, IResponse, Options } from './types';
 
 export class HttpProxyMiddleware {
   private logger = getInstance();
   private config;
   private wsInternalSubscribed = false;
-  private proxyOptions;
-  private proxy;
+  private proxyOptions: Options;
+  private proxy: httpProxy;
   private pathRewriter;
 
-  constructor(context, opts) {
+  constructor(context: Filter | Options, opts?: Options) {
     this.config = createConfig(context, opts);
     this.proxyOptions = this.config.options;
 
@@ -45,7 +47,11 @@ export class HttpProxyMiddleware {
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-  public middleware = async (req, res, next) => {
+  public middleware: IRequestHandler = async (
+    req: IRequest,
+    res: IResponse,
+    next: express.NextFunction
+  ) => {
     if (this.shouldProxy(this.config.context, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.web(req, res, activeProxyOptions);
@@ -55,7 +61,7 @@ export class HttpProxyMiddleware {
 
     if (this.proxyOptions.ws === true) {
       // use initial request to access the server object to subscribe to http upgrade event
-      this.catchUpgradeRequest(req.connection.server);
+      this.catchUpgradeRequest((req.connection as any).server);
     }
   };
 
@@ -68,7 +74,7 @@ export class HttpProxyMiddleware {
     }
   };
 
-  private handleUpgrade = async (req, socket, head) => {
+  private handleUpgrade = async (req: IRequest, socket, head) => {
     if (this.shouldProxy(this.config.context, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.ws(req, socket, head, activeProxyOptions);
@@ -84,7 +90,7 @@ export class HttpProxyMiddleware {
    * @param  {Object} req     [description]
    * @return {Boolean}
    */
-  private shouldProxy = (context, req) => {
+  private shouldProxy = (context, req: IRequest) => {
     const path = req.originalUrl || req.url;
     return contextMatcher.match(context, path, req);
   };
@@ -97,7 +103,7 @@ export class HttpProxyMiddleware {
    * @param {Object} req
    * @return {Object} proxy options
    */
-  private prepareProxyRequest = async req => {
+  private prepareProxyRequest = async (req: IRequest) => {
     // https://github.com/chimurai/http-proxy-middleware/issues/17
     // https://github.com/chimurai/http-proxy-middleware/issues/94
     req.url = req.originalUrl || req.url;
@@ -133,7 +139,7 @@ export class HttpProxyMiddleware {
   };
 
   // Modify option.target when router present.
-  private applyRouter = async (req, options) => {
+  private applyRouter = async (req: IRequest, options) => {
     let newTarget;
 
     if (options.router) {
@@ -151,7 +157,7 @@ export class HttpProxyMiddleware {
   };
 
   // rewrite path
-  private applyPathRewrite = (req, pathRewriter) => {
+  private applyPathRewrite = (req: IRequest, pathRewriter) => {
     if (pathRewriter) {
       const path = pathRewriter(req.url, req);
 
@@ -166,10 +172,11 @@ export class HttpProxyMiddleware {
     }
   };
 
-  private logError = (err, req, res) => {
+  private logError = (err, req: IRequest, res: IResponse) => {
     const hostname =
       (req.headers && req.headers.host) || (req.hostname || req.host); // (websocket) || (node0.10 || node 4/5)
-    const target = this.proxyOptions.target.host || this.proxyOptions.target;
+    const target =
+      (this.proxyOptions.target as any).host || this.proxyOptions.target;
     const errorMessage =
       '[HPM] Error occurred while trying to proxy request %s from %s to %s (%s) (%s)';
     const errReference =
