@@ -169,7 +169,9 @@ export class HttpProxyMiddleware {
   private logError = (err, req, res) => {
     const hostname =
       (req.headers && req.headers.host) || (req.hostname || req.host); // (websocket) || (node0.10 || node 4/5)
-    const target = this.proxyOptions.target.host || this.proxyOptions.target;
+    const routerTarget = Router.getTarget(req, this.proxyOptions);
+    const target =
+      routerTarget || this.proxyOptions.target.host || this.proxyOptions.target;
     const errorMessage =
       '[HPM] Error occurred while trying to proxy request %s from %s to %s (%s) (%s)';
     const errReference =
