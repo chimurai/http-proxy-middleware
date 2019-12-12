@@ -97,7 +97,7 @@ export class HttpProxyMiddleware {
    * @param {Object} req
    * @return {Object} proxy options
    */
-  private prepareProxyRequest = async (req) => {
+  private prepareProxyRequest = async req => {
     // https://github.com/chimurai/http-proxy-middleware/issues/17
     // https://github.com/chimurai/http-proxy-middleware/issues/94
     req.url = req.originalUrl || req.url;
