@@ -47,7 +47,7 @@ export class HttpProxyMiddleware {
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
   public middleware = async (req, res, next) => {
     if (this.shouldProxy(this.config.context, req)) {
-      const activeProxyOptions = this.prepareProxyRequest(req);
+      const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.web(req, res, activeProxyOptions);
     } else {
       next();
@@ -68,9 +68,9 @@ export class HttpProxyMiddleware {
     }
   };
 
-  private handleUpgrade = (req, socket, head) => {
+  private handleUpgrade = async (req, socket, head) => {
     if (this.shouldProxy(this.config.context, req)) {
-      const activeProxyOptions = this.prepareProxyRequest(req);
+      const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.ws(req, socket, head, activeProxyOptions);
       this.logger.info('[HPM] Upgrading to WebSocket');
     }
@@ -97,7 +97,7 @@ export class HttpProxyMiddleware {
    * @param {Object} req
    * @return {Object} proxy options
    */
-  private prepareProxyRequest = req => {
+  private prepareProxyRequest = async (req) => {
     // https://github.com/chimurai/http-proxy-middleware/issues/17
     // https://github.com/chimurai/http-proxy-middleware/issues/94
     req.url = req.originalUrl || req.url;
@@ -109,7 +109,7 @@ export class HttpProxyMiddleware {
     // Apply in order:
     // 1. option.router
     // 2. option.pathRewrite
-    this.applyRouter(req, newProxyOptions);
+    await this.applyRouter(req, newProxyOptions);
     this.applyPathRewrite(req, this.pathRewriter);
 
     // debug logging for both http(s) and websockets
@@ -133,11 +133,11 @@ export class HttpProxyMiddleware {
   };
 
   // Modify option.target when router present.
-  private applyRouter = (req, options) => {
+  private applyRouter = async (req, options) => {
     let newTarget;
 
     if (options.router) {
-      newTarget = Router.getTarget(req, options);
+      newTarget = await Router.getTarget(req, options);
 
       if (newTarget) {
         this.logger.debug(
