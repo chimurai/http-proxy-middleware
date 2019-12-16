@@ -40,7 +40,7 @@ describe('router unit test', () => {
         expect(request.url).toBe('/');
       });
       it('should return new target', () => {
-        expect(result).toBe('http://foobar.com:666');
+        expect(result).resolves.toBe('http://foobar.com:666');
       });
     });
   });
@@ -64,7 +64,7 @@ describe('router unit test', () => {
     describe('without router config', () => {
       it('should return the normal target when router not present in config', () => {
         result = getTarget(fakeReq, config);
-        expect(result).toBeUndefined();
+        expect(result).resolves.toBeUndefined();
       });
     });
 
@@ -72,13 +72,13 @@ describe('router unit test', () => {
       it('should target http://localhost:6001 when for router:"alpha.localhost"', () => {
         fakeReq.headers.host = 'alpha.localhost';
         result = getTarget(fakeReq, proxyOptionWithRouter);
-        expect(result).toBe('http://localhost:6001');
+        expect(result).resolves.toBe('http://localhost:6001');
       });
 
       it('should target http://localhost:6002 when for router:"beta.localhost"', () => {
         fakeReq.headers.host = 'beta.localhost';
         result = getTarget(fakeReq, proxyOptionWithRouter);
-        expect(result).toBe('http://localhost:6002');
+        expect(result).resolves.toBe('http://localhost:6002');
       });
     });
 
@@ -86,21 +86,21 @@ describe('router unit test', () => {
       it('should target http://localhost:6004 without path', () => {
         fakeReq.headers.host = 'gamma.localhost';
         result = getTarget(fakeReq, proxyOptionWithRouter);
-        expect(result).toBe('http://localhost:6004');
+        expect(result).resolves.toBe('http://localhost:6004');
       });
 
       it('should target http://localhost:6003 exact path match', () => {
         fakeReq.headers.host = 'gamma.localhost';
         fakeReq.url = '/api';
         result = getTarget(fakeReq, proxyOptionWithRouter);
-        expect(result).toBe('http://localhost:6003');
+        expect(result).resolves.toBe('http://localhost:6003');
       });
 
       it('should target http://localhost:6004 when contains path', () => {
         fakeReq.headers.host = 'gamma.localhost';
         fakeReq.url = '/api/books/123';
         result = getTarget(fakeReq, proxyOptionWithRouter);
-        expect(result).toBe('http://localhost:6003');
+        expect(result).resolves.toBe('http://localhost:6003');
       });
     });
 
@@ -108,19 +108,19 @@ describe('router unit test', () => {
       it('should target http://localhost:6005 with just a path as router config', () => {
         fakeReq.url = '/rest';
         result = getTarget(fakeReq, proxyOptionWithRouter);
-        expect(result).toBe('http://localhost:6005');
+        expect(result).resolves.toBe('http://localhost:6005');
       });
 
       it('should target http://localhost:6005 with just a path as router config', () => {
         fakeReq.url = '/rest/deep/path';
         result = getTarget(fakeReq, proxyOptionWithRouter);
-        expect(result).toBe('http://localhost:6005');
+        expect(result).resolves.toBe('http://localhost:6005');
       });
 
       it('should target http://localhost:6000 path in not present in router config', () => {
         fakeReq.url = '/unknow-path';
         result = getTarget(fakeReq, proxyOptionWithRouter);
-        expect(result).toBeUndefined();
+        expect(result).resolves.toBeUndefined();
       });
     });
 
@@ -128,7 +128,7 @@ describe('router unit test', () => {
       it('should return first matching target when similar paths are configured', () => {
         fakeReq.url = '/some/specific/path';
         result = getTarget(fakeReq, proxyOptionWithRouter);
-        expect(result).toBe('http://localhost:6006');
+        expect(result).resolves.toBe('http://localhost:6006');
       });
     });
   });
