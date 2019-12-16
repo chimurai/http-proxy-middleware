@@ -45,6 +45,32 @@ describe('router unit test', () => {
     });
   });
 
+  describe('router.getTarget from async function', () => {
+    let request;
+
+    beforeEach(() => {
+      proxyOptionWithRouter = {
+        target: 'http://localhost:6000',
+        async router(req) {
+          request = req;
+          return 'http://foobar.com:666';
+        }
+      };
+
+      result = getTarget(fakeReq, proxyOptionWithRouter);
+    });
+
+    describe('custom dynamic router async function', () => {
+      it('should provide the request object for dynamic routing', () => {
+        expect(request.headers.host).toBe('localhost');
+        expect(request.url).toBe('/');
+      });
+      it('should return new target', () => {
+        expect(result).resolves.toBe('http://foobar.com:666');
+      });
+    });
+  });
+
   describe('router.getTarget from table', () => {
     beforeEach(() => {
       proxyOptionWithRouter = {
