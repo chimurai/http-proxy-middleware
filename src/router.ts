@@ -2,14 +2,14 @@ import * as _ from 'lodash';
 import { getInstance } from './logger';
 const logger = getInstance();
 
-export function getTarget(req, config) {
+export async function getTarget(req, config) {
   let newTarget;
   const router = config.router;
 
   if (_.isPlainObject(router)) {
     newTarget = getTargetFromProxyTable(req, router);
   } else if (_.isFunction(router)) {
-    newTarget = router(req);
+    newTarget = await router(req);
   }
 
   return newTarget;

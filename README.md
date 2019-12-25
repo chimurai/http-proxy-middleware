@@ -217,6 +217,12 @@ Providing an alternative way to decide which requests should be proxied; In case
   router: function(req) {
       return 'http://localhost:8004';
   }
+
+  // Asynchronous router function which returns promise
+  router: async function(req) {
+      const url = await doSomeIO();
+      return url;
+  }
   ```
 
 - **option.logLevel**: string, ['debug', 'info', 'warn', 'error', 'silent']. Default: `'info'`
