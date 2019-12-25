@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- feat: async router ([#379](https://github.com/chimurai/http-proxy-middleware/issues/335)) ([LiranBri](https://github.com/LiranBri))
+
 ## [v0.20.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.20.0)
 
 - fix(ws): concurrent websocket requests do not get upgraded ([#335](https://github.com/chimurai/http-proxy-middleware/issues/335))
