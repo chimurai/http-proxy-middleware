@@ -52,9 +52,9 @@ export class HttpProxyMiddleware {
       // fallthrough to the middleware chain if a resource
       // cannot be found in the source being proxied
       if (this.proxyOptions.fallthrough) {
-        this.logger.info('[HPM] Fallthrough to middleware chain requested on 404s');
         this.proxy.once('proxyRes', (proxyRes) => {
           if (proxyRes.statusCode === 404) {
+            this.logger.info('[HPM] Falling through to middleware chain on 404');
             next();
           }
         });
