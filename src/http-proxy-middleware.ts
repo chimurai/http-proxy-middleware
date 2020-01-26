@@ -19,8 +19,13 @@ export class HttpProxyMiddleware {
     this.config = createConfig(context, opts);
     this.proxyOptions = this.config.options;
 
+    let httpProxyOptions = <any>{}
+    if (context.fallthrough) {
+      httpProxyOptions.fallthrough = true
+    }
+
     // create proxy
-    this.proxy = httpProxy.createProxyServer({});
+    this.proxy = httpProxy.createProxyServer(httpProxyOptions);
     this.logger.info(
       `[HPM] Proxy created: ${this.config.context}  -> ${this.proxyOptions.target}`
     );
