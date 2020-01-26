@@ -48,6 +48,18 @@ export class HttpProxyMiddleware {
   public middleware = async (req, res, next) => {
     if (this.shouldProxy(this.config.context, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
+
+      // fallthrough to the middleware chain if a resource
+      // cannot be found in the source being proxied
+      if (this.proxyOptions.fallthrough) {
+        this.logger.info('[HPM] Fallthrough to middleware chain requested on 404s');
+        this.proxy.once('proxyRes', (proxyRes) => {
+          if (proxyRes.statusCode === 404) {
+            next();
+          }
+        });
+      }
+
       this.proxy.web(req, res, activeProxyOptions);
     } else {
       next();

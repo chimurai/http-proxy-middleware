@@ -16,3 +16,16 @@ export function createServer(portNumber, middleware, path?) {
 
   return server;
 }
+
+export function createServerWithFallthrough(portNumber, middleware) {
+  const app = express();
+
+  app.use(middleware);
+  app.use((request, response, next) => {
+    response.end('fell through');
+  })
+
+  const server = app.listen(portNumber);
+
+  return server;
+}
