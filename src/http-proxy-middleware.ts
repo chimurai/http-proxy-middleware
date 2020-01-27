@@ -19,8 +19,13 @@ export class HttpProxyMiddleware {
     this.config = createConfig(context, opts);
     this.proxyOptions = this.config.options;
 
+    let httpProxyOptions = <any>{}
+    if (context.fallthrough) {
+      httpProxyOptions.fallthrough = true
+    }
+
     // create proxy
-    this.proxy = httpProxy.createProxyServer({});
+    this.proxy = httpProxy.createProxyServer(httpProxyOptions);
     this.logger.info(
       `[HPM] Proxy created: ${this.config.context}  -> ${this.proxyOptions.target}`
     );
@@ -48,6 +53,18 @@ export class HttpProxyMiddleware {
   public middleware = async (req, res, next) => {
     if (this.shouldProxy(this.config.context, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
+
+      // fallthrough to the middleware chain if a resource
+      // cannot be found in the source being proxied
+      if (this.proxyOptions.fallthrough) {
+        this.proxy.once('proxyRes', (proxyRes) => {
+          if (proxyRes.statusCode === 404) {
+            this.logger.info('[HPM] Falling through to middleware chain on 404');
+            next();
+          }
+        });
+      }
+
       this.proxy.web(req, res, activeProxyOptions);
     } else {
       next();

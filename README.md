@@ -225,6 +225,9 @@ Providing an alternative way to decide which requests should be proxied; In case
   }
   ```
 
+- **option.fallthrough**: boolean, sets whether execution should fall through to middleware chain when a 404 is encountered at the proxy target. If set, calls `next()` on the middleware chain.
+Default: `false`
+
 - **option.logLevel**: string, ['debug', 'info', 'warn', 'error', 'silent']. Default: `'info'`
 
 - **option.logProvider**: function, modify or replace log provider. Default: `console`.

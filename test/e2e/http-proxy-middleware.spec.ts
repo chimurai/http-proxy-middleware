@@ -1,5 +1,5 @@
 import * as http from 'http';
-import { createServer, proxyMiddleware } from './_utils';
+import { createServer, proxyMiddleware, createServerWithFallthrough } from './_utils';
 
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {
@@ -656,6 +656,91 @@ describe('E2E http-proxy-middleware', () => {
 
       it('should have logged messages', () => {
         expect(logMessage).not.toBeUndefined();
+      });
+    });
+
+    describe('404 fallthrough when requested', () => {
+      let proxyServer;
+      let targetServer;
+      let response;
+      let responseBody;
+
+      beforeEach(() => {
+        const mwProxy = proxyMiddleware('/', {
+          target: 'http://localhost:8000',
+          fallthrough: true
+        });
+
+        const mwTarget = (req, res, next) => {
+          // return 404 error
+          res.statusCode = 404;
+          res.end();
+        };
+
+        proxyServer = createServerWithFallthrough(3000, mwProxy);
+        targetServer = createServer(8000, mwTarget);
+      });
+
+      beforeEach(done => {
+        http.get('http://localhost:3000/', res => {
+          response = res;
+          res.on('data', chunk => {
+            responseBody = chunk.toString();
+            done();
+          });
+        });
+      });
+
+      afterEach(() => {
+        proxyServer.close();
+        targetServer.close();
+      });
+
+      it('should fall through', () => {
+        expect(response.statusCode).toBe(200);
+        expect(responseBody).toBe('fell through');
+      });
+    });
+
+    describe('404 do not fallthrough when not requested', () => {
+      let proxyServer;
+      let targetServer;
+      let response;
+      let responseBody;
+
+      beforeEach(() => {
+        const mwProxy = proxyMiddleware('/', {
+          target: 'http://localhost:8000',
+        });
+
+        const mwTarget = (req, res, next) => {
+          // return 404 error
+          res.statusCode = 404;
+          res.end('404 error');
+        };
+
+        proxyServer = createServerWithFallthrough(3000, mwProxy);
+        targetServer = createServer(8000, mwTarget);
+      });
+
+      beforeEach(done => {
+        http.get('http://localhost:3000/', res => {
+          response = res;
+          res.on('data', chunk => {
+            responseBody = chunk.toString();
+            done();
+          });
+        });
+      });
+
+      afterEach(() => {
+        proxyServer.close();
+        targetServer.close();
+      });
+
+      it('should not fall through', () => {
+        expect(response.statusCode).toBe(404);
+        expect(responseBody).toBe('404 error');
       });
     });
   });
