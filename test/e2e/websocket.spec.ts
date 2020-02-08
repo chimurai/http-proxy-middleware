@@ -1,5 +1,5 @@
-import * as http from 'http';
-import * as WebSocket from 'ws';
+import http from 'http';
+import WebSocket from 'ws';
 // tslint:disable-next-line: no-duplicate-imports
 import { Server as WebSocketServer } from 'ws';
 import { createServer, proxyMiddleware } from './_utils';

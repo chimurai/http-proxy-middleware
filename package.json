@@ -1,8 +1,9 @@
 {
   "name": "http-proxy-middleware",
-  "version": "0.21.0-beta.1",
+  "version": "0.21.0-beta.2",
   "description": "The one-liner node.js proxy middleware for connect, express and browser-sync",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -51,7 +52,6 @@
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
     "@types/express": "^4.17.0",
-    "@types/http-proxy": "^1.17.0",
     "@types/is-glob": "^4.0.0",
     "@types/jest": "^24.0.15",
     "@types/lodash": "^4.14.136",
@@ -72,6 +72,7 @@
     "ws": "^7.1.0"
   },
   "dependencies": {
+    "@types/http-proxy": "^1.17.2",
     "http-proxy": "^1.17.0",
     "is-glob": "^4.0.1",
     "lodash": "^4.17.14",

@@ -1,4 +1,4 @@
-import * as http from 'http';
+import http from 'http';
 import { createServer, proxyMiddleware } from './_utils';
 
 describe('E2E router', () => {
