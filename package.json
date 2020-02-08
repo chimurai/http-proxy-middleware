@@ -64,11 +64,11 @@
     "husky": "^3.0.0",
     "jest": "^25.1.0",
     "open": "^7.0.2",
-    "prettier": "^1.18.2",
+    "prettier": "^1.19.1",
     "ts-jest": "^25.2.0",
-    "tslint": "^5.18.0",
+    "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.3",
+    "typescript": "^3.7.5",
     "ws": "^7.1.0"
   },
   "dependencies": {
