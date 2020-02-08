@@ -1,10 +1,10 @@
-dist: xenial
+dist: bionic
 sudo: false
 language: node_js
 node_js:
 - 'stable'
+- '12'
 - '10'
-- '8'
 cache: yarn
 stages:
   - lint
