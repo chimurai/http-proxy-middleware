@@ -174,7 +174,7 @@ export class HttpProxyMiddleware {
 
   private logError = (err, req: IRequest, res: IResponse) => {
     const hostname =
-      (req.headers && req.headers.host) || (req.hostname || req.host); // (websocket) || (node0.10 || node 4/5)
+      (req.headers && req.headers.host) || req.hostname || req.host; // (websocket) || (node0.10 || node 4/5)
     const target =
       (this.proxyOptions.target as any).host || this.proxyOptions.target;
     const errorMessage =

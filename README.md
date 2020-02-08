@@ -240,7 +240,7 @@ Providing an alternative way to decide which requests should be proxied; In case
   ```javascript
   // verbose replacement
   function logProvider(provider) {
-    var logger = new (require('winston')).Logger();
+    var logger = new (require('winston').Logger)();
 
     var myCustomProvider = {
       log: logger.log,
