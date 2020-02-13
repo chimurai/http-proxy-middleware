@@ -116,7 +116,7 @@ export class HttpProxyMiddleware {
     // 1. option.router
     // 2. option.pathRewrite
     await this.applyRouter(req, newProxyOptions);
-    this.applyPathRewrite(req, this.pathRewriter);
+    await this.applyPathRewrite(req, this.pathRewriter);
 
     // debug logging for both http(s) and websockets
     if (this.proxyOptions.logLevel === 'debug') {
@@ -157,9 +157,9 @@ export class HttpProxyMiddleware {
   };
 
   // rewrite path
-  private applyPathRewrite = (req: IRequest, pathRewriter) => {
+  private applyPathRewrite = async (req: IRequest, pathRewriter) => {
     if (pathRewriter) {
-      const path = pathRewriter(req.url, req);
+      const path = await pathRewriter(req.url, req);
 
       if (typeof path === 'string') {
         req.url = path;
