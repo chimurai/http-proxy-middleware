@@ -107,7 +107,7 @@ describe('Path rewriting', () => {
 
     it('is async and should return unmodified path', () => {
       const rewriteFn = async path => {
-        var promise = new Promise(function(resolve, reject) {
+        const promise = new Promise((resolve, reject) => {
           resolve(path);
         });
         return await promise;
@@ -118,7 +118,7 @@ describe('Path rewriting', () => {
 
     it('is async and should return alternative path', () => {
       const rewriteFn = async path => {
-        var promise = new Promise(function(resolve, reject) {
+        const promise = new Promise((resolve, reject) => {
           resolve('/foo/bar');
         });
         return await promise;
@@ -129,7 +129,7 @@ describe('Path rewriting', () => {
 
     it('is async and should return replaced path', () => {
       const rewriteFn = async path => {
-        var promise = new Promise(function(resolve, reject) {
+        const promise = new Promise((resolve, reject) => {
           resolve(path.replace('/456', '/789'));
         });
         return await promise;
