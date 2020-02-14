@@ -84,7 +84,7 @@ describe('Path rewriting', () => {
         return path;
       };
 
-      expect(rewriter(rewriteFn)).toBe('/123/456');
+      expect(rewriter(rewriteFn)).resolves.toBe('/123/456');
     });
 
     it('should return alternative path', () => {
@@ -92,7 +92,7 @@ describe('Path rewriting', () => {
         return '/foo/bar';
       };
 
-      expect(rewriter(rewriteFn)).toBe('/foo/bar');
+      expect(rewriter(rewriteFn)).resolves.toBe('/foo/bar');
     });
 
     it('should return replaced path', () => {
@@ -100,7 +100,43 @@ describe('Path rewriting', () => {
         return path.replace('/456', '/789');
       };
 
-      expect(rewriter(rewriteFn)).toBe('/123/789');
+      expect(rewriter(rewriteFn)).resolves.toBe('/123/789');
+    });
+
+    // Same tests as the above three, but async
+
+    it('is async and should return unmodified path', () => {
+      const rewriteFn = async path => {
+        var promise = new Promise(function (resolve, reject) {
+          resolve(path);
+        });
+        return await promise;
+      };
+
+      expect(rewriter(rewriteFn)).resolves.toBe('/123/456');
+    });
+
+    it('is async and should return alternative path', () => {
+      const rewriteFn = async path => {
+        var promise = new Promise(function (resolve, reject) {
+          resolve('/foo/bar');
+        })
+        return await promise;
+      };
+
+      expect(rewriter(rewriteFn)).resolves.toBe('/foo/bar');
+    });
+
+    it('is async and should return replaced path', () => {
+      const rewriteFn = async path => {
+        var promise = new Promise(function (resolve, reject)
+        {
+          resolve(path.replace('/456','/789'));
+        })
+        return await promise;
+      };
+
+      expect(rewriter(rewriteFn)).resolves.toBe('/123/789');
     });
   });
 
@@ -136,5 +172,10 @@ describe('Path rewriting', () => {
       // tslint:disable-next-line: no-empty
       expect(badFn(() => {})).not.toThrowError(Error);
     });
+
+    it('should not throw when async function config is provided', () => {
+      // tslint:disable-next-line: no-empty
+      expect(badFn(async () => {})).not.toThrowError(Error);
+    })
   });
 });

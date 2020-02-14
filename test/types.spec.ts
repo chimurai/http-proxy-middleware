@@ -58,6 +58,11 @@ describe('http-proxy-middleware TypeScript Types', () => {
         options = { pathRewrite: (path, req) => '/path' };
         expect(options).toBeDefined();
       });
+
+      it('should have pathRewrite Type with async function', () => {
+        options = { pathRewrite: async (path, req) => '/path' };
+        expect(options).toBeDefined();
+      });
     });
 
     describe('router', () => {

@@ -199,6 +199,14 @@ Providing an alternative way to decide which requests should be proxied; In case
 
   // custom rewriting
   pathRewrite: function (path, req) { return path.replace('/api', '/base/api') }
+
+  // custom rewriting, returning Promise
+  pathRewrite: async function (path, req) {
+    var should_add_something = await httpRequestToDecideSomething(path);
+    if (should_add_something) path += "something";
+    return path;
+  }
+
   ```
 
 - **option.router**: object/function, re-target `option.target` for specific requests.
