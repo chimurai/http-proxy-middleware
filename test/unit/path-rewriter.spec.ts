@@ -110,7 +110,8 @@ describe('Path rewriting', () => {
         const promise = new Promise((resolve, reject) => {
           resolve(path);
         });
-        return await promise;
+        const changed = await promise;
+        return changed;
       };
 
       expect(rewriter(rewriteFn)).resolves.toBe('/123/456');
@@ -121,7 +122,8 @@ describe('Path rewriting', () => {
         const promise = new Promise((resolve, reject) => {
           resolve('/foo/bar');
         });
-        return await promise;
+        const changed = await promise;
+        return changed;
       };
 
       expect(rewriter(rewriteFn)).resolves.toBe('/foo/bar');
@@ -132,7 +134,8 @@ describe('Path rewriting', () => {
         const promise = new Promise((resolve, reject) => {
           resolve(path.replace('/456', '/789'));
         });
-        return await promise;
+        const changed = await promise;
+        return changed;
       };
 
       expect(rewriter(rewriteFn)).resolves.toBe('/123/789');
