@@ -107,7 +107,7 @@ describe('Path rewriting', () => {
 
     it('is async and should return unmodified path', () => {
       const rewriteFn = async path => {
-        var promise = new Promise(function (resolve, reject) {
+        var promise = new Promise(function(resolve, reject) {
           resolve(path);
         });
         return await promise;
@@ -118,9 +118,9 @@ describe('Path rewriting', () => {
 
     it('is async and should return alternative path', () => {
       const rewriteFn = async path => {
-        var promise = new Promise(function (resolve, reject) {
+        var promise = new Promise(function(resolve, reject) {
           resolve('/foo/bar');
-        })
+        });
         return await promise;
       };
 
@@ -129,10 +129,9 @@ describe('Path rewriting', () => {
 
     it('is async and should return replaced path', () => {
       const rewriteFn = async path => {
-        var promise = new Promise(function (resolve, reject)
-        {
-          resolve(path.replace('/456','/789'));
-        })
+        var promise = new Promise(function(resolve, reject) {
+          resolve(path.replace('/456', '/789'));
+        });
         return await promise;
       };
 
@@ -176,6 +175,6 @@ describe('Path rewriting', () => {
     it('should not throw when async function config is provided', () => {
       // tslint:disable-next-line: no-empty
       expect(badFn(async () => {})).not.toThrowError(Error);
-    })
+    });
   });
 });
