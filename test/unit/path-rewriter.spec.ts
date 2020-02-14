@@ -102,6 +102,44 @@ describe('Path rewriting', () => {
 
       expect(rewriter(rewriteFn)).toBe('/123/789');
     });
+
+    // Same tests as the above three, but async
+
+    it('is async and should return unmodified path', () => {
+      const rewriteFn = async path => {
+        const promise = new Promise((resolve, reject) => {
+          resolve(path);
+        });
+        const changed = await promise;
+        return changed;
+      };
+
+      expect(rewriter(rewriteFn)).resolves.toBe('/123/456');
+    });
+
+    it('is async and should return alternative path', () => {
+      const rewriteFn = async path => {
+        const promise = new Promise((resolve, reject) => {
+          resolve('/foo/bar');
+        });
+        const changed = await promise;
+        return changed;
+      };
+
+      expect(rewriter(rewriteFn)).resolves.toBe('/foo/bar');
+    });
+
+    it('is async and should return replaced path', () => {
+      const rewriteFn = async path => {
+        const promise = new Promise((resolve, reject) => {
+          resolve(path.replace('/456', '/789'));
+        });
+        const changed = await promise;
+        return changed;
+      };
+
+      expect(rewriter(rewriteFn)).resolves.toBe('/123/789');
+    });
   });
 
   describe('Invalid configuration', () => {
@@ -135,6 +173,11 @@ describe('Path rewriting', () => {
     it('should not throw when function config is provided', () => {
       // tslint:disable-next-line: no-empty
       expect(badFn(() => {})).not.toThrowError(Error);
+    });
+
+    it('should not throw when async function config is provided', () => {
+      // tslint:disable-next-line: no-empty
+      expect(badFn(async () => {})).not.toThrowError(Error);
     });
   });
 });

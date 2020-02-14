@@ -18,7 +18,8 @@ export type Filter =
 export interface Options extends httpProxy.ServerOptions {
   pathRewrite?:
     | { [regexp: string]: string }
-    | ((path: string, req: IRequest) => string);
+    | ((path: string, req: IRequest) => string)
+    | ((path: string, req: IRequest) => Promise<string>);
   router?:
     | { [hostOrPath: string]: string }
     | ((req: IRequest) => string)
