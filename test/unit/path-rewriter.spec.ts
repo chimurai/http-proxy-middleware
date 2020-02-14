@@ -84,7 +84,7 @@ describe('Path rewriting', () => {
         return path;
       };
 
-      expect(rewriter(rewriteFn)).resolves.toBe('/123/456');
+      expect(rewriter(rewriteFn)).toBe('/123/456');
     });
 
     it('should return alternative path', () => {
@@ -92,7 +92,7 @@ describe('Path rewriting', () => {
         return '/foo/bar';
       };
 
-      expect(rewriter(rewriteFn)).resolves.toBe('/foo/bar');
+      expect(rewriter(rewriteFn)).toBe('/foo/bar');
     });
 
     it('should return replaced path', () => {
@@ -100,7 +100,7 @@ describe('Path rewriting', () => {
         return path.replace('/456', '/789');
       };
 
-      expect(rewriter(rewriteFn)).resolves.toBe('/123/789');
+      expect(rewriter(rewriteFn)).toBe('/123/789');
     });
 
     // Same tests as the above three, but async
