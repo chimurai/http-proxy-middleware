@@ -5,6 +5,7 @@
 - feat(http-proxy): bump to v1.18.0
 - feat: async router ([#379](https://github.com/chimurai/http-proxy-middleware/issues/335)) ([LiranBri](https://github.com/LiranBri))
 - feat(typescript): types support ([#369](https://github.com/chimurai/http-proxy-middleware/pull/369))
+- feat: async pathRewrite ([#397](https://github.com/chimurai/http-proxy-middleware/pull/397)) ([rsethc](https://github.com/rsethc))
 
 ## [v0.20.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.20.0)
 
