@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## [v0.21.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.21.0)
 
 - feat(http-proxy): bump to v1.18.0
 - feat: async router ([#379](https://github.com/chimurai/http-proxy-middleware/issues/335)) ([LiranBri](https://github.com/LiranBri))
