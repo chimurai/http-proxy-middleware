@@ -60,7 +60,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 
 ## Install
 
-```javascript
+```bash
 $ npm install --save-dev http-proxy-middleware
 ```
 
@@ -136,7 +136,7 @@ Providing an alternative way to decide which requests should be proxied; In case
 
 [RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is used for context matching.
 
-```
+```ascii
          foo://example.com:8042/over/there?name=ferret#nose
          \_/   \______________/\_________/ \_________/ \__/
           |           |            |            |        |
@@ -316,6 +316,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   ```
 
 - **option.onClose**: function, subscribe to http-proxy's `close` event.
+
   ```javascript
   function onClose(res, socket, head) {
     // view disconnected websocket connections
@@ -349,7 +350,7 @@ The following options are provided by the underlying [http-proxy](https://github
   - String: new domain, for example `cookieDomainRewrite: "new.domain"`. To remove the domain, use `cookieDomainRewrite: ""`.
   - Object: mapping of domains to new domains, use `"*"` to match all domains.  
     For example keep one domain unchanged, rewrite one domain and remove other domains:
-    ```
+    ```json
     cookieDomainRewrite: {
       "unchanged.domain": "unchanged.domain",
       "old.domain": "new.domain",
@@ -361,7 +362,7 @@ The following options are provided by the underlying [http-proxy](https://github
   - String: new path, for example `cookiePathRewrite: "/newPath/"`. To remove the path, use `cookiePathRewrite: ""`. To set path to root use `cookiePathRewrite: "/"`.
   - Object: mapping of paths to new paths, use `"*"` to match all paths.
     For example, to keep one path unchanged, rewrite one path and remove other paths:
-    ```
+    ```json
     cookiePathRewrite: {
       "/unchanged.path/": "/unchanged.path/",
       "/old.path/": "/new.path/",
@@ -375,7 +376,7 @@ The following options are provided by the underlying [http-proxy](https://github
 - **option.selfHandleResponse** true/false, if set to true, none of the webOutgoing passes are called and it's your responsibility to appropriately return the response by listening and acting on the `proxyRes` event
 - **option.buffer**: stream of data to send as the request body. Maybe you have some middleware that consumes the request stream before proxying it on e.g. If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
 
-  ```
+  ```javascript
   'use strict';
 
   const streamify = require('stream-array');
@@ -383,12 +384,15 @@ The following options are provided by the underlying [http-proxy](https://github
   const proxy = new HttpProxy();
 
   module.exports = (req, res, next) => {
-
-    proxy.web(req, res, {
-      target: 'http://localhost:4003/',
-      buffer: streamify(req.rawBody)
-    }, next);
-
+    proxy.web(
+      req,
+      res,
+      {
+        target: 'http://localhost:4003/',
+        buffer: streamify(req.rawBody)
+      },
+      next
+    );
   };
   ```
 
@@ -423,6 +427,7 @@ app.use(
 
 - express: http://expressjs.com/en/4x/api.html#app.use
 - connect: https://github.com/senchalabs/connect#mount-middleware
+- polka: https://github.com/lukeed/polka#usebase-fn
 
 ## WebSocket
 
@@ -472,6 +477,7 @@ View the [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master
 - [express](https://www.npmjs.com/package/express)
 - [browser-sync](https://www.npmjs.com/package/browser-sync)
 - [lite-server](https://www.npmjs.com/package/lite-server)
+- [polka](https://github.com/lukeed/polka)
 - [grunt-contrib-connect](https://www.npmjs.com/package/grunt-contrib-connect)
 - [grunt-browser-sync](https://www.npmjs.com/package/grunt-browser-sync)
 - [gulp-connect](https://www.npmjs.com/package/gulp-connect)

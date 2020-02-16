@@ -4,18 +4,19 @@ Overview of `http-proxy-middleware` implementation in different servers.
 
 Missing a server? Feel free to extend this list of examples.
 
-<!-- MarkdownTOC autolink=true bracket=round -->
+<!-- TOC depthfrom:2 insertanchor:false -->
 
 - [Browser-Sync](#browser-sync)
 - [Express](#express)
 - [Connect](#connect)
 - [lite-server](#lite-server)
+- [Polka](#polka)
 - [grunt-contrib-connect](#grunt-contrib-connect)
 - [grunt-browser-sync](#grunt-browser-sync)
 - [gulp-connect](#gulp-connect)
 - [gulp-webserver](#gulp-webserver)
 
-<!-- /MarkdownTOC -->
+<!-- /TOC -->
 
 ## Browser-Sync
 
@@ -107,6 +108,27 @@ module.exports = {
     }
   }
 };
+```
+
+## Polka
+
+https://github.com/lukeed/polka
+[![GitHub stars](https://img.shields.io/github/stars/lukeed/polka.svg?style=social&label=Star)](https://github.com/lukeed/polka)
+
+```javascript
+const polka = require('polka');
+const proxy = require('http-proxy-middleware');
+
+const app = polka();
+
+app.use(
+  proxy({
+    target: 'http://www.example.org',
+    changeOrigin: true
+  })
+);
+
+app.listen(3000);
 ```
 
 ## grunt-contrib-connect
