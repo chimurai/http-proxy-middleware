@@ -1,52 +1,41 @@
-import express from 'express';
-import http from 'http';
-import httpProxy from 'http-proxy';
-import net from 'net';
+import * as express from 'express';
+import * as http from 'http';
+import * as httpProxy from 'http-proxy';
+import * as net from 'net';
 
-export interface IRequest extends express.Request {}
-export interface IResponse extends express.Response {}
+export interface Request extends express.Request {}
+export interface Response extends express.Response {}
 
-export interface IRequestHandler extends express.RequestHandler {
-  upgrade?: (req: IRequest, socket: net.Socket, head: any) => void;
+export interface RequestHandler extends express.RequestHandler {
+  upgrade?: (req: Request, socket: net.Socket, head: any) => void;
 }
 
-export type Filter =
-  | string
-  | string[]
-  | ((pathname: string, req: IRequest) => boolean);
+export type Filter = string | string[] | ((pathname: string, req: Request) => boolean);
 
 export interface Options extends httpProxy.ServerOptions {
   pathRewrite?:
     | { [regexp: string]: string }
-    | ((path: string, req: IRequest) => string)
-    | ((path: string, req: IRequest) => Promise<string>);
+    | ((path: string, req: Request) => string)
+    | ((path: string, req: Request) => Promise<string>);
   router?:
     | { [hostOrPath: string]: string }
-    | ((req: IRequest) => string)
-    | ((req: IRequest) => Promise<string>);
+    | ((req: Request) => string)
+    | ((req: Request) => Promise<string>);
   logLevel?: 'debug' | 'info' | 'warn' | 'error' | 'silent';
   logProvider?(provider: LogProvider): LogProvider;
 
-  onError?(err: Error, req: IRequest, res: IResponse): void;
-  onProxyRes?(
-    proxyRes: http.ServerResponse,
-    req: IRequest,
-    res: IResponse
-  ): void;
-  onProxyReq?(
-    proxyReq: http.ClientRequest,
-    req: IRequest,
-    res: IResponse
-  ): void;
+  onError?(err: Error, req: Request, res: Response): void;
+  onProxyRes?(proxyRes: http.ServerResponse, req: Request, res: Response): void;
+  onProxyReq?(proxyReq: http.ClientRequest, req: Request, res: Response): void;
   onProxyReqWs?(
     proxyReq: http.ClientRequest,
-    req: IRequest,
+    req: Request,
     socket: net.Socket,
     options: httpProxy.ServerOptions,
     head: any
   ): void;
   onOpen?(proxySocket: net.Socket): void;
-  onClose?(res: IResponse, socket: net.Socket, head: any): void;
+  onClose?(res: Response, socket: net.Socket, head: any): void;
 }
 
 interface LogProvider {

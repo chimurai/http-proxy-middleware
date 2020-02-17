@@ -8,10 +8,11 @@ Let's assume that we want slow down the access to backend's `/api/get-me-somethi
 For achieving it just put additional route handler to your app before proxy handler:
 
 ```javascript
-const myProxy = proxy({
+const myProxy = createProxyMiddleware({
   target: 'http://www.example.com',
   changeOrigin: true
 });
+
 const proxyDelay = function(req, res, next) {
   if (req.originalUrl === '/api/get-me-something') {
     // Delay request by 2 seconds

@@ -1,7 +1,6 @@
-import express from 'express';
+import * as express from 'express';
 
-// tslint:disable-next-line: no-var-requires
-export const proxyMiddleware = require('../../dist/index');
+export { createProxyMiddleware } from '../../dist/index';
 
 export function createServer(portNumber, middleware, path?) {
   const app = express();

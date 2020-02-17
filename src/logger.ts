@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import util from 'util';
+import * as _ from 'lodash';
+import * as util from 'util';
 
 let loggerInstance;
 

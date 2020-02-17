@@ -118,9 +118,7 @@ describe('default proxy error handler', () => {
 
   it('should end the response and return error message', () => {
     proxyError(mockError, mockReq, mockRes, proxyOptions);
-    expect(errorMessage).toBe(
-      'Error occured while trying to proxy to: localhost:3000/api'
-    );
+    expect(errorMessage).toBe('Error occured while trying to proxy to: localhost:3000/api');
   });
 
   it('should not set the http status code to: 500 if headers have already been sent', () => {
@@ -132,8 +130,6 @@ describe('default proxy error handler', () => {
   it('should end the response and return error message', () => {
     mockRes.headersSent = true;
     proxyError(mockError, mockReq, mockRes, proxyOptions);
-    expect(errorMessage).toBe(
-      'Error occured while trying to proxy to: localhost:3000/api'
-    );
+    expect(errorMessage).toBe('Error occured while trying to proxy to: localhost:3000/api');
   });
 });

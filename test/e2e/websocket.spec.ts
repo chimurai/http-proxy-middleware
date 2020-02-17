@@ -1,8 +1,8 @@
-import http from 'http';
-import WebSocket from 'ws';
+import * as http from 'http';
+import * as WebSocket from 'ws';
 // tslint:disable-next-line: no-duplicate-imports
 import { Server as WebSocketServer } from 'ws';
-import { createServer, proxyMiddleware } from './_utils';
+import { createServer, createProxyMiddleware } from './_utils';
 
 describe('E2E WebSocket proxy', () => {
   let proxyServer;
@@ -12,7 +12,7 @@ describe('E2E WebSocket proxy', () => {
   let proxy;
 
   beforeEach(() => {
-    proxy = proxyMiddleware('/', {
+    proxy = createProxyMiddleware('/', {
       target: 'http://localhost:8000',
       ws: true,
       pathRewrite: { '^/socket': '' }
@@ -84,7 +84,7 @@ describe('E2E WebSocket proxy', () => {
     beforeEach(() => {
       proxyServer.close();
       // override
-      proxy = proxyMiddleware('ws://localhost:8000', {
+      proxy = createProxyMiddleware('ws://localhost:8000', {
         pathRewrite: { '^/socket': '' }
       });
       proxyServer = createServer(3000, proxy);
@@ -115,7 +115,7 @@ describe('E2E WebSocket proxy', () => {
     beforeEach(() => {
       proxyServer.close();
       // override
-      proxy = proxyMiddleware('ws://notworkinghost:6789', {
+      proxy = createProxyMiddleware('ws://notworkinghost:6789', {
         router: { '/socket': 'ws://localhost:8000' },
         pathRewrite: { '^/socket': '' }
       });

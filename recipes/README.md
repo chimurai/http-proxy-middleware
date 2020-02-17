@@ -9,18 +9,18 @@ Overview of `http-proxy-middleware` specific options.
 http-proxy-middleware uses Nodejitsu's [http-proxy](https://github.com/nodejitsu/node-http-proxy) to do the actual proxying. All of its [options](https://github.com/nodejitsu/node-http-proxy#options) are exposed via http-proxy-middleware's configuration object.
 
 ```javascript
-var proxy = require('http-proxy-middleware');
-var winston = require('winston');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const winston = require('winston');
 
 /**
  * Context matching: decide which path(s) should be proxied. (wildcards supported)
  **/
-var context = '/api';
+const context = '/api';
 
 /**
  * Proxy options
  */
-var options = {
+const options = {
   // hostname to the target server
   target: 'http://localhost:3000',
 
@@ -104,5 +104,5 @@ var options = {
 /**
  * Create the proxy middleware, so it can be used in a server.
  */
-var apiProxy = proxy(context, options);
+const apiProxy = createProxyMiddleware(context, options);
 ```

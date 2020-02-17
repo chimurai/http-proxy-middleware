@@ -1,7 +1,7 @@
-import isGlob from 'is-glob';
-import _ from 'lodash';
-import micromatch from 'micromatch';
-import url from 'url';
+import * as isGlob from 'is-glob';
+import * as _ from 'lodash';
+import * as micromatch from 'micromatch';
+import * as url from 'url';
 import { ERRORS } from './errors';
 
 export function match(context, uri, req) {

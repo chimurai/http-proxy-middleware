@@ -1,9 +1,15 @@
 # Changelog
 
+## next
+
+- feat(createProxyMiddleware): explicit import http-proxy-middleware (BREAKING CHANGE)([#400](https://github.com/chimurai/http-proxy-middleware/issues/400#issuecomment-587162378))
+- feat(typescript): export http-proxy-middleware types ([#400](https://github.com/chimurai/http-proxy-middleware/issues/400))
+- fix(typescript): ES6 target - TS1192 ([#400](https://github.com/chimurai/http-proxy-middleware/issues/400#issuecomment-587064349))
+
 ## [v0.21.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.21.0)
 
 - feat(http-proxy): bump to v1.18.0
-- feat: async router ([#379](https://github.com/chimurai/http-proxy-middleware/issues/335)) ([LiranBri](https://github.com/LiranBri))
+- feat: async router ([#379](https://github.com/chimurai/http-proxy-middleware/issues/379)) ([LiranBri](https://github.com/LiranBri))
 - feat(typescript): types support ([#369](https://github.com/chimurai/http-proxy-middleware/pull/369))
 - feat: async pathRewrite ([#397](https://github.com/chimurai/http-proxy-middleware/pull/397)) ([rsethc](https://github.com/rsethc))
 

@@ -1,5 +1,5 @@
-import http from 'http';
-import { createServer, proxyMiddleware } from './_utils';
+import * as http from 'http';
+import { createServer, createProxyMiddleware } from './_utils';
 
 describe('E2E router', () => {
   let proxyServer;
@@ -34,7 +34,7 @@ describe('E2E router', () => {
     beforeEach(() => {
       proxyServer = createServer(
         6000,
-        proxyMiddleware({
+        createProxyMiddleware({
           target: 'http://localhost:6001',
           router(req) {
             return 'http://localhost:6003';
@@ -63,7 +63,7 @@ describe('E2E router', () => {
     beforeEach(function setupServers() {
       proxyServer = createServer(
         6000,
-        proxyMiddleware('/', {
+        createProxyMiddleware('/', {
           target: 'http://localhost:6001',
           router: {
             'alpha.localhost:6000': 'http://localhost:6001',

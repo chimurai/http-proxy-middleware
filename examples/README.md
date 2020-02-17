@@ -7,7 +7,8 @@ To run and view the [examples](https://github.com/chimurai/http-proxy-middleware
 ```bash
 $ git clone https://github.com/chimurai/http-proxy-middleware.git
 $ cd http-proxy-middleware
-$ npm install
+$ yarn
+$ yarn build
 ```
 
 Run the example from root folder:
