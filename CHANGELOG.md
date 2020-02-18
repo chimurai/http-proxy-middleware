@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## [v1.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.0)
 
 - feat(createProxyMiddleware): explicit import http-proxy-middleware (BREAKING CHANGE)([#400](https://github.com/chimurai/http-proxy-middleware/issues/400#issuecomment-587162378))
 - feat(typescript): export http-proxy-middleware types ([#400](https://github.com/chimurai/http-proxy-middleware/issues/400))

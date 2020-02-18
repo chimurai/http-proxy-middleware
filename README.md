@@ -10,9 +10,9 @@ Node.js proxying made simple. Configure proxy middleware with ease for [connect]
 
 Powered by the popular Nodejitsu [`http-proxy`](https://github.com/nodejitsu/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy)
 
-## ⚠️ NOTE
+## ⚠️ Note
 
-This page is showing documentation for version v1.x.x
+This page is showing documentation for version v1.x.x ([release notes](https://github.com/chimurai/http-proxy-middleware/releases))
 
 If you're looking for v0.x documentation. Go to:
 https://github.com/chimurai/http-proxy-middleware/tree/v0.21.0#readme
