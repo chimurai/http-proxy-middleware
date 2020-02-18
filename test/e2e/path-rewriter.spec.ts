@@ -1,5 +1,5 @@
-import http from 'http';
-import { createServer, proxyMiddleware } from './_utils';
+import * as http from 'http';
+import { createServer, createProxyMiddleware } from './_utils';
 
 describe('E2E pathRewrite', () => {
   let targetMiddleware;
@@ -36,7 +36,7 @@ describe('E2E pathRewrite', () => {
           '^/foobar/api/': '/api/'
         }
       };
-      const proxy = proxyMiddleware(proxyConfig);
+      const proxy = createProxyMiddleware(proxyConfig);
       proxyServer = createServer(3000, proxy);
     });
 
@@ -64,7 +64,7 @@ describe('E2E pathRewrite', () => {
           return path.replace('/foobar', '');
         }
       };
-      const proxy = proxyMiddleware(proxyConfig);
+      const proxy = createProxyMiddleware(proxyConfig);
       proxyServer = createServer(3000, proxy);
     });
 

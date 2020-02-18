@@ -15,14 +15,14 @@ Possible values:
 Log everyting.
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var options = {
+const options = {
   target: 'http://localhost:3000',
   logLevel: 'debug'
 };
 
-var apiProxy = proxy('/api', options);
+const apiProxy = createProxyMiddleware('/api', options);
 ```
 
 ## Level: silent
@@ -30,12 +30,12 @@ var apiProxy = proxy('/api', options);
 Suppress all logging.
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var options = {
+const options = {
   target: 'http://localhost:3000',
   logLevel: 'silent'
 };
 
-var apiProxy = proxy('/api', options);
+const apiProxy = createProxyMiddleware('/api', options);
 ```

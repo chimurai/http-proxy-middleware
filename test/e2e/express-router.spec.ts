@@ -1,6 +1,7 @@
-import express from 'express';
-import http from 'http';
-import { proxyMiddleware as proxy } from './_utils';
+import * as express from 'express';
+import * as http from 'http';
+import { createProxyMiddleware } from './_utils';
+import { Options } from '../../src/index';
 
 describe('Usage in Express', () => {
   let app;
@@ -31,12 +32,12 @@ describe('Usage in Express', () => {
       /**
        * Mount proxy without 'path' in sub route
        */
-      const proxyConfig = {
+      const proxyConfig: Options = {
         changeOrigin: true,
         logLevel: 'silent',
         target: 'http://jsonplaceholder.typicode.com'
       };
-      sub.use(proxy(filter, proxyConfig));
+      sub.use(createProxyMiddleware(filter, proxyConfig));
 
       sub.get('/hello', jsonMiddleware({ content: 'foobar' }));
 

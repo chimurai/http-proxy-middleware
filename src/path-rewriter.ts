@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { ERRORS } from './errors';
 import { getInstance } from './logger';
 const logger = getInstance();
@@ -64,11 +64,7 @@ function parsePathRewriteRules(rewriteConfig) {
         regex: new RegExp(key),
         value: rewriteConfig[key]
       });
-      logger.info(
-        '[HPM] Proxy rewrite rule created: "%s" ~> "%s"',
-        key,
-        rewriteConfig[key]
-      );
+      logger.info('[HPM] Proxy rewrite rule created: "%s" ~> "%s"', key, rewriteConfig[key]);
     });
   }
 

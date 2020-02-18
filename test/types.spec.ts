@@ -1,4 +1,4 @@
-import middleware from '../src';
+import { createProxyMiddleware as middleware } from '../src';
 import { Options } from '../src/types';
 
 describe('http-proxy-middleware TypeScript Types', () => {

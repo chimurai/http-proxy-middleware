@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "0.21.0",
+  "version": "0.22.0-alpha",
   "description": "The one-liner node.js proxy middleware for connect, express and browser-sync",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -48,7 +48,7 @@
   "bugs": {
     "url": "https://github.com/chimurai/http-proxy-middleware/issues"
   },
-  "homepage": "https://github.com/chimurai/http-proxy-middleware",
+  "homepage": "https://github.com/chimurai/http-proxy-middleware#readme",
   "devDependencies": {
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",

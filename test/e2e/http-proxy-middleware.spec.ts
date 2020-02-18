@@ -1,11 +1,11 @@
-import http from 'http';
-import { createServer, proxyMiddleware } from './_utils';
+import * as http from 'http';
+import { createServer, createProxyMiddleware } from './_utils';
 
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {
     it('should create a middleware', () => {
       let middleware;
-      middleware = proxyMiddleware('/api', {
+      middleware = createProxyMiddleware('/api', {
         target: 'http://localhost:8000'
       });
       expect(typeof middleware).toBe('function');
@@ -28,7 +28,7 @@ describe('E2E http-proxy-middleware', () => {
           isSkipped = true;
         };
 
-        middleware = proxyMiddleware('/api', {
+        middleware = createProxyMiddleware('/api', {
           target: 'http://localhost:8000'
         });
         middleware(mockReq, mockRes, mockNext);
@@ -49,7 +49,7 @@ describe('E2E http-proxy-middleware', () => {
       let responseBody;
 
       beforeEach(done => {
-        const mwProxy = proxyMiddleware('/api', {
+        const mwProxy = createProxyMiddleware('/api', {
           target: 'http://localhost:8000'
         });
 
@@ -104,7 +104,7 @@ describe('E2E http-proxy-middleware', () => {
           return true;
         };
 
-        const mwProxy = proxyMiddleware(filter, {
+        const mwProxy = createProxyMiddleware(filter, {
           target: 'http://localhost:8000'
         });
 
@@ -149,7 +149,7 @@ describe('E2E http-proxy-middleware', () => {
       let responseBody;
 
       beforeEach(() => {
-        const mwProxy = proxyMiddleware(['/api', '/ajax'], {
+        const mwProxy = createProxyMiddleware(['/api', '/ajax'], {
           target: 'http://localhost:8000'
         });
 
@@ -225,7 +225,7 @@ describe('E2E http-proxy-middleware', () => {
       let responseBody;
 
       beforeEach(() => {
-        const mwProxy = proxyMiddleware('/api/**', {
+        const mwProxy = createProxyMiddleware('/api/**', {
           target: 'http://localhost:8000'
         });
 
@@ -267,7 +267,7 @@ describe('E2E http-proxy-middleware', () => {
       let responseB;
 
       beforeEach(() => {
-        const mwProxy = proxyMiddleware(['**/*.html', '!**.json'], {
+        const mwProxy = createProxyMiddleware(['**/*.html', '!**.json'], {
           target: 'http://localhost:8000'
         });
 
@@ -320,7 +320,7 @@ describe('E2E http-proxy-middleware', () => {
       let targetHeaders;
 
       beforeEach(done => {
-        const mwProxy = proxyMiddleware('/api', {
+        const mwProxy = createProxyMiddleware('/api', {
           target: 'http://localhost:8000',
           headers: { host: 'foobar.dev' }
         });
@@ -356,7 +356,7 @@ describe('E2E http-proxy-middleware', () => {
 
       describe('default', () => {
         beforeEach(done => {
-          const mwProxy = proxyMiddleware('/api', {
+          const mwProxy = createProxyMiddleware('/api', {
             target: 'http://localhost:666'
           }); // unreachable host on port:666
           const mwTarget = (req, res, next) => {
@@ -391,7 +391,7 @@ describe('E2E http-proxy-middleware', () => {
             }
           };
 
-          const mwProxy = proxyMiddleware('/api', {
+          const mwProxy = createProxyMiddleware('/api', {
             target: 'http://localhost:666',
             onError: customOnError
           }); // unreachable host on port:666
@@ -437,7 +437,7 @@ describe('E2E http-proxy-middleware', () => {
           delete proxyRes.headers['x-removed'];
         };
 
-        const mwProxy = proxyMiddleware('/api', {
+        const mwProxy = createProxyMiddleware('/api', {
           target: 'http://localhost:8000',
           onProxyRes: fnOnProxyRes
         });
@@ -482,7 +482,7 @@ describe('E2E http-proxy-middleware', () => {
           proxyReq.setHeader('x-added', 'foobar'); // add custom header to request
         };
 
-        const mwProxy = proxyMiddleware('/api', {
+        const mwProxy = createProxyMiddleware('/api', {
           target: 'http://localhost:8000',
           onProxyReq: fnOnProxyReq
         });
@@ -517,7 +517,7 @@ describe('E2E http-proxy-middleware', () => {
       let responseBody;
 
       beforeEach(done => {
-        const mwProxy = proxyMiddleware('/api', {
+        const mwProxy = createProxyMiddleware('/api', {
           target: 'http://localhost:8000',
           pathRewrite: {
             '^/api': '/rest',
@@ -556,7 +556,7 @@ describe('E2E http-proxy-middleware', () => {
       let responseBody;
 
       beforeEach(done => {
-        const mwProxy = proxyMiddleware('http://localhost:8000/api');
+        const mwProxy = createProxyMiddleware('http://localhost:8000/api');
         const mwTarget = (req, res, next) => {
           res.write(req.url); // respond with req.url
           res.end();
@@ -589,7 +589,7 @@ describe('E2E http-proxy-middleware', () => {
       let responseBody;
 
       beforeEach(done => {
-        const mwProxy = proxyMiddleware('http://localhost:8000');
+        const mwProxy = createProxyMiddleware('http://localhost:8000');
         const mwTarget = (req, res, next) => {
           res.write(req.url); // respond with req.url
           res.end();
@@ -626,7 +626,7 @@ describe('E2E http-proxy-middleware', () => {
           logMessage = message;
         };
 
-        const mwProxy = proxyMiddleware('http://localhost:8000/api', {
+        const mwProxy = createProxyMiddleware('http://localhost:8000/api', {
           logLevel: 'info',
           logProvider(provider) {
             provider.debug = customLogger;

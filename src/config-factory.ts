@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import url from 'url';
+import * as _ from 'lodash';
+import * as url from 'url';
 import { ERRORS } from './errors';
 import { getInstance } from './logger';
 import { Filter, Options } from './types';

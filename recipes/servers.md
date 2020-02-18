@@ -24,10 +24,10 @@ https://github.com/BrowserSync/browser-sync
 [![GitHub stars](https://img.shields.io/github/stars/BrowserSync/browser-sync.svg?style=social&label=Star)](https://github.com/BrowserSync/browser-sync)
 
 ```javascript
-var browserSync = require('browser-sync').create();
-var proxy = require('http-proxy-middleware');
+const browserSync = require('browser-sync').create();
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api', {
+const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
 });
@@ -48,15 +48,15 @@ https://github.com/expressjs/express
 [![GitHub stars](https://img.shields.io/github/stars/expressjs/express.svg?style=social&label=Star)](https://github.com/expressjs/express)
 
 ```javascript
-var express = require('express');
-var proxy = require('http-proxy-middleware');
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api', {
+const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
 });
 
-var app = express();
+const app = express();
 
 app.use(apiProxy);
 app.listen(3000);
@@ -68,16 +68,16 @@ https://github.com/senchalabs/connect
 [![GitHub stars](https://img.shields.io/github/stars/senchalabs/connect.svg?style=social&label=Star)](https://github.com/senchalabs/connect)
 
 ```javascript
-var http = require('http');
-var connect = require('connect');
-var proxy = require('http-proxy-middleware');
+const http = require('http');
+const connect = require('connect');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api', {
+const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
 });
 
-var app = connect();
+const app = connect();
 app.use(apiProxy);
 
 http.createServer(app).listen(3000);
@@ -91,9 +91,9 @@ https://github.com/johnpapa/lite-server
 File: `bs-config.js`
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api', {
+const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
 });
@@ -117,12 +117,12 @@ https://github.com/lukeed/polka
 
 ```javascript
 const polka = require('polka');
-const proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = polka();
 
 app.use(
-  proxy({
+  createProxyMiddleware({
     target: 'http://www.example.org',
     changeOrigin: true
   })
@@ -139,9 +139,9 @@ https://github.com/gruntjs/grunt-contrib-connect
 As an `Array`:
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api', {
+const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
 });
@@ -160,9 +160,9 @@ grunt.initConfig({
 As a `function`:
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api', {
+const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
 });
@@ -189,9 +189,9 @@ https://github.com/BrowserSync/grunt-browser-sync
 [![GitHub stars](https://img.shields.io/github/stars/BrowserSync/grunt-browser-sync.svg?style=social&label=Star)](https://github.com/BrowserSync/grunt-browser-sync)
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var apiProxy = proxy('/api', {
+const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
   changeOrigin: true // for vhosted sites
 });
@@ -219,15 +219,15 @@ https://github.com/avevlad/gulp-connect
 [![GitHub stars](https://img.shields.io/github/stars/avevlad/gulp-connect.svg?style=social&label=Star)](https://github.com/avevlad/gulp-connect)
 
 ```javascript
-var gulp = require('gulp');
-var connect = require('gulp-connect');
-var proxy = require('http-proxy-middleware');
+const gulp = require('gulp');
+const connect = require('gulp-connect');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 gulp.task('connect', function() {
   connect.server({
     root: ['./app'],
     middleware: function(connect, opt) {
-      var apiProxy = proxy('/api', {
+      const apiProxy = createProxyMiddleware('/api', {
         target: 'http://www.example.org',
         changeOrigin: true // for vhosted sites
       });
@@ -246,12 +246,12 @@ https://github.com/schickling/gulp-webserver
 [![GitHub stars](https://img.shields.io/github/stars/schickling/gulp-webserver.svg?style=social&label=Star)](https://github.com/schickling/gulp-webserver)
 
 ```javascript
-var gulp = require('gulp');
-var webserver = require('gulp-webserver');
-var proxy = require('http-proxy-middleware');
+const gulp = require('gulp');
+const webserver = require('gulp-webserver');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 gulp.task('webserver', function() {
-  var apiProxy = proxy('/api', {
+  const apiProxy = createProxyMiddleware('/api', {
     target: 'http://www.example.org',
     changeOrigin: true // for vhosted sites
   });

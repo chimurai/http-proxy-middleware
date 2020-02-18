@@ -1,13 +1,13 @@
-import express from 'express';
-import httpProxy from 'http-proxy';
-import _ from 'lodash';
+import * as express from 'express';
+import * as httpProxy from 'http-proxy';
+import * as _ from 'lodash';
 import { createConfig } from './config-factory';
 import * as contextMatcher from './context-matcher';
 import * as handlers from './handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
-import { Filter, IRequest, IRequestHandler, IResponse, Options } from './types';
+import { Filter, Request, RequestHandler, Response, Options } from './types';
 
 export class HttpProxyMiddleware {
   private logger = getInstance();
@@ -23,13 +23,9 @@ export class HttpProxyMiddleware {
 
     // create proxy
     this.proxy = httpProxy.createProxyServer({});
-    this.logger.info(
-      `[HPM] Proxy created: ${this.config.context}  -> ${this.proxyOptions.target}`
-    );
+    this.logger.info(`[HPM] Proxy created: ${this.config.context}  -> ${this.proxyOptions.target}`);
 
-    this.pathRewriter = PathRewriter.createPathRewriter(
-      this.proxyOptions.pathRewrite
-    ); // returns undefined when "pathRewrite" is not provided
+    this.pathRewriter = PathRewriter.createPathRewriter(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
     // attach handler to http-proxy events
     handlers.init(this.proxy, this.proxyOptions);
@@ -47,9 +43,9 @@ export class HttpProxyMiddleware {
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-  public middleware: IRequestHandler = async (
-    req: IRequest,
-    res: IResponse,
+  public middleware: RequestHandler = async (
+    req: Request,
+    res: Response,
     next: express.NextFunction
   ) => {
     if (this.shouldProxy(this.config.context, req)) {
@@ -74,7 +70,7 @@ export class HttpProxyMiddleware {
     }
   };
 
-  private handleUpgrade = async (req: IRequest, socket, head) => {
+  private handleUpgrade = async (req: Request, socket, head) => {
     if (this.shouldProxy(this.config.context, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.ws(req, socket, head, activeProxyOptions);
@@ -90,7 +86,7 @@ export class HttpProxyMiddleware {
    * @param  {Object} req     [description]
    * @return {Boolean}
    */
-  private shouldProxy = (context, req: IRequest) => {
+  private shouldProxy = (context, req: Request) => {
     const path = req.originalUrl || req.url;
     return contextMatcher.match(context, path, req);
   };
@@ -103,7 +99,7 @@ export class HttpProxyMiddleware {
    * @param {Object} req
    * @return {Object} proxy options
    */
-  private prepareProxyRequest = async (req: IRequest) => {
+  private prepareProxyRequest = async (req: Request) => {
     // https://github.com/chimurai/http-proxy-middleware/issues/17
     // https://github.com/chimurai/http-proxy-middleware/issues/94
     req.url = req.originalUrl || req.url;
@@ -139,56 +135,39 @@ export class HttpProxyMiddleware {
   };
 
   // Modify option.target when router present.
-  private applyRouter = async (req: IRequest, options) => {
+  private applyRouter = async (req: Request, options) => {
     let newTarget;
 
     if (options.router) {
       newTarget = await Router.getTarget(req, options);
 
       if (newTarget) {
-        this.logger.debug(
-          '[HPM] Router new target: %s -> "%s"',
-          options.target,
-          newTarget
-        );
+        this.logger.debug('[HPM] Router new target: %s -> "%s"', options.target, newTarget);
         options.target = newTarget;
       }
     }
   };
 
   // rewrite path
-  private applyPathRewrite = async (req: IRequest, pathRewriter) => {
+  private applyPathRewrite = async (req: Request, pathRewriter) => {
     if (pathRewriter) {
       const path = await pathRewriter(req.url, req);
 
       if (typeof path === 'string') {
         req.url = path;
       } else {
-        this.logger.info(
-          '[HPM] pathRewrite: No rewritten path found. (%s)',
-          req.url
-        );
+        this.logger.info('[HPM] pathRewrite: No rewritten path found. (%s)', req.url);
       }
     }
   };
 
-  private logError = (err, req: IRequest, res: IResponse) => {
-    const hostname =
-      (req.headers && req.headers.host) || req.hostname || req.host; // (websocket) || (node0.10 || node 4/5)
-    const target =
-      (this.proxyOptions.target as any).host || this.proxyOptions.target;
+  private logError = (err, req: Request, res: Response) => {
+    const hostname = (req.headers && req.headers.host) || req.hostname || req.host; // (websocket) || (node0.10 || node 4/5)
+    const target = (this.proxyOptions.target as any).host || this.proxyOptions.target;
     const errorMessage =
       '[HPM] Error occurred while trying to proxy request %s from %s to %s (%s) (%s)';
-    const errReference =
-      'https://nodejs.org/api/errors.html#errors_common_system_errors'; // link to Node Common Systems Errors page
+    const errReference = 'https://nodejs.org/api/errors.html#errors_common_system_errors'; // link to Node Common Systems Errors page
 
-    this.logger.error(
-      errorMessage,
-      req.url,
-      hostname,
-      target,
-      err.code || err,
-      errReference
-    );
+    this.logger.error(errorMessage, req.url, hostname, target, err.code || err, errReference);
   };
 }
