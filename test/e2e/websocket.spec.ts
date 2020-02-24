@@ -1,11 +1,12 @@
 import * as http from 'http';
+import * as express from 'express';
 import * as WebSocket from 'ws';
 // tslint:disable-next-line: no-duplicate-imports
 import { Server as WebSocketServer } from 'ws';
-import { createServer, createProxyMiddleware } from './_utils';
+import { createProxyMiddleware } from './_utils';
 
 describe('E2E WebSocket proxy', () => {
-  let proxyServer;
+  let proxyServer: http.Server;
   let ws;
   let wss;
   let responseMessage;
@@ -13,21 +14,31 @@ describe('E2E WebSocket proxy', () => {
 
   beforeEach(() => {
     proxy = createProxyMiddleware('/', {
-      target: 'http://localhost:8000',
+      target: 'http://localhost:9000',
       ws: true,
       pathRewrite: { '^/socket': '' }
     });
 
-    proxyServer = createServer(3000, proxy);
+    proxyServer = express()
+      .use(proxy)
+      .listen(3000);
 
     // @ts-ignore: Expected arguments error
-    wss = new WebSocketServer({ port: 8000 });
+    wss = new WebSocketServer({ port: 9000 });
 
     wss.on('connection', function connection(websocket) {
       websocket.on('message', function incoming(message) {
         websocket.send(message); // echo received message
       });
     });
+  });
+
+  afterEach(done => {
+    proxyServer.close(() => {
+      done();
+    });
+    wss.close();
+    ws = null;
   });
 
   describe('option.ws', () => {
@@ -83,11 +94,15 @@ describe('E2E WebSocket proxy', () => {
   describe('option.ws with external server "upgrade" and shorthand usage', () => {
     beforeEach(() => {
       proxyServer.close();
+
       // override
-      proxy = createProxyMiddleware('ws://localhost:8000', {
+      proxy = createProxyMiddleware('ws://localhost:9000', {
         pathRewrite: { '^/socket': '' }
       });
-      proxyServer = createServer(3000, proxy);
+
+      proxyServer = express()
+        .use(proxy)
+        .listen(3000);
     });
 
     beforeEach(done => {
@@ -114,12 +129,16 @@ describe('E2E WebSocket proxy', () => {
   describe('with router and pathRewrite', () => {
     beforeEach(() => {
       proxyServer.close();
+
       // override
       proxy = createProxyMiddleware('ws://notworkinghost:6789', {
-        router: { '/socket': 'ws://localhost:8000' },
+        router: { '/socket': 'ws://localhost:9000' },
         pathRewrite: { '^/socket': '' }
       });
-      proxyServer = createServer(3000, proxy);
+
+      proxyServer = express()
+        .use(proxy)
+        .listen(3000);
     });
 
     beforeEach(done => {
@@ -140,14 +159,6 @@ describe('E2E WebSocket proxy', () => {
 
     it('should proxy to path', () => {
       expect(responseMessage).toBe('foobar');
-    });
-  });
-
-  afterEach(async () => {
-    return new Promise(resolve => {
-      proxyServer.close(resolve);
-      wss.close();
-      ws = null;
     });
   });
 });
