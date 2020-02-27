@@ -228,7 +228,6 @@ Providing an alternative way to decide which requests should be proxied; In case
     if (should_add_something) path += "something";
     return path;
   }
-
   ```
 
 - **option.router**: object/function, re-target `option.target` for specific requests.
@@ -245,7 +244,11 @@ Providing an alternative way to decide which requests should be proxied; In case
 
   // Custom router function
   router: function(req) {
-      return 'http://localhost:8004';
+      return {
+        protocol: 'https:', // The : is required
+        host: 'localhost',
+        port: 8004
+      };
   }
 
   // Asynchronous router function which returns promise
