@@ -28,13 +28,13 @@ describe('E2E router', () => {
 
     await targetServerA
       .anyRequest()
-      .thenCallback(request => ({ body: request.protocol === 'https' ? 'A' : 'NOT HTTPS A' }));
+      .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'A' : 'NOT HTTPS A' }));
     await targetServerB
       .anyRequest()
-      .thenCallback(request => ({ body: request.protocol === 'https' ? 'B' : 'NOT HTTPS B' }));
+      .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'B' : 'NOT HTTPS B' }));
     await targetServerC
       .anyRequest()
-      .thenCallback(request => ({ body: request.protocol === 'https' ? 'C' : 'NOT HTTPS C' }));
+      .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'C' : 'NOT HTTPS C' }));
 
     await targetServerA.start(6001);
     await targetServerB.start(6002);
