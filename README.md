@@ -242,12 +242,17 @@ Providing an alternative way to decide which requests should be proxied; In case
       '/rest'                      : 'http://localhost:8004'   // path only
   }
 
-  // Custom router function
+  // Custom router function (string target)
+  router: function(req) {
+      return 'http://localhost:8004';
+  }
+
+  // Custom router function (target object)
   router: function(req) {
       return {
-        protocol: 'https:', // The : is required
-        host: 'localhost',
-        port: 8004
+          protocol: 'https:', // The : is required
+          host: 'localhost',
+          port: 8004
       };
   }
 
