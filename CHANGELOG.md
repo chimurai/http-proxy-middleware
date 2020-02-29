@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.1)
+
+- fix(typescript): fix proxyRes and router types ([#410](https://github.com/chimurai/http-proxy-middleware/issues/410)) ([dylang](https://github.com/dylang))
+
 ## [v1.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.0)
 
 - feat(createProxyMiddleware): explicit import http-proxy-middleware ([BREAKING CHANGE](https://github.com/chimurai/http-proxy-middleware/releases))([#400](https://github.com/chimurai/http-proxy-middleware/issues/400#issuecomment-587162378))
