@@ -18,14 +18,14 @@ export interface Options extends httpProxy.ServerOptions {
     | ((path: string, req: Request) => string)
     | ((path: string, req: Request) => Promise<string>);
   router?:
-    | { [hostOrPath: string]: string }
-    | ((req: Request) => string)
-    | ((req: Request) => Promise<string>);
+    | { [hostOrPath: string]: httpProxy.ServerOptions['target'] }
+    | ((req: Request) => httpProxy.ServerOptions['target'])
+    | ((req: Request) => Promise<httpProxy.ServerOptions['target']>);
   logLevel?: 'debug' | 'info' | 'warn' | 'error' | 'silent';
   logProvider?(provider: LogProvider): LogProvider;
 
   onError?(err: Error, req: Request, res: Response): void;
-  onProxyRes?(proxyRes: http.ServerResponse, req: Request, res: Response): void;
+  onProxyRes?(proxyRes: http.IncomingMessage, req: Request, res: Response): void;
   onProxyReq?(proxyReq: http.ClientRequest, req: Request, res: Response): void;
   onProxyReqWs?(
     proxyReq: http.ClientRequest,
