@@ -49,8 +49,12 @@ export class HttpProxyMiddleware {
     next: express.NextFunction
   ) => {
     if (this.shouldProxy(this.config.context, req)) {
-      const activeProxyOptions = await this.prepareProxyRequest(req);
-      this.proxy.web(req, res, activeProxyOptions);
+      try {
+        const activeProxyOptions = await this.prepareProxyRequest(req);
+        this.proxy.web(req, res, activeProxyOptions);
+      } catch (err) {
+        next(err);
+      }
     } else {
       next();
     }

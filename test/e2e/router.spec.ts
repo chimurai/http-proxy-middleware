@@ -1,4 +1,5 @@
 import { createProxyMiddleware, createApp, createAppWithPath } from './_utils';
+import { ErrorRequestHandler } from 'express';
 import * as request from 'supertest';
 import { getLocal, generateCACertificate, Mockttp } from 'mockttp';
 
@@ -98,6 +99,27 @@ describe('E2E router', () => {
       const agent = request(app);
       const response = await agent.get('/api').expect(200);
       expect(response.text).toBe('C');
+    });
+
+    it('should handle promise rejection in router', async () => {
+      const app = createApp(
+        createProxyMiddleware({
+          target: 'https://localhost:6001',
+          secure: false,
+          changeOrigin: true,
+          router: async req => {
+            throw new Error('An error thrown in the router');
+          }
+        })
+      );
+      const errorHandler: ErrorRequestHandler = (err: Error, req, res, next) => {
+        res.status(502).send(err.message);
+      };
+      app.use(errorHandler);
+
+      const agent = request(app);
+      const response = await agent.get('/api').expect(502);
+      expect(response.text).toBe('An error thrown in the router');
     });
 
     it('missing a : will cause it to use http', async () => {
