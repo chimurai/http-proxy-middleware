@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.2)
+
+- fix(router): handle rejected promise in custom router ([#410](https://github.com/chimurai/http-proxy-middleware/pull/413)) ([bforbis](https://github.com/bforbis))
+
 ## [v1.0.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.1)
 
 - fix(typescript): fix proxyRes and router types ([#410](https://github.com/chimurai/http-proxy-middleware/issues/410)) ([dylang](https://github.com/dylang))
