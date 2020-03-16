@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.3](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.3)
+
+- build(package): exclude build artifact tsconfig.tsbuildinfo ([#415](https://github.com/chimurai/http-proxy-middleware/pull/415))
+
 ## [v1.0.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.2)
 
 - fix(router): handle rejected promise in custom router ([#410](https://github.com/chimurai/http-proxy-middleware/pull/413)) ([bforbis](https://github.com/bforbis))
