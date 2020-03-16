@@ -21,7 +21,7 @@
     "precoveralls": "yarn clean && yarn build",
     "coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "postcoveralls": "yarn clean",
-    "prepare": "yarn clean && yarn build"
+    "prepare": "yarn clean && yarn build && rm dist/tsconfig.tsbuildinfo"
   },
   "repository": {
     "type": "git",
