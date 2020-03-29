@@ -13,7 +13,7 @@ const proxyServer = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
 
 const options = {
   target: 'http://localhost:3000',
-  agent: new HttpsProxyAgent(proxyServer)
+  agent: new HttpsProxyAgent(proxyServer),
 };
 
 const apiProxy = createProxyMiddleware('/api', options);

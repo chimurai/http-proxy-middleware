@@ -21,20 +21,20 @@ describe('Logger', () => {
   });
 
   beforeEach(() => {
-    logger.setProvider(provider => {
-      provider.log = message => {
+    logger.setProvider((provider) => {
+      provider.log = (message) => {
         logMessage = message;
       };
-      provider.debug = message => {
+      provider.debug = (message) => {
         debugMessage = message;
       };
-      provider.info = message => {
+      provider.info = (message) => {
         infoMessage = message;
       };
-      provider.warn = message => {
+      provider.warn = (message) => {
         warnMessage = message;
       };
-      provider.error = message => {
+      provider.error = (message) => {
         errorMessage = message;
       };
 

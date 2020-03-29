@@ -11,7 +11,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api', {
   target: 'https://example.org',
-  changeOrigin: true
+  changeOrigin: true,
 });
 ```
 
@@ -27,8 +27,8 @@ const apiProxy = createProxyMiddleware('/api', {
     host: 'example.org',
     port: 443,
     pfx: fs.readFileSync('path/to/certificate.p12'),
-    passphrase: 'password'
+    passphrase: 'password',
   },
-  changeOrigin: true
+  changeOrigin: true,
 });
 ```

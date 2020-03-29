@@ -9,7 +9,7 @@ const defaultProvider = {
   debug: console.log, // use .log(); since console does not have .debug()
   info: console.info,
   warn: console.warn,
-  error: console.error
+  error: console.error,
 };
 
 // log level 'weight'
@@ -18,7 +18,7 @@ enum LEVELS {
   info = 20,
   warn = 30,
   error = 50,
-  silent = 80
+  silent = 80,
 }
 
 export function getInstance() {

@@ -34,7 +34,7 @@ This will match paths starting with `/api`
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api', {
-  target: 'http://localhost:3000'
+  target: 'http://localhost:3000',
 });
 
 // `/api/foo/bar` -> `http://localhost:3000/api/foo/bar`
@@ -61,7 +61,7 @@ This will match paths starting with `/api/` and should also end with `.json`
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api/**/*.json', {
-  target: 'http://localhost:3000'
+  target: 'http://localhost:3000',
 });
 ```
 
@@ -73,7 +73,7 @@ Multiple wildcards can be used.
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware(['/api/**/*.json', '/rest/**'], {
-  target: 'http://localhost:3000'
+  target: 'http://localhost:3000',
 });
 ```
 
@@ -85,7 +85,7 @@ This example will create a proxy with wildcard context matching.
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware(['foo/*.js', '!bar.js'], {
-  target: 'http://localhost:3000'
+  target: 'http://localhost:3000',
 });
 ```
 
@@ -97,7 +97,7 @@ The request `pathname` and `req` object are provided to determine which requests
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const filter = function(pathname, req) {
+const filter = function (pathname, req) {
   return pathname.match('^/api') && req.method === 'GET';
 };
 

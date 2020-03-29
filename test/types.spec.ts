@@ -6,7 +6,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
 
   beforeEach(() => {
     options = {
-      target: 'http://example.org'
+      target: 'http://example.org',
     };
   });
 
@@ -41,7 +41,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
     it('should extend from http-proxy options', () => {
       options = {
         target: 'http://example',
-        ws: true
+        ws: true,
       };
       expect(options).toBeDefined();
     });
@@ -72,12 +72,12 @@ describe('http-proxy-middleware TypeScript Types', () => {
       });
 
       it('should have router Type with function', () => {
-        options = { router: path => '/path' };
+        options = { router: (path) => '/path' };
         expect(options).toBeDefined();
       });
 
       it('should have router Type with async function', () => {
-        options = { router: async path => '/path' };
+        options = { router: async (path) => '/path' };
         expect(options).toBeDefined();
       });
     });
@@ -92,7 +92,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
     describe('logProvider', () => {
       it('should have logProvider Type', () => {
         options = {
-          logProvider: currentProvider => {
+          logProvider: (currentProvider) => {
             return {
               log: () => {
                 return;
@@ -108,9 +108,9 @@ describe('http-proxy-middleware TypeScript Types', () => {
               },
               error: () => {
                 return;
-              }
+              },
             };
-          }
+          },
         };
         expect(options).toBeDefined();
       });
@@ -138,14 +138,14 @@ describe('http-proxy-middleware TypeScript Types', () => {
       it('should have onProxyReqWs type', () => {
         options = {
           // tslint:disable no-empty
-          onProxyReqWs: (proxyReq, req, socket, opts, head) => {}
+          onProxyReqWs: (proxyReq, req, socket, opts, head) => {},
         };
         expect(options).toBeDefined();
       });
 
       it('should have onOpen type', () => {
         // tslint:disable no-empty
-        options = { onOpen: proxySocket => {} };
+        options = { onOpen: (proxySocket) => {} };
         expect(options).toBeDefined();
       });
 

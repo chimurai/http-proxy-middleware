@@ -68,7 +68,7 @@
     "lint-staged": "^10.0.7",
     "mockttp": "^0.19.3",
     "open": "^7.0.2",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.2",
     "supertest": "^4.0.2",
     "ts-jest": "^25.2.0",
     "tslint": "^6.0.0",

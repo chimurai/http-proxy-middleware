@@ -16,18 +16,18 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const router = express.Router();
 
-const proxy_filter = function(path, req) {
+const proxy_filter = function (path, req) {
   return path.match('^/docs') && (req.method === 'GET' || req.method === 'POST');
 };
 
 const proxy_options = {
   target: 'http://localhost:8080',
   pathRewrite: {
-    '^/docs': '/java/rep/server1' // Host path & target path conversion
+    '^/docs': '/java/rep/server1', // Host path & target path conversion
   },
   onError(err, req, res) {
     res.writeHead(500, {
-      'Content-Type': 'text/plain'
+      'Content-Type': 'text/plain',
     });
     res.end('Something went wrong. And we are reporting a custom error message.' + err);
   },
@@ -49,7 +49,7 @@ const proxy_options = {
 
       // URI encode JSON object
       body = Object.keys(body)
-        .map(function(key) {
+        .map(function (key) {
           return encodeURIComponent(key) + '=' + encodeURIComponent(body[key]);
         })
         .join('&');
@@ -62,14 +62,14 @@ const proxy_options = {
       proxyReq.write(body);
       proxyReq.end();
     }
-  }
+  },
 };
 
 // Proxy configuration
 const proxy = createProxyMiddleware(proxy_filter, proxy_options);
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: 'Node.js Express Proxy Test' });
 });
 

@@ -10,7 +10,7 @@ export function createConfig(context, opts?) {
   // structure of config object to be returned
   const config = {
     context: undefined,
-    options: {} as Options
+    options: {} as Options,
   };
 
   // app.use('/api', proxy({target:'http://localhost:9000'}));

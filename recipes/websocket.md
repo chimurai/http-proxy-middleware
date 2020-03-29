@@ -7,7 +7,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const socketProxy = createProxyMiddleware('/socket', {
   target: 'http://localhost:3000',
-  ws: true
+  ws: true,
 });
 ```
 
@@ -22,8 +22,8 @@ const options = {
   target: 'http://localhost:3000',
   ws: true,
   pathRewrite: {
-    '^/socket': ''
-  }
+    '^/socket': '',
+  },
 };
 
 const socketProxy = createProxyMiddleware('/socket', options);
@@ -40,7 +40,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const socketProxy = createProxyMiddleware('/socket', {
   target: 'http://localhost:3000',
-  ws: true
+  ws: true,
 });
 
 server.on('upgrade', proxy.upgrade); // <-- subscribe to http 'upgrade'

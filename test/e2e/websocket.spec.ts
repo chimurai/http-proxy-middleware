@@ -16,12 +16,10 @@ describe('E2E WebSocket proxy', () => {
     proxy = createProxyMiddleware('/', {
       target: 'http://localhost:9000',
       ws: true,
-      pathRewrite: { '^/socket': '' }
+      pathRewrite: { '^/socket': '' },
     });
 
-    proxyServer = express()
-      .use(proxy)
-      .listen(3000);
+    proxyServer = express().use(proxy).listen(3000);
 
     // @ts-ignore: Expected arguments error
     wss = new WebSocketServer({ port: 9000 });
@@ -33,7 +31,7 @@ describe('E2E WebSocket proxy', () => {
     });
   });
 
-  afterEach(done => {
+  afterEach((done) => {
     proxyServer.close(() => {
       done();
     });
@@ -42,7 +40,7 @@ describe('E2E WebSocket proxy', () => {
   });
 
   describe('option.ws', () => {
-    beforeEach(done => {
+    beforeEach((done) => {
       // need to make a normal http request,
       // so http-proxy-middleware can catch the upgrade request
       http.get('http://localhost:3000/', () => {
@@ -70,7 +68,7 @@ describe('E2E WebSocket proxy', () => {
   });
 
   describe('option.ws with external server "upgrade"', () => {
-    beforeEach(done => {
+    beforeEach((done) => {
       proxyServer.on('upgrade', proxy.upgrade);
 
       // @ts-ignore: Expected arguments error
@@ -97,15 +95,13 @@ describe('E2E WebSocket proxy', () => {
 
       // override
       proxy = createProxyMiddleware('ws://localhost:9000', {
-        pathRewrite: { '^/socket': '' }
+        pathRewrite: { '^/socket': '' },
       });
 
-      proxyServer = express()
-        .use(proxy)
-        .listen(3000);
+      proxyServer = express().use(proxy).listen(3000);
     });
 
-    beforeEach(done => {
+    beforeEach((done) => {
       proxyServer.on('upgrade', proxy.upgrade);
 
       // @ts-ignore: Expected arguments error
@@ -133,15 +129,13 @@ describe('E2E WebSocket proxy', () => {
       // override
       proxy = createProxyMiddleware('ws://notworkinghost:6789', {
         router: { '/socket': 'ws://localhost:9000' },
-        pathRewrite: { '^/socket': '' }
+        pathRewrite: { '^/socket': '' },
       });
 
-      proxyServer = express()
-        .use(proxy)
-        .listen(3000);
+      proxyServer = express().use(proxy).listen(3000);
     });
 
-    beforeEach(done => {
+    beforeEach((done) => {
       proxyServer.on('upgrade', proxy.upgrade);
 
       // @ts-ignore: Expected arguments error

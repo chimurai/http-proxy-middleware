@@ -183,7 +183,7 @@ describe('Context Matching', () => {
   });
 
   describe('Use function for matching', () => {
-    const testFunctionAsContext = val => {
+    const testFunctionAsContext = (val) => {
       return contextMatcher.match(fn, 'http://localhost/api/foo/bar', fakeReq);
 
       function fn(path, req) {
@@ -211,7 +211,7 @@ describe('Context Matching', () => {
     let testContext;
 
     beforeEach(() => {
-      testContext = context => {
+      testContext = (context) => {
         return () => {
           contextMatcher.match(context, 'http://localhost/api/foo/bar', fakeReq);
         };

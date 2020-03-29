@@ -18,13 +18,13 @@ The `req` object is provided to retrieve contextual data.
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const customRouter = function(req) {
+const customRouter = function (req) {
   return 'http://www.example.org'; // protocol + host
 };
 
 const options = {
   target: 'http://localhost:8000',
-  router: customRouter
+  router: customRouter,
 };
 
 const myProxy = createProxyMiddleware(options);
@@ -51,12 +51,12 @@ const proxyTable = {
   'integration.localhost:3000': 'http://localhost:8001', // host only
   'staging.localhost:3000': 'http://localhost:8002', // host only
   'localhost:3000/api': 'http://localhost:8003', // host + path
-  '/rest': 'http://localhost:8004' // path only
+  '/rest': 'http://localhost:8004', // path only
 };
 
 const options = {
   target: 'http://localhost:8000',
-  router: proxyTable
+  router: proxyTable,
 };
 
 const myProxy = createProxyMiddleware(options);

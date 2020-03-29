@@ -19,7 +19,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const options = {
   target: 'http://localhost:3000',
-  logLevel: 'debug'
+  logLevel: 'debug',
 };
 
 const apiProxy = createProxyMiddleware('/api', options);
@@ -34,7 +34,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const options = {
   target: 'http://localhost:3000',
-  logLevel: 'silent'
+  logLevel: 'silent',
 };
 
 const apiProxy = createProxyMiddleware('/api', options);

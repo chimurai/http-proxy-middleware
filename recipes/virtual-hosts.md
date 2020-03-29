@@ -11,7 +11,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const options = {
   target: 'http://localhost:3000',
-  changeOrigin: true
+  changeOrigin: true,
 };
 
 const apiProxy = createProxyMiddleware('/api', options);

@@ -21,8 +21,8 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const options = {
   target: 'http://localhost:3000',
   pathRewrite: {
-    '^/api/old-path': '/api/new-path' // rewrite path
-  }
+    '^/api/old-path': '/api/new-path', // rewrite path
+  },
 };
 
 const apiProxy = createProxyMiddleware('/api', options);
@@ -40,8 +40,8 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const options = {
   target: 'http://localhost:3000',
   pathRewrite: {
-    '^/api/': '/' // remove base path
-  }
+    '^/api/': '/', // remove base path
+  },
 };
 
 const apiProxy = createProxyMiddleware('/api', options);
@@ -59,8 +59,8 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const options = {
   target: 'http://localhost:3000',
   pathRewrite: {
-    '^/': '/extra/' // add base path
-  }
+    '^/': '/extra/', // add base path
+  },
 };
 
 const apiProxy = createProxyMiddleware('/api', options);
@@ -77,13 +77,13 @@ The unmodified path will be used, when rewrite function returns `undefined`
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const rewriteFn = function(path, req) {
+const rewriteFn = function (path, req) {
   return path.replace('/api/foo', '/api/bar');
 };
 
 const options = {
   target: 'http://localhost:3000',
-  pathRewrite: rewriteFn
+  pathRewrite: rewriteFn,
 };
 
 const apiProxy = createProxyMiddleware('/api', options);

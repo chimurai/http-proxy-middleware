@@ -6,7 +6,7 @@ describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {
     it('should create a middleware', () => {
       const middleware = createProxyMiddleware('/api', {
-        target: `http://localhost:8000`
+        target: `http://localhost:8000`,
       });
       expect(typeof middleware).toBe('function');
     });
@@ -29,7 +29,7 @@ describe('E2E http-proxy-middleware', () => {
         };
 
         middleware = createProxyMiddleware('/api', {
-          target: `http://localhost:8000`
+          target: `http://localhost:8000`,
         });
         middleware(mockReq, mockRes, mockNext);
       });
@@ -58,7 +58,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware('/api', {
-              target: `http://localhost:${mockTargetServer.port}`
+              target: `http://localhost:${mockTargetServer.port}`,
             })
           )
         );
@@ -93,7 +93,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware(filter, {
-              target: `http://localhost:${mockTargetServer.port}`
+              target: `http://localhost:${mockTargetServer.port}`,
             })
           )
         );
@@ -111,7 +111,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware(filter, {
-              target: `http://localhost:${mockTargetServer.port}`
+              target: `http://localhost:${mockTargetServer.port}`,
             })
           )
         );
@@ -127,7 +127,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware(['/api', '/ajax'], {
-              target: `http://localhost:${mockTargetServer.port}`
+              target: `http://localhost:${mockTargetServer.port}`,
             })
           )
         );
@@ -156,7 +156,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware('/api/**', {
-              target: `http://localhost:${mockTargetServer.port}`
+              target: `http://localhost:${mockTargetServer.port}`,
             })
           )
         );
@@ -174,7 +174,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware(['**/*.html', '!**.json'], {
-              target: `http://localhost:${mockTargetServer.port}`
+              target: `http://localhost:${mockTargetServer.port}`,
             })
           )
         );
@@ -199,7 +199,7 @@ describe('E2E http-proxy-middleware', () => {
           createApp(
             createProxyMiddleware('/api', {
               target: `http://localhost:${mockTargetServer.port}`,
-              headers: { host: 'foobar.dev' }
+              headers: { host: 'foobar.dev' },
             })
           )
         );
@@ -208,7 +208,7 @@ describe('E2E http-proxy-middleware', () => {
       it('should send request header "host" to target server', async () => {
         let completedRequest: CompletedRequest;
 
-        await mockTargetServer.get().thenCallback(req => {
+        await mockTargetServer.get().thenCallback((req) => {
           completedRequest = req;
           return { statusCode: 200, body: 'OK' };
         });
@@ -225,7 +225,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:666` // unreachable host on port:666
+              target: `http://localhost:666`, // unreachable host on port:666
             })
           )
         );
@@ -248,7 +248,7 @@ describe('E2E http-proxy-middleware', () => {
                   res.writeHead(418); // different error code
                   res.end("I'm a teapot"); // no response body
                 }
-              }
+              },
             })
           )
         );
@@ -276,7 +276,7 @@ describe('E2E http-proxy-middleware', () => {
                 proxyRes['headers']['x-added'] = 'foobar'; // add custom header to response
                 // tslint:disable-next-line: no-string-literal
                 delete proxyRes['headers']['x-removed'];
-              }
+              },
             })
           )
         );
@@ -289,12 +289,12 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should remove `x-removed` field from response header"', async () => {
-        await mockTargetServer.get().thenCallback(req => {
+        await mockTargetServer.get().thenCallback((req) => {
           return {
             statusCode: 200,
             headers: {
-              'x-removed': 'this should be removed'
-            }
+              'x-removed': 'this should be removed',
+            },
           };
         });
         const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
@@ -310,7 +310,7 @@ describe('E2E http-proxy-middleware', () => {
               target: `http://localhost:${mockTargetServer.port}`,
               onProxyReq(proxyReq, req, res) {
                 proxyReq.setHeader('x-added', 'added-from-hpm'); // add custom header to request
-              }
+              },
             })
           )
         );
@@ -318,7 +318,7 @@ describe('E2E http-proxy-middleware', () => {
 
       it('should add `x-added` as custom header to request"', async () => {
         let completedRequest: CompletedRequest;
-        await mockTargetServer.get().thenCallback(req => {
+        await mockTargetServer.get().thenCallback((req) => {
           completedRequest = req;
           return { statusCode: 200 };
         });
@@ -337,8 +337,8 @@ describe('E2E http-proxy-middleware', () => {
               target: `http://localhost:${mockTargetServer.port}`,
               pathRewrite: {
                 '^/api': '/rest',
-                '^/remove': ''
-              }
+                '^/remove': '',
+              },
             })
           )
         );
@@ -392,7 +392,7 @@ describe('E2E http-proxy-middleware', () => {
       let logMessage;
 
       beforeEach(() => {
-        const customLogger = message => {
+        const customLogger = (message) => {
           logMessage = message;
         };
 
@@ -403,7 +403,7 @@ describe('E2E http-proxy-middleware', () => {
               logLevel: 'info',
               logProvider(provider) {
                 return { ...provider, debug: customLogger, info: customLogger };
-              }
+              },
             })
           )
         );

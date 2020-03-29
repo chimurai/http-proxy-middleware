@@ -29,16 +29,16 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
-  changeOrigin: true // for vhosted sites
+  changeOrigin: true, // for vhosted sites
 });
 
 browserSync.init({
   server: {
     baseDir: './',
     port: 3000,
-    middleware: [apiProxy]
+    middleware: [apiProxy],
   },
-  startPath: '/api'
+  startPath: '/api',
 });
 ```
 
@@ -53,7 +53,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
-  changeOrigin: true // for vhosted sites
+  changeOrigin: true, // for vhosted sites
 });
 
 const app = express();
@@ -74,7 +74,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
-  changeOrigin: true // for vhosted sites
+  changeOrigin: true, // for vhosted sites
 });
 
 const app = connect();
@@ -95,7 +95,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
-  changeOrigin: true // for vhosted sites
+  changeOrigin: true, // for vhosted sites
 });
 
 module.exports = {
@@ -104,9 +104,9 @@ module.exports = {
     // by `lite-server` or any future ones that might be added.
     // Reference: https://github.com/johnpapa/lite-server/blob/master/lib/config-defaults.js#L16
     middleware: {
-      10: apiProxy
-    }
-  }
+      10: apiProxy,
+    },
+  },
 };
 ```
 
@@ -124,7 +124,7 @@ const app = polka();
 app.use(
   createProxyMiddleware({
     target: 'http://www.example.org',
-    changeOrigin: true
+    changeOrigin: true,
   })
 );
 
@@ -143,17 +143,17 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
-  changeOrigin: true // for vhosted sites
+  changeOrigin: true, // for vhosted sites
 });
 
 grunt.initConfig({
   connect: {
     server: {
       options: {
-        middleware: [apiProxy]
-      }
-    }
-  }
+        middleware: [apiProxy],
+      },
+    },
+  },
 });
 ```
 
@@ -164,22 +164,22 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
-  changeOrigin: true // for vhosted sites
+  changeOrigin: true, // for vhosted sites
 });
 
 grunt.initConfig({
   connect: {
     server: {
       options: {
-        middleware: function(connect, options, middlewares) {
+        middleware: function (connect, options, middlewares) {
           // inject a custom middleware into the array of default middlewares
           middlewares.unshift(apiProxy);
 
           return middlewares;
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 });
 ```
 
@@ -193,7 +193,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware('/api', {
   target: 'http://www.example.org',
-  changeOrigin: true // for vhosted sites
+  changeOrigin: true, // for vhosted sites
 });
 
 grunt.initConfig({
@@ -205,11 +205,11 @@ grunt.initConfig({
         port: 9000,
         server: {
           baseDir: ['app'],
-          middleware: apiProxy
-        }
-      }
-    }
-  }
+          middleware: apiProxy,
+        },
+      },
+    },
+  },
 });
 ```
 
@@ -223,17 +223,17 @@ const gulp = require('gulp');
 const connect = require('gulp-connect');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-gulp.task('connect', function() {
+gulp.task('connect', function () {
   connect.server({
     root: ['./app'],
-    middleware: function(connect, opt) {
+    middleware: function (connect, opt) {
       const apiProxy = createProxyMiddleware('/api', {
         target: 'http://www.example.org',
-        changeOrigin: true // for vhosted sites
+        changeOrigin: true, // for vhosted sites
       });
 
       return [apiProxy];
-    }
+    },
   });
 });
 
@@ -250,10 +250,10 @@ const gulp = require('gulp');
 const webserver = require('gulp-webserver');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-gulp.task('webserver', function() {
+gulp.task('webserver', function () {
   const apiProxy = createProxyMiddleware('/api', {
     target: 'http://www.example.org',
-    changeOrigin: true // for vhosted sites
+    changeOrigin: true, // for vhosted sites
   });
 
   gulp.src('app').pipe(
@@ -261,7 +261,7 @@ gulp.task('webserver', function() {
       livereload: true,
       directoryListing: true,
       open: true,
-      middleware: [apiProxy]
+      middleware: [apiProxy],
     })
   );
 });
