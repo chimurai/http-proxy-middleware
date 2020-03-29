@@ -60,7 +60,7 @@
     "express": "^4.17.1",
     "husky": "^4.2.3",
     "jest": "^25.2.3",
-    "lint-staged": "^10.0.7",
+    "lint-staged": "^10.0.10",
     "mockttp": "^0.19.3",
     "open": "^7.0.3",
     "prettier": "^2.0.2",
