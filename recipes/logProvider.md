@@ -10,9 +10,9 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const options = {
   target: 'http://localhost:3000',
-  logProvider: function(provider) {
+  logProvider: function (provider) {
     return winston;
-  }
+  },
 };
 
 const apiProxy = createProxyMiddleware('/api', options);
@@ -28,19 +28,19 @@ In this example [winston](https://www.npmjs.com/package/winston) is configured t
 const winston = require('winston');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const logProvider = function(provider) {
+const logProvider = function (provider) {
   return {
     log: winston.log,
     debug: winston.debug,
     info: winston.info,
     warn: winston.warn,
-    error: winston.error
+    error: winston.error,
   };
 };
 
 const options = {
   target: 'http://localhost:3000',
-  logProvider: logProvider
+  logProvider: logProvider,
 };
 
 const apiProxy = createProxyMiddleware('/api', options);
@@ -56,12 +56,12 @@ In this example [winston](https://www.npmjs.com/package/winston) is configured t
 const winston = require('winston');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const logProvider = function(provider) {
+const logProvider = function (provider) {
   const logger = new winston.Logger({
     transports: [
       new winston.transports.Console(),
-      new winston.transports.File({ filename: 'somefile.log' })
-    ]
+      new winston.transports.File({ filename: 'somefile.log' }),
+    ],
   });
 
   return logger;
@@ -69,7 +69,7 @@ const logProvider = function(provider) {
 
 const options = {
   target: 'http://localhost:3000',
-  logProvider: logProvider
+  logProvider: logProvider,
 };
 
 const apiProxy = createProxyMiddleware('/api', options);

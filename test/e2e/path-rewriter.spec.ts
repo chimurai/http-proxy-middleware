@@ -23,8 +23,8 @@ describe('E2E pathRewrite', () => {
           createProxyMiddleware({
             target: `http://localhost:${mockTargetServer.port}`,
             pathRewrite: {
-              '^/foobar/api/': '/api/'
-            }
+              '^/foobar/api/': '/api/',
+            },
           })
         )
       );
@@ -47,7 +47,7 @@ describe('E2E pathRewrite', () => {
             target: `http://localhost:${mockTargetServer.port}`,
             pathRewrite(path, req) {
               return path.replace('/foobar', '');
-            }
+            },
           })
         )
       );

@@ -10,7 +10,7 @@ const { createProxyMiddleware } = require('../../dist'); // require('http-proxy-
 const jsonPlaceholderProxy = createProxyMiddleware({
   target: 'http://jsonplaceholder.typicode.com',
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
-  logLevel: 'debug'
+  logLevel: 'debug',
 });
 
 const app = express();

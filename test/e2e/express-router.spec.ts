@@ -35,7 +35,7 @@ describe('Usage in Express', () => {
       const proxyConfig: Options = {
         changeOrigin: true,
         logLevel: 'silent',
-        target: 'http://jsonplaceholder.typicode.com'
+        target: 'http://jsonplaceholder.typicode.com',
       };
       sub.use(createProxyMiddleware(filter, proxyConfig));
 
@@ -48,10 +48,10 @@ describe('Usage in Express', () => {
       server = app.listen(3000);
     });
 
-    it('should still return a response when route does not match proxyConfig', done => {
+    it('should still return a response when route does not match proxyConfig', (done) => {
       let responseBody;
-      http.get('http://localhost:3000/sub/hello', res => {
-        res.on('data', chunk => {
+      http.get('http://localhost:3000/sub/hello', (res) => {
+        res.on('data', (chunk) => {
           responseBody = chunk.toString();
           expect(responseBody).toBe('{"content":"foobar"}');
           done();

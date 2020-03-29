@@ -10,18 +10,18 @@ For achieving it just put additional route handler to your app before proxy hand
 ```javascript
 const myProxy = createProxyMiddleware({
   target: 'http://www.example.com',
-  changeOrigin: true
+  changeOrigin: true,
 });
 
-const proxyDelay = function(req, res, next) {
+const proxyDelay = function (req, res, next) {
   if (req.originalUrl === '/api/get-me-something') {
     // Delay request by 2 seconds
     setTimeout(next, 2000);
 
     // Delay response completion by 5 seconds
     const endOriginal = res.end;
-    res.end = function(...args) {
-      setTimeout(function() {
+    res.end = function (...args) {
+      setTimeout(function () {
         endOriginal.apply(res, args);
       }, 5000);
     };

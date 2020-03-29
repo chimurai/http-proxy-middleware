@@ -42,7 +42,7 @@ describe('configFactory', () => {
 
         it('should return config object with options', () => {
           expect(result.options).toEqual({
-            target: 'http://www.example.org:8000'
+            target: 'http://www.example.org:8000',
           });
         });
       });
@@ -98,14 +98,14 @@ describe('configFactory', () => {
       describe('shorthand String config with options', () => {
         beforeEach(() => {
           result = createConfig('http://www.example.org:8000/api', {
-            changeOrigin: true
+            changeOrigin: true,
           });
         });
 
         it('should return config object with additional options', () => {
           expect(result.options).toEqual({
             changeOrigin: true,
-            target: 'http://www.example.org:8000'
+            target: 'http://www.example.org:8000',
           });
         });
       });
@@ -122,7 +122,7 @@ describe('configFactory', () => {
 
       it('should return config object', () => {
         expect(result.options).toEqual({
-          target: 'http://www.example.org:8000'
+          target: 'http://www.example.org:8000',
         });
       });
     });
@@ -144,7 +144,7 @@ describe('configFactory', () => {
     describe('faulty config. mixing classic with shorthand', () => {
       beforeEach(() => {
         result = createConfig('http://localhost:3000/api', {
-          target: 'http://localhost:8000'
+          target: 'http://localhost:8000',
         });
       });
 

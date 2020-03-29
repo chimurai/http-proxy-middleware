@@ -57,7 +57,7 @@ describe('E2E router', () => {
           changeOrigin: true,
           router(req) {
             return 'https://localhost:6003';
-          }
+          },
         })
       );
 
@@ -74,7 +74,7 @@ describe('E2E router', () => {
           changeOrigin: true,
           router(req) {
             return { host: 'localhost', port: 6003, protocol: 'https:' };
-          }
+          },
         })
       );
       const agent = request(app);
@@ -88,11 +88,11 @@ describe('E2E router', () => {
           target: 'https://localhost:6001',
           secure: false,
           changeOrigin: true,
-          router: async req => {
-            return new Promise(resolve =>
+          router: async (req) => {
+            return new Promise((resolve) =>
               resolve({ host: 'localhost', port: 6003, protocol: 'https:' })
             );
-          }
+          },
         })
       );
 
@@ -107,9 +107,9 @@ describe('E2E router', () => {
           target: 'https://localhost:6001',
           secure: false,
           changeOrigin: true,
-          router: async req => {
+          router: async (req) => {
             throw new Error('An error thrown in the router');
-          }
+          },
         })
       );
       const errorHandler: ErrorRequestHandler = (err: Error, req, res, next) => {
@@ -128,11 +128,11 @@ describe('E2E router', () => {
           target: 'https://localhost:6001',
           secure: false,
           changeOrigin: true,
-          router: async req => {
-            return new Promise(resolve =>
+          router: async (req) => {
+            return new Promise((resolve) =>
               resolve({ host: 'localhost', port: 6003, protocol: 'https' })
             );
-          }
+          },
         })
       );
 
@@ -155,8 +155,8 @@ describe('E2E router', () => {
           router: {
             'alpha.localhost:6000': 'https://localhost:6001',
             'beta.localhost:6000': 'https://localhost:6002',
-            'localhost:6000/api': 'https://localhost:6003'
-          }
+            'localhost:6000/api': 'https://localhost:6003',
+          },
         })
       );
 
@@ -170,28 +170,19 @@ describe('E2E router', () => {
     });
 
     it('should proxy when host is "alpha.localhost"', async () => {
-      const response = await agent
-        .get('/api')
-        .set('host', 'alpha.localhost:6000')
-        .expect(200);
+      const response = await agent.get('/api').set('host', 'alpha.localhost:6000').expect(200);
 
       expect(response.text).toBe('A');
     });
 
     it('should proxy when host is "beta.localhost"', async () => {
-      const response = await agent
-        .get('/api')
-        .set('host', 'beta.localhost:6000')
-        .expect(200);
+      const response = await agent.get('/api').set('host', 'beta.localhost:6000').expect(200);
 
       expect(response.text).toBe('B');
     });
 
     it('should proxy with host & path config: "localhost:6000/api"', async () => {
-      const response = await agent
-        .get('/api')
-        .set('host', 'localhost:6000')
-        .expect(200);
+      const response = await agent.get('/api').set('host', 'localhost:6000').expect(200);
 
       expect(response.text).toBe('C');
     });

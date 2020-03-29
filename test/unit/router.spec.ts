@@ -9,13 +9,13 @@ describe('router unit test', () => {
   beforeEach(() => {
     fakeReq = {
       headers: {
-        host: 'localhost'
+        host: 'localhost',
       },
-      url: '/'
+      url: '/',
     };
 
     config = {
-      target: 'http://localhost:6000'
+      target: 'http://localhost:6000',
     };
   });
 
@@ -28,7 +28,7 @@ describe('router unit test', () => {
         router(req) {
           request = req;
           return 'http://foobar.com:666';
-        }
+        },
       };
 
       result = getTarget(fakeReq, proxyOptionWithRouter);
@@ -54,7 +54,7 @@ describe('router unit test', () => {
         async router(req) {
           request = req;
           return 'http://foobar.com:666';
-        }
+        },
       };
 
       result = getTarget(fakeReq, proxyOptionWithRouter);
@@ -82,8 +82,8 @@ describe('router unit test', () => {
           'gamma.localhost': 'http://localhost:6004',
           '/rest': 'http://localhost:6005',
           '/some/specific/path': 'http://localhost:6006',
-          '/some': 'http://localhost:6007'
-        }
+          '/some': 'http://localhost:6007',
+        },
       };
     });
 

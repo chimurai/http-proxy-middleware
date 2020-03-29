@@ -132,13 +132,13 @@ const options = {
   ws: true, // proxy websockets
   pathRewrite: {
     '^/api/old-path': '/api/new-path', // rewrite path
-    '^/api/remove/path': '/path' // remove base path
+    '^/api/remove/path': '/path', // remove base path
   },
   router: {
     // when request.headers.host == 'dev.localhost:3000',
     // override target 'http://www.example.org' to 'http://localhost:8000'
-    'dev.localhost:3000': 'http://localhost:8000'
-  }
+    'dev.localhost:3000': 'http://localhost:8000',
+  },
 };
 
 // create the proxy (without context)
@@ -194,12 +194,12 @@ Providing an alternative way to decide which requests should be proxied; In case
   /**
    * @return {Boolean}
    */
-  const filter = function(pathname, req) {
+  const filter = function (pathname, req) {
     return pathname.match('^/api') && req.method === 'GET';
   };
 
   const apiProxy = createProxyMiddleware(filter, {
-    target: 'http://www.example.org'
+    target: 'http://www.example.org',
   });
   ```
 
@@ -285,7 +285,7 @@ Providing an alternative way to decide which requests should be proxied; In case
       debug: logger.debug,
       info: logger.info,
       warn: logger.warn,
-      error: logger.error
+      error: logger.error,
     };
     return myCustomProvider;
   }
@@ -300,7 +300,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   ```javascript
   function onError(err, req, res) {
     res.writeHead(500, {
-      'Content-Type': 'text/plain'
+      'Content-Type': 'text/plain',
     });
     res.end('Something went wrong. And we are reporting a custom error message.');
   }
@@ -417,7 +417,7 @@ The following options are provided by the underlying [http-proxy](https://github
       res,
       {
         target: 'http://localhost:4003/',
-        buffer: streamify(req.rawBody)
+        buffer: streamify(req.rawBody),
       },
       next
     );

@@ -9,7 +9,7 @@ Subscribe to http-proxy's [error event](https://www.npmjs.com/package/http-proxy
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const onError = function(err, req, res) {
+const onError = function (err, req, res) {
   console.log('Something went wrong.');
   console.log('And we are reporting a custom error message.');
 };
@@ -26,7 +26,7 @@ Subscribe to http-proxy's [proxyReq event](https://www.npmjs.com/package/http-pr
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const onProxyReq = function(proxyReq, req, res) {
+const onProxyReq = function (proxyReq, req, res) {
   // add new header to request
   proxyReq.setHeader('x-added', 'foobar');
 };
@@ -43,7 +43,7 @@ Subscribe to http-proxy's [proxyReqWs event](https://www.npmjs.com/package/http-
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const onProxyReqWs = function(proxyReq, req, socket, options, head) {
+const onProxyReqWs = function (proxyReq, req, socket, options, head) {
   // add custom header
   proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
 };
@@ -60,7 +60,7 @@ Subscribe to http-proxy's [proxyRes event](https://www.npmjs.com/package/http-pr
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const onProxyRes = function(proxyRes, req, res) {
+const onProxyRes = function (proxyRes, req, res) {
   // add new header to response
   proxyRes.headers['x-added'] = 'foobar';
 

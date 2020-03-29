@@ -15,7 +15,7 @@ const wsProxy = createProxyMiddleware('/', {
   // },
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
   ws: true, // enable websocket proxy
-  logLevel: 'debug'
+  logLevel: 'debug',
 });
 
 const app = express();
