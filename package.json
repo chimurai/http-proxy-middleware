@@ -16,11 +16,7 @@
     "build": "tsc",
     "pretest": "yarn build",
     "test": "jest",
-    "precover": "yarn clean && yarn build",
-    "cover": "jest --coverage",
-    "precoveralls": "yarn clean && yarn build",
-    "coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
-    "postcoveralls": "yarn clean",
+    "coverage": "jest --coverage --coverageReporters=lcov",
     "prepare": "yarn clean && yarn build && rm dist/tsconfig.tsbuildinfo"
   },
   "repository": {
@@ -61,7 +57,6 @@
     "@types/supertest": "^2.0.8",
     "browser-sync": "^2.26.7",
     "connect": "^3.7.0",
-    "coveralls": "^3.0.5",
     "express": "^4.17.1",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
