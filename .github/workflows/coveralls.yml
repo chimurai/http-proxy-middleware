@@ -11,10 +11,10 @@ jobs:
 
     - uses: actions/checkout@master
 
-    - name: Use Node.js 12.x
+    - name: Use Node.js 14.x
       uses: actions/setup-node@master
       with:
-        node-version: 12.x
+        node-version: 14.x
 
     - name: yarn install, coverage
       run: |
