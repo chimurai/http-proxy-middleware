@@ -17,7 +17,8 @@
     "pretest": "yarn build",
     "test": "jest",
     "coverage": "jest --coverage --coverageReporters=lcov",
-    "prepare": "yarn clean && yarn build && rm dist/tsconfig.tsbuildinfo"
+    "prepare": "yarn run snyk-protect && yarn clean && yarn build && rm dist/tsconfig.tsbuildinfo",
+    "snyk-protect": "snyk protect"
   },
   "repository": {
     "type": "git",
@@ -76,7 +77,8 @@
     "http-proxy": "^1.18.0",
     "is-glob": "^4.0.1",
     "lodash": "^4.17.15",
-    "micromatch": "^4.0.2"
+    "micromatch": "^4.0.2",
+    "snyk": "^1.316.2"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -91,5 +93,6 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
-  }
+  },
+  "snyk": true
 }
