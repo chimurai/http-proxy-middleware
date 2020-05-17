@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "@types/http-proxy": "^1.17.4",
-    "http-proxy": "^1.18.0",
+    "http-proxy": "^1.18.1",
     "is-glob": "^4.0.1",
     "lodash": "^4.17.15",
     "micromatch": "^4.0.2"
