@@ -2,11 +2,8 @@ language: node_js
 node_js:
 - 'stable'
 - '10'
-- '9'
 - '8'
-- '7'
 - '6'
-- '5'
 - '4'
 before_install:
 # https://github.com/npm/npm/issues/11283
