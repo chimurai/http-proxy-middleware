@@ -114,7 +114,7 @@ describe('Path rewriting', () => {
         return changed;
       };
 
-      expect(rewriter(rewriteFn)).resolves.toBe('/123/456');
+      return expect(rewriter(rewriteFn)).resolves.toBe('/123/456');
     });
 
     it('is async and should return alternative path', () => {
@@ -126,7 +126,7 @@ describe('Path rewriting', () => {
         return changed;
       };
 
-      expect(rewriter(rewriteFn)).resolves.toBe('/foo/bar');
+      return expect(rewriter(rewriteFn)).resolves.toBe('/foo/bar');
     });
 
     it('is async and should return replaced path', () => {
@@ -138,7 +138,7 @@ describe('Path rewriting', () => {
         return changed;
       };
 
-      expect(rewriter(rewriteFn)).resolves.toBe('/123/789');
+      return expect(rewriter(rewriteFn)).resolves.toBe('/123/789');
     });
   });
 

@@ -22,20 +22,20 @@ export function getHandlers(options) {
     // loop through options and try to find these handlers
     // and add them to the handlers object for subscription in init().
     const eventName = _.camelCase('on ' + event);
-    const fnHandler = _.get(options, eventName);
+    const fnHandler = options ? options[eventName] : null;
 
-    if (_.isFunction(fnHandler)) {
+    if (typeof fnHandler === 'function') {
       handlers[event] = fnHandler;
     }
   }
 
   // add default error handler in absence of error handler
-  if (!_.isFunction(handlers.error)) {
+  if (typeof handlers.error !== 'function') {
     handlers.error = defaultErrorHandler;
   }
 
   // add default close handler in absence of close handler
-  if (!_.isFunction(handlers.close)) {
+  if (typeof handlers.close !== 'function') {
     handlers.close = logClose;
   }
 

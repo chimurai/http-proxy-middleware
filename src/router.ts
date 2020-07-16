@@ -8,7 +8,7 @@ export async function getTarget(req, config) {
 
   if (_.isPlainObject(router)) {
     newTarget = getTargetFromProxyTable(req, router);
-  } else if (_.isFunction(router)) {
+  } else if (typeof router === 'function') {
     newTarget = await router(req);
   }
 
@@ -22,23 +22,23 @@ function getTargetFromProxyTable(req, table) {
 
   const hostAndPath = host + path;
 
-  _.forIn(table, (value, key) => {
+  for (const [key] of Object.entries(table)) {
     if (containsPath(key)) {
       if (hostAndPath.indexOf(key) > -1) {
         // match 'localhost:3000/api'
         result = table[key];
         logger.debug('[HPM] Router table match: "%s"', key);
-        return false;
+        break;
       }
     } else {
       if (key === host) {
         // match 'localhost:3000'
         result = table[key];
         logger.debug('[HPM] Router table match: "%s"', host);
-        return false;
+        break;
       }
     }
-  });
+  }
 
   return result;
 }

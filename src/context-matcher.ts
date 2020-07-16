@@ -1,5 +1,4 @@
 import * as isGlob from 'is-glob';
-import * as _ from 'lodash';
 import * as micromatch from 'micromatch';
 import * as url from 'url';
 import { ERRORS } from './errors';
@@ -28,7 +27,7 @@ export function match(context, uri, req) {
   }
 
   // custom matching
-  if (_.isFunction(context)) {
+  if (typeof context === 'function') {
     const pathname = getUrlPathName(uri);
     return context(pathname, req);
   }
@@ -85,7 +84,7 @@ function getUrlPathName(uri) {
 }
 
 function isStringPath(context) {
-  return _.isString(context) && !isGlob(context);
+  return typeof context === 'string' && !isGlob(context);
 }
 
 function isGlobPath(context) {
