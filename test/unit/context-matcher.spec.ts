@@ -257,7 +257,7 @@ describe('Context Matching', () => {
       });
 
       it('should not throw error with Function', () => {
-        // tslint:disable-next-line: no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         expect(testContext(() => {})).not.toThrowError(Error);
       });
     });

@@ -2,9 +2,9 @@ dist: bionic
 sudo: false
 language: node_js
 node_js:
-- 'stable'
-- '12'
-- '10'
+  - 'stable'
+  - '12'
+  - '10'
 cache: yarn
 stages:
   - lint

@@ -21,7 +21,6 @@ describe('E2E WebSocket proxy', () => {
 
     proxyServer = express().use(proxy).listen(3000);
 
-    // @ts-ignore: Expected arguments error
     wss = new WebSocketServer({ port: 9000 });
 
     wss.on('connection', function connection(websocket) {
@@ -47,7 +46,6 @@ describe('E2E WebSocket proxy', () => {
         // do a second http request to make
         // sure only 1 listener subscribes to upgrade request
         http.get('http://localhost:3000/', () => {
-          // @ts-ignore: Expected arguments error
           ws = new WebSocket('ws://localhost:3000/socket');
 
           ws.on('message', function incoming(message) {
@@ -71,7 +69,6 @@ describe('E2E WebSocket proxy', () => {
     beforeEach((done) => {
       proxyServer.on('upgrade', proxy.upgrade);
 
-      // @ts-ignore: Expected arguments error
       ws = new WebSocket('ws://localhost:3000/socket');
 
       ws.on('message', function incoming(message) {
@@ -104,7 +101,6 @@ describe('E2E WebSocket proxy', () => {
     beforeEach((done) => {
       proxyServer.on('upgrade', proxy.upgrade);
 
-      // @ts-ignore: Expected arguments error
       ws = new WebSocket('ws://localhost:3000/socket');
 
       ws.on('message', function incoming(message) {
@@ -138,7 +134,6 @@ describe('E2E WebSocket proxy', () => {
     beforeEach((done) => {
       proxyServer.on('upgrade', proxy.upgrade);
 
-      // @ts-ignore: Expected arguments error
       ws = new WebSocket('ws://localhost:3000/socket');
 
       ws.on('message', function incoming(message) {

@@ -1,3 +1,5 @@
+/* eslint-disable prefer-rest-params */
+
 import * as util from 'util';
 
 let loggerInstance;
