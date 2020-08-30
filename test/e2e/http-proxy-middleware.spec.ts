@@ -216,7 +216,6 @@ describe('E2E http-proxy-middleware', () => {
         const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
         expect(response.text).toBe('OK');
         expect(completedRequest.headers.host).toBe('foobar.dev');
-        expect(completedRequest.hostname).toBe('foobar.dev');
       });
     });
 
