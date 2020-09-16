@@ -8,94 +8,54 @@ describe('Context Matching', () => {
 
     describe('Single path matching', () => {
       it('should match all paths', () => {
-        result = contextMatcher.match(
-          '',
-          'http://localhost/api/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match('', 'http://localhost/api/foo/bar', fakeReq);
         expect(result).toBe(true);
       });
 
       it('should match all paths starting with forward-slash', () => {
-        result = contextMatcher.match(
-          '/',
-          'http://localhost/api/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match('/', 'http://localhost/api/foo/bar', fakeReq);
         expect(result).toBe(true);
       });
 
       it('should return true when the context is present in url', () => {
-        result = contextMatcher.match(
-          '/api',
-          'http://localhost/api/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match('/api', 'http://localhost/api/foo/bar', fakeReq);
         expect(result).toBe(true);
       });
 
       it('should return false when the context is not present in url', () => {
-        result = contextMatcher.match(
-          '/abc',
-          'http://localhost/api/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match('/abc', 'http://localhost/api/foo/bar', fakeReq);
         expect(result).toBe(false);
       });
 
       it('should return false when the context is present half way in url', () => {
-        result = contextMatcher.match(
-          '/foo',
-          'http://localhost/api/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match('/foo', 'http://localhost/api/foo/bar', fakeReq);
         expect(result).toBe(false);
       });
 
       it('should return false when the context does not start with /', () => {
-        result = contextMatcher.match(
-          'api',
-          'http://localhost/api/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match('api', 'http://localhost/api/foo/bar', fakeReq);
         expect(result).toBe(false);
       });
     });
 
     describe('Multi path matching', () => {
       it('should return true when the context is present in url', () => {
-        result = contextMatcher.match(
-          ['/api'],
-          'http://localhost/api/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match(['/api'], 'http://localhost/api/foo/bar', fakeReq);
         expect(result).toBe(true);
       });
 
       it('should return true when the context is present in url', () => {
-        result = contextMatcher.match(
-          ['/api', '/ajax'],
-          'http://localhost/ajax/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match(['/api', '/ajax'], 'http://localhost/ajax/foo/bar', fakeReq);
         expect(result).toBe(true);
       });
 
       it('should return false when the context does not match url', () => {
-        result = contextMatcher.match(
-          ['/api', '/ajax'],
-          'http://localhost/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match(['/api', '/ajax'], 'http://localhost/foo/bar', fakeReq);
         expect(result).toBe(false);
       });
 
       it('should return false when empty array provided', () => {
-        result = contextMatcher.match(
-          [],
-          'http://localhost/api/foo/bar',
-          fakeReq
-        );
+        result = contextMatcher.match([], 'http://localhost/api/foo/bar', fakeReq);
         expect(result).toBe(false);
       });
     });
@@ -122,9 +82,7 @@ describe('Context Matching', () => {
 
         it('should only match paths starting with "foo" folder in it ', () => {
           expect(contextMatcher.match('**/foo/**', url, fakeReq)).toBe(true);
-          expect(contextMatcher.match('**/invalid/**', url, fakeReq)).toBe(
-            false
-          );
+          expect(contextMatcher.match('**/invalid/**', url, fakeReq)).toBe(false);
         });
       });
 
@@ -147,75 +105,37 @@ describe('Context Matching', () => {
 
         it('should only match .html under root path', () => {
           const pattern = '/*.html';
+          expect(contextMatcher.match(pattern, 'http://localhost/index.html', fakeReq)).toBe(true);
           expect(
-            contextMatcher.match(
-              pattern,
-              'http://localhost/index.html',
-              fakeReq
-            )
-          ).toBe(true);
-          expect(
-            contextMatcher.match(
-              pattern,
-              'http://localhost/some/path/index.html',
-              fakeReq
-            )
+            contextMatcher.match(pattern, 'http://localhost/some/path/index.html', fakeReq)
           ).toBe(false);
         });
 
         it('should ignore query params', () => {
           expect(
-            contextMatcher.match(
-              '/**/*.php',
-              'http://localhost/a/b/c.php?d=e&e=f',
-              fakeReq
-            )
+            contextMatcher.match('/**/*.php', 'http://localhost/a/b/c.php?d=e&e=f', fakeReq)
           ).toBe(true);
           expect(
-            contextMatcher.match(
-              '/**/*.php?*',
-              'http://localhost/a/b/c.php?d=e&e=f',
-              fakeReq
-            )
+            contextMatcher.match('/**/*.php?*', 'http://localhost/a/b/c.php?d=e&e=f', fakeReq)
           ).toBe(false);
         });
 
         it('should only match any file in root path', () => {
-          expect(
-            contextMatcher.match('/*', 'http://localhost/bar.html', fakeReq)
-          ).toBe(true);
-          expect(
-            contextMatcher.match('/*.*', 'http://localhost/bar.html', fakeReq)
-          ).toBe(true);
-          expect(
-            contextMatcher.match('/*', 'http://localhost/foo/bar.html', fakeReq)
-          ).toBe(false);
+          expect(contextMatcher.match('/*', 'http://localhost/bar.html', fakeReq)).toBe(true);
+          expect(contextMatcher.match('/*.*', 'http://localhost/bar.html', fakeReq)).toBe(true);
+          expect(contextMatcher.match('/*', 'http://localhost/foo/bar.html', fakeReq)).toBe(false);
         });
 
         it('should only match .html file is in root path', () => {
+          expect(contextMatcher.match('/*.html', 'http://localhost/bar.html', fakeReq)).toBe(true);
           expect(
-            contextMatcher.match(
-              '/*.html',
-              'http://localhost/bar.html',
-              fakeReq
-            )
-          ).toBe(true);
-          expect(
-            contextMatcher.match(
-              '/*.html',
-              'http://localhost/api/foo/bar.html',
-              fakeReq
-            )
+            contextMatcher.match('/*.html', 'http://localhost/api/foo/bar.html', fakeReq)
           ).toBe(false);
         });
 
         it('should only match .html files in "foo" folder', () => {
-          expect(contextMatcher.match('**/foo/*.html', url, fakeReq)).toBe(
-            true
-          );
-          expect(contextMatcher.match('**/bar/*.html', url, fakeReq)).toBe(
-            false
-          );
+          expect(contextMatcher.match('**/foo/*.html', url, fakeReq)).toBe(true);
+          expect(contextMatcher.match('**/bar/*.html', url, fakeReq)).toBe(false);
         });
 
         it('should not match .html files', () => {
@@ -228,70 +148,42 @@ describe('Context Matching', () => {
       describe('Multiple patterns', () => {
         it('should return true when both path patterns match', () => {
           const pattern = ['/api/**', '/ajax/**'];
-          expect(
-            contextMatcher.match(
-              pattern,
-              'http://localhost/api/foo/bar.json',
-              fakeReq
-            )
-          ).toBe(true);
-          expect(
-            contextMatcher.match(
-              pattern,
-              'http://localhost/ajax/foo/bar.json',
-              fakeReq
-            )
-          ).toBe(true);
-          expect(
-            contextMatcher.match(
-              pattern,
-              'http://localhost/rest/foo/bar.json',
-              fakeReq
-            )
-          ).toBe(false);
+          expect(contextMatcher.match(pattern, 'http://localhost/api/foo/bar.json', fakeReq)).toBe(
+            true
+          );
+          expect(contextMatcher.match(pattern, 'http://localhost/ajax/foo/bar.json', fakeReq)).toBe(
+            true
+          );
+          expect(contextMatcher.match(pattern, 'http://localhost/rest/foo/bar.json', fakeReq)).toBe(
+            false
+          );
         });
         it('should return true when both file extensions pattern match', () => {
           const pattern = ['/**/*.html', '/**/*.jpeg'];
-          expect(
-            contextMatcher.match(
-              pattern,
-              'http://localhost/api/foo/bar.html',
-              fakeReq
-            )
-          ).toBe(true);
-          expect(
-            contextMatcher.match(
-              pattern,
-              'http://localhost/api/foo/bar.jpeg',
-              fakeReq
-            )
-          ).toBe(true);
-          expect(
-            contextMatcher.match(
-              pattern,
-              'http://localhost/api/foo/bar.gif',
-              fakeReq
-            )
-          ).toBe(false);
+          expect(contextMatcher.match(pattern, 'http://localhost/api/foo/bar.html', fakeReq)).toBe(
+            true
+          );
+          expect(contextMatcher.match(pattern, 'http://localhost/api/foo/bar.jpeg', fakeReq)).toBe(
+            true
+          );
+          expect(contextMatcher.match(pattern, 'http://localhost/api/foo/bar.gif', fakeReq)).toBe(
+            false
+          );
         });
       });
 
       describe('Negation patterns', () => {
         it('should not match file extension', () => {
           const url = 'http://localhost/api/foo/bar.html';
-          expect(contextMatcher.match(['**', '!**/*.html'], url, fakeReq)).toBe(
-            false
-          );
-          expect(contextMatcher.match(['**', '!**/*.json'], url, fakeReq)).toBe(
-            true
-          );
+          expect(contextMatcher.match(['**', '!**/*.html'], url, fakeReq)).toBe(false);
+          expect(contextMatcher.match(['**', '!**/*.json'], url, fakeReq)).toBe(true);
         });
       });
     });
   });
 
   describe('Use function for matching', () => {
-    const testFunctionAsContext = val => {
+    const testFunctionAsContext = (val) => {
       return contextMatcher.match(fn, 'http://localhost/api/foo/bar', fakeReq);
 
       function fn(path, req) {
@@ -319,13 +211,9 @@ describe('Context Matching', () => {
     let testContext;
 
     beforeEach(() => {
-      testContext = context => {
+      testContext = (context) => {
         return () => {
-          contextMatcher.match(
-            context,
-            'http://localhost/api/foo/bar',
-            fakeReq
-          );
+          contextMatcher.match(context, 'http://localhost/api/foo/bar', fakeReq);
         };
       };
     });

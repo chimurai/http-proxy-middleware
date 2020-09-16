@@ -27,7 +27,7 @@ export function createPathRewriter(rewriteConfig) {
   function rewritePath(path) {
     let result = path;
 
-    _.forEach(rulesCache, rule => {
+    _.forEach(rulesCache, (rule) => {
       if (rule.regex.test(path)) {
         result = result.replace(rule.regex, rule.value);
         logger.debug('[HPM] Rewriting path from "%s" to "%s"', path, result);
@@ -62,13 +62,9 @@ function parsePathRewriteRules(rewriteConfig) {
     _.forIn(rewriteConfig, (value, key) => {
       rules.push({
         regex: new RegExp(key),
-        value: rewriteConfig[key]
+        value: rewriteConfig[key],
       });
-      logger.info(
-        '[HPM] Proxy rewrite rule created: "%s" ~> "%s"',
-        key,
-        rewriteConfig[key]
-      );
+      logger.info('[HPM] Proxy rewrite rule created: "%s" ~> "%s"', key, rewriteConfig[key]);
     });
   }
 

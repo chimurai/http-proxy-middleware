@@ -1,22 +1,15 @@
-dist: xenial
+dist: bionic
 sudo: false
 language: node_js
 node_js:
 - 'stable'
+- '12'
 - '10'
-- '8'
 cache: yarn
 stages:
   - lint
   - test
-  - coveralls
 jobs:
   include:
     - stage: lint
       script: yarn lint
-    - stage: coveralls
-      script: yarn coveralls
-env:
-  global:
-    # COVERALLS_REPO_TOKEN=
-      secure: "I8mDH0n2DQHAPvUFEV/ZNmrMNYTJxgywg8+P3yuCAWwQkZeXQi0DWG+6VUpOylaRhL/4kCdZK9gnJD2MfrqvNqVLDUqBK3tTmZVoyqqJEdE0UdEHcPncAPmxWrG98sDjqFN9r4nWeizHvyA1fNRQHRN56Zy+DcQWjgEhHJaYeNA="

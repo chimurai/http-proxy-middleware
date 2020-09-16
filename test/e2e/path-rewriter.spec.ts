@@ -1,90 +1,59 @@
-import * as http from 'http';
-import { createServer, proxyMiddleware } from './_utils';
+import { createProxyMiddleware, createApp } from './_utils';
+import * as request from 'supertest';
+import { getLocal, Mockttp } from 'mockttp';
 
 describe('E2E pathRewrite', () => {
-  let targetMiddleware;
-  let targetData;
+  let mockTargetServer: Mockttp;
 
-  beforeEach(() => {
-    targetData = {};
-    targetMiddleware = (req, res, next) => {
-      targetData.url = req.url; // store target url.
-      targetData.headers = req.headers; // store target headers.
-      res.write(req.url); // respond with target url.
-      res.end();
-    };
+  beforeEach(async () => {
+    mockTargetServer = getLocal();
+    await mockTargetServer.start();
   });
 
-  let proxyServer;
-  let targetServer;
-
-  beforeEach(() => {
-    targetServer = createServer(8000, targetMiddleware);
-  });
-
-  afterEach(() => {
-    // tslint:disable-next-line: no-unused-expression
-    proxyServer && proxyServer.close();
-    targetServer.close();
+  afterEach(async () => {
+    await mockTargetServer.stop();
   });
 
   describe('Rewrite paths with rules table', () => {
-    beforeEach(() => {
-      const proxyConfig = {
-        target: 'http://localhost:8000',
-        pathRewrite: {
-          '^/foobar/api/': '/api/'
-        }
-      };
-      const proxy = proxyMiddleware(proxyConfig);
-      proxyServer = createServer(3000, proxy);
-    });
+    it('should remove "/foobar" from path', async () => {
+      mockTargetServer.get('/api/lorum/ipsum').thenReply(200, '/API RESPONSE AFTER PATH REWRITE');
 
-    beforeEach(done => {
-      http.get('http://localhost:3000/foobar/api/lorum/ipsum', res => {
-        done();
-      });
-    });
+      const agent = request(
+        createApp(
+          createProxyMiddleware({
+            target: `http://localhost:${mockTargetServer.port}`,
+            pathRewrite: {
+              '^/foobar/api/': '/api/',
+            },
+          })
+        )
+      );
 
-    it('should remove "/foobar" from path', () => {
-      expect(targetData.url).toBe('/api/lorum/ipsum');
+      const response = await agent.get('/foobar/api/lorum/ipsum').expect(200);
+
+      expect(response.text).toBe('/API RESPONSE AFTER PATH REWRITE');
     });
   });
 
   describe('Rewrite paths with function', () => {
-    let originalPath;
-    let pathRewriteReqObject;
+    it('should remove "/foobar" from path', async () => {
+      mockTargetServer
+        .get('/api/lorum/ipsum')
+        .thenReply(200, '/API RESPONSE AFTER PATH REWRITE FUNCTION');
 
-    beforeEach(() => {
-      const proxyConfig = {
-        target: 'http://localhost:8000',
-        pathRewrite(path, req) {
-          originalPath = path;
-          pathRewriteReqObject = req;
-          return path.replace('/foobar', '');
-        }
-      };
-      const proxy = proxyMiddleware(proxyConfig);
-      proxyServer = createServer(3000, proxy);
-    });
+      const agent = request(
+        createApp(
+          createProxyMiddleware({
+            target: `http://localhost:${mockTargetServer.port}`,
+            pathRewrite(path, req) {
+              return path.replace('/foobar', '');
+            },
+          })
+        )
+      );
 
-    beforeEach(done => {
-      http.get('http://localhost:3000/foobar/api/lorum/ipsum', res => {
-        done();
-      });
-    });
-
-    it('should remove "/foobar" from path', () => {
-      expect(targetData.url).toBe('/api/lorum/ipsum');
-    });
-
-    it('should provide the `path` parameter with the unmodified path value', () => {
-      expect(originalPath).toBe('/foobar/api/lorum/ipsum');
-    });
-
-    it('should provide the `req` object as second parameter of the rewrite function', () => {
-      expect(pathRewriteReqObject.method).toBe('GET');
-      expect(pathRewriteReqObject.url).toBe('/api/lorum/ipsum');
+      const response = await agent.get('/foobar/api/lorum/ipsum').expect(200);
+      expect(response.text).toBe('/API RESPONSE AFTER PATH REWRITE FUNCTION');
     });
   });
 });

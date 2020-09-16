@@ -1,5 +1,38 @@
 # Changelog
 
+## [v1.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.5)
+
+- chore(deps): lodash 4.17.19 ([#454](https://github.com/chimurai/http-proxy-middleware/pull/454))
+
+## [v1.0.4](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.4)
+
+- chore(deps): http-proxy 1.18.1 ([#442](https://github.com/chimurai/http-proxy-middleware/pull/442))
+
+## [v1.0.3](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.3)
+
+- build(package): exclude build artifact tsconfig.tsbuildinfo ([#415](https://github.com/chimurai/http-proxy-middleware/pull/415))
+
+## [v1.0.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.2)
+
+- fix(router): handle rejected promise in custom router ([#410](https://github.com/chimurai/http-proxy-middleware/pull/413)) ([bforbis](https://github.com/bforbis))
+
+## [v1.0.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.1)
+
+- fix(typescript): fix proxyRes and router types ([#410](https://github.com/chimurai/http-proxy-middleware/issues/410)) ([dylang](https://github.com/dylang))
+
+## [v1.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.0)
+
+- feat(createProxyMiddleware): explicit import http-proxy-middleware ([BREAKING CHANGE](https://github.com/chimurai/http-proxy-middleware/releases))([#400](https://github.com/chimurai/http-proxy-middleware/issues/400#issuecomment-587162378))
+- feat(typescript): export http-proxy-middleware types ([#400](https://github.com/chimurai/http-proxy-middleware/issues/400))
+- fix(typescript): ES6 target - TS1192 ([#400](https://github.com/chimurai/http-proxy-middleware/issues/400#issuecomment-587064349))
+
+## [v0.21.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.21.0)
+
+- feat(http-proxy): bump to v1.18.0
+- feat: async router ([#379](https://github.com/chimurai/http-proxy-middleware/issues/379)) ([LiranBri](https://github.com/LiranBri))
+- feat(typescript): types support ([#369](https://github.com/chimurai/http-proxy-middleware/pull/369))
+- feat: async pathRewrite ([#397](https://github.com/chimurai/http-proxy-middleware/pull/397)) ([rsethc](https://github.com/rsethc))
+
 ## [v0.20.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v0.20.0)
 
 - fix(ws): concurrent websocket requests do not get upgraded ([#335](https://github.com/chimurai/http-proxy-middleware/issues/335))

@@ -7,12 +7,12 @@ When `changeOrigin` is set to `true`; Host [HTTP header](https://en.wikipedia.or
 The `changeOrigin` option is provided by [http-proxy](https://github.com/nodejitsu/node-http-proxy).
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var options = {
+const options = {
   target: 'http://localhost:3000',
-  changeOrigin: true
+  changeOrigin: true,
 };
 
-var apiProxy = proxy('/api', options);
+const apiProxy = createProxyMiddleware('/api', options);
 ```

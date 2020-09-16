@@ -14,14 +14,7 @@ export function init(proxy, option) {
 
 export function getHandlers(options) {
   // https://github.com/nodejitsu/node-http-proxy#listening-for-proxy-events
-  const proxyEvents = [
-    'error',
-    'proxyReq',
-    'proxyReqWs',
-    'proxyRes',
-    'open',
-    'close'
-  ];
+  const proxyEvents = ['error', 'proxyReq', 'proxyReqWs', 'proxyRes', 'open', 'close'];
   const handlers: any = {};
 
   for (const event of proxyEvents) {

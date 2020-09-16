@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as url from 'url';
 import { ERRORS } from './errors';
 import { getInstance } from './logger';
+import { Filter, Options } from './types';
 
 const logger = getInstance();
 
@@ -9,7 +10,7 @@ export function createConfig(context, opts?) {
   // structure of config object to be returned
   const config = {
     context: undefined,
-    options: {} as any
+    options: {} as Options,
   };
 
   // app.use('/api', proxy({target:'http://localhost:9000'}));
@@ -55,7 +56,7 @@ export function createConfig(context, opts?) {
  * @param  {String}  context [description]
  * @return {Boolean}         [description]
  */
-function isStringShortHand(context) {
+function isStringShortHand(context: Filter) {
   if (_.isString(context)) {
     return !!url.parse(context).host;
   }
@@ -72,11 +73,11 @@ function isStringShortHand(context) {
  * @param  {*}       opts    [description]
  * @return {Boolean}         [description]
  */
-function isContextless(context, opts) {
+function isContextless(context: Filter, opts: Options) {
   return _.isPlainObject(context) && _.isEmpty(opts);
 }
 
-function configureLogger(options) {
+function configureLogger(options: Options) {
   if (options.logLevel) {
     logger.setLevel(options.logLevel);
   }

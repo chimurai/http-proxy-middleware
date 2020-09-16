@@ -1,12 +1,12 @@
-import * as http from 'http';
-import { createServer, proxyMiddleware } from './_utils';
+import { createProxyMiddleware, createApp, createAppWithPath } from './_utils';
+import * as request from 'supertest';
+import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
 
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {
     it('should create a middleware', () => {
-      let middleware;
-      middleware = proxyMiddleware('/api', {
-        target: 'http://localhost:8000'
+      const middleware = createProxyMiddleware('/api', {
+        target: `http://localhost:8000`,
       });
       expect(typeof middleware).toBe('function');
     });
@@ -28,8 +28,8 @@ describe('E2E http-proxy-middleware', () => {
           isSkipped = true;
         };
 
-        middleware = proxyMiddleware('/api', {
-          target: 'http://localhost:8000'
+        middleware = createProxyMiddleware('/api', {
+          target: `http://localhost:8000`,
         });
         middleware(mockReq, mockRes, mockNext);
       });
@@ -41,621 +41,380 @@ describe('E2E http-proxy-middleware', () => {
   });
 
   describe('http-proxy-middleware in actual server', () => {
+    let mockTargetServer: Mockttp;
+    let agent: request.SuperTest<request.Test>;
+
+    beforeEach(async () => {
+      mockTargetServer = getLocal();
+      await mockTargetServer.start();
+    });
+
+    afterEach(async () => {
+      await mockTargetServer.stop();
+    });
+
     describe('basic setup, requests to target', () => {
-      let proxyServer;
-      let targetServer;
-      let targetHeaders;
-      let targetUrl;
-      let responseBody;
-
-      beforeEach(done => {
-        const mwProxy = proxyMiddleware('/api', {
-          target: 'http://localhost:8000'
-        });
-
-        const mwTarget = (req, res, next) => {
-          targetUrl = req.url; // store target url.
-          targetHeaders = req.headers; // store target headers.
-          res.write('HELLO WEB'); // respond with 'HELLO WEB'
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
-
-        http.get('http://localhost:3000/api/b/c/dp?q=1&r=[2,3]#s"', res => {
-          res.on('data', chunk => {
-            responseBody = chunk.toString();
-            done();
-          });
-        });
+      beforeEach(() => {
+        agent = request(
+          createApp(
+            createProxyMiddleware('/api', {
+              target: `http://localhost:${mockTargetServer.port}`,
+            })
+          )
+        );
       });
 
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
+      it('should have response body: "HELLO WEB"', async () => {
+        await mockTargetServer.get('/api').thenReply(200, 'HELLO WEB');
+        const response = await agent.get(`/api`).expect(200);
+        expect(response.text).toBe('HELLO WEB');
       });
 
-      it('should have the same headers.host value', () => {
-        expect(targetHeaders.host).toBe('localhost:3000');
-      });
+      it('should have proxied the uri-path and uri-query, but not the uri-hash', async () => {
+        await mockTargetServer
+          .get('/api/b/c/dp')
+          .withExactQuery('?q=1&r=[2,3]')
+          .thenReply(200, 'OK');
 
-      it('should have proxied the uri-path and uri-query, but not the uri-hash', () => {
-        expect(targetUrl).toBe('/api/b/c/dp?q=1&r=[2,3]');
-      });
+        const response = await request(`http://localhost:${mockTargetServer.port}`)
+          .get(`/api/b/c/dp?q=1&r=[2,3]#s`)
+          .expect(200);
 
-      it('should have response body: "HELLO WEB"', () => {
-        expect(responseBody).toBe('HELLO WEB');
+        expect(response.text).toBe('OK');
       });
     });
 
     describe('custom context matcher/filter', () => {
-      let proxyServer;
-      let targetServer;
-      let responseBody;
-
-      let filterPath;
-      let filterReq;
-
-      beforeEach(done => {
+      it('should have response body: "HELLO WEB"', async () => {
         const filter = (path, req) => {
-          filterPath = path;
-          filterReq = req;
           return true;
         };
 
-        const mwProxy = proxyMiddleware(filter, {
-          target: 'http://localhost:8000'
-        });
+        agent = request(
+          createApp(
+            createProxyMiddleware(filter, {
+              target: `http://localhost:${mockTargetServer.port}`,
+            })
+          )
+        );
 
-        const mwTarget = (req, res, next) => {
-          res.write('HELLO WEB'); // respond with 'HELLO WEB'
-          res.end();
+        await mockTargetServer.get('/api/b/c/d').thenReply(200, 'HELLO WEB');
+        const response = await agent.get(`/api/b/c/d`).expect(200);
+        expect(response.text).toBe('HELLO WEB');
+      });
+
+      it('should not proxy when filter returns false', async () => {
+        const filter = (path, req) => {
+          return false;
         };
 
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
+        agent = request(
+          createApp(
+            createProxyMiddleware(filter, {
+              target: `http://localhost:${mockTargetServer.port}`,
+            })
+          )
+        );
 
-        http.get('http://localhost:3000/api/b/c/d', res => {
-          res.on('data', chunk => {
-            responseBody = chunk.toString();
-            done();
-          });
-        });
-      });
-
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
-
-      it('should have response body: "HELLO WEB"', () => {
-        expect(responseBody).toBe('HELLO WEB');
-      });
-
-      it('should provide the url path in the first argument', () => {
-        expect(filterPath).toBe('/api/b/c/d');
-      });
-
-      it('should provide the req object in the second argument', () => {
-        expect(filterReq.method).toBe('GET');
+        await mockTargetServer.get('/api/b/c/d').thenReply(200, 'HELLO WEB');
+        const response = await agent.get(`/api/b/c/d`).expect(404);
+        expect(response.status).toBe(404);
       });
     });
 
     describe('multi path', () => {
-      let proxyServer;
-      let targetServer;
-      let response;
-      let responseBody;
-
       beforeEach(() => {
-        const mwProxy = proxyMiddleware(['/api', '/ajax'], {
-          target: 'http://localhost:8000'
-        });
-
-        const mwTarget = (req, res, next) => {
-          res.write(req.url); // respond with req.url
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
+        agent = request(
+          createApp(
+            createProxyMiddleware(['/api', '/ajax'], {
+              target: `http://localhost:${mockTargetServer.port}`,
+            })
+          )
+        );
       });
 
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
+      it('should proxy to path /api', async () => {
+        await mockTargetServer.get(/\/api\/.+/).thenReply(200, 'HELLO /API');
+        const response = await agent.get(`/api/b/c/d`).expect(200);
+        expect(response.text).toBe('HELLO /API');
       });
 
-      describe('request to path A, configured', () => {
-        beforeEach(done => {
-          http.get('http://localhost:3000/api/some/endpoint', res => {
-            response = res;
-            res.on('data', chunk => {
-              responseBody = chunk.toString();
-              done();
-            });
-          });
-        });
-
-        it('should proxy to path A', () => {
-          expect(response.statusCode).toBe(200);
-          expect(responseBody).toBe('/api/some/endpoint');
-        });
+      it('should proxy to path /ajax', async () => {
+        await mockTargetServer.get(/\/ajax\/.+/).thenReply(200, 'HELLO /AJAX');
+        const response = await agent.get(`/ajax/b/c/d`).expect(200);
+        expect(response.text).toBe('HELLO /AJAX');
       });
 
-      describe('request to path B, configured', () => {
-        beforeEach(done => {
-          http.get('http://localhost:3000/ajax/some/library', res => {
-            response = res;
-            res.on('data', chunk => {
-              responseBody = chunk.toString();
-              done();
-            });
-          });
-        });
-
-        it('should proxy to path B', () => {
-          expect(response.statusCode).toBe(200);
-          expect(responseBody).toBe('/ajax/some/library');
-        });
-      });
-
-      describe('request to path C, not configured', () => {
-        beforeEach(done => {
-          http.get('http://localhost:3000/lorum/ipsum', res => {
-            response = res;
-            res.on('data', chunk => {
-              responseBody = chunk.toString();
-              done();
-            });
-          });
-        });
-
-        it('should not proxy to this path', () => {
-          expect(response.statusCode).toBe(404);
-        });
+      it('should not proxy with no matching path', async () => {
+        const response = await agent.get(`/lorum/ipsum`).expect(404);
+        expect(response.status).toBe(404);
       });
     });
 
     describe('wildcard path matching', () => {
-      let proxyServer;
-      let targetServer;
-      let response;
-      let responseBody;
-
       beforeEach(() => {
-        const mwProxy = proxyMiddleware('/api/**', {
-          target: 'http://localhost:8000'
-        });
-
-        const mwTarget = (req, res, next) => {
-          res.write(req.url); // respond with req.url
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
+        agent = request(
+          createApp(
+            createProxyMiddleware('/api/**', {
+              target: `http://localhost:${mockTargetServer.port}`,
+            })
+          )
+        );
       });
 
-      beforeEach(done => {
-        http.get('http://localhost:3000/api/some/endpoint', res => {
-          response = res;
-          res.on('data', chunk => {
-            responseBody = chunk.toString();
-            done();
-          });
-        });
-      });
-
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
-
-      it('should proxy to path', () => {
-        expect(response.statusCode).toBe(200);
-        expect(responseBody).toBe('/api/some/endpoint');
+      it('should proxy to path', async () => {
+        await mockTargetServer.get(/\/api\/.+/).thenReply(200, 'HELLO /api');
+        const response = await agent.get(`/api/b/c/d`).expect(200);
+        expect(response.text).toBe('HELLO /api');
       });
     });
 
     describe('multi glob wildcard path matching', () => {
-      let proxyServer;
-      let targetServer;
-      let responseA;
-      let responseBodyA;
-      let responseB;
-
       beforeEach(() => {
-        const mwProxy = proxyMiddleware(['**/*.html', '!**.json'], {
-          target: 'http://localhost:8000'
-        });
-
-        const mwTarget = (req, res, next) => {
-          res.write(req.url); // respond with req.url
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
+        agent = request(
+          createApp(
+            createProxyMiddleware(['**/*.html', '!**.json'], {
+              target: `http://localhost:${mockTargetServer.port}`,
+            })
+          )
+        );
       });
 
-      beforeEach(done => {
-        http.get('http://localhost:3000/api/some/endpoint/index.html', res => {
-          responseA = res;
-          res.on('data', chunk => {
-            responseBodyA = chunk.toString();
-            done();
-          });
-        });
+      it('should proxy to paths ending with *.html', async () => {
+        await mockTargetServer.get(/.+html$/).thenReply(200, 'HELLO .html');
+        const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
+        expect(response.text).toBe('HELLO .html');
       });
 
-      beforeEach(done => {
-        http.get('http://localhost:3000/api/some/endpoint/data.json', res => {
-          responseB = res;
-          res.on('data', chunk => {
-            done();
-          });
-        });
-      });
-
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
-
-      it('should proxy to paths ending with *.html', () => {
-        expect(responseA.statusCode).toBe(200);
-        expect(responseBodyA).toBe('/api/some/endpoint/index.html');
-      });
-
-      it('should not proxy to paths ending with *.json', () => {
-        expect(responseB.statusCode).toBe(404);
+      it('should not proxy to paths ending with *.json', async () => {
+        await mockTargetServer.get(/.+json$/).thenReply(200, 'HELLO .html');
+        const response = await agent.get(`/api/some/endpoint/data.json`).expect(404);
+        expect(response.status).toBe(404);
       });
     });
 
     describe('option.headers - additional request headers', () => {
-      let proxyServer;
-      let targetServer;
-      let targetHeaders;
-
-      beforeEach(done => {
-        const mwProxy = proxyMiddleware('/api', {
-          target: 'http://localhost:8000',
-          headers: { host: 'foobar.dev' }
-        });
-
-        const mwTarget = (req, res, next) => {
-          targetHeaders = req.headers;
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
-
-        http.get('http://localhost:3000/api/', res => {
-          done();
-        });
+      beforeEach(() => {
+        agent = request(
+          createApp(
+            createProxyMiddleware('/api', {
+              target: `http://localhost:${mockTargetServer.port}`,
+              headers: { host: 'foobar.dev' },
+            })
+          )
+        );
       });
 
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
+      it('should send request header "host" to target server', async () => {
+        let completedRequest: CompletedRequest;
 
-      it('should send request header "host" to target server', () => {
-        expect(targetHeaders.host).toBe('foobar.dev');
+        await mockTargetServer.get().thenCallback((req) => {
+          completedRequest = req;
+          return { statusCode: 200, body: 'OK' };
+        });
+
+        const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
+        expect(response.text).toBe('OK');
+        expect(completedRequest.headers.host).toBe('foobar.dev');
       });
     });
 
-    describe('option.onError - Error handling', () => {
-      let proxyServer;
-      let targetServer;
-      let response;
-      let responseBody;
-
-      describe('default', () => {
-        beforeEach(done => {
-          const mwProxy = proxyMiddleware('/api', {
-            target: 'http://localhost:666'
-          }); // unreachable host on port:666
-          const mwTarget = (req, res, next) => {
-            next();
-          };
-
-          proxyServer = createServer(3000, mwProxy);
-          targetServer = createServer(8000, mwTarget);
-
-          http.get('http://localhost:3000/api/', res => {
-            response = res;
-            done();
-          });
-        });
-
-        afterEach(() => {
-          proxyServer.close();
-          targetServer.close();
-        });
-
-        it('should handle errors when host is not reachable', () => {
-          expect(response.statusCode).toBe(504);
-        });
+    describe('option.onError - with default error handling', () => {
+      beforeEach(() => {
+        agent = request(
+          createApp(
+            createProxyMiddleware({
+              target: `http://localhost:666`, // unreachable host on port:666
+            })
+          )
+        );
       });
 
-      describe('custom', () => {
-        beforeEach(done => {
-          const customOnError = (err, req, res) => {
-            if (err) {
-              res.writeHead(418); // different error code
-              res.end("I'm a teapot"); // no response body
-            }
-          };
+      it('should handle errors when host is not reachable', async () => {
+        const response = await agent.get(`/api/some/endpoint`).expect(504);
+        expect(response.status).toBe(504);
+      });
+    });
 
-          const mwProxy = proxyMiddleware('/api', {
-            target: 'http://localhost:666',
-            onError: customOnError
-          }); // unreachable host on port:666
-          const mwTarget = (req, res, next) => {
-            next();
-          };
+    describe('option.onError - custom error handling', () => {
+      beforeEach(() => {
+        agent = request(
+          createApp(
+            createProxyMiddleware({
+              target: `http://localhost:666`, // unreachable host on port:666
+              onError(err, req, res) {
+                if (err) {
+                  res.writeHead(418); // different error code
+                  res.end("I'm a teapot"); // no response body
+                }
+              },
+            })
+          )
+        );
+      });
 
-          proxyServer = createServer(3000, mwProxy);
-          targetServer = createServer(8000, mwTarget);
+      it('should respond with custom http status code', async () => {
+        const response = await agent.get(`/api/some/endpoint`).expect(418);
+        expect(response.status).toBe(418);
+      });
 
-          http.get('http://localhost:3000/api/', res => {
-            response = res;
-            res.on('data', chunk => {
-              responseBody = chunk.toString();
-              done();
-            });
-          });
-        });
-
-        afterEach(() => {
-          proxyServer.close();
-          targetServer.close();
-        });
-
-        it('should respond with custom http status code', () => {
-          expect(response.statusCode).toBe(418);
-        });
-
-        it('should respond with custom status message', () => {
-          expect(responseBody).toBe("I'm a teapot");
-        });
+      it('should respond with custom status message', async () => {
+        const response = await agent.get(`/api/some/endpoint`).expect(418);
+        expect(response.text).toBe("I'm a teapot");
       });
     });
 
     describe('option.onProxyRes', () => {
-      let proxyServer;
-      let targetServer;
-      let response;
+      beforeEach(() => {
+        agent = request(
+          createApp(
+            createProxyMiddleware('/api', {
+              target: `http://localhost:${mockTargetServer.port}`,
+              onProxyRes(proxyRes, req, res) {
+                // tslint:disable-next-line: no-string-literal
+                proxyRes['headers']['x-added'] = 'foobar'; // add custom header to response
+                // tslint:disable-next-line: no-string-literal
+                delete proxyRes['headers']['x-removed'];
+              },
+            })
+          )
+        );
+      });
 
-      beforeEach(done => {
-        const fnOnProxyRes = (proxyRes, req, res) => {
-          proxyRes.headers['x-added'] = 'foobar'; // add custom header to response
-          delete proxyRes.headers['x-removed'];
-        };
+      it('should add `x-added` as custom header to response"', async () => {
+        await mockTargetServer.get().thenReply(200, 'HELLO .html');
+        const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
+        expect(response.header['x-added']).toBe('foobar');
+      });
 
-        const mwProxy = proxyMiddleware('/api', {
-          target: 'http://localhost:8000',
-          onProxyRes: fnOnProxyRes
+      it('should remove `x-removed` field from response header"', async () => {
+        await mockTargetServer.get().thenCallback((req) => {
+          return {
+            statusCode: 200,
+            headers: {
+              'x-removed': 'this should be removed',
+            },
+          };
         });
-        const mwTarget = (req, res, next) => {
-          res.setHeader('x-removed', 'remove-header');
-          res.write(req.url); // respond with req.url
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
-
-        http.get('http://localhost:3000/api/foo/bar', res => {
-          response = res;
-          res.on('data', chunk => {
-            done();
-          });
-        });
-      });
-
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
-
-      it('should add `x-added` as custom header to response"', () => {
-        expect(response.headers['x-added']).toBe('foobar');
-      });
-
-      it('should remove `x-removed` field from response header"', () => {
-        expect(response.headers['x-removed']).toBeUndefined();
+        const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
+        expect(response.header['x-removed']).toBeUndefined();
       });
     });
 
     describe('option.onProxyReq', () => {
-      let proxyServer;
-      let targetServer;
-      let receivedRequest;
-
-      beforeEach(done => {
-        const fnOnProxyReq = (proxyReq, req, res) => {
-          proxyReq.setHeader('x-added', 'foobar'); // add custom header to request
-        };
-
-        const mwProxy = proxyMiddleware('/api', {
-          target: 'http://localhost:8000',
-          onProxyReq: fnOnProxyReq
-        });
-
-        const mwTarget = (req, res, next) => {
-          receivedRequest = req;
-          res.write(req.url); // respond with req.url
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
-
-        http.get('http://localhost:3000/api/foo/bar', () => {
-          done();
-        });
+      beforeEach(() => {
+        agent = request(
+          createApp(
+            createProxyMiddleware('/api', {
+              target: `http://localhost:${mockTargetServer.port}`,
+              onProxyReq(proxyReq, req, res) {
+                proxyReq.setHeader('x-added', 'added-from-hpm'); // add custom header to request
+              },
+            })
+          )
+        );
       });
 
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
+      it('should add `x-added` as custom header to request"', async () => {
+        let completedRequest: CompletedRequest;
+        await mockTargetServer.get().thenCallback((req) => {
+          completedRequest = req;
+          return { statusCode: 200 };
+        });
 
-      it('should add `x-added` as custom header to request"', () => {
-        expect(receivedRequest.headers['x-added']).toBe('foobar');
+        await agent.get(`/api/foo/bar`).expect(200);
+
+        expect(completedRequest.headers['x-added']).toBe('added-from-hpm');
       });
     });
 
     describe('option.pathRewrite', () => {
-      let proxyServer;
-      let targetServer;
-      let responseBody;
-
-      beforeEach(done => {
-        const mwProxy = proxyMiddleware('/api', {
-          target: 'http://localhost:8000',
-          pathRewrite: {
-            '^/api': '/rest',
-            '^/remove': ''
-          }
-        });
-        const mwTarget = (req, res, next) => {
-          res.write(req.url); // respond with req.url
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
-
-        http.get('http://localhost:3000/api/foo/bar', res => {
-          res.on('data', chunk => {
-            responseBody = chunk.toString();
-            done();
-          });
-        });
+      beforeEach(() => {
+        agent = request(
+          createApp(
+            createProxyMiddleware({
+              target: `http://localhost:${mockTargetServer.port}`,
+              pathRewrite: {
+                '^/api': '/rest',
+                '^/remove': '',
+              },
+            })
+          )
+        );
       });
 
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
+      it('should have rewritten path from "/api/foo/bar" to "/rest/foo/bar"', async () => {
+        await mockTargetServer.get('/rest/foo/bar').thenReply(200, 'HELLO /rest/foo/bar');
+        const response = await agent.get(`/api/foo/bar`).expect(200);
+        expect(response.text).toBe('HELLO /rest/foo/bar');
       });
 
-      it('should have rewritten path from "/api/foo/bar" to "/rest/foo/bar"', () => {
-        expect(responseBody).toBe('/rest/foo/bar');
+      it('should have removed path from "/remove/api/lipsum" to "/api/lipsum"', async () => {
+        await mockTargetServer.get('/api/lipsum').thenReply(200, 'HELLO /api/lipsum');
+        const response = await agent.get(`/remove/api/lipsum`).expect(200);
+        expect(response.text).toBe('HELLO /api/lipsum');
       });
     });
 
     describe('shorthand usage', () => {
-      let proxyServer;
-      let targetServer;
-      let responseBody;
-
-      beforeEach(done => {
-        const mwProxy = proxyMiddleware('http://localhost:8000/api');
-        const mwTarget = (req, res, next) => {
-          res.write(req.url); // respond with req.url
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
-
-        http.get('http://localhost:3000/api/foo/bar', res => {
-          res.on('data', chunk => {
-            responseBody = chunk.toString();
-            done();
-          });
-        });
+      beforeEach(() => {
+        agent = request(
+          createApp(createProxyMiddleware(`http://localhost:${mockTargetServer.port}/api`))
+        );
       });
 
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
-
-      it('should have proxy with shorthand configuration', () => {
-        expect(responseBody).toBe('/api/foo/bar');
+      it('should have proxy with shorthand configuration', async () => {
+        await mockTargetServer.get('/api/foo/bar').thenReply(200, 'HELLO /api/foo/bar');
+        const response = await agent.get(`/api/foo/bar`).expect(200);
+        expect(response.text).toBe('HELLO /api/foo/bar');
       });
     });
 
     describe('express with path + proxy', () => {
-      let proxyServer;
-      let targetServer;
-      let responseBody;
-
-      beforeEach(done => {
-        const mwProxy = proxyMiddleware('http://localhost:8000');
-        const mwTarget = (req, res, next) => {
-          res.write(req.url); // respond with req.url
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy, '/api');
-        targetServer = createServer(8000, mwTarget);
-
-        http.get('http://localhost:3000/api/foo/bar', res => {
-          res.on('data', chunk => {
-            responseBody = chunk.toString();
-            done();
-          });
-        });
+      beforeEach(() => {
+        agent = request(
+          createAppWithPath(
+            '/api',
+            createProxyMiddleware({ target: `http://localhost:${mockTargetServer.port}` })
+          )
+        );
       });
 
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
-
-      it('should proxy to target with the baseUrl', () => {
-        expect(responseBody).toBe('/api/foo/bar');
+      it('should proxy to target with the baseUrl', async () => {
+        await mockTargetServer.get('/api/foo/bar').thenReply(200, 'HELLO /api/foo/bar');
+        const response = await agent.get(`/api/foo/bar`).expect(200);
+        expect(response.text).toBe('HELLO /api/foo/bar');
       });
     });
 
     describe('option.logLevel & option.logProvider', () => {
-      let proxyServer;
-      let targetServer;
       let logMessage;
 
-      beforeEach(done => {
-        const customLogger = message => {
+      beforeEach(() => {
+        const customLogger = (message) => {
           logMessage = message;
         };
 
-        const mwProxy = proxyMiddleware('http://localhost:8000/api', {
-          logLevel: 'info',
-          logProvider(provider) {
-            provider.debug = customLogger;
-            provider.info = customLogger;
-            return provider;
-          }
-        });
-        const mwTarget = (req, res, next) => {
-          res.write(req.url); // respond with req.url
-          res.end();
-        };
-
-        proxyServer = createServer(3000, mwProxy);
-        targetServer = createServer(8000, mwTarget);
-
-        http.get('http://localhost:3000/api/foo/bar', res => {
-          res.on('data', chunk => {
-            done();
-          });
-        });
+        agent = request(
+          createApp(
+            createProxyMiddleware('/api', {
+              target: `http://localhost:${mockTargetServer.port}`,
+              logLevel: 'info',
+              logProvider(provider) {
+                return { ...provider, debug: customLogger, info: customLogger };
+              },
+            })
+          )
+        );
       });
 
-      afterEach(() => {
-        proxyServer.close();
-        targetServer.close();
-      });
+      it('should have logged messages', async () => {
+        await mockTargetServer.get('/api/foo/bar').thenReply(200);
+        await agent.get(`/api/foo/bar`).expect(200);
 
-      it('should have logged messages', () => {
-        expect(logMessage).not.toBeUndefined();
+        expect(logMessage).toMatchInlineSnapshot(
+          `"[HPM] Proxy created: /api  -> http://localhost:8000"`
+        );
       });
     });
   });

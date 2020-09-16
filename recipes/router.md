@@ -15,21 +15,21 @@ Write your own router to dynamically route to a different `target`.
 The `req` object is provided to retrieve contextual data.
 
 ```javascript
-var express = require('express');
-var proxy = require('http-proxy-middleware');
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var customRouter = function(req) {
+const customRouter = function (req) {
   return 'http://www.example.org'; // protocol + host
 };
 
-var options = {
+const options = {
   target: 'http://localhost:8000',
-  router: customRouter
+  router: customRouter,
 };
 
-var myProxy = proxy(options);
+const myProxy = createProxyMiddleware(options);
 
-var app = express();
+const app = express();
 app.use(myProxy); // add the proxy to express
 
 app.listen(3000);
@@ -44,24 +44,24 @@ Use a Proxy Table to proxy requests to a different `target` based on:
 - Host HTTP header + path
 
 ```javascript
-var express = require('express');
-var proxy = require('http-proxy-middleware');
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var proxyTable = {
+const proxyTable = {
   'integration.localhost:3000': 'http://localhost:8001', // host only
   'staging.localhost:3000': 'http://localhost:8002', // host only
   'localhost:3000/api': 'http://localhost:8003', // host + path
-  '/rest': 'http://localhost:8004' // path only
+  '/rest': 'http://localhost:8004', // path only
 };
 
-var options = {
+const options = {
   target: 'http://localhost:8000',
-  router: proxyTable
+  router: proxyTable,
 };
 
-var myProxy = proxy(options);
+const myProxy = createProxyMiddleware(options);
 
-var app = express();
+const app = express();
 app.use(myProxy); // add the proxy to express
 
 app.listen(3000);

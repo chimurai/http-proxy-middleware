@@ -5,17 +5,17 @@ Configure your own logger with the `logProvider` option.
 In this example [winston](https://www.npmjs.com/package/winston) is configured to do the actual logging.
 
 ```javascript
-var winston = require('winston');
-var proxy = require('http-proxy-middleware');
+const winston = require('winston');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var options = {
+const options = {
   target: 'http://localhost:3000',
-  logProvider: function(provider) {
+  logProvider: function (provider) {
     return winston;
-  }
+  },
 };
 
-var apiProxy = proxy('/api', options);
+const apiProxy = createProxyMiddleware('/api', options);
 ```
 
 ## Winston
@@ -25,25 +25,25 @@ Configure your own logger with the `logProvider` option.
 In this example [winston](https://www.npmjs.com/package/winston) is configured to do the actual logging. Map the logging api if needed.
 
 ```javascript
-var winston = require('winston');
-var proxy = require('http-proxy-middleware');
+const winston = require('winston');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var logProvider = function(provider) {
+const logProvider = function (provider) {
   return {
     log: winston.log,
     debug: winston.debug,
     info: winston.info,
     warn: winston.warn,
-    error: winston.error
+    error: winston.error,
   };
 };
 
-var options = {
+const options = {
   target: 'http://localhost:3000',
-  logProvider: logProvider
+  logProvider: logProvider,
 };
 
-var apiProxy = proxy('/api', options);
+const apiProxy = createProxyMiddleware('/api', options);
 ```
 
 # Winston Multi Transport
@@ -53,24 +53,24 @@ Configure your own logger with the `logProvider` option.
 In this example [winston](https://www.npmjs.com/package/winston) is configured to do the actual logging.
 
 ```javascript
-var winston = require('winston');
-var proxy = require('http-proxy-middleware');
+const winston = require('winston');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var logProvider = function(provider) {
-  var logger = new winston.Logger({
+const logProvider = function (provider) {
+  const logger = new winston.Logger({
     transports: [
       new winston.transports.Console(),
-      new winston.transports.File({ filename: 'somefile.log' })
-    ]
+      new winston.transports.File({ filename: 'somefile.log' }),
+    ],
   });
 
   return logger;
 };
 
-var options = {
+const options = {
   target: 'http://localhost:3000',
-  logProvider: logProvider
+  logProvider: logProvider,
 };
 
-var apiProxy = proxy('/api', options);
+const apiProxy = createProxyMiddleware('/api', options);
 ```

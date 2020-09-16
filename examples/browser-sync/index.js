@@ -1,16 +1,16 @@
 /**
  * Module dependencies.
  */
-var browserSync = require('browser-sync').create();
-var proxy = require('../_proxy'); // require('http-proxy-middleware');
+const browserSync = require('browser-sync').create();
+const { createProxyMiddleware } = require('../../dist'); // require('http-proxy-middleware');
 
 /**
  * Configure proxy middleware
  */
-var jsonPlaceholderProxy = proxy('/users', {
+const jsonPlaceholderProxy = createProxyMiddleware('/users', {
   target: 'http://jsonplaceholder.typicode.com',
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
-  logLevel: 'debug'
+  logLevel: 'debug',
 });
 
 /**
@@ -20,9 +20,9 @@ browserSync.init({
   server: {
     baseDir: './',
     port: 3000,
-    middleware: [jsonPlaceholderProxy]
+    middleware: [jsonPlaceholderProxy],
   },
-  startPath: '/users'
+  startPath: '/users',
 });
 
 console.log('[DEMO] Server: listening on port 3000');

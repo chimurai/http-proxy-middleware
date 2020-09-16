@@ -3,11 +3,11 @@
 This example will create a proxy middleware with websocket support.
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var socketProxy = proxy('/socket', {
+const socketProxy = createProxyMiddleware('/socket', {
   target: 'http://localhost:3000',
-  ws: true
+  ws: true,
 });
 ```
 
@@ -16,17 +16,17 @@ var socketProxy = proxy('/socket', {
 This example will create a proxy middleware with websocket support and pathRewrite.
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var options = {
+const options = {
   target: 'http://localhost:3000',
   ws: true,
   pathRewrite: {
-    '^/socket': ''
-  }
+    '^/socket': '',
+  },
 };
 
-var socketProxy = proxy('/socket', options);
+const socketProxy = createProxyMiddleware('/socket', options);
 ```
 
 ## WebSocket - Server update subscription
@@ -36,11 +36,11 @@ This example will create a proxy middleware with websocket support.
 Subscribe to server's upgrade event.
 
 ```javascript
-var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-var socketProxy = proxy('/socket', {
+const socketProxy = createProxyMiddleware('/socket', {
   target: 'http://localhost:3000',
-  ws: true
+  ws: true,
 });
 
 server.on('upgrade', proxy.upgrade); // <-- subscribe to http 'upgrade'

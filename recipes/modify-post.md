@@ -12,28 +12,24 @@ Since this only modifies the request body stream the original POST body paramete
 ```js
 'use strict';
 
-var express = require('express');
-var ProxyMiddleware = require('http-proxy-middleware');
-var router = express.Router();
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const router = express.Router();
 
-var proxy_filter = function(path, req) {
-  return (
-    path.match('^/docs') && (req.method === 'GET' || req.method === 'POST')
-  );
+const proxy_filter = function (path, req) {
+  return path.match('^/docs') && (req.method === 'GET' || req.method === 'POST');
 };
 
-var proxy_options = {
+const proxy_options = {
   target: 'http://localhost:8080',
   pathRewrite: {
-    '^/docs': '/java/rep/server1' // Host path & target path conversion
+    '^/docs': '/java/rep/server1', // Host path & target path conversion
   },
   onError(err, req, res) {
     res.writeHead(500, {
-      'Content-Type': 'text/plain'
+      'Content-Type': 'text/plain',
     });
-    res.end(
-      'Something went wrong. And we are reporting a custom error message.' + err
-    );
+    res.end('Something went wrong. And we are reporting a custom error message.' + err);
   },
   onProxyReq(proxyReq, req, res) {
     if (req.method == 'POST' && req.body) {
@@ -53,7 +49,7 @@ var proxy_options = {
 
       // URI encode JSON object
       body = Object.keys(body)
-        .map(function(key) {
+        .map(function (key) {
           return encodeURIComponent(key) + '=' + encodeURIComponent(body[key]);
         })
         .join('&');
@@ -66,14 +62,14 @@ var proxy_options = {
       proxyReq.write(body);
       proxyReq.end();
     }
-  }
+  },
 };
 
 // Proxy configuration
-var proxy = ProxyMiddleware(proxy_filter, proxy_options);
+const proxy = createProxyMiddleware(proxy_filter, proxy_options);
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: 'Node.js Express Proxy Test' });
 });
 

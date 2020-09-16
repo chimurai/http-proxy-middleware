@@ -13,7 +13,7 @@ describe('Path rewriting', () => {
         invalid: 'path/new',
         '/valid': '/path/new',
         '/some/specific/path': '/awe/some/specific/path',
-        '/some': '/awe/some'
+        '/some': '/awe/some',
       };
     });
 
@@ -56,7 +56,7 @@ describe('Path rewriting', () => {
   describe('Rewrite rule: add base path to requests', () => {
     beforeEach(() => {
       config = {
-        '^/': '/extra/base/path/'
+        '^/': '/extra/base/path/',
       };
     });
 
@@ -72,7 +72,7 @@ describe('Path rewriting', () => {
 
   describe('Rewrite function', () => {
     beforeEach(() => {
-      rewriter = fn => {
+      rewriter = (fn) => {
         const rewriteFn = createPathRewriter(fn);
         const requestPath = '/123/456';
         return rewriteFn(requestPath);
@@ -80,7 +80,7 @@ describe('Path rewriting', () => {
     });
 
     it('should return unmodified path', () => {
-      const rewriteFn = path => {
+      const rewriteFn = (path) => {
         return path;
       };
 
@@ -88,7 +88,7 @@ describe('Path rewriting', () => {
     });
 
     it('should return alternative path', () => {
-      const rewriteFn = path => {
+      const rewriteFn = (path) => {
         return '/foo/bar';
       };
 
@@ -96,11 +96,49 @@ describe('Path rewriting', () => {
     });
 
     it('should return replaced path', () => {
-      const rewriteFn = path => {
+      const rewriteFn = (path) => {
         return path.replace('/456', '/789');
       };
 
       expect(rewriter(rewriteFn)).toBe('/123/789');
+    });
+
+    // Same tests as the above three, but async
+
+    it('is async and should return unmodified path', () => {
+      const rewriteFn = async (path) => {
+        const promise = new Promise((resolve, reject) => {
+          resolve(path);
+        });
+        const changed = await promise;
+        return changed;
+      };
+
+      expect(rewriter(rewriteFn)).resolves.toBe('/123/456');
+    });
+
+    it('is async and should return alternative path', () => {
+      const rewriteFn = async (path) => {
+        const promise = new Promise((resolve, reject) => {
+          resolve('/foo/bar');
+        });
+        const changed = await promise;
+        return changed;
+      };
+
+      expect(rewriter(rewriteFn)).resolves.toBe('/foo/bar');
+    });
+
+    it('is async and should return replaced path', () => {
+      const rewriteFn = async (path) => {
+        const promise = new Promise((resolve, reject) => {
+          resolve(path.replace('/456', '/789'));
+        });
+        const changed = await promise;
+        return changed;
+      };
+
+      expect(rewriter(rewriteFn)).resolves.toBe('/123/789');
     });
   });
 
@@ -108,7 +146,7 @@ describe('Path rewriting', () => {
     let badFn;
 
     beforeEach(() => {
-      badFn = cfg => {
+      badFn = (cfg) => {
         return () => {
           createPathRewriter(cfg);
         };
@@ -135,6 +173,11 @@ describe('Path rewriting', () => {
     it('should not throw when function config is provided', () => {
       // tslint:disable-next-line: no-empty
       expect(badFn(() => {})).not.toThrowError(Error);
+    });
+
+    it('should not throw when async function config is provided', () => {
+      // tslint:disable-next-line: no-empty
+      expect(badFn(async () => {})).not.toThrowError(Error);
     });
   });
 });

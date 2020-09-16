@@ -24,7 +24,7 @@ describe('handlers factory', () => {
         onProxyReqWs: fnCustom,
         onProxyRes: fnCustom,
         onDummy: fnCustom,
-        foobar: fnCustom
+        foobar: fnCustom,
       };
 
       handlersMap = getHandlers(proxyOptions);
@@ -55,20 +55,20 @@ describe('handlers factory', () => {
 
 describe('default proxy error handler', () => {
   const mockError = {
-    code: 'ECONNREFUSED'
+    code: 'ECONNREFUSED',
   };
 
   const mockReq = {
     headers: {
-      host: 'localhost:3000'
+      host: 'localhost:3000',
     },
-    url: '/api'
+    url: '/api',
   };
 
   const proxyOptions = {
     target: {
-      host: 'localhost.dev'
-    }
+      host: 'localhost.dev',
+    },
   };
 
   let httpErrorCode;
@@ -83,7 +83,7 @@ describe('default proxy error handler', () => {
       errorMessage = v;
       return v;
     },
-    headersSent: false
+    headersSent: false,
   };
 
   let proxyError;
@@ -104,10 +104,10 @@ describe('default proxy error handler', () => {
     ['ECONNREFUSED', 504],
     ['ENOTFOUND', 504],
     ['ECONNREFUSED', 504],
-    ['any', 500]
+    ['any', 500],
   ];
 
-  codes.forEach(item => {
+  codes.forEach((item) => {
     const msg = item[0];
     const code = item[1];
     it('should set the http status code for ' + msg + ' to: ' + code, () => {
@@ -118,9 +118,7 @@ describe('default proxy error handler', () => {
 
   it('should end the response and return error message', () => {
     proxyError(mockError, mockReq, mockRes, proxyOptions);
-    expect(errorMessage).toBe(
-      'Error occured while trying to proxy to: localhost:3000/api'
-    );
+    expect(errorMessage).toBe('Error occured while trying to proxy to: localhost:3000/api');
   });
 
   it('should not set the http status code to: 500 if headers have already been sent', () => {
@@ -132,8 +130,6 @@ describe('default proxy error handler', () => {
   it('should end the response and return error message', () => {
     mockRes.headersSent = true;
     proxyError(mockError, mockReq, mockRes, proxyOptions);
-    expect(errorMessage).toBe(
-      'Error occured while trying to proxy to: localhost:3000/api'
-    );
+    expect(errorMessage).toBe('Error occured while trying to proxy to: localhost:3000/api');
   });
 });

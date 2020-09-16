@@ -1,19 +1,19 @@
 /**
  * Module dependencies.
  */
-var express = require('express');
-var proxy = require('../_proxy'); // require('http-proxy-middleware');
+const express = require('express');
+const { createProxyMiddleware } = require('../../dist'); // require('http-proxy-middleware');
 
 /**
  * Configure proxy middleware
  */
-var jsonPlaceholderProxy = proxy({
+const jsonPlaceholderProxy = createProxyMiddleware({
   target: 'http://jsonplaceholder.typicode.com',
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
-  logLevel: 'debug'
+  logLevel: 'debug',
 });
 
-var app = express();
+const app = express();
 
 /**
  * Add the proxy to express

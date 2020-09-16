@@ -9,18 +9,18 @@ Overview of `http-proxy-middleware` specific options.
 http-proxy-middleware uses Nodejitsu's [http-proxy](https://github.com/nodejitsu/node-http-proxy) to do the actual proxying. All of its [options](https://github.com/nodejitsu/node-http-proxy#options) are exposed via http-proxy-middleware's configuration object.
 
 ```javascript
-var proxy = require('http-proxy-middleware');
-var winston = require('winston');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const winston = require('winston');
 
 /**
  * Context matching: decide which path(s) should be proxied. (wildcards supported)
  **/
-var context = '/api';
+const context = '/api';
 
 /**
  * Proxy options
  */
-var options = {
+const options = {
   // hostname to the target server
   target: 'http://localhost:3000',
 
@@ -32,13 +32,13 @@ var options = {
 
   // additional request headers
   headers: {
-    'x-powered-by': 'foobar'
+    'x-powered-by': 'foobar',
   },
 
   // rewrite paths
   pathRewrite: {
     '^/api/old-path': '/api/new-path', // rewrite path
-    '^/api/remove/path': '/path' // remove base path
+    '^/api/remove/path': '/path', // remove base path
   },
 
   // re-target based on the request's host header and/or path
@@ -48,7 +48,7 @@ var options = {
     'integration.localhost:8000': 'http://localhost:8001', // host only
     'staging.localhost:8000': 'http://localhost:8002', // host only
     'localhost:8000/api': 'http://localhost:8003', // host + path
-    '/rest': 'http://localhost:8004' // path only
+    '/rest': 'http://localhost:8004', // path only
   },
 
   // control logging
@@ -56,7 +56,7 @@ var options = {
 
   // use a different lib for logging;
   // i.e., write logs to file or server
-  logProvider: function(provider) {
+  logProvider: function (provider) {
     return winston;
   },
 
@@ -67,16 +67,16 @@ var options = {
   },
 
   // subscribe to http-proxy's proxyRes event
-  onProxyRes: function(proxyRes, req, res) {
+  onProxyRes: function (proxyRes, req, res) {
     proxyRes.headers['x-added'] = 'foobar';
     delete proxyRes.headers['x-removed'];
   },
 
   // subscribe to http-proxy's proxyReq event
-  onProxyReq: function(proxyReq, req, res) {
+  onProxyReq: function (proxyReq, req, res) {
     // add custom header to request
     proxyReq.setHeader('x-powered-by', 'foobar');
-  }
+  },
 
   /**
    * The following options are provided by Nodejitsu's http-proxy
@@ -104,5 +104,5 @@ var options = {
 /**
  * Create the proxy middleware, so it can be used in a server.
  */
-var apiProxy = proxy(context, options);
+const apiProxy = createProxyMiddleware(context, options);
 ```
