@@ -1,6 +1,10 @@
 # Changelog
 
-## [v1.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.5)
+## [v1.0.6](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.6)
+
+- chore(deps): lodash 4.17.20 ([#475](https://github.com/chimurai/http-proxy-middleware/pull/475))
+
+## [v1.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.6)
 
 - chore(deps): lodash 4.17.19 ([#454](https://github.com/chimurai/http-proxy-middleware/pull/454))
 
