@@ -75,7 +75,7 @@
     "@types/http-proxy": "^1.17.4",
     "http-proxy": "^1.18.1",
     "is-glob": "^4.0.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "micromatch": "^4.0.2"
   },
   "engines": {
