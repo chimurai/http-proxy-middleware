@@ -1,5 +1,9 @@
-import { createProxyMiddleware as middleware } from '../src';
+import { createProxyMiddleware, createProxyMiddleware as middleware } from '../src';
 import { Options } from '../src/types';
+import * as http from 'http';
+import * as express from 'express';
+import * as connect from 'connect';
+import * as browserSync from 'browser-sync';
 
 describe('http-proxy-middleware TypeScript Types', () => {
   let options: Options;
@@ -154,6 +158,81 @@ describe('http-proxy-middleware TypeScript Types', () => {
         options = { onClose: (res, socket, head) => {} };
         expect(options).toBeDefined();
       });
+    });
+  });
+
+  describe('request response inference', () => {
+    interface FooBarRequest extends http.IncomingMessage {
+      foo: string;
+    }
+    interface FooBarResponse extends http.ServerResponse {
+      bar: number;
+    }
+    const fooBarUse = (handler: (request: FooBarRequest, response: FooBarResponse) => void) => {};
+
+    fooBarUse(createProxyMiddleware((_, request) => request.foo && true));
+    fooBarUse(
+      createProxyMiddleware({
+        onError: (_, request, response) => {
+          request.foo;
+          response.bar;
+          // @ts-expect-error
+          request.params;
+          // @ts-expect-error
+          response.json;
+        },
+      })
+    );
+  });
+
+  describe('works for third-party libraries', () => {
+    express().use(
+      '/proxy',
+      createProxyMiddleware({
+        onError: (_, request, response) => {
+          request.params;
+          response.json;
+          // @ts-expect-error
+          request.lol;
+          // @ts-expect-error
+          response.lol;
+        },
+      })
+    );
+
+    connect().use(
+      '/proxy',
+      createProxyMiddleware({
+        onError: (_, request, response) => {
+          // todo, non trivial fix @ts-expect-error
+          request.params;
+          /*
+          problem with connect types,
+          request somehow gets inferred to `any` because of `connect.ErrorHandleFunction`
+
+          connect types are anyway pretty weird, like in `connect().use((req, res) => {})`,
+          `req` and `req` get inferred to `any`
+          */
+
+          // @ts-expect-error
+          response.json;
+        },
+      })
+    );
+
+    browserSync.create().init({
+      server: {
+        middleware: [
+          createProxyMiddleware({
+            onError: (_, request, response) => {
+              // @ts-expect-error
+              request.params;
+              // @ts-expect-error
+              response.json;
+            },
+          }),
+        ],
+      },
     });
   });
 });

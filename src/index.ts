@@ -1,7 +1,14 @@
 import { HttpProxyMiddleware } from './http-proxy-middleware';
-import { Filter, Options } from './types';
+import { Filter, Options, RequestHandler } from './types';
+import * as http from 'http';
 
-export function createProxyMiddleware(context: Filter | Options, options?: Options) {
+export function createProxyMiddleware<
+  Request extends http.IncomingMessage,
+  Response extends http.ServerResponse
+>(
+  context: Filter<Request> | Options<Request, Response>,
+  options?: Options<Request, Response>
+): RequestHandler<Request, Response> {
   const { middleware } = new HttpProxyMiddleware(context, options);
   return middleware;
 }

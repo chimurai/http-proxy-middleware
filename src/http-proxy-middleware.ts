@@ -1,4 +1,3 @@
-import * as express from 'express';
 import * as httpProxy from 'http-proxy';
 import * as _ from 'lodash';
 import { createConfig } from './config-factory';
@@ -46,17 +45,17 @@ export class HttpProxyMiddleware {
   public middleware: RequestHandler = async (
     req: Request,
     res: Response,
-    next: express.NextFunction
+    next?: (error?: any) => void
   ) => {
     if (this.shouldProxy(this.config.context, req)) {
       try {
         const activeProxyOptions = await this.prepareProxyRequest(req);
         this.proxy.web(req, res, activeProxyOptions);
       } catch (err) {
-        next(err);
+        next && next(err);
       }
     } else {
-      next();
+      next && next();
     }
 
     if (this.proxyOptions.ws === true) {

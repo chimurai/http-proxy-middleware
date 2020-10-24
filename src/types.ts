@@ -1,18 +1,31 @@
-import * as express from 'express';
 import * as http from 'http';
 import * as httpProxy from 'http-proxy';
 import * as net from 'net';
 
-export interface Request extends express.Request {}
-export interface Response extends express.Response {}
+export interface Request extends http.IncomingMessage {
+  originalUrl?: string; // in case express, connect
+  hostname?: string; // in case express
+  host?: string; // in case express
+}
+export interface Response extends http.ServerResponse {}
 
-export interface RequestHandler extends express.RequestHandler {
+export interface RequestHandler<
+  Request extends http.IncomingMessage = http.IncomingMessage,
+  Response extends http.ServerResponse = http.ServerResponse
+> {
+  (request: Request, response: Response, next?: (err: any) => void): void;
   upgrade?: (req: Request, socket: net.Socket, head: any) => void;
 }
 
-export type Filter = string | string[] | ((pathname: string, req: Request) => boolean);
+export type Filter<Request extends http.IncomingMessage = http.IncomingMessage> =
+  | string
+  | string[]
+  | ((pathname: string, req: Request) => boolean);
 
-export interface Options extends httpProxy.ServerOptions {
+export interface Options<
+  Request extends http.IncomingMessage = http.IncomingMessage,
+  Response extends http.ServerResponse = http.ServerResponse
+> extends httpProxy.ServerOptions {
   pathRewrite?:
     | { [regexp: string]: string }
     | ((path: string, req: Request) => string)
