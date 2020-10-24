@@ -4,6 +4,7 @@ import * as http from 'http';
 import * as express from 'express';
 import * as connect from 'connect';
 import * as browserSync from 'browser-sync';
+/* tslint:disable:no-unused-expression because we're expecting expressions to compile */
 
 describe('http-proxy-middleware TypeScript Types', () => {
   let options: Options;
