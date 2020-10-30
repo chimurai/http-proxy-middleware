@@ -81,7 +81,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 ## Install
 
 ```bash
-$ npm install --save-dev http-proxy-middleware
+$ npm install --save http-proxy-middleware
 ```
 
 ## Core concept
