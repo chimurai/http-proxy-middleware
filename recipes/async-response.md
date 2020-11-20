@@ -72,4 +72,4 @@ const myProxy = createProxyMiddleware({
 app.use('/api', entryMiddleware, myProxy);
 ```
 
-_working sample available at: [codesandbox.io/s/holy-resonance-yz552](https://codesandbox.io/s/holy-resonance-yz552?file=/src/index.js)_
+_working sample available at: [codesandbox.io/s/holy-resonance-yz552](https://codesandbox.io/s/holy-resonance-yz552?file=/src/index.js) Server Control Panel: restart server, see logging_
