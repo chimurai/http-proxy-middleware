@@ -12,14 +12,14 @@ const myProxy = createProxyMiddleware({
     proxyReq.setHeader('mpth-1', 'da');
   },
   onProxyRes: async (proxyRes, req, res) => {
-    const bar = await new Promise((resolve, reject) => {
+    const da = await new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve({ wei: 'da' });
+        resolve({ wei: 'wei' });
       }, 200);
     });
 
     // add your dynamic header
-    res.setHeader('mpth-2', bar.wei);
+    res.setHeader('mpth-2', da.wei);
 
     // now pipe the response
     proxyRes.pipe(res);
@@ -29,7 +29,7 @@ const myProxy = createProxyMiddleware({
 app.use('/api', myProxy);
 ```
 
-There are also cases where you need to modify the request header async, we can achieve this by applying middleware in front of the proxy or by making onProxyReq async as well. Like:
+There are also cases where you need to modify the request header async, we can achieve this by applying middleware in front of the proxy. Like:
 
 ```javascript
 const entryMiddleware = async (req, res, next) => {
@@ -56,14 +56,14 @@ const myProxy = createProxyMiddleware({
     proxyReq.setHeader('mpth-1', req.locals.da);
   },
   onProxyRes: async (proxyRes, req, res) => {
-    const bar = await new Promise((resolve, reject) => {
+    const da = await new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve({ wei: 'da' });
+        resolve({ wei: 'wei' });
       }, 200);
     });
 
     // end:
-    res.setHeader('mpth-2', bar.wei);
+    res.setHeader('mpth-2', da.wei);
 
     proxyRes.pipe(res);
   },
