@@ -29,7 +29,7 @@ const myProxy = createProxyMiddleware({
 app.use('/api', myProxy);
 ```
 
-There are also cases where you need to modify the request header async, we can achieve this by applying middleware in front of the proxy. Like:
+There are also cases where you need to modify the request header async, we can achieve this by applying middleware in front of the proxy or by making onProxyReq async as well. Like:
 
 ```javascript
 const entryMiddleware = async (req, res, next) => {
