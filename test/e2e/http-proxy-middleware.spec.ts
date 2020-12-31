@@ -90,8 +90,8 @@ describe('E2E http-proxy-middleware', () => {
           )
         );
 
-        await mockTargetServer.post('/api').thenCallback((request) => {
-          expect(request.body.text).toBe('foo=bar&bar=baz');
+        await mockTargetServer.post('/api').thenCallback((req) => {
+          expect(req.body.text).toBe('foo=bar&bar=baz');
           return { status: 200 };
         });
         await agent.post('/api').send('foo=bar').send('bar=baz').expect(200);
@@ -106,8 +106,8 @@ describe('E2E http-proxy-middleware', () => {
           )
         );
 
-        await mockTargetServer.post('/api').thenCallback((request) => {
-          expect(request.body.json).toEqual({ foo: 'bar', bar: 'baz' });
+        await mockTargetServer.post('/api').thenCallback((req) => {
+          expect(req.body.json).toEqual({ foo: 'bar', bar: 'baz' });
           return { status: 200 };
         });
         await agent.post('/api').send({ foo: 'bar', bar: 'baz' }).expect(200);
