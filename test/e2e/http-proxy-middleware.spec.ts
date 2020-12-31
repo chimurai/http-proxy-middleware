@@ -3,6 +3,7 @@ import * as request from 'supertest';
 import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
 import { Request, Response } from '../../src/types';
 import { NextFunction } from 'express';
+import * as bodyParser from 'body-parser';
 
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {
@@ -75,6 +76,41 @@ describe('E2E http-proxy-middleware', () => {
           .expect(200);
 
         expect(response.text).toBe('OK');
+      });
+    });
+
+    describe('basic setup with configured body-parser', () => {
+      it('should proxy request body from form', async () => {
+        agent = request(
+          createApp(
+            bodyParser.urlencoded({ extended: false }),
+            createProxyMiddleware('/api', {
+              target: `http://localhost:${mockTargetServer.port}`,
+            })
+          )
+        );
+
+        await mockTargetServer.post('/api').thenCallback((request) => {
+          expect(request.body.text).toBe('foo=bar&bar=baz');
+          return { status: 200 };
+        });
+        await agent.post('/api').send('foo=bar').send('bar=baz').expect(200);
+      });
+      it('should proxy request body from json', async () => {
+        agent = request(
+          createApp(
+            bodyParser.urlencoded({ extended: false }),
+            createProxyMiddleware('/api', {
+              target: `http://localhost:${mockTargetServer.port}`,
+            })
+          )
+        );
+
+        await mockTargetServer.post('/api').thenCallback((request) => {
+          expect(request.body.json).toEqual({ foo: 'bar', bar: 'baz' });
+          return { status: 200 };
+        });
+        await agent.post('/api').send({ foo: 'bar', bar: 'baz' }).expect(200);
       });
     });
 

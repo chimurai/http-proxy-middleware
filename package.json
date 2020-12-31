@@ -60,6 +60,7 @@
     "@types/ws": "^7.4.0",
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.19.0",
+    "body-parser": "^1.19.0",
     "browser-sync": "^2.26.14",
     "connect": "^3.7.0",
     "eslint": "^7.23.0",

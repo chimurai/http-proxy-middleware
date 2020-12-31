@@ -3,9 +3,9 @@ import { Express, RequestHandler } from 'express';
 
 export { createProxyMiddleware, responseInterceptor } from '../../dist/index';
 
-export function createApp(middleware: RequestHandler): Express {
+export function createApp(...middleware: RequestHandler[]): Express {
   const app = express();
-  app.use(middleware);
+  app.use(...middleware);
   return app;
 }
 
