@@ -99,7 +99,7 @@ describe('E2E http-proxy-middleware', () => {
       it('should proxy request body from json', async () => {
         agent = request(
           createApp(
-            bodyParser.urlencoded({ extended: false }),
+            bodyParser.json(),
             createProxyMiddleware('/api', {
               target: `http://localhost:${mockTargetServer.port}`,
             })
