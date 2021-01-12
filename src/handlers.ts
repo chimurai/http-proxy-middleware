@@ -54,6 +54,7 @@ function defaultErrorHandler(err, req, res) {
         case 'ECONNRESET':
         case 'ENOTFOUND':
         case 'ECONNREFUSED':
+        case 'ETIMEDOUT':
           res.writeHead(504);
           break;
         default:
