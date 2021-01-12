@@ -180,8 +180,10 @@ export class HttpProxyMiddleware {
   };
 
   private fixBody = (proxyReq: ClientRequest, req: Request) => {
-    if (req.body instanceof Object) {
-      proxyReq.write(JSON.stringify(req.body));
+    if (req.is('application/json')) {
+      const bodyData = JSON.stringify(req.body);
+      proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+      proxyReq.write(bodyData);
     }
   };
 }
