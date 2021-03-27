@@ -1,27 +1,25 @@
-on: ["push","pull_request"]
+on: ['push', 'pull_request']
 
 name: Coveralls
 
 jobs:
-
   build:
     name: coveralls/build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@master
 
-    - uses: actions/checkout@master
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@master
+        with:
+          node-version: 14.x
 
-    - name: Use Node.js 14.x
-      uses: actions/setup-node@master
-      with:
-        node-version: 14.x
+      - name: yarn install, coverage
+        run: |
+          yarn install
+          yarn coverage
 
-    - name: yarn install, coverage
-      run: |
-        yarn install
-        yarn coverage
-
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.github_token }}
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}

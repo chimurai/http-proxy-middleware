@@ -1,6 +1,8 @@
 import { createProxyMiddleware, createApp, createAppWithPath } from './_utils';
 import * as request from 'supertest';
 import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
+import { Request, Response } from '../../src/types';
+import { NextFunction } from 'express';
 
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {
@@ -14,28 +16,20 @@ describe('E2E http-proxy-middleware', () => {
 
   describe('context matching', () => {
     describe('do not proxy', () => {
-      let isSkipped;
+      const mockReq: Request = { url: '/foo/bar', originalUrl: '/foo/bar' } as Request;
+      const mockRes: Response = {} as Response;
+      const mockNext: NextFunction = jest.fn();
 
       beforeEach(() => {
-        isSkipped = false;
-
-        let middleware;
-
-        const mockReq = { url: '/foo/bar', originalUrl: '/foo/bar' };
-        const mockRes = {};
-        const mockNext = () => {
-          // mockNext will be called when request is not proxied
-          isSkipped = true;
-        };
-
-        middleware = createProxyMiddleware('/api', {
+        const middleware = createProxyMiddleware('/api', {
           target: `http://localhost:8000`,
         });
+
         middleware(mockReq, mockRes, mockNext);
       });
 
       it('should not proxy requests when request url does not match context', () => {
-        expect(isSkipped).toBe(true);
+        expect(mockNext).toBeCalled();
       });
     });
   });

@@ -118,39 +118,39 @@ describe('http-proxy-middleware TypeScript Types', () => {
 
     describe('HPM http-proxy events', () => {
       it('should have onError type', () => {
-        // tslint:disable no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         options = { onError: (err, req, res) => {} };
         expect(options).toBeDefined();
       });
 
       it('should have onProxyReq type', () => {
-        // tslint:disable no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         options = { onProxyReq: (proxyReq, req, res) => {} };
         expect(options).toBeDefined();
       });
 
       it('should have onProxyRes type', () => {
-        // tslint:disable no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         options = { onProxyRes: (proxyRes, req, res) => {} };
         expect(options).toBeDefined();
       });
 
       it('should have onProxyReqWs type', () => {
         options = {
-          // tslint:disable no-empty
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           onProxyReqWs: (proxyReq, req, socket, opts, head) => {},
         };
         expect(options).toBeDefined();
       });
 
       it('should have onOpen type', () => {
-        // tslint:disable no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         options = { onOpen: (proxySocket) => {} };
         expect(options).toBeDefined();
       });
 
       it('should have onClose type', () => {
-        // tslint:disable no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         options = { onClose: (res, socket, head) => {} };
         expect(options).toBeDefined();
       });

@@ -12,16 +12,14 @@ describe('Usage in Express', () => {
   });
 
   afterEach(() => {
-    // tslint:disable-next-line: no-unused-expression
-    server && server.close();
+    server?.close();
   });
 
   // https://github.com/chimurai/http-proxy-middleware/issues/94
   describe('Express Sub Route', () => {
     beforeEach(() => {
       // sub route config
-      // @ts-ignore: Only a void function can be called with the 'new' keyword.ts(2350)
-      const sub = new express.Router();
+      const sub = express.Router();
 
       function filter(pathname, req) {
         const urlFilter = new RegExp('^/sub/api');

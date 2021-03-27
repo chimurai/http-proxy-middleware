@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-interface */
+
 import * as express from 'express';
 import * as http from 'http';
 import * as httpProxy from 'http-proxy';
