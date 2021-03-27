@@ -16,7 +16,7 @@ export function createConfig(context, opts?) {
   // app.use('/api', proxy({target:'http://localhost:9000'}));
   if (isContextless(context, opts)) {
     config.context = '/';
-    config.options = _.assign(config.options, context);
+    config.options = Object.assign(config.options, context);
 
     // app.use('/api', proxy('http://localhost:9000'));
     // app.use(proxy('http://localhost:9000/api'));
@@ -25,7 +25,7 @@ export function createConfig(context, opts?) {
     const target = [oUrl.protocol, '//', oUrl.host].join('');
 
     config.context = oUrl.pathname || '/';
-    config.options = _.assign(config.options, { target }, opts);
+    config.options = Object.assign(config.options, { target }, opts);
 
     if (oUrl.protocol === 'ws:' || oUrl.protocol === 'wss:') {
       config.options.ws = true;
@@ -33,7 +33,7 @@ export function createConfig(context, opts?) {
     // app.use('/api', proxy({target:'http://localhost:9000'}));
   } else {
     config.context = context;
-    config.options = _.assign(config.options, opts);
+    config.options = Object.assign(config.options, opts);
   }
 
   configureLogger(config.options);
@@ -57,7 +57,7 @@ export function createConfig(context, opts?) {
  * @return {Boolean}         [description]
  */
 function isStringShortHand(context: Filter) {
-  if (_.isString(context)) {
+  if (typeof context === 'string') {
     return !!url.parse(context).host;
   }
 }
@@ -74,7 +74,7 @@ function isStringShortHand(context: Filter) {
  * @return {Boolean}         [description]
  */
 function isContextless(context: Filter, opts: Options) {
-  return _.isPlainObject(context) && _.isEmpty(opts);
+  return _.isPlainObject(context) && (opts == null || Object.keys(opts).length === 0);
 }
 
 function configureLogger(options: Options) {

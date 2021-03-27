@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as util from 'util';
 
 let loggerInstance;
@@ -82,7 +81,7 @@ class Logger {
   public isValidProvider(fnProvider) {
     const result = true;
 
-    if (fnProvider && !_.isFunction(fnProvider)) {
+    if (fnProvider && typeof fnProvider !== 'function') {
       throw new Error('[HPM] Log provider config error. Expecting a function.');
     }
 
@@ -118,9 +117,8 @@ class Logger {
 
   // make sure logged messages and its data are return interpolated
   // make it possible for additional log data, such date/time or custom prefix.
-  private _interpolate() {
-    const fn = _.spread(util.format);
-    const result = fn(_.slice(arguments));
+  private _interpolate(format, ...args) {
+    const result = util.format(format, ...args);
 
     return result;
   }

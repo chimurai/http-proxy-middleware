@@ -16,7 +16,7 @@ export function createPathRewriter(rewriteConfig) {
     return;
   }
 
-  if (_.isFunction(rewriteConfig)) {
+  if (typeof rewriteConfig === 'function') {
     const customRewriteFn = rewriteConfig;
     return customRewriteFn;
   } else {
@@ -27,26 +27,26 @@ export function createPathRewriter(rewriteConfig) {
   function rewritePath(path) {
     let result = path;
 
-    _.forEach(rulesCache, (rule) => {
+    for (const rule of rulesCache) {
       if (rule.regex.test(path)) {
         result = result.replace(rule.regex, rule.value);
         logger.debug('[HPM] Rewriting path from "%s" to "%s"', path, result);
-        return false;
+        break;
       }
-    });
+    }
 
     return result;
   }
 }
 
 function isValidRewriteConfig(rewriteConfig) {
-  if (_.isFunction(rewriteConfig)) {
+  if (typeof rewriteConfig === 'function') {
     return true;
-  } else if (!_.isEmpty(rewriteConfig) && _.isPlainObject(rewriteConfig)) {
+  } else if (_.isPlainObject(rewriteConfig) && Object.keys(rewriteConfig).length !== 0) {
     return true;
   } else if (
-    _.isUndefined(rewriteConfig) ||
-    _.isNull(rewriteConfig) ||
+    rewriteConfig === undefined ||
+    rewriteConfig === null ||
     _.isEqual(rewriteConfig, {})
   ) {
     return false;
@@ -59,13 +59,13 @@ function parsePathRewriteRules(rewriteConfig) {
   const rules = [];
 
   if (_.isPlainObject(rewriteConfig)) {
-    _.forIn(rewriteConfig, (value, key) => {
+    for (const [key] of Object.entries(rewriteConfig)) {
       rules.push({
         regex: new RegExp(key),
         value: rewriteConfig[key],
       });
       logger.info('[HPM] Proxy rewrite rule created: "%s" ~> "%s"', key, rewriteConfig[key]);
-    });
+    }
   }
 
   return rules;
