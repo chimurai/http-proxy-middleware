@@ -104,6 +104,7 @@ describe('default proxy error handler', () => {
     ['ECONNREFUSED', 504],
     ['ENOTFOUND', 504],
     ['ECONNREFUSED', 504],
+    ['ETIMEDOUT', 504],
     ['any', 500],
   ];
 
