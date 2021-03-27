@@ -53,7 +53,6 @@
     "@types/express": "^4.17.3",
     "@types/is-glob": "^4.0.1",
     "@types/jest": "^26.0.22",
-    "@types/lodash": "^4.14.168",
     "@types/micromatch": "^4.0.1",
     "@types/node": "^14.14.37",
     "@types/supertest": "^2.0.10",
@@ -79,9 +78,10 @@
   },
   "dependencies": {
     "@types/http-proxy": "^1.17.5",
+    "camelcase": "^6.2.0",
     "http-proxy": "^1.18.1",
     "is-glob": "^4.0.1",
-    "lodash": "^4.17.21",
+    "is-plain-obj": "^3.0.0",
     "micromatch": "^4.0.2"
   },
   "engines": {

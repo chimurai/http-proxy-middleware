@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import isPlainObj = require('is-plain-obj');
 import { ERRORS } from './errors';
 import { getInstance } from './logger';
 const logger = getInstance();
@@ -42,13 +42,9 @@ export function createPathRewriter(rewriteConfig) {
 function isValidRewriteConfig(rewriteConfig) {
   if (typeof rewriteConfig === 'function') {
     return true;
-  } else if (_.isPlainObject(rewriteConfig) && Object.keys(rewriteConfig).length !== 0) {
-    return true;
-  } else if (
-    rewriteConfig === undefined ||
-    rewriteConfig === null ||
-    _.isEqual(rewriteConfig, {})
-  ) {
+  } else if (isPlainObj(rewriteConfig)) {
+    return Object.keys(rewriteConfig).length !== 0;
+  } else if (rewriteConfig === undefined || rewriteConfig === null) {
     return false;
   } else {
     throw new Error(ERRORS.ERR_PATH_REWRITER_CONFIG);
@@ -58,7 +54,7 @@ function isValidRewriteConfig(rewriteConfig) {
 function parsePathRewriteRules(rewriteConfig) {
   const rules = [];
 
-  if (_.isPlainObject(rewriteConfig)) {
+  if (isPlainObj(rewriteConfig)) {
     for (const [key] of Object.entries(rewriteConfig)) {
       rules.push({
         regex: new RegExp(key),
