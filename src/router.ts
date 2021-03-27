@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import isPlainObj = require('is-plain-obj');
 import { getInstance } from './logger';
 const logger = getInstance();
 
@@ -6,7 +6,7 @@ export async function getTarget(req, config) {
   let newTarget;
   const router = config.router;
 
-  if (_.isPlainObject(router)) {
+  if (isPlainObj(router)) {
     newTarget = getTargetFromProxyTable(req, router);
   } else if (typeof router === 'function') {
     newTarget = await router(req);

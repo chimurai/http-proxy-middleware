@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import isPlainObj = require('is-plain-obj');
 import * as url from 'url';
 import { ERRORS } from './errors';
 import { getInstance } from './logger';
@@ -74,7 +74,7 @@ function isStringShortHand(context: Filter) {
  * @return {Boolean}         [description]
  */
 function isContextless(context: Filter, opts: Options) {
-  return _.isPlainObject(context) && (opts == null || Object.keys(opts).length === 0);
+  return isPlainObj(context) && (opts == null || Object.keys(opts).length === 0);
 }
 
 function configureLogger(options: Options) {

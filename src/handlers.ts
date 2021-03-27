@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import camelcase = require('camelcase');
 import { getInstance } from './logger';
 const logger = getInstance();
 
@@ -21,7 +21,7 @@ export function getHandlers(options) {
     // all handlers for the http-proxy events are prefixed with 'on'.
     // loop through options and try to find these handlers
     // and add them to the handlers object for subscription in init().
-    const eventName = _.camelCase('on ' + event);
+    const eventName = camelcase('on ' + event);
     const fnHandler = options ? options[eventName] : null;
 
     if (typeof fnHandler === 'function') {
