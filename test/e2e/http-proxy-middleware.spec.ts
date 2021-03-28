@@ -382,11 +382,12 @@ describe('E2E http-proxy-middleware', () => {
     });
 
     describe('option.logLevel & option.logProvider', () => {
-      let logMessage;
+      let logMessages: string[];
 
       beforeEach(() => {
-        const customLogger = (message) => {
-          logMessage = message;
+        logMessages = [];
+        const customLogger = (message: string) => {
+          logMessages.push(message);
         };
 
         agent = request(
@@ -406,9 +407,12 @@ describe('E2E http-proxy-middleware', () => {
         await mockTargetServer.get('/api/foo/bar').thenReply(200);
         await agent.get(`/api/foo/bar`).expect(200);
 
-        expect(logMessage).toMatchInlineSnapshot(
-          `"[HPM] Proxy created: /api  -> http://localhost:8000"`
-        );
+        expect(logMessages).toMatchInlineSnapshot(`
+          Array [
+            "[HPM] Proxy created: /api  -> http://localhost:8000",
+            "[HPM] server close signal received: closing proxy server",
+          ]
+        `);
       });
     });
   });
