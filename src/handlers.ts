@@ -1,3 +1,4 @@
+import type * as express from 'express';
 import camelcase = require('camelcase');
 import { getInstance } from './logger';
 const logger = getInstance();
@@ -42,7 +43,7 @@ export function getHandlers(options) {
   return handlers;
 }
 
-function defaultErrorHandler(err, req, res) {
+function defaultErrorHandler(err, req: express.Request, res: express.Response) {
   const host = req.headers && req.headers.host;
   const code = err.code;
 
@@ -63,7 +64,7 @@ function defaultErrorHandler(err, req, res) {
     }
   }
 
-  res.end('Error occured while trying to proxy to: ' + host + req.url);
+  res.end(`Error occured while trying to proxy: ${host}${req.url}`);
 }
 
 function logClose(req, socket, head) {
