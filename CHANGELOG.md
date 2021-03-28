@@ -2,6 +2,7 @@
 
 ## next
 
+- fix(errorHandler): fix confusing error message ([#509](https://github.com/chimurai/http-proxy-middleware/pull/509))
 - fix(proxy): close proxy when server closes ([#508](https://github.com/chimurai/http-proxy-middleware/pull/508))
 - refactor(lodash): remove lodash ([#459](https://github.com/chimurai/http-proxy-middleware/pull/459)) ([#507](https://github.com/chimurai/http-proxy-middleware/pull/507)) ([TrySound](https://github.com/TrySound))
 - fix(ETIMEDOUT): return 504 on ETIMEDOUT ([#480](https://github.com/chimurai/http-proxy-middleware/pull/480)) ([aremishevsky](https://github.com/aremishevsky))
