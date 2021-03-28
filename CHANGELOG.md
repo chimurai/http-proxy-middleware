@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.0.7](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.7)
+## [v1.1.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.1.0)
 
 - fix(errorHandler): fix confusing error message ([#509](https://github.com/chimurai/http-proxy-middleware/pull/509))
 - fix(proxy): close proxy when server closes ([#508](https://github.com/chimurai/http-proxy-middleware/pull/508))
