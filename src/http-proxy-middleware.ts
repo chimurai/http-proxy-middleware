@@ -1,3 +1,4 @@
+import * as https from 'https';
 import * as express from 'express';
 import * as httpProxy from 'http-proxy';
 import { createConfig } from './config-factory';
@@ -12,6 +13,7 @@ export class HttpProxyMiddleware {
   private logger = getInstance();
   private config;
   private wsInternalSubscribed = false;
+  private serverOnCloseSubscribed = false;
   private proxyOptions: Options;
   private proxy: httpProxy;
   private pathRewriter;
@@ -58,13 +60,31 @@ export class HttpProxyMiddleware {
       next();
     }
 
+    /**
+     * Get the server object to subscribe to server events;
+     * 'upgrade' for websocket and 'close' for graceful shutdown
+     *
+     * NOTE:
+     * req.socket: node >= 13
+     * req.connection: node < 13 (Remove this when node 12/13 support is dropped)
+     */
+    const server: https.Server = ((req.socket ?? req.connection) as any)?.server;
+
+    if (server && !this.serverOnCloseSubscribed) {
+      server.on('close', () => {
+        this.logger.info('[HPM] server close signal received: closing proxy server');
+        this.proxy.close();
+      });
+      this.serverOnCloseSubscribed = true;
+    }
+
     if (this.proxyOptions.ws === true) {
       // use initial request to access the server object to subscribe to http upgrade event
-      this.catchUpgradeRequest((req.connection as any).server);
+      this.catchUpgradeRequest(server);
     }
   };
 
-  private catchUpgradeRequest = (server) => {
+  private catchUpgradeRequest = (server: https.Server) => {
     if (!this.wsInternalSubscribed) {
       server.on('upgrade', this.handleUpgrade);
       // prevent duplicate upgrade handling;

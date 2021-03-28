@@ -4,8 +4,8 @@ import { createProxyMiddleware } from './_utils';
 import { Options } from '../../src/index';
 
 describe('Usage in Express', () => {
-  let app;
-  let server;
+  let app: express.Express;
+  let server: http.Server;
 
   beforeEach(() => {
     app = express();
@@ -46,6 +46,7 @@ describe('Usage in Express', () => {
       server = app.listen(3000);
     });
 
+    // FIXME: flaky e2e test; caused by fixed port:3000
     it('should still return a response when route does not match proxyConfig', (done) => {
       let responseBody;
       http.get('http://localhost:3000/sub/hello', (res) => {
