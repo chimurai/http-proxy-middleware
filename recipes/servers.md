@@ -9,6 +9,7 @@ Missing a server? Feel free to extend this list of examples.
 - [Browser-Sync](#browser-sync)
 - [Express](#express)
 - [Connect](#connect)
+- [fastify](#fastify)
 - [lite-server](#lite-server)
 - [Polka](#polka)
 - [grunt-contrib-connect](#grunt-contrib-connect)
@@ -81,6 +82,33 @@ const app = connect();
 app.use(apiProxy);
 
 http.createServer(app).listen(3000);
+```
+
+## fastify
+
+https://github.com/fastify/fastify [![GitHub stars](https://img.shields.io/github/stars/fastify/fastify.svg?style=social&label=Star)](https://github.com/lukeed/polka)
+
+```javascript
+const fastify = require('fastify')({ logger: true });
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+(async () => {
+  await fastify.register(require('fastify-express'));
+
+  const proxy = createProxyMiddleware({
+    target: 'http://jsonplaceholder.typicode.com',
+    changeOrigin: true,
+  });
+
+  fastify.use(proxy);
+
+  fastify.listen(3000, (err, address) => {
+    if (err) throw err;
+    fastify.log.info(`server listening on ${address}`);
+  });
+})();
+
+// curl http://localhost:3000/users
 ```
 
 ## lite-server
