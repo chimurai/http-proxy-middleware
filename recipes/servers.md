@@ -86,7 +86,7 @@ http.createServer(app).listen(3000);
 
 ## fastify
 
-https://github.com/fastify/fastify [![GitHub stars](https://img.shields.io/github/stars/fastify/fastify.svg?style=social&label=Star)](https://github.com/lukeed/polka)
+https://github.com/fastify/fastify [![GitHub stars](https://img.shields.io/github/stars/fastify/fastify.svg?style=social&label=Star)](https://github.com/fastify/fastify)
 
 ```javascript
 const fastify = require('fastify')({ logger: true });
