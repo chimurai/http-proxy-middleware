@@ -500,6 +500,7 @@ View the [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master
 
 - [connect](https://www.npmjs.com/package/connect)
 - [express](https://www.npmjs.com/package/express)
+- [fastify](https://www.npmjs.com/package/fastify)
 - [browser-sync](https://www.npmjs.com/package/browser-sync)
 - [lite-server](https://www.npmjs.com/package/lite-server)
 - [polka](https://github.com/lukeed/polka)
