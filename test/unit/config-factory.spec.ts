@@ -136,8 +136,24 @@ describe('configFactory', () => {
         };
       });
 
-      it('should throw an error when target option is missing', () => {
+      it('should throw an error when target and router option are missing', () => {
         expect(fn).toThrowError(Error);
+      });
+    });
+
+    describe('optional option.target when option.router is used', () => {
+      let fn;
+
+      beforeEach(() => {
+        fn = () => {
+          createConfig('/api', {
+            router: (req) => 'http://www.example.com',
+          });
+        };
+      });
+
+      it('should not throw an error when target option is missing when router is used', () => {
+        expect(fn).not.toThrowError(Error);
       });
     });
 

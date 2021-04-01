@@ -6,9 +6,11 @@ import { Filter, Options } from './types';
 
 const logger = getInstance();
 
-export function createConfig(context, opts?) {
+export type Config = { context: Filter; options: Options };
+
+export function createConfig(context, opts?: Options): Config {
   // structure of config object to be returned
-  const config = {
+  const config: Config = {
     context: undefined,
     options: {} as Options,
   };
@@ -38,7 +40,7 @@ export function createConfig(context, opts?) {
 
   configureLogger(config.options);
 
-  if (!config.options.target) {
+  if (!config.options.target && !config.options.router) {
     throw new Error(ERRORS.ERR_CONFIG_FACTORY_TARGET_MISSING);
   }
 
