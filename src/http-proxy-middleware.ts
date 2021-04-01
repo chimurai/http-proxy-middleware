@@ -1,7 +1,7 @@
 import * as https from 'https';
 import * as express from 'express';
 import * as httpProxy from 'http-proxy';
-import { createConfig } from './config-factory';
+import { createConfig, Config } from './config-factory';
 import * as contextMatcher from './context-matcher';
 import * as handlers from './handlers';
 import { getArrow, getInstance } from './logger';
@@ -11,7 +11,7 @@ import { Filter, Request, RequestHandler, Response, Options } from './types';
 
 export class HttpProxyMiddleware {
   private logger = getInstance();
-  private config;
+  private config: Config;
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options;

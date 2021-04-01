@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- fix(option): optional `target` when `router` is used ([#512](https://github.com/chimurai/http-proxy-middleware/pull/512))
+
 ## [v1.1.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.1.0)
 
 - fix(errorHandler): fix confusing error message ([#509](https://github.com/chimurai/http-proxy-middleware/pull/509))
