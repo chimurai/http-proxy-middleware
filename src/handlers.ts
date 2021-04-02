@@ -1,9 +1,11 @@
 import type * as express from 'express';
+import type { Options } from './types';
+import type * as httpProxy from 'http-proxy';
 import camelcase = require('camelcase');
 import { getInstance } from './logger';
 const logger = getInstance();
 
-export function init(proxy, option) {
+export function init(proxy: httpProxy, option: Options): void {
   const handlers = getHandlers(option);
 
   for (const eventName of Object.keys(handlers)) {
@@ -13,7 +15,7 @@ export function init(proxy, option) {
   logger.debug('[HPM] Subscribed to http-proxy events:', Object.keys(handlers));
 }
 
-export function getHandlers(options) {
+export function getHandlers(options: Options) {
   // https://github.com/nodejitsu/node-http-proxy#listening-for-proxy-events
   const proxyEvents = ['error', 'proxyReq', 'proxyReqWs', 'proxyRes', 'open', 'close'];
   const handlers: any = {};

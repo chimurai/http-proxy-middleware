@@ -1,17 +1,18 @@
+import type { Filter, Request } from './types';
 import * as isGlob from 'is-glob';
 import * as micromatch from 'micromatch';
 import * as url from 'url';
 import { ERRORS } from './errors';
 
-export function match(context, uri, req) {
+export function match(context: Filter, uri: string, req: Request): boolean {
   // single path
-  if (isStringPath(context)) {
-    return matchSingleStringPath(context, uri);
+  if (isStringPath(context as string)) {
+    return matchSingleStringPath(context as string, uri);
   }
 
   // single glob path
-  if (isGlobPath(context)) {
-    return matchSingleGlobPath(context, uri);
+  if (isGlobPath(context as string)) {
+    return matchSingleGlobPath(context as string[], uri);
   }
 
   // multi path
@@ -20,7 +21,7 @@ export function match(context, uri, req) {
       return matchMultiPath(context, uri);
     }
     if (context.every(isGlobPath)) {
-      return matchMultiGlobPath(context, uri);
+      return matchMultiGlobPath(context as string[], uri);
     }
 
     throw new Error(ERRORS.ERR_CONTEXT_MATCHER_INVALID_ARRAY);
@@ -40,18 +41,18 @@ export function match(context, uri, req) {
  * @param  {String} uri     'http://example.org/api/b/c/d.html'
  * @return {Boolean}
  */
-function matchSingleStringPath(context, uri) {
+function matchSingleStringPath(context: string, uri: string) {
   const pathname = getUrlPathName(uri);
   return pathname.indexOf(context) === 0;
 }
 
-function matchSingleGlobPath(pattern, uri) {
+function matchSingleGlobPath(pattern: string | string[], uri: string) {
   const pathname = getUrlPathName(uri);
   const matches = micromatch([pathname], pattern);
   return matches && matches.length > 0;
 }
 
-function matchMultiGlobPath(patternList, uri) {
+function matchMultiGlobPath(patternList: string | string[], uri: string) {
   return matchSingleGlobPath(patternList, uri);
 }
 
@@ -60,7 +61,7 @@ function matchMultiGlobPath(patternList, uri) {
  * @param  {String} uri     'http://example.org/api/b/c/d.html'
  * @return {Boolean}
  */
-function matchMultiPath(contextList, uri) {
+function matchMultiPath(contextList: string[], uri: string) {
   let isMultiPath = false;
 
   for (const context of contextList) {
@@ -79,14 +80,14 @@ function matchMultiPath(contextList, uri) {
  * @param  {String} uri from req.url
  * @return {String}     RFC 3986 path
  */
-function getUrlPathName(uri) {
+function getUrlPathName(uri: string) {
   return uri && url.parse(uri).pathname;
 }
 
-function isStringPath(context) {
+function isStringPath(context: string) {
   return typeof context === 'string' && !isGlob(context);
 }
 
-function isGlobPath(context) {
+function isGlobPath(context: string) {
   return isGlob(context);
 }
