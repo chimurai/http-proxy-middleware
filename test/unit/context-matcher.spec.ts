@@ -1,7 +1,8 @@
+import type { Request } from '../../src/types';
 import * as contextMatcher from '../../src/context-matcher';
 
 describe('Context Matching', () => {
-  const fakeReq = {};
+  const fakeReq = {} as Request;
 
   describe('String path matching', () => {
     let result;

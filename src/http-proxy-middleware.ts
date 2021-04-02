@@ -1,5 +1,6 @@
-import * as https from 'https';
-import * as express from 'express';
+import type * as https from 'https';
+import type * as express from 'express';
+import type { Filter, Request, RequestHandler, Response, Options } from './types';
 import * as httpProxy from 'http-proxy';
 import { createConfig, Config } from './config-factory';
 import * as contextMatcher from './context-matcher';
@@ -7,7 +8,6 @@ import * as handlers from './handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
-import { Filter, Request, RequestHandler, Response, Options } from './types';
 
 export class HttpProxyMiddleware {
   private logger = getInstance();
@@ -109,7 +109,7 @@ export class HttpProxyMiddleware {
    * @param  {Object} req     [description]
    * @return {Boolean}
    */
-  private shouldProxy = (context, req: Request) => {
+  private shouldProxy = (context, req: Request): boolean => {
     const path = req.originalUrl || req.url;
     return contextMatcher.match(context, path, req);
   };
