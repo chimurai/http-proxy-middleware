@@ -1,7 +1,6 @@
 import type * as express from 'express';
 import type { Options } from './types';
 import type * as httpProxy from 'http-proxy';
-import camelcase = require('camelcase');
 import { getInstance } from './logger';
 const logger = getInstance();
 
@@ -15,20 +14,29 @@ export function init(proxy: httpProxy, option: Options): void {
   logger.debug('[HPM] Subscribed to http-proxy events:', Object.keys(handlers));
 }
 
+type HttpProxyEventName = 'error' | 'proxyReq' | 'proxyReqWs' | 'proxyRes' | 'open' | 'close';
+
 export function getHandlers(options: Options) {
   // https://github.com/nodejitsu/node-http-proxy#listening-for-proxy-events
-  const proxyEvents = ['error', 'proxyReq', 'proxyReqWs', 'proxyRes', 'open', 'close'];
+  const proxyEventsMap: Record<HttpProxyEventName, string> = {
+    error: 'onError',
+    proxyReq: 'onProxyReq',
+    proxyReqWs: 'onProxyReqWs',
+    proxyRes: 'onProxyRes',
+    open: 'onOpen',
+    close: 'onClose',
+  };
+
   const handlers: any = {};
 
-  for (const event of proxyEvents) {
+  for (const [eventName, onEventName] of Object.entries(proxyEventsMap)) {
     // all handlers for the http-proxy events are prefixed with 'on'.
     // loop through options and try to find these handlers
     // and add them to the handlers object for subscription in init().
-    const eventName = camelcase('on ' + event);
-    const fnHandler = options ? options[eventName] : null;
+    const fnHandler = options ? options[onEventName] : null;
 
     if (typeof fnHandler === 'function') {
-      handlers[event] = fnHandler;
+      handlers[eventName] = fnHandler;
     }
   }
 
