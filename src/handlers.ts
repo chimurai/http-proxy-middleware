@@ -54,6 +54,11 @@ export function getHandlers(options: Options) {
 }
 
 function defaultErrorHandler(err, req: express.Request, res: express.Response) {
+  // Re-throw error. Not recoverable since req & res are empty.
+  if (!req && !res) {
+    throw err; // "Error: Must provide a proper URL as target"
+  }
+
   const host = req.headers && req.headers.host;
   const code = err.code;
 
