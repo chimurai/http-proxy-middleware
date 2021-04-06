@@ -133,4 +133,11 @@ describe('default proxy error handler', () => {
     proxyError(mockError, mockReq, mockRes, proxyOptions);
     expect(errorMessage).toBe('Error occured while trying to proxy: localhost:3000/api');
   });
+
+  it('should re-throw error from http-proxy when target is missing', () => {
+    mockRes.headersSent = true;
+    const error = new Error('Must provide a proper URL as target');
+    const fn = () => proxyError(error, undefined, undefined, proxyOptions);
+    expect(fn).toThrowError(error);
+  });
 });
