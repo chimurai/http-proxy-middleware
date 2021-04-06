@@ -4,7 +4,7 @@ import type { Filter, Request, RequestHandler, Response, Options } from './types
 import * as httpProxy from 'http-proxy';
 import { createConfig, Config } from './config-factory';
 import * as contextMatcher from './context-matcher';
-import * as handlers from './handlers';
+import * as handlers from './_handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
