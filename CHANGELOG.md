@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- feat(handler): response interceptor
+
 ## [v1.1.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.1.2)
 
 - fix(log error): handle optional target ([#523](https://github.com/chimurai/http-proxy-middleware/pull/523))

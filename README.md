@@ -69,6 +69,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [app.use\(path, proxy\)](#appusepath-proxy)
 - [WebSocket](#websocket)
   - [External WebSocket upgrade](#external-websocket-upgrade)
+- [Intercept and manipulate responses](#intercept-and-manipulate-responses)
 - [Working examples](#working-examples)
 - [Recipes](#recipes)
 - [Compatible servers](#compatible-servers)
@@ -481,6 +482,39 @@ const server = app.listen(3000);
 server.on('upgrade', wsProxy.upgrade); // <-- subscribe to http 'upgrade'
 ```
 
+## Intercept and manipulate responses
+
+Intercept responses from upstream with `responseInterceptor`. (Make sure to set `selfHandleResponse: true`)
+
+Responses which are compressed with `brotli`, `gzip` and `deflate` will be decompressed automatically. The response will be returned as `buffer` ([docs](https://nodejs.org/api/buffer.html)) which you can manipulate.
+
+With `buffer`, response manipulation is not limited to text responses (html/css/js, etc...); image manipulation will be possible too. ([example](https://github.com/chimurai/http-proxy-middleware/blob/response-interceptor/recipes/response-interceptor.md#manipulate-image-response))
+
+NOTE: `responseInterceptor` disables streaming of target's response.
+
+Example:
+
+```javascript
+const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
+
+const proxy = createProxyMiddleware({
+  /**
+   * IMPORTANT: avoid res.end being called automatically
+   **/
+  selfHandleResponse: true, // res.end() will be called internally by responseInterceptor()
+
+  /**
+   * Intercept response and replace 'Hello' with 'Goodbye'
+   **/
+  onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+    const response = responseBuffer.toString('utf-8'); // convert buffer to string
+    return response.replace('Hello', 'Goodbye'); // manipulate response and return the result
+  }),
+});
+```
+
+Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/response-interceptor/recipes/response-interceptor.md#readme) for more examples.
+
 ## Working examples
 
 View and play around with [working examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples).
@@ -489,6 +523,7 @@ View and play around with [working examples](https://github.com/chimurai/http-pr
 - express ([example source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express/index.js))
 - connect ([example source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect/index.js))
 - WebSocket ([example source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/websocket/index.js))
+- Response Manipulation ([example source](https://github.com/chimurai/http-proxy-middleware/blob/master/response-interceptor/examples/response-interceptor/index.js))
 
 ## Recipes
 
