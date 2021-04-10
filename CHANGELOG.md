@@ -1,7 +1,8 @@
 # Changelog
 
-## next
+## [v1.1.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.1.1)
 
+- fix(error handler): re-throw http-proxy missing target error ([#517](https://github.com/chimurai/http-proxy-middleware/pull/517))
 - refactor(dependency): remove `camelcase`
 - fix(option): optional `target` when `router` is used ([#512](https://github.com/chimurai/http-proxy-middleware/pull/512))
 
