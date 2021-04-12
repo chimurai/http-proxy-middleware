@@ -298,7 +298,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
 - **option.onError**: function, subscribe to http-proxy's `error` event for custom error handling.
 
   ```javascript
-  function onError(err, req, res) {
+  function onError(err, req, res, target) {
     res.writeHead(500, {
       'Content-Type': 'text/plain',
     });
