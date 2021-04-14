@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.1.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.1.2)
+
+- fix(log error): handle optional target ([#523](https://github.com/chimurai/http-proxy-middleware/pull/523))
+
 ## [v1.1.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.1.1)
 
 - fix(error handler): re-throw http-proxy missing target error ([#517](https://github.com/chimurai/http-proxy-middleware/pull/517))

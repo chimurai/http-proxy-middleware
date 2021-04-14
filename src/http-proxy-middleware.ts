@@ -8,7 +8,6 @@ import * as handlers from './handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
-
 export class HttpProxyMiddleware {
   private logger = getInstance();
   private config: Config;
@@ -184,13 +183,14 @@ export class HttpProxyMiddleware {
     }
   };
 
-  private logError = (err, req: Request, res: Response) => {
-    const hostname = (req.headers && req.headers.host) || req.hostname || req.host; // (websocket) || (node0.10 || node 4/5)
-    const target = (this.proxyOptions.target as any).host || this.proxyOptions.target;
-    const errorMessage =
-      '[HPM] Error occurred while trying to proxy request %s from %s to %s (%s) (%s)';
+  private logError = (err, req: Request, res: Response, target) => {
+    const hostname = req.headers?.host || req.hostname || req.host; // (websocket) || (node0.10 || node 4/5)
+    const requestHref = `${hostname}${req.url}`;
+    const targetHref = `${target.href}`;
+
+    const errorMessage = '[HPM] Error occurred while proxying request %s to %s [%s] (%s)';
     const errReference = 'https://nodejs.org/api/errors.html#errors_common_system_errors'; // link to Node Common Systems Errors page
 
-    this.logger.error(errorMessage, req.url, hostname, target, err.code || err, errReference);
+    this.logger.error(errorMessage, requestHref, targetHref, err.code || err, errReference);
   };
 }
