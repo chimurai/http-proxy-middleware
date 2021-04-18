@@ -1,4 +1,4 @@
-import { getHandlers } from '../../src/handlers';
+import { getHandlers } from '../../src/_handlers';
 
 describe('handlers factory', () => {
   let handlersMap;

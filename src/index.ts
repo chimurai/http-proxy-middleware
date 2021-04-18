@@ -6,4 +6,6 @@ export function createProxyMiddleware(context: Filter | Options, options?: Optio
   return middleware;
 }
 
+export * from './handlers';
+
 export { Filter, Options, RequestHandler } from './types';
