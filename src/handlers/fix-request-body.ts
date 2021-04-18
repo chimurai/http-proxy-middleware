@@ -12,6 +12,7 @@ export function fixRequestBody(proxyReq: ClientRequest, req: Request): void {
 
   const contentType = proxyReq.getHeader('Content-Type') as string;
   const writeBody = (bodyData: string) => {
+    // deepcode ignore ContentLengthInCode: bodyParser fix
     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
     proxyReq.write(bodyData);
   };
