@@ -1,10 +1,10 @@
 # http-proxy-middleware
 
-[![Build Status](https://img.shields.io/travis/chimurai/http-proxy-middleware/master.svg?style=flat-square)](https://travis-ci.org/chimurai/http-proxy-middleware)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/chimurai/http-proxy-middleware/Test/master?style=flat-square)](https://github.com/chimurai/http-proxy-middleware/actions?query=branch%3Amaster)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square)](https://coveralls.io/r/chimurai/http-proxy-middleware)
 [![dependency Status](https://img.shields.io/david/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=dependencies)
 [![dependency Status](https://snyk.io/test/npm/http-proxy-middleware/badge.svg?style=flat-square)](https://snyk.io/test/npm/http-proxy-middleware)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![npm](https://img.shields.io/npm/v/http-proxy-middleware?color=%23CC3534&style=flat-square)](https://www.npmjs.com/package/http-proxy-middleware)
 
 Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express), [browser-sync](https://github.com/BrowserSync/browser-sync) and [many more](#compatible-servers).
 
