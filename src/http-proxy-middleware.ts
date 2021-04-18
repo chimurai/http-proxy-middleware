@@ -183,10 +183,10 @@ export class HttpProxyMiddleware {
     }
   };
 
-  private logError = (err, req: Request, res: Response, target) => {
+  private logError = (err, req: Request, res: Response, target?) => {
     const hostname = req.headers?.host || req.hostname || req.host; // (websocket) || (node0.10 || node 4/5)
     const requestHref = `${hostname}${req.url}`;
-    const targetHref = `${target.href}`;
+    const targetHref = `${target?.href}`; // target is undefined when websocket errors
 
     const errorMessage = '[HPM] Error occurred while proxying request %s to %s [%s] (%s)';
     const errReference = 'https://nodejs.org/api/errors.html#errors_common_system_errors'; // link to Node Common Systems Errors page
