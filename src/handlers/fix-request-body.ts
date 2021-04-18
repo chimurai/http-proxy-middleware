@@ -5,7 +5,7 @@ import * as querystring from 'querystring';
 /**
  * Fix proxied body if bodyParser is involved.
  */
-export function fixRequestBody(proxyReq: ClientRequest, req: Request) {
+export function fixRequestBody(proxyReq: ClientRequest, req: Request): void {
   if (!req.body || !Object.keys(req.body).length) {
     return;
   }
