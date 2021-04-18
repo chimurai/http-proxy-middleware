@@ -488,7 +488,7 @@ Intercept responses from upstream with `responseInterceptor`. (Make sure to set 
 
 Responses which are compressed with `brotli`, `gzip` and `deflate` will be decompressed automatically. The response will be returned as `buffer` ([docs](https://nodejs.org/api/buffer.html)) which you can manipulate.
 
-With `buffer`, response manipulation is not limited to text responses (html/css/js, etc...); image manipulation will be possible too. ([example](https://github.com/chimurai/http-proxy-middleware/blob/response-interceptor/recipes/response-interceptor.md#manipulate-image-response))
+With `buffer`, response manipulation is not limited to text responses (html/css/js, etc...); image manipulation will be possible too. ([example](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md#manipulate-image-response))
 
 NOTE: `responseInterceptor` disables streaming of target's response.
 
@@ -513,7 +513,7 @@ const proxy = createProxyMiddleware({
 });
 ```
 
-Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/response-interceptor/recipes/response-interceptor.md#readme) for more examples.
+Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md#readme) for more examples.
 
 ## Working examples
 
@@ -523,7 +523,7 @@ View and play around with [working examples](https://github.com/chimurai/http-pr
 - express ([example source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/express/index.js))
 - connect ([example source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/connect/index.js))
 - WebSocket ([example source](https://github.com/chimurai/http-proxy-middleware/tree/master/examples/websocket/index.js))
-- Response Manipulation ([example source](https://github.com/chimurai/http-proxy-middleware/blob/master/response-interceptor/examples/response-interceptor/index.js))
+- Response Manipulation ([example source](https://github.com/chimurai/http-proxy-middleware/blob/master/examples/response-interceptor/index.js))
 
 ## Recipes
 
