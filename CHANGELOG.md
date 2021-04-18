@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## [v1.2.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.2.0)
 
 - feat(handler): response interceptor ([#520](https://github.com/chimurai/http-proxy-middleware/pull/520))
 - fix(log error): handle undefined target when websocket errors ([#527](https://github.com/chimurai/http-proxy-middleware/pull/527))
