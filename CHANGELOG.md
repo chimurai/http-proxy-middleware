@@ -2,7 +2,8 @@
 
 ## next
 
-- feat(handler): response interceptor
+- feat(handler): response interceptor ([#520](https://github.com/chimurai/http-proxy-middleware/pull/520))
+- fix(log error): handle undefined target when websocket errors ([#527](https://github.com/chimurai/http-proxy-middleware/pull/527))
 
 ## [v1.1.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.1.2)
 
