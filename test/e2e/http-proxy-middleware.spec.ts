@@ -1,4 +1,4 @@
-import { createProxyMiddleware, createApp, createAppWithPath } from './_utils';
+import { createProxyMiddleware, createApp, createAppWithPath, fixRequestBody } from './_utils';
 import * as request from 'supertest';
 import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
 import { Request, Response } from '../../src/types';
@@ -86,6 +86,7 @@ describe('E2E http-proxy-middleware', () => {
             bodyParser.urlencoded({ extended: false }),
             createProxyMiddleware('/api', {
               target: `http://localhost:${mockTargetServer.port}`,
+              onProxyReq: fixRequestBody,
             })
           )
         );
@@ -102,6 +103,7 @@ describe('E2E http-proxy-middleware', () => {
             bodyParser.json(),
             createProxyMiddleware('/api', {
               target: `http://localhost:${mockTargetServer.port}`,
+              onProxyReq: fixRequestBody,
             })
           )
         );
