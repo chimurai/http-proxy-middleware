@@ -97,6 +97,7 @@ describe('E2E http-proxy-middleware', () => {
         });
         await agent.post('/api').send('foo=bar').send('bar=baz').expect(200);
       });
+
       it('should proxy request body from json', async () => {
         agent = request(
           createApp(
@@ -109,10 +110,10 @@ describe('E2E http-proxy-middleware', () => {
         );
 
         await mockTargetServer.post('/api').thenCallback((req) => {
-          expect(req.body.json).toEqual({ foo: 'bar', bar: 'baz' });
+          expect(req.body.json).toEqual({ foo: 'bar', bar: 'baz', doubleByte: '文' });
           return { status: 200 };
         });
-        await agent.post('/api').send({ foo: 'bar', bar: 'baz' }).expect(200);
+        await agent.post('/api').send({ foo: 'bar', bar: 'baz', doubleByte: '文' }).expect(200);
       });
     });
 
