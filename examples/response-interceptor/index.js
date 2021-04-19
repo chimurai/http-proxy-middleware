@@ -50,7 +50,7 @@ const jsonPlaceholderProxy = createProxyMiddleware({
     console.log(exchange);
 
     // log original response
-    // console.log(`[DEBUG] original response:\n${buffer.toString('utf-8')}`);
+    // console.log(`[DEBUG] original response:\n${buffer.toString('utf8')}`);
 
     // set response content-type
     res.setHeader('content-type', 'application/json; charset=utf-8');
