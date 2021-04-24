@@ -1,5 +1,5 @@
 import { createProxyMiddleware, responseInterceptor } from '../../src';
-import { createApp } from './_utils';
+import { createApp } from './test-kit';
 import * as request from 'supertest';
 
 describe('responseInterceptor()', () => {

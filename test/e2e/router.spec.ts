@@ -1,4 +1,4 @@
-import { createProxyMiddleware, createApp, createAppWithPath } from './_utils';
+import { createProxyMiddleware, createApp, createAppWithPath } from './test-kit';
 import { ErrorRequestHandler } from 'express';
 import * as request from 'supertest';
 import { getLocal, generateCACertificate, Mockttp } from 'mockttp';
