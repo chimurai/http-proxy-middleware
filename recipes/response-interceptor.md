@@ -24,7 +24,7 @@ const proxy = createProxyMiddleware({
   onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
     res.statusCode = 418; // set different response status code
 
-    const response = responseBuffer.toString('utf-8');
+    const response = responseBuffer.toString('utf8');
     return response.replace('Hello', 'Teapot');
   }),
 });
@@ -45,7 +45,7 @@ const proxy = createProxyMiddleware({
     console.log(exchange); // [DEBUG] GET / -> http://www.example.com [200]
 
     // log complete response
-    const response = responseBuffer.toString('utf-8');
+    const response = responseBuffer.toString('utf8');
     console.log(response); // log response body
 
     return responseBuffer;
@@ -65,7 +65,7 @@ const proxy = createProxyMiddleware({
   onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
     // detect json responses
     if (proxyRes.headers['content-type'] === 'application/json') {
-      let data = JSON.parse(responseBuffer.toString('utf-8'));
+      let data = JSON.parse(responseBuffer.toString('utf8'));
 
       // manipulate JSON data here
       data = Object.assign({}, data, { extra: 'foo bar' });
