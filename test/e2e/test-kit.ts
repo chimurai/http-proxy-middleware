@@ -1,11 +1,11 @@
 import * as express from 'express';
 import { Express, RequestHandler } from 'express';
 
-export { createProxyMiddleware, responseInterceptor } from '../../dist/index';
+export { createProxyMiddleware, responseInterceptor, fixRequestBody } from '../../dist/index';
 
-export function createApp(middleware: RequestHandler): Express {
+export function createApp(...middlewares: RequestHandler[]): Express {
   const app = express();
-  app.use(middleware);
+  app.use(...middlewares);
   return app;
 }
 

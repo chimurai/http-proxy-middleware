@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "The one-liner node.js proxy middleware for connect, express and browser-sync",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -60,6 +60,7 @@
     "@types/ws": "^7.4.0",
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.19.0",
+    "body-parser": "^1.19.0",
     "browser-sync": "^2.26.14",
     "connect": "^3.7.0",
     "eslint": "^7.23.0",

@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as WebSocket from 'ws';
 // tslint:disable-next-line: no-duplicate-imports
 import { Server as WebSocketServer } from 'ws';
-import { createProxyMiddleware } from './_utils';
+import { createProxyMiddleware } from './test-kit';
 
 describe('E2E WebSocket proxy', () => {
   let proxyServer: http.Server;

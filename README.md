@@ -69,6 +69,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [app.use\(path, proxy\)](#appusepath-proxy)
 - [WebSocket](#websocket)
   - [External WebSocket upgrade](#external-websocket-upgrade)
+- [Intercept and manipulate requests](#intercept-and-manipulate-requests)
 - [Intercept and manipulate responses](#intercept-and-manipulate-responses)
 - [Working examples](#working-examples)
 - [Recipes](#recipes)
@@ -480,6 +481,25 @@ app.use(wsProxy);
 
 const server = app.listen(3000);
 server.on('upgrade', wsProxy.upgrade); // <-- subscribe to http 'upgrade'
+```
+
+## Intercept and manipulate requests
+
+Intercept requests from downstream by defining `onProxyReq` in `createProxyMiddleware`.
+
+Currently the only pre-provided request interceptor is `fixRequestBody`, which is used to fix proxied POST requests when `bodyParser` is applied before this middleware.
+
+Example:
+
+```javascript
+const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
+
+const proxy = createProxyMiddleware({
+  /**
+   * Fix bodyParser
+   **/
+  onProxyReq: fixRequestBody,
+});
 ```
 
 ## Intercept and manipulate responses

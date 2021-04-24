@@ -1,5 +1,5 @@
 import { createProxyMiddleware, responseInterceptor } from '../../src';
-import { createApp } from './_utils';
+import { createApp } from './test-kit';
 import * as request from 'supertest';
 
 describe('responseInterceptor()', () => {
@@ -38,6 +38,32 @@ describe('responseInterceptor()', () => {
     it('should support double bytes characters http://httpbin.org/json', async () => {
       const response = await agent.get(`/json`).expect(200);
       expect(response.body.favorite).toEqual('叉燒包');
+    });
+  });
+
+  describe('intercept responses with original headers', () => {
+    beforeEach(() => {
+      agent = request(
+        createApp(
+          createProxyMiddleware({
+            target: `http://httpbin.org`,
+            changeOrigin: true, // for vhosted sites, changes host header to match to target's host
+            selfHandleResponse: true,
+            onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+              return responseBuffer;
+            }),
+          })
+        )
+      );
+    });
+
+    it('should proxy and return original headers from http://httpbin.org/cookies/set/cookie/monster', async () => {
+      return agent
+        .get(`/cookies/set/cookie/monster`)
+        .expect('Access-Control-Allow-Origin', '*')
+        .expect('Date', /.+/)
+        .expect('set-cookie', /.*cookie=monster.*/)
+        .expect(302);
     });
   });
 
