@@ -31,8 +31,8 @@ export function responseInterceptor(interceptor: Interceptor) {
     _proxyRes.on('data', (chunk) => (buffer = Buffer.concat([buffer, chunk])));
 
     _proxyRes.on('end', async () => {
-      // set original content type from upstream
-      res.setHeader('content-type', originalProxyRes.headers['content-type'] || '');
+      // copy original headers
+      copyHeaders(proxyRes, res);
 
       // call interceptor with intercepted response (buffer)
       const interceptedBuffer = Buffer.from(await interceptor(buffer, originalProxyRes, req, res));
@@ -78,4 +78,34 @@ function decompress(proxyRes: http.IncomingMessage, contentEncoding: string) {
   }
 
   return _proxyRes;
+}
+
+/**
+ * Copy original headers
+ * https://github.com/apache/superset/blob/9773aba522e957ed9423045ca153219638a85d2f/superset-frontend/webpack.proxy-config.js#L78
+ */
+function copyHeaders(originalResponse, response) {
+  response.statusCode = originalResponse.statusCode;
+  response.statusMessage = originalResponse.statusMessage;
+
+  if (response.setHeader) {
+    let keys = Object.keys(originalResponse.headers);
+
+    // ignore chunked, brotli, gzip, deflate headers
+    keys = keys.filter((key) => !['content-encoding', 'transfer-encoding'].includes(key));
+
+    keys.forEach((key) => {
+      let value = originalResponse.headers[key];
+
+      if (key === 'set-cookie') {
+        // remove cookie domain
+        value = Array.isArray(value) ? value : [value];
+        value = value.map((x) => x.replace(/Domain=[^;]+?/i, ''));
+      }
+
+      response.setHeader(key, value);
+    });
+  } else {
+    response.headers = originalResponse.headers;
+  }
 }
