@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.2.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.2.1)
+
+- fix(response interceptor): proxy original response headers ([#563](https://github.com/chimurai/http-proxy-middleware/pull/563))
+
 ## [v1.2.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.2.0)
 
 - feat(handler): response interceptor ([#520](https://github.com/chimurai/http-proxy-middleware/pull/520))

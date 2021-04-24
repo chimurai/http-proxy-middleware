@@ -41,6 +41,32 @@ describe('responseInterceptor()', () => {
     });
   });
 
+  describe('intercept responses with original headers', () => {
+    beforeEach(() => {
+      agent = request(
+        createApp(
+          createProxyMiddleware({
+            target: `http://httpbin.org`,
+            changeOrigin: true, // for vhosted sites, changes host header to match to target's host
+            selfHandleResponse: true,
+            onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+              return responseBuffer;
+            }),
+          })
+        )
+      );
+    });
+
+    it('should proxy and return original headers from http://httpbin.org/cookies/set/cookie/monster', async () => {
+      return agent
+        .get(`/cookies/set/cookie/monster`)
+        .expect('Access-Control-Allow-Origin', '*')
+        .expect('Date', /.+/)
+        .expect('set-cookie', /.*cookie=monster.*/)
+        .expect(302);
+    });
+  });
+
   describe('intercept compressed responses', () => {
     beforeEach(() => {
       agent = request(
