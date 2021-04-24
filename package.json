@@ -15,11 +15,12 @@
     "eslint:fix": "yarn eslint --fix",
     "prettier": "prettier --list-different \"**/*.{js,ts,md,yml,json,html}\"",
     "prettier:fix": "prettier --write \"**/*.{js,ts,md,yml,json,html}\"",
+    "prebuild": "yarn clean",
     "build": "tsc",
     "pretest": "yarn build",
     "test": "jest",
     "coverage": "jest --coverage --coverageReporters=lcov",
-    "prepare": "yarn clean && yarn build && rm dist/tsconfig.tsbuildinfo"
+    "prepare": "yarn build && rm dist/tsconfig.tsbuildinfo"
   },
   "repository": {
     "type": "git",
