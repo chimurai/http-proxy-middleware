@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as http from 'http';
-import { createProxyMiddleware } from './_utils';
+import { createProxyMiddleware } from './test-kit';
 import { Options } from '../../src/index';
 
 describe('Usage in Express', () => {

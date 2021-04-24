@@ -1,4 +1,4 @@
-import { createProxyMiddleware, createApp } from './_utils';
+import { createProxyMiddleware, createApp } from './test-kit';
 import * as request from 'supertest';
 import { getLocal, Mockttp } from 'mockttp';
 

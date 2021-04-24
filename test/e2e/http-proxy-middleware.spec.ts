@@ -1,4 +1,4 @@
-import { createProxyMiddleware, createApp, createAppWithPath, fixRequestBody } from './_utils';
+import { createProxyMiddleware, createApp, createAppWithPath, fixRequestBody } from './test-kit';
 import * as request from 'supertest';
 import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
 import { Request, Response } from '../../src/types';
