@@ -6,47 +6,24 @@ Missing a server? Feel free to extend this list of examples.
 
 <!-- TOC depthfrom:2 insertanchor:false -->
 
-- [Browser-Sync](#browser-sync)
 - [Express](#express)
 - [Connect](#connect)
+- [Browser-Sync](#browser-sync)
 - [fastify](#fastify)
-- [lite-server](#lite-server)
 - [Polka](#polka)
+- [lite-server](#lite-server)
 - [grunt-contrib-connect](#grunt-contrib-connect)
-- [grunt-browser-sync](#grunt-browser-sync)
 - [gulp-connect](#gulp-connect)
+- [grunt-browser-sync](#grunt-browser-sync)
 - [gulp-webserver](#gulp-webserver)
 
 <!-- /TOC -->
-
-## Browser-Sync
-
-https://github.com/BrowserSync/browser-sync
-[![GitHub stars](https://img.shields.io/github/stars/BrowserSync/browser-sync.svg?style=social&label=Star)](https://github.com/BrowserSync/browser-sync)
-
-```javascript
-const browserSync = require('browser-sync').create();
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
-const apiProxy = createProxyMiddleware('/api', {
-  target: 'http://www.example.org',
-  changeOrigin: true, // for vhosted sites
-});
-
-browserSync.init({
-  server: {
-    baseDir: './',
-    port: 3000,
-    middleware: [apiProxy],
-  },
-  startPath: '/api',
-});
-```
 
 ## Express
 
 https://github.com/expressjs/express
 [![GitHub stars](https://img.shields.io/github/stars/expressjs/express.svg?style=social&label=Star)](https://github.com/expressjs/express)
+![express downloads](https://img.shields.io/npm/dm/express)
 
 ```javascript
 const express = require('express');
@@ -67,6 +44,7 @@ app.listen(3000);
 
 https://github.com/senchalabs/connect
 [![GitHub stars](https://img.shields.io/github/stars/senchalabs/connect.svg?style=social&label=Star)](https://github.com/senchalabs/connect)
+![connect downloads](https://img.shields.io/npm/dm/connect)
 
 ```javascript
 const http = require('http');
@@ -84,9 +62,35 @@ app.use(apiProxy);
 http.createServer(app).listen(3000);
 ```
 
+## Browser-Sync
+
+https://github.com/BrowserSync/browser-sync
+[![GitHub stars](https://img.shields.io/github/stars/BrowserSync/browser-sync.svg?style=social&label=Star)](https://github.com/BrowserSync/browser-sync)
+![browser-sync downloads](https://img.shields.io/npm/dm/browser-sync)
+
+```javascript
+const browserSync = require('browser-sync').create();
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+const apiProxy = createProxyMiddleware('/api', {
+  target: 'http://www.example.org',
+  changeOrigin: true, // for vhosted sites
+});
+
+browserSync.init({
+  server: {
+    baseDir: './',
+    port: 3000,
+    middleware: [apiProxy],
+  },
+  startPath: '/api',
+});
+```
+
 ## fastify
 
 https://github.com/fastify/fastify [![GitHub stars](https://img.shields.io/github/stars/fastify/fastify.svg?style=social&label=Star)](https://github.com/fastify/fastify)
+![fastify downloads](https://img.shields.io/npm/dm/fastify)
 
 ```javascript
 const fastify = require('fastify')({ logger: true });
@@ -111,10 +115,33 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 // curl http://localhost:3000/users
 ```
 
+## Polka
+
+https://github.com/lukeed/polka
+[![GitHub stars](https://img.shields.io/github/stars/lukeed/polka.svg?style=social&label=Star)](https://github.com/lukeed/polka)
+![polka downloads](https://img.shields.io/npm/dm/polka)
+
+```javascript
+const polka = require('polka');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+const app = polka();
+
+app.use(
+  createProxyMiddleware({
+    target: 'http://www.example.org',
+    changeOrigin: true,
+  })
+);
+
+app.listen(3000);
+```
+
 ## lite-server
 
 https://github.com/johnpapa/lite-server
 [![GitHub stars](https://img.shields.io/github/stars/johnpapa/lite-server.svg?style=social&label=Star)](https://github.com/johnpapa/lite-server)
+![lite-server downloads](https://img.shields.io/npm/dm/lite-server)
 
 File: `bs-config.js`
 
@@ -138,31 +165,11 @@ module.exports = {
 };
 ```
 
-## Polka
-
-https://github.com/lukeed/polka
-[![GitHub stars](https://img.shields.io/github/stars/lukeed/polka.svg?style=social&label=Star)](https://github.com/lukeed/polka)
-
-```javascript
-const polka = require('polka');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
-const app = polka();
-
-app.use(
-  createProxyMiddleware({
-    target: 'http://www.example.org',
-    changeOrigin: true,
-  })
-);
-
-app.listen(3000);
-```
-
 ## grunt-contrib-connect
 
 https://github.com/gruntjs/grunt-contrib-connect
 [![GitHub stars](https://img.shields.io/github/stars/gruntjs/grunt-contrib-connect.svg?style=social&label=Star)](https://github.com/gruntjs/grunt-contrib-connect)
+![grunt-contrib-connect downloads](https://img.shields.io/npm/dm/grunt-contrib-connect)
 
 As an `Array`:
 
@@ -211,10 +218,39 @@ grunt.initConfig({
 });
 ```
 
+## gulp-connect
+
+https://github.com/avevlad/gulp-connect
+[![GitHub stars](https://img.shields.io/github/stars/avevlad/gulp-connect.svg?style=social&label=Star)](https://github.com/avevlad/gulp-connect)
+![gulp-connect downloads](https://img.shields.io/npm/dm/gulp-connect)
+
+```javascript
+const gulp = require('gulp');
+const connect = require('gulp-connect');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+gulp.task('connect', function () {
+  connect.server({
+    root: ['./app'],
+    middleware: function (connect, opt) {
+      const apiProxy = createProxyMiddleware('/api', {
+        target: 'http://www.example.org',
+        changeOrigin: true, // for vhosted sites
+      });
+
+      return [apiProxy];
+    },
+  });
+});
+
+gulp.task('default', ['connect']);
+```
+
 ## grunt-browser-sync
 
 https://github.com/BrowserSync/grunt-browser-sync
 [![GitHub stars](https://img.shields.io/github/stars/BrowserSync/grunt-browser-sync.svg?style=social&label=Star)](https://github.com/BrowserSync/grunt-browser-sync)
+![grunt-browser-sync downloads](https://img.shields.io/npm/dm/grunt-browser-sync)
 
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
@@ -241,37 +277,11 @@ grunt.initConfig({
 });
 ```
 
-## gulp-connect
-
-https://github.com/avevlad/gulp-connect
-[![GitHub stars](https://img.shields.io/github/stars/avevlad/gulp-connect.svg?style=social&label=Star)](https://github.com/avevlad/gulp-connect)
-
-```javascript
-const gulp = require('gulp');
-const connect = require('gulp-connect');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
-gulp.task('connect', function () {
-  connect.server({
-    root: ['./app'],
-    middleware: function (connect, opt) {
-      const apiProxy = createProxyMiddleware('/api', {
-        target: 'http://www.example.org',
-        changeOrigin: true, // for vhosted sites
-      });
-
-      return [apiProxy];
-    },
-  });
-});
-
-gulp.task('default', ['connect']);
-```
-
 ## gulp-webserver
 
 https://github.com/schickling/gulp-webserver
 [![GitHub stars](https://img.shields.io/github/stars/schickling/gulp-webserver.svg?style=social&label=Star)](https://github.com/schickling/gulp-webserver)
+![gulp-webserver downloads](https://img.shields.io/npm/dm/gulp-webserver)
 
 ```javascript
 const gulp = require('gulp');
