@@ -1,0 +1,46 @@
+name: Bug report
+description: 'Create a report to help us improve'
+labels: bug
+body:
+  - type: markdown
+    attributes:
+      value: 'Please note your issue will be closed without comment if do not fill out the issue checklist and provide ALL the requested information.'
+  - type: textarea
+    attributes:
+      render: shell
+      label: '`yarn why http-proxy-middleware` OR `npm ls http-proxy-middleware` output (mask private folder names with *****)'
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      description: Please verify that you've followed these steps.
+      options:
+        - label: I updated to latest `http-proxy-middleware`.
+          required: true
+  - type: textarea
+    attributes:
+      label: 'Describe the bug (be clear and concise)'
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      render: shell
+      label: 'Server and `http-proxy-middleware` configuration'
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: 'If possible, please provide minimal example on CodeSandbox that demonstrates the issue. You can use the following template: https://codesandbox.io/s/http-proxy-middleware-44oc1'
+  - type: textarea
+    attributes:
+      label: 'Step-by-step reproduction instructions'
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 'Expected behavior'
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 'Additional context (optional)'

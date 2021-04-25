@@ -1,0 +1,12 @@
+name: Feature Request
+description: 'Suggest an idea for this project'
+labels: feature
+body:
+  - type: textarea
+    attributes:
+      label: "Describe the feature you'd love to see"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 'Additional context (optional)'
