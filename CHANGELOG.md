@@ -1,5 +1,10 @@
 # Changelog
 
+## [v1.3.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.3.0)
+
+- docs(response interceptor): align with nodejs default utf8 ([#567](https://github.com/chimurai/http-proxy-middleware/pull/567))
+- feat: try to proxy body even after body-parser middleware ([#492](https://github.com/chimurai/http-proxy-middleware/pull/492)) ([midgleyc](https://github.com/midgleyc))
+
 ## [v1.2.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.2.1)
 
 - fix(response interceptor): proxy original response headers ([#563](https://github.com/chimurai/http-proxy-middleware/pull/563))
