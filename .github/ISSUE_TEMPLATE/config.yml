@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Get help in GitHub Discussions
+    url: https://github.com/chimurai/http-proxy-middleware/discussions
+    about: Have a question? The quickest way to get help is on http-proxy-middleware's GitHub Discussions!
