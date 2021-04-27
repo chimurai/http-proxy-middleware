@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.0)
+
+- chore(package): drop node 10 [BREAKING CHANGE] ([#577](https://github.com/chimurai/http-proxy-middleware/pull/577))
+
 ## [v1.3.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.3.1)
 
 - fix(fix-request-body): make sure the content-type exists ([#578](https://github.com/chimurai/http-proxy-middleware/pull/578)) ([oufeng](https://github.com/oufeng))
