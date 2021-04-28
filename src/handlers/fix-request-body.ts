@@ -17,7 +17,7 @@ export function fixRequestBody(proxyReq: ClientRequest, req: Request): void {
     proxyReq.write(bodyData);
   };
 
-  if (contentType.includes('application/json')) {
+  if (contentType && contentType.includes('application/json')) {
     writeBody(JSON.stringify(req.body));
   }
 
