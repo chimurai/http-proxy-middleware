@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.3.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.3.1)
+
+- fix(fix-request-body): make sure the content-type exists ([#578](https://github.com/chimurai/http-proxy-middleware/pull/578)) ([oufeng](https://github.com/oufeng))
+
 ## [v1.3.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.3.0)
 
 - docs(response interceptor): align with nodejs default utf8 ([#567](https://github.com/chimurai/http-proxy-middleware/pull/567))
