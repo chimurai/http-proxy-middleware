@@ -1,153 +1,145 @@
 import * as http from 'http';
-import * as express from 'express';
 import * as WebSocket from 'ws';
-// tslint:disable-next-line: no-duplicate-imports
 import { Server as WebSocketServer } from 'ws';
-import { createProxyMiddleware } from './test-kit';
+import { createProxyMiddleware, createApp } from './test-kit';
+import type { RequestHandler } from '../../src/types';
+
+/********************************************************************
+ * - Not possible to use `supertest` to test WebSockets
+ * - Make sure to use different port for each test to avoid flakiness
+ ********************************************************************/
 
 describe('E2E WebSocket proxy', () => {
   let proxyServer: http.Server;
-  let ws;
-  let wss;
-  let responseMessage;
-  let proxy;
+  let ws: WebSocket;
+  let wss: WebSocketServer;
+  let proxyMiddleware: RequestHandler;
+  const WS_SERVER_PORT = 9000;
 
   beforeEach(() => {
-    proxy = createProxyMiddleware('/', {
-      target: 'http://localhost:9000',
-      ws: true,
-      pathRewrite: { '^/socket': '' },
-    });
+    wss = new WebSocketServer({ port: WS_SERVER_PORT });
 
-    proxyServer = express().use(proxy).listen(3000);
-
-    wss = new WebSocketServer({ port: 9000 });
-
-    wss.on('connection', function connection(websocket) {
-      websocket.on('message', function incoming(message) {
+    wss.on('connection', (websocket) => {
+      websocket.on('message', (message) => {
         websocket.send(message); // echo received message
       });
     });
   });
 
-  afterEach((done) => {
-    proxyServer.close(() => {
-      done();
+  beforeEach(() => {
+    proxyMiddleware = createProxyMiddleware('/', {
+      target: `http://localhost:${WS_SERVER_PORT}`,
+      ws: true,
+      pathRewrite: { '^/socket': '' },
     });
-    wss.close();
-    ws = null;
+  });
+
+  afterEach(async () => {
+    return Promise.all([
+      new Promise((resolve) => proxyServer.close(resolve)),
+      new Promise((resolve) => wss.close(resolve)),
+      new Promise((resolve) => resolve(ws.close())),
+    ]);
   });
 
   describe('option.ws', () => {
-    beforeEach((done) => {
-      // need to make a normal http request,
-      // so http-proxy-middleware can catch the upgrade request
-      http.get('http://localhost:3000/', () => {
-        // do a second http request to make
-        // sure only 1 listener subscribes to upgrade request
-        http.get('http://localhost:3000/', () => {
-          ws = new WebSocket('ws://localhost:3000/socket');
+    beforeEach(async (done) => {
+      const SERVER_PORT = 31000;
+      proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
 
-          ws.on('message', function incoming(message) {
-            responseMessage = message;
-            done();
-          });
+      // quick & dirty Promise version of http.get (don't care about correctness)
+      const get = async (uri) => new Promise((resolve, reject) => http.get(uri, resolve));
 
-          ws.on('open', function open() {
-            ws.send('foobar');
-          });
-        });
-      });
+      // need to make a normal http request, so http-proxy-middleware can catch the upgrade request
+      await get(`http://localhost:${SERVER_PORT}/`);
+      // do a second http request to make sure only 1 listener subscribes to upgrade request
+      await get(`http://localhost:${SERVER_PORT}/`);
+
+      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
+      ws.on('open', done);
     });
 
-    it('should proxy to path', () => {
-      expect(responseMessage).toBe('foobar');
+    it('should proxy to path', (done) => {
+      ws.on('message', (message) => {
+        expect(message).toBe('foobar');
+        done();
+      });
+      ws.send('foobar');
     });
   });
 
   describe('option.ws with external server "upgrade"', () => {
     beforeEach((done) => {
-      proxyServer.on('upgrade', proxy.upgrade);
+      const SERVER_PORT = 32000;
+      proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
+      proxyServer.on('upgrade', proxyMiddleware.upgrade);
 
-      ws = new WebSocket('ws://localhost:3000/socket');
-
-      ws.on('message', function incoming(message) {
-        responseMessage = message;
-        done();
-      });
-
-      ws.on('open', function open() {
-        ws.send('foobar');
-      });
+      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
+      ws.on('open', done);
     });
 
-    it('should proxy to path', () => {
-      expect(responseMessage).toBe('foobar');
+    it('should proxy to path', async (done) => {
+      ws.on('message', (message) => {
+        expect(message).toBe('foobar');
+        done();
+      });
+      ws.send('foobar');
     });
   });
 
   describe('option.ws with external server "upgrade" and shorthand usage', () => {
+    const SERVER_PORT = 33000;
+
     beforeEach(() => {
-      proxyServer.close();
+      proxyServer = createApp(
+        createProxyMiddleware(`ws://localhost:${WS_SERVER_PORT}`, {
+          pathRewrite: { '^/socket': '' },
+        })
+      ).listen(SERVER_PORT);
 
-      // override
-      proxy = createProxyMiddleware('ws://localhost:9000', {
-        pathRewrite: { '^/socket': '' },
-      });
-
-      proxyServer = express().use(proxy).listen(3000);
+      proxyServer.on('upgrade', proxyMiddleware.upgrade);
     });
 
     beforeEach((done) => {
-      proxyServer.on('upgrade', proxy.upgrade);
-
-      ws = new WebSocket('ws://localhost:3000/socket');
-
-      ws.on('message', function incoming(message) {
-        responseMessage = message;
-        done();
-      });
-
-      ws.on('open', function open() {
-        ws.send('foobar');
-      });
+      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
+      ws.on('open', done);
     });
 
-    it('should proxy to path', () => {
-      expect(responseMessage).toBe('foobar');
+    it('should proxy to path', (done) => {
+      ws.on('message', (message) => {
+        expect(message).toBe('foobar');
+        done();
+      });
+      ws.send('foobar');
     });
   });
 
   describe('with router and pathRewrite', () => {
+    const SERVER_PORT = 34000;
+
     beforeEach(() => {
-      proxyServer.close();
-
       // override
-      proxy = createProxyMiddleware('ws://notworkinghost:6789', {
-        router: { '/socket': 'ws://localhost:9000' },
-        pathRewrite: { '^/socket': '' },
-      });
+      proxyServer = createApp(
+        createProxyMiddleware('ws://notworkinghost:6789', {
+          router: { '/socket': `ws://localhost:${WS_SERVER_PORT}` },
+          pathRewrite: { '^/socket': '' },
+        })
+      ).listen(SERVER_PORT);
 
-      proxyServer = express().use(proxy).listen(3000);
+      proxyServer.on('upgrade', proxyMiddleware.upgrade);
     });
 
     beforeEach((done) => {
-      proxyServer.on('upgrade', proxy.upgrade);
-
-      ws = new WebSocket('ws://localhost:3000/socket');
-
-      ws.on('message', function incoming(message) {
-        responseMessage = message;
-        done();
-      });
-
-      ws.on('open', function open() {
-        ws.send('foobar');
-      });
+      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
+      ws.on('open', done);
     });
 
-    it('should proxy to path', () => {
-      expect(responseMessage).toBe('foobar');
+    it('should proxy to path', (done) => {
+      ws.on('message', (message) => {
+        expect(message).toBe('foobar');
+        done();
+      });
+      ws.send('foobar');
     });
   });
 });
