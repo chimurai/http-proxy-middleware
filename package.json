@@ -19,6 +19,7 @@
     "build": "tsc",
     "pretest": "yarn build",
     "test": "jest",
+    "precoverage": "yarn build",
     "coverage": "jest --coverage --coverageReporters=lcov",
     "prepare": "yarn build && rm dist/tsconfig.tsbuildinfo"
   },
