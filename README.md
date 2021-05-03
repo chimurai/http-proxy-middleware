@@ -1,6 +1,6 @@
 # http-proxy-middleware
 
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/chimurai/http-proxy-middleware/Test/master?style=flat-square)](https://github.com/chimurai/http-proxy-middleware/actions?query=branch%3Amaster)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/chimurai/http-proxy-middleware/CI/master?style=flat-square)](https://github.com/chimurai/http-proxy-middleware/actions?query=branch%3Amaster)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square)](https://coveralls.io/r/chimurai/http-proxy-middleware)
 [![dependency Status](https://img.shields.io/david/chimurai/http-proxy-middleware.svg?style=flat-square)](https://david-dm.org/chimurai/http-proxy-middleware#info=dependencies)
 [![dependency Status](https://snyk.io/test/npm/http-proxy-middleware/badge.svg?style=flat-square)](https://snyk.io/test/npm/http-proxy-middleware)
