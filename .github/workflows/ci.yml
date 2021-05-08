@@ -24,7 +24,7 @@ jobs:
 
       - name: yarn install
         if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --ignore-scripts
 
       - name: yarn lint
         run: yarn lint
@@ -57,7 +57,7 @@ jobs:
 
       - name: yarn install
         if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --ignore-scripts
 
       - name: yarn test
         run: yarn test
@@ -86,7 +86,7 @@ jobs:
 
       - name: yarn install
         if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --ignore-scripts
 
       - name: yarn coverage
         run: yarn coverage
