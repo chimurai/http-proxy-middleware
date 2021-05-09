@@ -1,9 +1,14 @@
+/**
+ * Based on definition by DefinitelyTyped:
+ * https://github.com/DefinitelyTyped/DefinitelyTyped/blob/6f529c6c67a447190f86bfbf894d1061e41e07b7/types/http-proxy-middleware/index.d.ts
+ */
+
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
-import * as express from 'express';
-import * as http from 'http';
-import * as httpProxy from 'http-proxy';
-import * as net from 'net';
+import type * as express from 'express';
+import type * as http from 'http';
+import type * as httpProxy from 'http-proxy';
+import type * as net from 'net';
 
 export interface Request extends express.Request {}
 export interface Response extends express.Response {}
