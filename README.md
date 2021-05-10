@@ -582,10 +582,10 @@ $ yarn lint:fix
 $ yarn build
 
 # unit tests
-$ yarn test
+$ yarn build && yarn test
 
 # code coverage
-$ yarn cover
+$ yarn build && yarn coverage
 ```
 
 ## Changelog

@@ -1,0 +1,14 @@
+{
+  "name": "---http-proxy-middleware--pkg---",
+  "private": "true",
+  "description": "http-proxy-middleware package test",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "http-proxy-middleware": "file:http-proxy-middleware.tgz",
+    "jest": "^26.6.3"
+  }
+}

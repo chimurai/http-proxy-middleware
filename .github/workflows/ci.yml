@@ -59,8 +59,11 @@ jobs:
         if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
         run: yarn install --frozen-lockfile --ignore-scripts
 
-      - name: yarn test
-        run: yarn test
+      - name: make test-jest
+        run: make test-jest
+
+      - name: make test-pkg
+        run: make test-pkg
 
         env:
           CI: true
