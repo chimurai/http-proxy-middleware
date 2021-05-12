@@ -9,6 +9,7 @@ import type * as express from 'express';
 import type * as http from 'http';
 import type * as httpProxy from 'http-proxy';
 import type * as net from 'net';
+import type * as url from 'url';
 
 export interface Request extends express.Request {}
 export interface Response extends express.Response {}
@@ -29,20 +30,14 @@ export interface Options extends httpProxy.ServerOptions {
     | ((req: Request) => httpProxy.ServerOptions['target'])
     | ((req: Request) => Promise<httpProxy.ServerOptions['target']>);
   logLevel?: 'debug' | 'info' | 'warn' | 'error' | 'silent';
-  logProvider?(provider: LogProvider): LogProvider;
+  logProvider?: LogProviderCallback;
 
-  onError?(err: Error, req: Request, res: Response): void;
-  onProxyRes?(proxyRes: http.IncomingMessage, req: Request, res: Response): void;
-  onProxyReq?(proxyReq: http.ClientRequest, req: Request, res: Response): void;
-  onProxyReqWs?(
-    proxyReq: http.ClientRequest,
-    req: Request,
-    socket: net.Socket,
-    options: httpProxy.ServerOptions,
-    head: any
-  ): void;
-  onOpen?(proxySocket: net.Socket): void;
-  onClose?(res: Response, socket: net.Socket, head: any): void;
+  onError?: OnErrorCallback;
+  onProxyRes?: OnProxyResCallback;
+  onProxyReq?: OnProxyReqCallback;
+  onProxyReqWs?: OnProxyReqWsCallback;
+  onOpen?: OnOpenCallback;
+  onClose?: OnCloseCallback;
 }
 
 interface LogProvider {
@@ -54,3 +49,41 @@ interface LogProvider {
 }
 
 type Logger = (...args: any[]) => void;
+
+export type LogProviderCallback = (provider: LogProvider) => LogProvider;
+
+/**
+ * Use types based on the events listeners from http-proxy
+ * https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51504fd999031b7f025220fab279f1b2155cbaff/types/http-proxy/index.d.ts
+ */
+export type OnErrorCallback = (
+  err: Error,
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  target?: string | Partial<url.Url>
+) => void;
+export type OnProxyResCallback = (
+  proxyRes: http.IncomingMessage,
+  req: http.IncomingMessage,
+  res: http.ServerResponse
+) => void;
+export type OnProxyReqCallback = (
+  proxyReq: http.ClientRequest,
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  options: httpProxy.ServerOptions
+) => void;
+export type OnProxyReqWsCallback = (
+  proxyReq: http.ClientRequest,
+  req: http.IncomingMessage,
+  socket: net.Socket,
+  options: httpProxy.ServerOptions,
+  head: any
+) => void;
+export type OnCloseCallback = (
+  proxyRes: http.IncomingMessage,
+  proxySocket: net.Socket,
+  proxyHead: any
+) => void;
+
+export type OnOpenCallback = (proxySocket: net.Socket) => void;
