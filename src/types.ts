@@ -29,20 +29,14 @@ export interface Options extends httpProxy.ServerOptions {
     | ((req: Request) => httpProxy.ServerOptions['target'])
     | ((req: Request) => Promise<httpProxy.ServerOptions['target']>);
   logLevel?: 'debug' | 'info' | 'warn' | 'error' | 'silent';
-  logProvider?(provider: LogProvider): LogProvider;
+  logProvider?: LogProviderCallback;
 
-  onError?(err: Error, req: Request, res: Response): void;
-  onProxyRes?(proxyRes: http.IncomingMessage, req: Request, res: Response): void;
-  onProxyReq?(proxyReq: http.ClientRequest, req: Request, res: Response): void;
-  onProxyReqWs?(
-    proxyReq: http.ClientRequest,
-    req: Request,
-    socket: net.Socket,
-    options: httpProxy.ServerOptions,
-    head: any
-  ): void;
-  onOpen?(proxySocket: net.Socket): void;
-  onClose?(res: Response, socket: net.Socket, head: any): void;
+  onError?: OnErrorCallback;
+  onProxyRes?: OnProxyResCallback;
+  onProxyReq?: OnProxyReqCallback;
+  onProxyReqWs?: OnProxyReqWsCallback;
+  onOpen?: OnOpenCallback;
+  onClose?: OnCloseCallback;
 }
 
 interface LogProvider {
@@ -54,3 +48,27 @@ interface LogProvider {
 }
 
 type Logger = (...args: any[]) => void;
+
+export type LogProviderCallback = (provider: LogProvider) => LogProvider;
+
+export type OnErrorCallback = (err: Error, req: Request, res: Response) => void;
+export type OnProxyResCallback = (
+  proxyRes: http.IncomingMessage,
+  req: Request,
+  res: Response
+) => void;
+export type OnProxyReqCallback = (
+  proxyReq: http.ClientRequest,
+  req: Request,
+  res: Response
+) => void;
+export type OnProxyReqWsCallback = (
+  proxyReq: http.ClientRequest,
+  req: Request,
+  socket: net.Socket,
+  options: httpProxy.ServerOptions,
+  head: any
+) => void;
+export type OnCloseCallback = (res: Response, socket: net.Socket, head: any) => void;
+
+export type OnOpenCallback = (proxySocket: net.Socket) => void;
