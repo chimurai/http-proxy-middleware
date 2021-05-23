@@ -1,12 +1,14 @@
-import { ClientRequest } from 'http';
+import type * as http from 'http';
 import type { Request } from '../types';
 import * as querystring from 'querystring';
 
 /**
  * Fix proxied body if bodyParser is involved.
  */
-export function fixRequestBody(proxyReq: ClientRequest, req: Request): void {
-  if (!req.body || !Object.keys(req.body).length) {
+export function fixRequestBody(proxyReq: http.ClientRequest, req: http.IncomingMessage): void {
+  const requestBody = (req as Request).body;
+
+  if (!requestBody || !Object.keys(requestBody).length) {
     return;
   }
 
@@ -18,10 +20,10 @@ export function fixRequestBody(proxyReq: ClientRequest, req: Request): void {
   };
 
   if (contentType && contentType.includes('application/json')) {
-    writeBody(JSON.stringify(req.body));
+    writeBody(JSON.stringify(requestBody));
   }
 
   if (contentType === 'application/x-www-form-urlencoded') {
-    writeBody(querystring.stringify(req.body));
+    writeBody(querystring.stringify(requestBody));
   }
 }
