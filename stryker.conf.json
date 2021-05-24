@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "Comments can be put inside `xxx_comment` properties.",
+  "testRunner": "jest",
+  "jest": {
+    "projectType": "custom",
+    "configFile": "./jest.config.js",
+    "enableFindRelatedTests": true
+  },
+  "commandRunner": {
+    "command": "yarn test"
+  }
+}

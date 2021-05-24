@@ -17,7 +17,6 @@
     "prettier:fix": "prettier --write \"**/*.{js,ts,md,yml,json,html}\"",
     "prebuild": "yarn clean",
     "build": "tsc",
-    "pretest": "yarn build",
     "test": "jest",
     "precoverage": "yarn build",
     "coverage": "jest --coverage --coverageReporters=lcov",
@@ -53,6 +52,8 @@
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",
+    "@stryker-mutator/core": "^5.0.0",
+    "@stryker-mutator/jest-runner": "^5.0.0",
     "@types/express": "4.17.7",
     "@types/is-glob": "^4.0.1",
     "@types/jest": "^26.0.23",
