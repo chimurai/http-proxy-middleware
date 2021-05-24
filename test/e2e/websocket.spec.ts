@@ -1,6 +1,7 @@
 import * as http from 'http';
 import * as WebSocket from 'ws';
 import { Server as WebSocketServer } from 'ws';
+import * as getPort from 'get-port';
 import { createProxyMiddleware, createApp } from './test-kit';
 import type { RequestHandler } from '../../src/types';
 
@@ -14,9 +15,13 @@ describe('E2E WebSocket proxy', () => {
   let ws: WebSocket;
   let wss: WebSocketServer;
   let proxyMiddleware: RequestHandler;
-  const WS_SERVER_PORT = 9000;
+  let WS_SERVER_PORT: number;
+  let SERVER_PORT: number;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    WS_SERVER_PORT = await getPort();
+    SERVER_PORT = await getPort();
+
     wss = new WebSocketServer({ port: WS_SERVER_PORT });
 
     wss.on('connection', (websocket) => {
@@ -44,7 +49,6 @@ describe('E2E WebSocket proxy', () => {
 
   describe('option.ws', () => {
     beforeEach(async (done) => {
-      const SERVER_PORT = 31000;
       proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
 
       // quick & dirty Promise version of http.get (don't care about correctness)
@@ -70,7 +74,6 @@ describe('E2E WebSocket proxy', () => {
 
   describe('option.ws with external server "upgrade"', () => {
     beforeEach((done) => {
-      const SERVER_PORT = 32000;
       proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
       proxyServer.on('upgrade', proxyMiddleware.upgrade);
 
@@ -88,8 +91,6 @@ describe('E2E WebSocket proxy', () => {
   });
 
   describe('option.ws with external server "upgrade" and shorthand usage', () => {
-    const SERVER_PORT = 33000;
-
     beforeEach(() => {
       proxyServer = createApp(
         createProxyMiddleware(`ws://localhost:${WS_SERVER_PORT}`, {
@@ -115,8 +116,6 @@ describe('E2E WebSocket proxy', () => {
   });
 
   describe('with router and pathRewrite', () => {
-    const SERVER_PORT = 34000;
-
     beforeEach(() => {
       // override
       proxyServer = createApp(

@@ -2,6 +2,7 @@ import { createProxyMiddleware, createApp, createAppWithPath } from './test-kit'
 import { ErrorRequestHandler } from 'express';
 import * as request from 'supertest';
 import { getLocal, generateCACertificate, Mockttp } from 'mockttp';
+import * as getPort from 'get-port';
 
 const untrustedCACert = generateCACertificate({ bits: 1024 });
 
@@ -12,10 +13,18 @@ describe('E2E router', () => {
   let targetServerB: Mockttp;
   let targetServerC: Mockttp;
 
+  let targetPortA: number;
+  let targetPortB: number;
+  let targetPortC: number;
+
   beforeEach(async () => {
     targetServerA = getLocal({ https: await untrustedCACert });
     targetServerB = getLocal({ https: await untrustedCACert });
     targetServerC = getLocal({ https: await untrustedCACert });
+
+    targetPortA = await getPort();
+    targetPortB = await getPort();
+    targetPortC = await getPort();
 
     await targetServerA
       .anyRequest()
@@ -37,9 +46,9 @@ describe('E2E router', () => {
       .anyRequest()
       .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'C' : 'NOT HTTPS C' }));
 
-    await targetServerA.start(6001);
-    await targetServerB.start(6002);
-    await targetServerC.start(6003);
+    await targetServerA.start(targetPortA);
+    await targetServerB.start(targetPortB);
+    await targetServerC.start(targetPortC);
   });
 
   afterEach(async () => {
@@ -52,11 +61,11 @@ describe('E2E router', () => {
     it('should work with a string', async () => {
       const app = createApp(
         createProxyMiddleware({
-          target: 'https://localhost:6001',
+          target: `https://localhost:${targetPortA}`,
           secure: false,
           changeOrigin: true,
           router(req) {
-            return 'https://localhost:6003';
+            return `https://localhost:${targetPortC}`;
           },
         })
       );
@@ -69,11 +78,11 @@ describe('E2E router', () => {
     it('should work with an object', async () => {
       const app = createApp(
         createProxyMiddleware({
-          target: 'https://localhost:6001',
+          target: `https://localhost:${targetPortA}`,
           secure: false,
           changeOrigin: true,
           router(req) {
-            return { host: 'localhost', port: 6003, protocol: 'https:' };
+            return { host: 'localhost', port: targetPortC, protocol: 'https:' };
           },
         })
       );
@@ -85,12 +94,12 @@ describe('E2E router', () => {
     it('should work with an async callback', async () => {
       const app = createApp(
         createProxyMiddleware({
-          target: 'https://localhost:6001',
+          target: `https://localhost:${targetPortA}`,
           secure: false,
           changeOrigin: true,
           router: async (req) => {
             return new Promise((resolve) =>
-              resolve({ host: 'localhost', port: 6003, protocol: 'https:' })
+              resolve({ host: 'localhost', port: targetPortC, protocol: 'https:' })
             );
           },
         })
@@ -104,7 +113,7 @@ describe('E2E router', () => {
     it('should handle promise rejection in router', async () => {
       const app = createApp(
         createProxyMiddleware({
-          target: 'https://localhost:6001',
+          target: `https://localhost:${targetPortA}`,
           secure: false,
           changeOrigin: true,
           router: async (req) => {
@@ -125,12 +134,12 @@ describe('E2E router', () => {
     it('missing a : will cause it to use http', async () => {
       const app = createApp(
         createProxyMiddleware({
-          target: 'https://localhost:6001',
+          target: `https://localhost:${targetPortA}`,
           secure: false,
           changeOrigin: true,
           router: async (req) => {
             return new Promise((resolve) =>
-              resolve({ host: 'localhost', port: 6003, protocol: 'https' })
+              resolve({ host: 'localhost', port: targetPortC, protocol: 'https' })
             );
           },
         })
@@ -149,13 +158,13 @@ describe('E2E router', () => {
       const app = createAppWithPath(
         '/',
         createProxyMiddleware({
-          target: 'https://localhost:6001',
+          target: `https://localhost:${targetPortA}`,
           secure: false,
           changeOrigin: true,
           router: {
-            'alpha.localhost:6000': 'https://localhost:6001',
-            'beta.localhost:6000': 'https://localhost:6002',
-            'localhost:6000/api': 'https://localhost:6003',
+            'alpha.localhost:6000': `https://localhost:${targetPortA}`,
+            'beta.localhost:6000': `https://localhost:${targetPortB}`,
+            'localhost:6000/api': `https://localhost:${targetPortC}`,
           },
         })
       );
