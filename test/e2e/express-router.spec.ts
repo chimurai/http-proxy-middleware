@@ -1,18 +1,14 @@
 import * as express from 'express';
-import * as http from 'http';
+import * as request from 'supertest';
 import { createProxyMiddleware } from './test-kit';
 import { Options } from '../../src/index';
 
 describe('Usage in Express', () => {
   let app: express.Express;
-  let server: http.Server;
+  let agent: request.SuperTest<request.Test>;
 
   beforeEach(() => {
     app = express();
-  });
-
-  afterEach(() => {
-    server?.close();
   });
 
   // https://github.com/chimurai/http-proxy-middleware/issues/94
@@ -43,19 +39,12 @@ describe('Usage in Express', () => {
       app.use('/sub', sub);
 
       // start server
-      server = app.listen(3000);
+      agent = request(app);
     });
 
-    // FIXME: flaky e2e test; caused by fixed port:3000
-    it('should still return a response when route does not match proxyConfig', (done) => {
-      let responseBody;
-      http.get('http://localhost:3000/sub/hello', (res) => {
-        res.on('data', (chunk) => {
-          responseBody = chunk.toString();
-          expect(responseBody).toBe('{"content":"foobar"}');
-          done();
-        });
-      });
+    it('should still return a response when route does not match proxyConfig', async () => {
+      const response = await agent.get('/sub/hello');
+      expect(response.body).toEqual({ content: 'foobar' });
     });
   });
 
