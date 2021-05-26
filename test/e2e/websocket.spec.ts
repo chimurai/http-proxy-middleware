@@ -48,7 +48,7 @@ describe('E2E WebSocket proxy', () => {
   });
 
   describe('option.ws', () => {
-    beforeEach(async (done) => {
+    beforeEach(async () => {
       proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
 
       // quick & dirty Promise version of http.get (don't care about correctness)
@@ -59,8 +59,10 @@ describe('E2E WebSocket proxy', () => {
       // do a second http request to make sure only 1 listener subscribes to upgrade request
       await get(`http://localhost:${SERVER_PORT}/`);
 
-      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
-      ws.on('open', done);
+      return new Promise((resolve) => {
+        ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
+        ws.on('open', resolve);
+      });
     });
 
     it('should proxy to path', (done) => {
@@ -81,7 +83,7 @@ describe('E2E WebSocket proxy', () => {
       ws.on('open', done);
     });
 
-    it('should proxy to path', async (done) => {
+    it('should proxy to path', (done) => {
       ws.on('message', (message) => {
         expect(message).toBe('foobar');
         done();
