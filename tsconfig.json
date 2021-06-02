@@ -6,7 +6,8 @@
     "moduleResolution": "node",
     "target": "es2019",
     "incremental": true,
-    "declaration": true
+    "declaration": true,
+    "allowJs": true
   },
   "include": ["./src"]
 }

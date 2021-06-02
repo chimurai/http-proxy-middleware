@@ -1,4 +1,4 @@
-import isPlainObj = require('is-plain-obj');
+import isPlainObj from 'is-plain-obj';
 import * as url from 'url';
 import { ERRORS } from './errors';
 import { getInstance } from './logger';
