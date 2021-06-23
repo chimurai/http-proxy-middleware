@@ -157,5 +157,13 @@ describe('router unit test', () => {
         return expect(result).resolves.toBe('http://localhost:6006');
       });
     });
+        
+    describe('matching order of router config', () => {
+      it('should return another route key is use in url path configured', () => {
+        fakeReq.url = '/some/rest/path';
+        result = getTarget(fakeReq, proxyOptionWithRouter);
+        return expect(result).resolves.toBe('http://localhost:6007');
+      });
+    });
   });
 });
