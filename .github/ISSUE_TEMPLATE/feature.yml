@@ -5,8 +5,10 @@ body:
   - type: textarea
     attributes:
       label: "Describe the feature you'd love to see"
+      placeholder: 'A clear and concise description of the feature request'
     validations:
       required: true
   - type: textarea
     attributes:
       label: 'Additional context (optional)'
+      placeholder: 'Add any other context about the feature request here.'
