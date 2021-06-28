@@ -1,4 +1,4 @@
-name: Bug report
+name: Bug Report
 description: 'Create a report to help us improve'
 labels: bug
 body:
@@ -15,17 +15,13 @@ body:
     attributes:
       description: Please verify that you've followed these steps.
       options:
+        - label: I understand project setup issues should be asked on [StackOverflow](https://stackoverflow.com/questions/tagged/http-proxy-middleware) or in [GitHub Discussions](https://github.com/chimurai/http-proxy-middleware/discussions).
+          required: true
         - label: I updated to latest `http-proxy-middleware`.
           required: true
   - type: textarea
     attributes:
       label: 'Describe the bug (be clear and concise)'
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      render: shell
-      label: 'Server and `http-proxy-middleware` configuration'
     validations:
       required: true
   - type: markdown
@@ -34,13 +30,33 @@ body:
   - type: textarea
     attributes:
       label: 'Step-by-step reproduction instructions'
+      value: |
+        1. ...
+        2. ...
+      render: shell
     validations:
       required: true
   - type: textarea
     attributes:
-      label: 'Expected behavior'
+      label: 'Expected behavior (be clear and concise)'
+      placeholder: Tell us in a clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      render: typescript
+      label: 'What http-proxy-middleware configuration are you using?'
+      placeholder: 'Paste your http-proxy configuration here...'
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      render: shell
+      label: 'What OS/version and node/version are you seeing the problem?'
+      placeholder: 'ie. MacOS 11.4 and Node 16.2.0'
     validations:
       required: true
   - type: textarea
     attributes:
       label: 'Additional context (optional)'
+      placeholder: 'Please add any addition information that might help the investigation'
