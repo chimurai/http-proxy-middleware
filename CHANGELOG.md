@@ -1,5 +1,12 @@
 # Changelog
 
+## [v2.0.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.1)
+
+- fix(fixRequestBody): fix type error ([#615](https://github.com/chimurai/http-proxy-middleware/pull/615))
+- test(coverage): improve coverage config ([#609](https://github.com/chimurai/http-proxy-middleware/pull/609)) ([leonardobazico](https://github.com/leonardobazico))
+- test: add test coverage to fixRequestBody and responseInterceptor ([#608](https://github.com/chimurai/http-proxy-middleware/pull/608)) ([leonardobazico](https://github.com/leonardobazico))
+- chore(typescript): extract handlers types ([#603](https://github.com/chimurai/http-proxy-middleware/pull/603)) ([leonardobazico](https://github.com/leonardobazico))
+
 ## [v2.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.0)
 
 - chore(package): drop node 10 [BREAKING CHANGE] ([#577](https://github.com/chimurai/http-proxy-middleware/pull/577))
