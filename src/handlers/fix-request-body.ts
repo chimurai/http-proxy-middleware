@@ -8,7 +8,7 @@ import * as querystring from 'querystring';
 export function fixRequestBody(proxyReq: http.ClientRequest, req: http.IncomingMessage): void {
   const requestBody = (req as Request).body;
 
-  if (!requestBody || !Object.keys(requestBody).length) {
+  if (!requestBody) {
     return;
   }
 

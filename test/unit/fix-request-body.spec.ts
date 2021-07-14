@@ -24,16 +24,17 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).not.toHaveBeenCalled();
   });
 
-  it('should not write when body is empty', () => {
+  it('should write when body is an empty JSON object', () => {
     const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
 
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, { body: {} } as Request);
 
-    expect(proxyRequest.setHeader).not.toHaveBeenCalled();
-    expect(proxyRequest.write).not.toHaveBeenCalled();
+    expect(proxyRequest.setHeader).toHaveBeenCalled();
+    expect(proxyRequest.write).toHaveBeenCalled();
   });
 
   it('should write when body is not empty and Content-Type is application/json', () => {
