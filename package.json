@@ -53,11 +53,11 @@
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
-    "@types/express": "4.17.7",
+    "@types/express": "^4.17.13",
     "@types/is-glob": "^4.0.2",
     "@types/jest": "^27.0.1",
     "@types/micromatch": "^4.0.2",
-    "@types/node": "^15.6.2",
+    "@types/node": "^16.6.1",
     "@types/supertest": "^2.0.11",
     "@types/ws": "^7.4.7",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
@@ -95,5 +95,10 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
+  },
+  "resolutions": {
+    "@types/express": "^4.17.13",
+    "@types/express-serve-static-core": "^4.17.24",
+    "@types/serve-static": "^1.13.10"
   }
 }
