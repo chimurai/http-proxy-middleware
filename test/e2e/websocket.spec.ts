@@ -25,7 +25,8 @@ describe('E2E WebSocket proxy', () => {
     wss = new WebSocketServer({ port: WS_SERVER_PORT });
 
     wss.on('connection', (websocket) => {
-      websocket.on('message', (message) => {
+      websocket.on('message', (data, isBinary) => {
+        const message = isBinary ? data : data.toString();
         websocket.send(message); // echo received message
       });
     });
@@ -66,7 +67,8 @@ describe('E2E WebSocket proxy', () => {
     });
 
     it('should proxy to path', (done) => {
-      ws.on('message', (message) => {
+      ws.on('message', (data, isBinary) => {
+        const message = isBinary ? data : data.toString();
         expect(message).toBe('foobar');
         done();
       });
@@ -84,7 +86,8 @@ describe('E2E WebSocket proxy', () => {
     });
 
     it('should proxy to path', (done) => {
-      ws.on('message', (message) => {
+      ws.on('message', (data, isBinary) => {
+        const message = isBinary ? data : data.toString();
         expect(message).toBe('foobar');
         done();
       });
@@ -109,7 +112,8 @@ describe('E2E WebSocket proxy', () => {
     });
 
     it('should proxy to path', (done) => {
-      ws.on('message', (message) => {
+      ws.on('message', (data, isBinary) => {
+        const message = isBinary ? data : data.toString();
         expect(message).toBe('foobar');
         done();
       });
@@ -136,7 +140,8 @@ describe('E2E WebSocket proxy', () => {
     });
 
     it('should proxy to path', (done) => {
-      ws.on('message', (message) => {
+      ws.on('message', (data, isBinary) => {
+        const message = isBinary ? data : data.toString();
         expect(message).toBe('foobar');
         done();
       });
