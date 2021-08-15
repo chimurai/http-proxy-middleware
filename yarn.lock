@@ -823,7 +823,7 @@
     "@types/qs" "*"
     "@types/range-parser" "*"
 
-"@types/express@*", "@types/express@^4.0.33", "@types/express@^4.17.13":
+"@types/express@*", "@types/express@^4.17.13":
   version "4.17.13"
   resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.13.tgz#a76e2995728999bab51a33fabce1d705a3709034"
   integrity sha512-6bSZTPaTIACxn48l50SR+axgrqm6qXFIxrdAKaG6PaJk3+zuUr35hBlgT7vOmJcum+OEaIBLtHV/qloEAFITeA==
@@ -896,22 +896,10 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-1.3.2.tgz#93e25bf9ee75fe0fd80b594bc4feb0e862111b5a"
   integrity sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==
 
-"@types/node-forge@^0.9.1":
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/@types/node-forge/-/node-forge-0.9.4.tgz#3a81edafed5022eba8e63338ef4b04def04c61f1"
-  integrity sha512-uFhaKXdhhrLNzfNhXbXJqDwF3jXMzN9qfkdW+IAMnAfwqNZhBcE/cciMITLT0Sg6ls6JYHo3xVWNXAG1g9tm8A==
-  dependencies:
-    "@types/node" "*"
-
 "@types/node@*":
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-15.6.2.tgz#c61d49f38af70da32424b5322eee21f97e627175"
   integrity sha512-dxcOx8801kMo3KlU+C+/ctWrzREAH7YvoF3aoVpRdqgs+Kf7flp+PJDN/EX5bME3suDUZHsxes9hpvBmzYlWbA==
-
-"@types/node@^14.14.37":
-  version "14.14.37"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.37.tgz#a3dd8da4eb84a996c36e331df98d82abd76b516e"
-  integrity sha512-XYmBiy+ohOR4Lh5jE379fV2IU+6Jn4g5qASinhitfyO71b/sCo6MKsMLF5tc7Zf2CE8hViVQyYSobJNke8OvUw==
 
 "@types/node@^16.6.1":
   version "16.6.1"
@@ -4134,18 +4122,16 @@ mkdirp@^0.5.5:
   dependencies:
     minimist "^1.2.5"
 
-mockttp@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/mockttp/-/mockttp-2.2.1.tgz#6e517b276c090c6825d9c42e95aead6832706df3"
-  integrity sha512-0Nhp7gDnPkKNKRaJtqfDQaSYEbfYQohmf7DUTJG/Q6vP0gNblSEjr/sFGHDX6XvBraoOpSw3ePV2XDzK21VAsQ==
+mockttp@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/mockttp/-/mockttp-2.2.2.tgz#fcee10860341b70ec014886fb15ab587f9fb911f"
+  integrity sha512-f9sERZe+95sGBSzBt7nSXsPdTm+O2uPA/gy/Wlf544a4zKbe0fhBRfs62HCgoTYnJu3lMxlX4oxph7L+SHW/LA==
   dependencies:
     "@graphql-tools/schema" "^7.1.5"
     "@httptoolkit/httpolyglot" "^1.0.0"
     "@httptoolkit/subscriptions-transport-ws" "^0.9.19"
     "@types/cors" "^2.8.6"
-    "@types/express" "^4.0.33"
-    "@types/node" "^14.14.37"
-    "@types/node-forge" "^0.9.1"
+    "@types/node" "*"
     base64-arraybuffer "^0.1.5"
     body-parser "^1.15.2"
     cacheable-lookup "^6.0.0"
