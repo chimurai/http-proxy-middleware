@@ -73,7 +73,7 @@
     "husky": "^7.0.1",
     "jest": "^27.0.6",
     "lint-staged": "^11.1.2",
-    "mockttp": "^2.2.1",
+    "mockttp": "^2.2.2",
     "open": "^8.2.1",
     "prettier": "^2.3.2",
     "supertest": "^6.1.5",
@@ -95,10 +95,5 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
-  },
-  "resolutions": {
-    "@types/express": "^4.17.13",
-    "@types/express-serve-static-core": "^4.17.24",
-    "@types/serve-static": "^1.13.10"
   }
 }
