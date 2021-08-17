@@ -79,7 +79,7 @@ function defaultErrorHandler(err, req: express.Request, res: express.Response) {
     }
   }
 
-  res.end(`Error occured while trying to proxy: ${host}${req.url}`);
+  res.end(`Error occurred while trying to proxy: ${host}${req.url}`);
 }
 
 function logClose(req, socket, head) {
