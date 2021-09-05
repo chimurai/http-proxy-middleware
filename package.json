@@ -59,6 +59,7 @@
     "@types/micromatch": "^4.0.2",
     "@types/node": "^16.6.1",
     "@types/supertest": "^2.0.11",
+    "@types/type-is": "^1.6.3",
     "@types/ws": "^7.4.7",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
     "@typescript-eslint/parser": "^4.29.1",
@@ -86,7 +87,8 @@
     "http-proxy": "^1.18.1",
     "is-glob": "^4.0.1",
     "is-plain-obj": "^3.0.0",
-    "micromatch": "^4.0.2"
+    "micromatch": "^4.0.2",
+    "type-is": "^1.6.18"
   },
   "engines": {
     "node": ">=12.0.0"
