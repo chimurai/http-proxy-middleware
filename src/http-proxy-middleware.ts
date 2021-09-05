@@ -8,6 +8,10 @@ import * as handlers from './_handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
+import { Readable } from 'stream';
+import { hasBody } from 'type-is';
+import { cacheRequestBody } from './handlers/cache-request-body';
+
 export class HttpProxyMiddleware {
   private logger = getInstance();
   private config: Config;
@@ -51,7 +55,60 @@ export class HttpProxyMiddleware {
     if (this.shouldProxy(this.config.context, req)) {
       try {
         const activeProxyOptions = await this.prepareProxyRequest(req);
-        this.proxy.web(req, res, activeProxyOptions);
+        const targets = [].concat(activeProxyOptions.target);
+        if (targets.length === 1) {
+          activeProxyOptions.target = targets[0];
+          this.proxy.web(req, res, activeProxyOptions);
+          return;
+        }
+
+        // load balance & retryable
+        let buffer: Buffer | undefined;
+        let retryable = true;
+        if (hasBody(req)) {
+          const contentLength = req.headers['content-length'];
+          const limit = 100 * 2 ** 10; // 100k
+          if (!contentLength || Number(contentLength) < limit) {
+            try {
+              buffer = await cacheRequestBody(req);
+            } catch (err) {
+              retryable = false;
+              this.logger.error(err);
+            }
+          } else {
+            retryable = false;
+          }
+        }
+        const triedTargets = [];
+        const getTarget = () => {
+          const idleTargets = targets.filter((target) => !triedTargets.includes(target));
+          const target = idleTargets[Math.floor(Math.random() * idleTargets.length)];
+          triedTargets.push(target);
+          return target;
+        };
+
+        const cb = (
+          err: NodeJS.ErrnoException | null,
+          req: Request,
+          res: Response,
+          url?: string
+        ) => {
+          activeProxyOptions.target = getTarget();
+          activeProxyOptions.buffer = buffer && Readable.from(buffer);
+          if (err) {
+            if (err.code === 'ECONNREFUSED' && activeProxyOptions.target) {
+              this.proxy.web(req, res, activeProxyOptions, cb);
+              return;
+            }
+
+            this.proxy.emit('error', err, req, res, url);
+            return;
+          }
+
+          this.proxy.web(req, res, activeProxyOptions, retryable ? cb : undefined);
+        };
+
+        cb(null, req, res);
       } catch (err) {
         next(err);
       }
@@ -95,6 +152,12 @@ export class HttpProxyMiddleware {
   private handleUpgrade = async (req: Request, socket, head) => {
     if (this.shouldProxy(this.config.context, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
+      const { target } = activeProxyOptions;
+      if (Array.isArray(target)) {
+        const len = target.length;
+        const idx = len > 1 ? Math.floor(Math.random() * len) : 0;
+        activeProxyOptions.target = target[idx];
+      }
       this.proxy.ws(req, socket, head, activeProxyOptions);
       this.logger.info('[HPM] Upgrading to WebSocket');
     }
