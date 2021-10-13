@@ -21,7 +21,8 @@
     "test": "jest",
     "precoverage": "yarn build",
     "coverage": "jest --coverage --coverageReporters=lcov",
-    "prepare": "husky install && yarn build && rm dist/tsconfig.tsbuildinfo"
+    "prepare": "husky install",
+    "prepack": "yarn build && rm dist/tsconfig.tsbuildinfo"
   },
   "repository": {
     "type": "git",
