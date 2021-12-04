@@ -54,7 +54,6 @@
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
-    "@types/express": "^4.17.13",
     "@types/is-glob": "^4.0.2",
     "@types/jest": "^27.0.2",
     "@types/micromatch": "^4.0.2",
@@ -83,6 +82,7 @@
     "ws": "^8.2.3"
   },
   "dependencies": {
+    "@types/express": "^4.17.13",
     "@types/http-proxy": "^1.17.5",
     "http-proxy": "^1.18.1",
     "is-glob": "^4.0.1",
