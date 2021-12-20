@@ -6,6 +6,10 @@ export function createProxyMiddleware(context: Filter | Options, options?: Optio
   return middleware;
 }
 
+export function createProxy(context: Filter | Options, options?: Options) {
+  return new HttpProxyMiddleware(context, options);
+}
+
 export * from './handlers';
 export * from './http-proxy-middleware';
 
