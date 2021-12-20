@@ -43,7 +43,7 @@ export class HttpProxyMiddleware {
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-  public middleware: RequestHandler = async (
+  public middleware: any = async (
     req: Request,
     res: Response,
     next: express.NextFunction
