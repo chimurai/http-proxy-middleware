@@ -7,5 +7,6 @@ export function createProxyMiddleware(context: Filter | Options, options?: Optio
 }
 
 export * from './handlers';
+export * from './http-proxy-middleware';
 
 export { Filter, Options, RequestHandler } from './types';
