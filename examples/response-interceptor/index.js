@@ -8,6 +8,7 @@ const express = require('express');
 const { createProxyMiddleware, responseInterceptor } = require('../../dist'); // require('http-proxy-middleware');
 
 // test with double-byte characters
+// cSpell:ignore Kroket, ส้มตำไทย, चिकन
 const favoriteFoods = [
   {
     country: 'NL',

@@ -585,6 +585,9 @@ $ yarn test
 
 # code coverage
 $ yarn cover
+
+# check spelling mistakes
+$ yarn spellcheck
 ```
 
 ## Changelog

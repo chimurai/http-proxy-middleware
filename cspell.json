@@ -1,0 +1,40 @@
+{
+  "language": "en",
+  "spellCheckDelayMs": 500,
+  "dictionaries": ["node", "npm", "typescript", "contributors"],
+  "ignorePaths": ["node_modules/**", "coverage/**", "dist/**", "package.json", "yarn.lock"],
+  "dictionaryDefinitions": [
+    {
+      "name": "contributors",
+      "path": "CONTRIBUTORS.txt"
+    }
+  ],
+  "ignoreRegExpList": ["[a-z]+path"],
+  "words": [
+    "camelcase",
+    "codesandbox",
+    "deepcode",
+    "depthfrom",
+    "fastify",
+    "globbing",
+    "gzipped",
+    "insertanchor",
+    "lcov",
+    "Lenna",
+    "lipsum",
+    "lorum",
+    "middlewares",
+    "millis",
+    "mockttp",
+    "Nodejitsu",
+    "ntlm",
+    "proxied",
+    "proxying",
+    "rawbody",
+    "restream",
+    "streamify",
+    "vhosted",
+    "websockets",
+    "xfwd"
+  ]
+}
