@@ -340,7 +340,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   ```javascript
   function onOpen(proxySocket) {
     // listen for messages coming FROM the target here
-    proxySocket.on('data', hybiParseAndLogMessage);
+    proxySocket.on('data', hybridParseAndLogMessage);
   }
   ```
 
@@ -585,6 +585,9 @@ $ yarn test
 
 # code coverage
 $ yarn cover
+
+# check spelling mistakes
+$ yarn spellcheck
 ```
 
 ## Changelog

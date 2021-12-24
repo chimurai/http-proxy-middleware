@@ -50,7 +50,7 @@ const myProxy = createProxyMiddleware({
   selfHandleResponse: true,
   onProxyReq: (proxyReq, req, res) => {
     // before
-    // get something async from entry middlware before the proxy kicks in
+    // get something async from entry middleware before the proxy kicks in
     console.log('proxyReq:', req.locals.da);
 
     proxyReq.setHeader('mpth-1', req.locals.da);

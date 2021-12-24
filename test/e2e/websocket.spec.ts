@@ -125,6 +125,7 @@ describe('E2E WebSocket proxy', () => {
     beforeEach(() => {
       // override
       proxyServer = createApp(
+        // cSpell:ignore notworkinghost
         createProxyMiddleware('ws://notworkinghost:6789', {
           router: { '/socket': `ws://localhost:${WS_SERVER_PORT}` },
           pathRewrite: { '^/socket': '' },

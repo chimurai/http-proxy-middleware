@@ -22,7 +22,8 @@
     "precoverage": "yarn build",
     "coverage": "jest --coverage --coverageReporters=lcov",
     "prepare": "husky install",
-    "prepack": "yarn build && rm dist/tsconfig.tsbuildinfo"
+    "prepack": "yarn build && rm dist/tsconfig.tsbuildinfo",
+    "spellcheck": "npx --yes cspell --show-context --show-suggestions '**/*.*'"
   },
   "repository": {
     "type": "git",

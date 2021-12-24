@@ -99,7 +99,7 @@ Some working examples on <https://03rjl.sse.codesandbox.io>/[relative wikimedia 
 _You can just use any relative image path from <https://upload.wikimedia.org> and use the relative image path on <https://03rjl.sse.codesandbox.io> to see the manipulated image._
 
 ```javascript
-const Jimp = require('jimp'); // use jimp libray for image manipulation
+const Jimp = require('jimp'); // use jimp library for image manipulation
 
 const proxy = createProxyMiddleware({
   target: 'https://upload.wikimedia.org',

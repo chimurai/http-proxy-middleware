@@ -93,7 +93,7 @@
             log('DISCONNECTED');
           });
           socket.addEventListener('error', () => {
-            log('SOCKET ERROR OCCURED');
+            log('SOCKET ERROR OCCURRED');
           });
           socket.addEventListener('message', (msg) => {
             log('RECEIVED:' + msg.data);

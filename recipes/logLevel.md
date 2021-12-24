@@ -12,7 +12,7 @@ Possible values:
 
 ## Level: debug
 
-Log everyting.
+Log everything.
 
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');

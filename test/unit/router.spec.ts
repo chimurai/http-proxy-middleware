@@ -144,7 +144,7 @@ describe('router unit test', () => {
       });
 
       it('should target http://localhost:6000 path in not present in router config', () => {
-        fakeReq.url = '/unknow-path';
+        fakeReq.url = '/unknown-path';
         result = getTarget(fakeReq, proxyOptionWithRouter);
         return expect(result).resolves.toBeUndefined();
       });

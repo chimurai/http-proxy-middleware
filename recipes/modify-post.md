@@ -44,8 +44,8 @@ const proxy_options = {
       let body = new Object();
 
       body.filename = 'reports/statistics/summary_2016.pdf';
-      body.routeid = 's003b012d002';
-      body.authid = 'bac02c1d-258a-4177-9da6-862580154960';
+      body.routeId = 's003b012d002';
+      body.authId = 'bac02c1d-258a-4177-9da6-862580154960';
 
       // URI encode JSON object
       body = Object.keys(body)
