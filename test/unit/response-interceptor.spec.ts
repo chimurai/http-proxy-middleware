@@ -52,12 +52,10 @@ describe('responseInterceptor', () => {
       response
     );
 
-    httpIncomingMessage.emit('error', new Error('some error meessage'));
+    httpIncomingMessage.emit('error', new Error('some error message'));
 
     expect(response.setHeader).not.toHaveBeenCalled();
     expect(response.write).not.toHaveBeenCalled();
-    expect(response.end).toHaveBeenCalledWith(
-      'Error fetching proxied request: some error meessage'
-    );
+    expect(response.end).toHaveBeenCalledWith('Error fetching proxied request: some error message');
   });
 });
