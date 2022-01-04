@@ -24,10 +24,16 @@ function getTargetFromProxyTable(req, table) {
 
   for (const [key] of Object.entries(table)) {
     if (containsPath(key)) {
-      if (hostAndPath.indexOf(key) > -1) {
+      if(/^\//.test(key)) {
+        if(path.startsWith(key)) {
+          result = table[key];
+          logger.debug('[HPM] Router table match path only : "%s"', key);
+          break;
+        }
+      } else if (hostAndPath.indexOf(key) > -1) {
         // match 'localhost:3000/api'
         result = table[key];
-        logger.debug('[HPM] Router table match: "%s"', key);
+        logger.debug('[HPM] Router table match host and path: "%s"', key);
         break;
       }
     } else {
