@@ -1,6 +1,5 @@
 name: Bug Report
 description: 'Create a report to help us improve'
-labels: bug
 body:
   - type: markdown
     attributes:
@@ -13,6 +12,7 @@ body:
       required: true
   - type: checkboxes
     attributes:
+      label: Checks
       description: Please verify that you've followed these steps.
       options:
         - label: I understand project setup issues should be asked on [StackOverflow](https://stackoverflow.com/questions/tagged/http-proxy-middleware) or in [GitHub Discussions](https://github.com/chimurai/http-proxy-middleware/discussions).
