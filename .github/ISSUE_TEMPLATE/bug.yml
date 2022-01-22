@@ -4,12 +4,6 @@ body:
   - type: markdown
     attributes:
       value: 'Please note your issue will be closed without comment if do not fill out the issue checklist and provide ALL the requested information.'
-  - type: textarea
-    attributes:
-      render: shell
-      label: '`yarn why http-proxy-middleware` OR `npm ls http-proxy-middleware` output (mask private folder names with *****)'
-    validations:
-      required: true
   - type: checkboxes
     attributes:
       label: Checks
@@ -24,12 +18,10 @@ body:
       label: 'Describe the bug (be clear and concise)'
     validations:
       required: true
-  - type: markdown
-    attributes:
-      value: 'If possible, please provide minimal example on CodeSandbox that demonstrates the issue. You can use the following template: https://codesandbox.io/s/http-proxy-middleware-44oc1'
   - type: textarea
     attributes:
       label: 'Step-by-step reproduction instructions'
+      description: 'If possible, please provide minimal example to demonstrate the issue. Create a minimal Github project or use the CodeSandbox template: https://codesandbox.io/s/http-proxy-middleware-44oc1'
       value: |
         1. ...
         2. ...
@@ -39,24 +31,32 @@ body:
   - type: textarea
     attributes:
       label: 'Expected behavior (be clear and concise)'
-      placeholder: Tell us in a clear and concise description of what you expected to happen.
+      description: Tell us in a clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      render: shell
+      label: 'How is http-proxy-middleware used in your project?'
+      description: '`yarn why http-proxy-middleware` OR `npm ls http-proxy-middleware` output (mask private folder names with *****)'
     validations:
       required: true
   - type: textarea
     attributes:
       render: typescript
       label: 'What http-proxy-middleware configuration are you using?'
-      placeholder: 'Paste your http-proxy configuration here...'
+      description: 'Paste your http-proxy configuration here...'
     validations:
       required: true
   - type: textarea
     attributes:
       render: shell
       label: 'What OS/version and node/version are you seeing the problem?'
+      description: 'Paste the output of `npx envinfo`'
       placeholder: 'ie. MacOS 11.4 and Node 16.2.0'
     validations:
       required: true
   - type: textarea
     attributes:
       label: 'Additional context (optional)'
-      placeholder: 'Please add any addition information that might help the investigation'
+      description: 'Please add any addition information that might help the investigation'
