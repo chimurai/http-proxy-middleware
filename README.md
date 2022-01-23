@@ -127,6 +127,7 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 // proxy middleware options
+/** @type {import('http-proxy-middleware/dist/types').Options} */
 const options = {
   target: 'http://www.example.org', // target host
   changeOrigin: true, // needed for virtual hosted sites
@@ -598,4 +599,4 @@ $ yarn spellcheck
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2021 Steven Chim
+Copyright (c) 2015-2022 Steven Chim
