@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.0.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.2)
+
+- chore(deps): update @types/http-proxy to 1.17.8 ([#701](https://github.com/chimurai/http-proxy-middleware/pull/701))
+- fix(fixRequestBody): fix request body for empty JSON object requests ([#640](https://github.com/chimurai/http-proxy-middleware/pull/640)) ([mhassan1](https://github.com/mhassan1))
+- fix(types): fix type regression ([#700](https://github.com/chimurai/http-proxy-middleware/pull/700))
+
 ## [v2.0.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.1)
 
 - fix(fixRequestBody): fix type error ([#615](https://github.com/chimurai/http-proxy-middleware/pull/615))
