@@ -58,32 +58,28 @@ export type LogProviderCallback = (provider: LogProvider) => LogProvider;
  */
 export type OnErrorCallback = (
   err: Error,
-  req: http.IncomingMessage,
-  res: http.ServerResponse,
+  req: Request,
+  res: Response,
   target?: string | Partial<url.Url>
 ) => void;
 export type OnProxyResCallback = (
   proxyRes: http.IncomingMessage,
-  req: http.IncomingMessage,
-  res: http.ServerResponse
+  req: Request,
+  res: Response
 ) => void;
 export type OnProxyReqCallback = (
   proxyReq: http.ClientRequest,
-  req: http.IncomingMessage,
-  res: http.ServerResponse,
+  req: Request,
+  res: Response,
   options: httpProxy.ServerOptions
 ) => void;
 export type OnProxyReqWsCallback = (
   proxyReq: http.ClientRequest,
-  req: http.IncomingMessage,
+  req: Request,
   socket: net.Socket,
   options: httpProxy.ServerOptions,
   head: any
 ) => void;
-export type OnCloseCallback = (
-  proxyRes: http.IncomingMessage,
-  proxySocket: net.Socket,
-  proxyHead: any
-) => void;
+export type OnCloseCallback = (proxyRes: Response, proxySocket: net.Socket, proxyHead: any) => void;
 
 export type OnOpenCallback = (proxySocket: net.Socket) => void;
