@@ -84,7 +84,7 @@
     "ws": "8.4.2"
   },
   "dependencies": {
-    "@types/http-proxy": "^1.17.5",
+    "@types/http-proxy": "^1.17.8",
     "http-proxy": "^1.18.1",
     "is-glob": "^4.0.1",
     "is-plain-obj": "^3.0.0",
