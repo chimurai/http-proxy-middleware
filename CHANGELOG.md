@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.3](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.3)
+
+- feat(package): optional @types/express peer dependency ([#707](https://github.com/chimurai/http-proxy-middleware/pull/707))
+
 ## [v2.0.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.2)
 
 - chore(deps): update @types/http-proxy to 1.17.8 ([#701](https://github.com/chimurai/http-proxy-middleware/pull/701))
