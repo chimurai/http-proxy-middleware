@@ -9,14 +9,14 @@ Node.js proxying made simple. Configure proxy middleware with ease for [connect]
 
 Powered by the popular Nodejitsu [`http-proxy`](https://github.com/nodejitsu/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy)
 
-## ⚠️ Note
+## ⚠️ Note <!-- omit in toc -->
 
-This page is showing documentation for version v1.x.x ([release notes](https://github.com/chimurai/http-proxy-middleware/releases))
+This page is showing documentation for version v2.x.x ([release notes](https://github.com/chimurai/http-proxy-middleware/releases))
 
 If you're looking for v0.x documentation. Go to:
 https://github.com/chimurai/http-proxy-middleware/tree/v0.21.0#readme
 
-## TL;DR
+## TL;DR <!-- omit in toc -->
 
 Proxy `/api` requests to `http://www.example.org`
 
@@ -52,9 +52,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 
 :bulb: **Tip:** Set the option `changeOrigin` to `true` for [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based).
 
-## Table of Contents
-
-<!-- MarkdownTOC autolink=true bracket=round depth=2 -->
+## Table of Contents <!-- omit in toc -->
 
 - [Install](#install)
 - [Core concept](#core-concept)
@@ -65,7 +63,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [http-proxy events](#http-proxy-events)
   - [http-proxy options](#http-proxy-options)
 - [Shorthand](#shorthand)
-  - [app.use\(path, proxy\)](#appusepath-proxy)
+  - [app.use(path, proxy)](#appusepath-proxy)
 - [WebSocket](#websocket)
   - [External WebSocket upgrade](#external-websocket-upgrade)
 - [Intercept and manipulate requests](#intercept-and-manipulate-requests)
@@ -76,8 +74,6 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 - [Tests](#tests)
 - [Changelog](#changelog)
 - [License](#license)
-
-<!-- /MarkdownTOC -->
 
 ## Install
 
