@@ -95,32 +95,6 @@ describe('E2E WebSocket proxy', () => {
     });
   });
 
-  describe('option.ws with external server "upgrade" and shorthand usage', () => {
-    beforeEach(() => {
-      proxyServer = createApp(
-        createProxyMiddleware(`ws://localhost:${WS_SERVER_PORT}`, {
-          pathRewrite: { '^/socket': '' },
-        })
-      ).listen(SERVER_PORT);
-
-      proxyServer.on('upgrade', proxyMiddleware.upgrade);
-    });
-
-    beforeEach((done) => {
-      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
-      ws.on('open', done);
-    });
-
-    it('should proxy to path', (done) => {
-      ws.on('message', (data, isBinary) => {
-        const message = isBinary ? data : data.toString();
-        expect(message).toBe('foobar');
-        done();
-      });
-      ws.send('foobar');
-    });
-  });
-
   describe('with router and pathRewrite', () => {
     beforeEach(() => {
       // override

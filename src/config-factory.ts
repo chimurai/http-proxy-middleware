@@ -1,5 +1,4 @@
 import isPlainObj = require('is-plain-obj');
-import * as url from 'url';
 import { ERRORS } from './errors';
 import { getInstance } from './logger';
 import { Filter, Options } from './types';
@@ -22,17 +21,6 @@ export function createConfig(context, opts?: Options): Config {
 
     // app.use('/api', proxy('http://localhost:9000'));
     // app.use(proxy('http://localhost:9000/api'));
-  } else if (isStringShortHand(context)) {
-    const oUrl = url.parse(context);
-    const target = [oUrl.protocol, '//', oUrl.host].join('');
-
-    config.context = oUrl.pathname || '/';
-    config.options = Object.assign(config.options, { target }, opts);
-
-    if (oUrl.protocol === 'ws:' || oUrl.protocol === 'wss:') {
-      config.options.ws = true;
-    }
-    // app.use('/api', proxy({target:'http://localhost:9000'}));
   } else {
     config.context = context;
     config.options = Object.assign(config.options, opts);
@@ -45,23 +33,6 @@ export function createConfig(context, opts?: Options): Config {
   }
 
   return config;
-}
-
-/**
- * Checks if a String only target/config is provided.
- * This can be just the host or with the optional path.
- *
- * @example
- *      app.use('/api', proxy('http://localhost:9000'));
- *      app.use(proxy('http://localhost:9000/api'));
- *
- * @param  {String}  context [description]
- * @return {Boolean}         [description]
- */
-function isStringShortHand(context: Filter) {
-  if (typeof context === 'string') {
-    return !!url.parse(context).host;
-  }
 }
 
 /**
