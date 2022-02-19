@@ -4,46 +4,46 @@ import * as micromatch from 'micromatch';
 import * as url from 'url';
 import { ERRORS } from './errors';
 
-export function match(context: Filter, uri: string, req: Request): boolean {
+export function matchPathFilter(pathFilter: Filter = '/', uri: string, req: Request): boolean {
   // single path
-  if (isStringPath(context as string)) {
-    return matchSingleStringPath(context as string, uri);
+  if (isStringPath(pathFilter as string)) {
+    return matchSingleStringPath(pathFilter as string, uri);
   }
 
   // single glob path
-  if (isGlobPath(context as string)) {
-    return matchSingleGlobPath(context as string[], uri);
+  if (isGlobPath(pathFilter as string)) {
+    return matchSingleGlobPath(pathFilter as unknown as string[], uri);
   }
 
   // multi path
-  if (Array.isArray(context)) {
-    if (context.every(isStringPath)) {
-      return matchMultiPath(context, uri);
+  if (Array.isArray(pathFilter)) {
+    if (pathFilter.every(isStringPath)) {
+      return matchMultiPath(pathFilter, uri);
     }
-    if (context.every(isGlobPath)) {
-      return matchMultiGlobPath(context as string[], uri);
+    if (pathFilter.every(isGlobPath)) {
+      return matchMultiGlobPath(pathFilter as string[], uri);
     }
 
     throw new Error(ERRORS.ERR_CONTEXT_MATCHER_INVALID_ARRAY);
   }
 
   // custom matching
-  if (typeof context === 'function') {
+  if (typeof pathFilter === 'function') {
     const pathname = getUrlPathName(uri);
-    return context(pathname, req);
+    return pathFilter(pathname, req);
   }
 
   throw new Error(ERRORS.ERR_CONTEXT_MATCHER_GENERIC);
 }
 
 /**
- * @param  {String} context '/api'
+ * @param  {String} pathFilter '/api'
  * @param  {String} uri     'http://example.org/api/b/c/d.html'
  * @return {Boolean}
  */
-function matchSingleStringPath(context: string, uri: string) {
+function matchSingleStringPath(pathFilter: string, uri: string) {
   const pathname = getUrlPathName(uri);
-  return pathname.indexOf(context) === 0;
+  return pathname.indexOf(pathFilter) === 0;
 }
 
 function matchSingleGlobPath(pattern: string | string[], uri: string) {
@@ -57,14 +57,14 @@ function matchMultiGlobPath(patternList: string | string[], uri: string) {
 }
 
 /**
- * @param  {String} contextList ['/api', '/ajax']
+ * @param  {String} pathFilterList ['/api', '/ajax']
  * @param  {String} uri     'http://example.org/api/b/c/d.html'
  * @return {Boolean}
  */
-function matchMultiPath(contextList: string[], uri: string) {
+function matchMultiPath(pathFilterList: string[], uri: string) {
   let isMultiPath = false;
 
-  for (const context of contextList) {
+  for (const context of pathFilterList) {
     if (matchSingleStringPath(context, uri)) {
       isMultiPath = true;
       break;
@@ -84,10 +84,10 @@ function getUrlPathName(uri: string) {
   return uri && url.parse(uri).pathname;
 }
 
-function isStringPath(context: string) {
-  return typeof context === 'string' && !isGlob(context);
+function isStringPath(pathFilter: string) {
+  return typeof pathFilter === 'string' && !isGlob(pathFilter);
 }
 
-function isGlobPath(context: string) {
-  return isGlob(context);
+function isGlobPath(pathFilter: string) {
+  return isGlob(pathFilter);
 }

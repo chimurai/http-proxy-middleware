@@ -1,10 +1,17 @@
 import { HttpProxyMiddleware } from './http-proxy-middleware';
-import { Filter, Options } from './types';
+import { Options } from './types';
 
-export function createProxyMiddleware(context: Filter | Options, options?: Options) {
-  const { middleware } = new HttpProxyMiddleware(context, options);
+export function createProxyMiddleware(options: Options) {
+  const { middleware } = new HttpProxyMiddleware(options);
   return middleware;
 }
+
+/**
+ * @deprecated
+ */
+// export function legacyCreateProxyMiddleware(pathFilter: Filter, options: Options) {
+//   return createProxyMiddleware({ ...options, pathFilter });
+// }
 
 export * from './handlers';
 
