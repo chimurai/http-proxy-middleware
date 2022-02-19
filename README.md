@@ -57,13 +57,12 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 - [Install](#install)
 - [Core concept](#core-concept)
 - [Example](#example)
+  - [app.use(path, proxy)](#appusepath-proxy)
 - [Context matching](#context-matching)
 - [Options](#options)
   - [http-proxy-middleware options](#http-proxy-middleware-options)
   - [http-proxy events](#http-proxy-events)
   - [http-proxy options](#http-proxy-options)
-- [Shorthand](#shorthand)
-  - [app.use(path, proxy)](#appusepath-proxy)
 - [WebSocket](#websocket)
   - [External WebSocket upgrade](#external-websocket-upgrade)
 - [Intercept and manipulate requests](#intercept-and-manipulate-requests)
@@ -104,15 +103,6 @@ const apiProxy = createProxyMiddleware('/api', { target: 'http://www.example.org
 
 (full list of [`http-proxy-middleware` configuration options](#options))
 
-#### createProxyMiddleware(uri [, config])
-
-```javascript
-// shorthand syntax for the example above:
-const apiProxy = createProxyMiddleware('http://www.example.org/api');
-```
-
-More about the [shorthand configuration](#shorthand).
-
 ## Example
 
 An example with `express` server.
@@ -147,6 +137,21 @@ const app = express();
 app.use('/api', exampleProxy);
 app.listen(3000);
 ```
+
+### app.use(path, proxy)
+
+If you want to use the server's `app.use` `path` parameter to match requests;
+Create and mount the proxy without the http-proxy-middleware `context` parameter:
+
+```javascript
+app.use('/api', createProxyMiddleware({ target: 'http://www.example.org', changeOrigin: true }));
+```
+
+`app.use` documentation:
+
+- express: http://expressjs.com/en/4x/api.html#app.use
+- connect: https://github.com/senchalabs/connect#mount-middleware
+- polka: https://github.com/lukeed/polka#usebase-fn
 
 ## Context matching
 
@@ -422,47 +427,11 @@ The following options are provided by the underlying [http-proxy](https://github
   };
   ```
 
-## Shorthand
-
-Use the shorthand syntax when verbose configuration is not needed. The `context` and `option.target` will be automatically configured when shorthand is used. Options can still be used if needed.
-
-```javascript
-createProxyMiddleware('http://www.example.org:8000/api');
-// createProxyMiddleware('/api', {target: 'http://www.example.org:8000'});
-
-createProxyMiddleware('http://www.example.org:8000/api/books/*/**.json');
-// createProxyMiddleware('/api/books/*/**.json', {target: 'http://www.example.org:8000'});
-
-createProxyMiddleware('http://www.example.org:8000/api', { changeOrigin: true });
-// createProxyMiddleware('/api', {target: 'http://www.example.org:8000', changeOrigin: true});
-```
-
-### app.use(path, proxy)
-
-If you want to use the server's `app.use` `path` parameter to match requests;
-Create and mount the proxy without the http-proxy-middleware `context` parameter:
-
-```javascript
-app.use('/api', createProxyMiddleware({ target: 'http://www.example.org', changeOrigin: true }));
-```
-
-`app.use` documentation:
-
-- express: http://expressjs.com/en/4x/api.html#app.use
-- connect: https://github.com/senchalabs/connect#mount-middleware
-- polka: https://github.com/lukeed/polka#usebase-fn
-
 ## WebSocket
 
 ```javascript
 // verbose api
 createProxyMiddleware('/', { target: 'http://echo.websocket.org', ws: true });
-
-// shorthand
-createProxyMiddleware('http://echo.websocket.org', { ws: true });
-
-// shorter shorthand
-createProxyMiddleware('ws://echo.websocket.org');
 ```
 
 ### External WebSocket upgrade

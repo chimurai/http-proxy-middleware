@@ -389,20 +389,6 @@ describe('E2E http-proxy-middleware', () => {
       });
     });
 
-    describe('shorthand usage', () => {
-      beforeEach(() => {
-        agent = request(
-          createApp(createProxyMiddleware(`http://localhost:${mockTargetServer.port}/api`))
-        );
-      });
-
-      it('should have proxy with shorthand configuration', async () => {
-        await mockTargetServer.get('/api/foo/bar').thenReply(200, 'HELLO /api/foo/bar');
-        const response = await agent.get(`/api/foo/bar`).expect(200);
-        expect(response.text).toBe('HELLO /api/foo/bar');
-      });
-    });
-
     describe('express with path + proxy', () => {
       beforeEach(() => {
         agent = request(
