@@ -4,19 +4,34 @@
  */
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
-
-import type * as express from 'express';
 import type * as http from 'http';
 import type * as httpProxy from 'http-proxy';
 import type * as net from 'net';
 import type * as url from 'url';
 
-export interface Request extends express.Request {}
-export interface Response extends express.Response {}
+export type Request = http.IncomingMessage;
+export type Response = http.ServerResponse;
 
-export interface RequestHandler extends express.RequestHandler {
-  upgrade?: (req: Request, socket: net.Socket, head: any) => void;
+declare module 'http' {
+  interface IncomingMessage {
+    originalUrl?: string;
+    hostname?: string;
+    host?: string;
+    body?: Record<string, any>;
+  }
 }
+
+export type Next = (...args: unknown[]) => unknown;
+
+type RequestMiddlewareFunction = (
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  next: Next
+) => unknown | Promise<unknown>;
+
+export type RequestMiddleware = RequestMiddlewareFunction & {
+  upgrade?: (req: Request, socket: net.Socket, head: any) => void;
+};
 
 export type Filter = string | string[] | ((pathname: string, req: Request) => boolean);
 

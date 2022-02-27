@@ -8,4 +8,4 @@ export function createProxyMiddleware(context: Filter | Options, options?: Optio
 
 export * from './handlers';
 
-export { Filter, Options, RequestHandler } from './types';
+export { Filter, Options, RequestMiddleware as RequestHandler } from './types';
