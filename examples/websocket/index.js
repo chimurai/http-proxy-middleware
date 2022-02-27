@@ -7,8 +7,8 @@ const { createProxyMiddleware } = require('../../dist'); // require('http-proxy-
 /**
  * Configure proxy middleware
  */
-const wsProxy = createProxyMiddleware('/', {
-  target: 'http://echo.websocket.org',
+const wsProxy = createProxyMiddleware({
+  target: 'http://ws.ifelse.io',
   // pathRewrite: {
   //  '^/websocket' : '/socket',        // rewrite path.
   //  '^/removepath' : ''               // remove path.
