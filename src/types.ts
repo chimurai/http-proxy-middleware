@@ -21,6 +21,7 @@ export interface RequestHandler extends express.RequestHandler {
 export type Filter = string | string[] | ((pathname: string, req: Request) => boolean);
 
 export interface Options extends httpProxy.ServerOptions {
+  pathFilter?: Filter;
   pathRewrite?:
     | { [regexp: string]: string }
     | ((path: string, req: Request) => string)

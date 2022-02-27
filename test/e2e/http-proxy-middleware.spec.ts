@@ -8,28 +8,30 @@ import * as bodyParser from 'body-parser';
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {
     it('should create a middleware', () => {
-      const middleware = createProxyMiddleware('/api', {
+      const middleware = createProxyMiddleware({
         target: `http://localhost:8000`,
+        pathFilter: '/api',
       });
       expect(typeof middleware).toBe('function');
     });
   });
 
-  describe('context matching', () => {
+  describe('pathFilter matching', () => {
     describe('do not proxy', () => {
       const mockReq: Request = { url: '/foo/bar', originalUrl: '/foo/bar' } as Request;
       const mockRes: Response = {} as Response;
       const mockNext: NextFunction = jest.fn();
 
       beforeEach(() => {
-        const middleware = createProxyMiddleware('/api', {
+        const middleware = createProxyMiddleware({
           target: `http://localhost:8000`,
+          pathFilter: '/api',
         });
 
         middleware(mockReq, mockRes, mockNext);
       });
 
-      it('should not proxy requests when request url does not match context', () => {
+      it('should not proxy requests when request url does not match pathFilter', () => {
         expect(mockNext).toBeCalled();
       });
     });
@@ -52,8 +54,9 @@ describe('E2E http-proxy-middleware', () => {
       beforeEach(() => {
         agent = request(
           createApp(
-            createProxyMiddleware('/api', {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api',
             })
           )
         );
@@ -84,8 +87,9 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             bodyParser.urlencoded({ extended: false }),
-            createProxyMiddleware('/api', {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api',
               onProxyReq: fixRequestBody,
             })
           )
@@ -102,8 +106,9 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             bodyParser.json(),
-            createProxyMiddleware('/api', {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api',
               onProxyReq: fixRequestBody,
             })
           )
@@ -117,7 +122,7 @@ describe('E2E http-proxy-middleware', () => {
       });
     });
 
-    describe('custom context matcher/filter', () => {
+    describe('custom pathFilter matcher/filter', () => {
       it('should have response body: "HELLO WEB"', async () => {
         const filter = (path, req) => {
           return true;
@@ -125,8 +130,9 @@ describe('E2E http-proxy-middleware', () => {
 
         agent = request(
           createApp(
-            createProxyMiddleware(filter, {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: filter,
             })
           )
         );
@@ -143,8 +149,9 @@ describe('E2E http-proxy-middleware', () => {
 
         agent = request(
           createApp(
-            createProxyMiddleware(filter, {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: filter,
             })
           )
         );
@@ -159,8 +166,9 @@ describe('E2E http-proxy-middleware', () => {
       beforeEach(() => {
         agent = request(
           createApp(
-            createProxyMiddleware(['/api', '/ajax'], {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: ['/api', '/ajax'],
             })
           )
         );
@@ -188,8 +196,9 @@ describe('E2E http-proxy-middleware', () => {
       beforeEach(() => {
         agent = request(
           createApp(
-            createProxyMiddleware('/api/**', {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api/**',
             })
           )
         );
@@ -206,8 +215,9 @@ describe('E2E http-proxy-middleware', () => {
       beforeEach(() => {
         agent = request(
           createApp(
-            createProxyMiddleware(['**/*.html', '!**.json'], {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: ['**/*.html', '!**.json'],
             })
           )
         );
@@ -230,8 +240,9 @@ describe('E2E http-proxy-middleware', () => {
       beforeEach(() => {
         agent = request(
           createApp(
-            createProxyMiddleware('/api', {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api',
               headers: { host: 'foobar.dev' },
             })
           )
@@ -301,8 +312,9 @@ describe('E2E http-proxy-middleware', () => {
       beforeEach(() => {
         agent = request(
           createApp(
-            createProxyMiddleware('/api', {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api',
               onProxyRes(proxyRes, req, res) {
                 // tslint:disable-next-line: no-string-literal
                 proxyRes['headers']['x-added'] = 'foobar'; // add custom header to response
@@ -338,8 +350,9 @@ describe('E2E http-proxy-middleware', () => {
       beforeEach(() => {
         agent = request(
           createApp(
-            createProxyMiddleware('/api', {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api',
               onProxyReq(proxyReq, req, res) {
                 proxyReq.setHeader('x-added', 'added-from-hpm'); // add custom header to request
               },
@@ -417,8 +430,9 @@ describe('E2E http-proxy-middleware', () => {
 
         agent = request(
           createApp(
-            createProxyMiddleware('/api', {
+            createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api',
               logLevel: 'info',
               logProvider(provider) {
                 return { ...provider, debug: customLogger, info: customLogger };

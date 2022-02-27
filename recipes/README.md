@@ -13,14 +13,12 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const winston = require('winston');
 
 /**
- * Context matching: decide which path(s) should be proxied. (wildcards supported)
- **/
-const context = '/api';
-
-/**
  * Proxy options
  */
 const options = {
+  // decide which path(s) should be proxied. (wildcards supported)
+  pathFilter: '/api',
+
   // hostname to the target server
   target: 'http://localhost:3000',
 
@@ -104,5 +102,5 @@ const options = {
 /**
  * Create the proxy middleware, so it can be used in a server.
  */
-const apiProxy = createProxyMiddleware(context, options);
+const apiProxy = createProxyMiddleware(options);
 ```

@@ -30,8 +30,9 @@ describe('Usage in Express', () => {
         changeOrigin: true,
         logLevel: 'silent',
         target: 'http://jsonplaceholder.typicode.com',
+        pathFilter: filter,
       };
-      sub.use(createProxyMiddleware(filter, proxyConfig));
+      sub.use(createProxyMiddleware(proxyConfig));
 
       sub.get('/hello', jsonMiddleware({ content: 'foobar' }));
 
