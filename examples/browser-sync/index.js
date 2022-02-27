@@ -7,8 +7,9 @@ const { createProxyMiddleware } = require('../../dist'); // require('http-proxy-
 /**
  * Configure proxy middleware
  */
-const jsonPlaceholderProxy = createProxyMiddleware('/users', {
+const jsonPlaceholderProxy = createProxyMiddleware({
   target: 'http://jsonplaceholder.typicode.com',
+  pathFilter: '/users',
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
   logLevel: 'debug',
 });

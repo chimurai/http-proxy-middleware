@@ -1,29 +1,29 @@
 import type * as https from 'https';
 import type * as express from 'express';
-import type { Filter, Request, RequestHandler, Response, Options } from './types';
+import type { Request, RequestHandler, Response, Options, Filter } from './types';
 import * as httpProxy from 'http-proxy';
-import { createConfig, Config } from './config-factory';
-import * as contextMatcher from './context-matcher';
+import { verifyConfig } from './configuration';
+import { matchPathFilter } from './path-filter';
 import * as handlers from './_handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
+
 export class HttpProxyMiddleware {
   private logger = getInstance();
-  private config: Config;
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options;
   private proxy: httpProxy;
   private pathRewriter;
 
-  constructor(context: Filter | Options, opts?: Options) {
-    this.config = createConfig(context, opts);
-    this.proxyOptions = this.config.options;
+  constructor(options: Options) {
+    verifyConfig(options);
+    this.proxyOptions = options;
 
     // create proxy
     this.proxy = httpProxy.createProxyServer({});
-    this.logger.info(`[HPM] Proxy created: ${this.config.context}  -> ${this.proxyOptions.target}`);
+    this.logger.info(`[HPM] Proxy created: ${options.pathFilter ?? '/'}  -> ${options.target}`);
 
     this.pathRewriter = PathRewriter.createPathRewriter(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
@@ -48,7 +48,7 @@ export class HttpProxyMiddleware {
     res: Response,
     next: express.NextFunction
   ) => {
-    if (this.shouldProxy(this.config.context, req)) {
+    if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       try {
         const activeProxyOptions = await this.prepareProxyRequest(req);
         this.proxy.web(req, res, activeProxyOptions);
@@ -93,7 +93,7 @@ export class HttpProxyMiddleware {
   };
 
   private handleUpgrade = async (req: Request, socket, head) => {
-    if (this.shouldProxy(this.config.context, req)) {
+    if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.ws(req, socket, head, activeProxyOptions);
       this.logger.info('[HPM] Upgrading to WebSocket');
@@ -102,15 +102,10 @@ export class HttpProxyMiddleware {
 
   /**
    * Determine whether request should be proxied.
-   *
-   * @private
-   * @param  {String} context [description]
-   * @param  {Object} req     [description]
-   * @return {Boolean}
    */
-  private shouldProxy = (context, req: Request): boolean => {
+  private shouldProxy = (pathFilter: Filter, req: Request): boolean => {
     const path = req.originalUrl || req.url;
-    return contextMatcher.match(context, path, req);
+    return matchPathFilter(pathFilter, path, req);
   };
 
   /**

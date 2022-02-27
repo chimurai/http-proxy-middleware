@@ -17,22 +17,22 @@ describe('http-proxy-middleware TypeScript Types', () => {
 
   describe('HPM Filters', () => {
     it('should create proxy with path filter', () => {
-      const proxy = middleware('/path', options);
+      const proxy = middleware({ ...options, pathFilter: '/api' });
       expect(proxy).toBeDefined();
     });
 
     it('should create proxy with glob filter', () => {
-      const proxy = middleware(['/path/**'], options);
+      const proxy = middleware({ ...options, pathFilter: ['/path/**'] });
       expect(proxy).toBeDefined();
     });
 
     it('should create proxy with custom filter', () => {
-      const proxy = middleware((path, req) => true, options);
+      const proxy = middleware({ ...options, pathFilter: (path, req) => true });
       expect(proxy).toBeDefined();
     });
 
     it('should create proxy with manual websocket upgrade function', () => {
-      const proxy = middleware((path, req) => true, options);
+      const proxy = middleware({ ...options, pathFilter: (path, req) => true });
       expect(proxy.upgrade).toBeDefined();
     });
   });

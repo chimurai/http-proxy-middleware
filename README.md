@@ -54,15 +54,20 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 
 ## Table of Contents <!-- omit in toc -->
 
+<!-- // spell-checker:disable -->
+
 - [Install](#install)
 - [Core concept](#core-concept)
-- [Example](#example)
+- [Express Server Example](#express-server-example)
   - [app.use(path, proxy)](#appusepath-proxy)
-- [Context matching](#context-matching)
 - [Options](#options)
-  - [http-proxy-middleware options](#http-proxy-middleware-options)
-  - [http-proxy events](#http-proxy-events)
-  - [http-proxy options](#http-proxy-options)
+  - [`pathFilter` (string, []string, glob, []glob, function)](#pathfilter-string-string-glob-glob-function)
+  - [`pathRewrite` (object/function)](#pathrewrite-objectfunction)
+  - [`router` (object/function)](#router-objectfunction)
+  - [`logLevel` (string)](#loglevel-string)
+  - [`logProvider` (function)](#logprovider-function)
+- [`http-proxy` events](#http-proxy-events)
+- [`http-proxy` options](#http-proxy-options)
 - [WebSocket](#websocket)
   - [External WebSocket upgrade](#external-websocket-upgrade)
 - [Intercept and manipulate requests](#intercept-and-manipulate-requests)
@@ -74,36 +79,36 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 - [Changelog](#changelog)
 - [License](#license)
 
+<!-- // spell-checker:enable -->
+
 ## Install
 
-```bash
-$ npm install --save-dev http-proxy-middleware
+```shell
+npm install --save-dev http-proxy-middleware
 ```
 
 ## Core concept
 
-Proxy middleware configuration.
-
-#### createProxyMiddleware([context,] config)
+Create and configure a proxy middleware with: `createProxyMiddleware(config)`.
 
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', { target: 'http://www.example.org' });
-//                                    \____/   \_____________________________/
-//                                      |                    |
-//                                    context             options
+const apiProxy = createProxyMiddleware({
+  pathFilter: '/api',
+  target: 'http://www.example.org',
+});
 
 // 'apiProxy' is now ready to be used as middleware in a server.
 ```
 
-- **context**: Determine which requests should be proxied to the target host.
-  (more on [context matching](#context-matching))
+- **options.pathFilter**: Determine which requests should be proxied to the target host.
+  (more on [path filter](#path-filter))
 - **options.target**: target host to proxy to. _(protocol + host)_
 
-(full list of [`http-proxy-middleware` configuration options](#options))
+- see full list of [`http-proxy-middleware` configuration options](#options)
 
-## Example
+## Express Server Example
 
 An example with `express` server.
 
@@ -129,7 +134,7 @@ const options = {
   },
 };
 
-// create the proxy (without context)
+// create the proxy
 const exampleProxy = createProxyMiddleware(options);
 
 // mount `exampleProxy` in web server
@@ -140,8 +145,8 @@ app.listen(3000);
 
 ### app.use(path, proxy)
 
-If you want to use the server's `app.use` `path` parameter to match requests;
-Create and mount the proxy without the http-proxy-middleware `context` parameter:
+If you want to use the server's `app.use` `path` parameter to match requests.
+Use `pathFilter` option to further include/exclude requests which you want to proxy.
 
 ```javascript
 app.use('/api', createProxyMiddleware({ target: 'http://www.example.org', changeOrigin: true }));
@@ -153,11 +158,15 @@ app.use('/api', createProxyMiddleware({ target: 'http://www.example.org', change
 - connect: https://github.com/senchalabs/connect#mount-middleware
 - polka: https://github.com/lukeed/polka#usebase-fn
 
-## Context matching
+## Options
 
-Providing an alternative way to decide which requests should be proxied; In case you are not able to use the server's [`path` parameter](http://expressjs.com/en/4x/api.html#app.use) to mount the proxy or when you need more flexibility.
+http-proxy-middleware options:
 
-[RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is used for context matching.
+### `pathFilter` (string, []string, glob, []glob, function)
+
+Decide which requests should be proxied; In case you are not able to use the server's [`path` parameter](http://expressjs.com/en/4x/api.html#app.use) to mount the proxy or when you need more flexibility.
+
+[RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is used in `pathFilter`.
 
 ```ascii
          foo://example.com:8042/over/there?name=ferret#nose
@@ -169,23 +178,22 @@ Providing an alternative way to decide which requests should be proxied; In case
 - **path matching**
 
   - `createProxyMiddleware({...})` - matches any path, all requests will be proxied.
-  - `createProxyMiddleware('/', {...})` - matches any path, all requests will be proxied.
-  - `createProxyMiddleware('/api', {...})` - matches paths starting with `/api`
+  - `createProxyMiddleware({ pathFilter: '/api', ...})` - matches paths starting with `/api`
 
 - **multiple path matching**
 
-  - `createProxyMiddleware(['/api', '/ajax', '/someotherpath'], {...})`
+  - `createProxyMiddleware({ pathFilter: ['/api', '/ajax', '/someotherpath'], ...})`
 
 - **wildcard path matching**
 
   For fine-grained control you can use wildcard matching. Glob pattern matching is done by _micromatch_. Visit [micromatch](https://www.npmjs.com/package/micromatch) or [glob](https://www.npmjs.com/package/glob) for more globbing examples.
 
-  - `createProxyMiddleware('**', {...})` matches any path, all requests will be proxied.
-  - `createProxyMiddleware('**/*.html', {...})` matches any path which ends with `.html`
-  - `createProxyMiddleware('/*.html', {...})` matches paths directly under path-absolute
-  - `createProxyMiddleware('/api/**/*.html', {...})` matches requests ending with `.html` in the path of `/api`
-  - `createProxyMiddleware(['/api/**', '/ajax/**'], {...})` combine multiple patterns
-  - `createProxyMiddleware(['/api/**', '!**/bad.json'], {...})` exclusion
+  - `createProxyMiddleware({ pathFilter: '**', ...})` matches any path, all requests will be proxied.
+  - `createProxyMiddleware({ pathFilter: '**/*.html', ...})` matches any path which ends with `.html`
+  - `createProxyMiddleware({ pathFilter: '/*.html', ...})` matches paths directly under path-absolute
+  - `createProxyMiddleware({ pathFilter: '/api/**/*.html', ...})` matches requests ending with `.html` in the path of `/api`
+  - `createProxyMiddleware({ pathFilter: ['/api/**', '/ajax/**'], ...})` combine multiple patterns
+  - `createProxyMiddleware({ pathFilter: ['/api/**', '!**/bad.json'], ...})` exclusion
 
   **Note**: In multiple path matching, you cannot use string paths and wildcard paths together.
 
@@ -197,8 +205,8 @@ Providing an alternative way to decide which requests should be proxied; In case
   /**
    * @return {Boolean}
    */
-  const filter = function (pathname, req) {
-    return pathname.match('^/api') && req.method === 'GET';
+  const filter = function (path, req) {
+    return path.match('^/api') && req.method === 'GET';
   };
 
   const apiProxy = createProxyMiddleware(filter, {
@@ -206,95 +214,101 @@ Providing an alternative way to decide which requests should be proxied; In case
   });
   ```
 
-## Options
+### `pathRewrite` (object/function)
 
-### http-proxy-middleware options
+Rewrite target's url path. Object-keys will be used as _RegExp_ to match paths.
 
-- **option.pathRewrite**: object/function, rewrite target's url path. Object-keys will be used as _RegExp_ to match paths.
+```javascript
+// rewrite path
+pathRewrite: {'^/old/api' : '/new/api'}
 
-  ```javascript
-  // rewrite path
-  pathRewrite: {'^/old/api' : '/new/api'}
+// remove path
+pathRewrite: {'^/remove/api' : ''}
 
-  // remove path
-  pathRewrite: {'^/remove/api' : ''}
+// add base path
+pathRewrite: {'^/' : '/basepath/'}
 
-  // add base path
-  pathRewrite: {'^/' : '/basepath/'}
+// custom rewriting
+pathRewrite: function (path, req) { return path.replace('/api', '/base/api') }
 
-  // custom rewriting
-  pathRewrite: function (path, req) { return path.replace('/api', '/base/api') }
+// custom rewriting, returning Promise
+pathRewrite: async function (path, req) {
+  const should_add_something = await httpRequestToDecideSomething(path);
+  if (should_add_something) path += "something";
+  return path;
+}
+```
 
-  // custom rewriting, returning Promise
-  pathRewrite: async function (path, req) {
-    const should_add_something = await httpRequestToDecideSomething(path);
-    if (should_add_something) path += "something";
-    return path;
-  }
-  ```
+### `router` (object/function)
 
-- **option.router**: object/function, re-target `option.target` for specific requests.
+Re-target `option.target` for specific requests.
 
-  ```javascript
-  // Use `host` and/or `path` to match requests. First match will be used.
-  // The order of the configuration matters.
-  router: {
-      'integration.localhost:3000' : 'http://localhost:8001',  // host only
-      'staging.localhost:3000'     : 'http://localhost:8002',  // host only
-      'localhost:3000/api'         : 'http://localhost:8003',  // host + path
-      '/rest'                      : 'http://localhost:8004'   // path only
-  }
+```javascript
+// Use `host` and/or `path` to match requests. First match will be used.
+// The order of the configuration matters.
+router: {
+    'integration.localhost:3000' : 'http://localhost:8001',  // host only
+    'staging.localhost:3000'     : 'http://localhost:8002',  // host only
+    'localhost:3000/api'         : 'http://localhost:8003',  // host + path
+    '/rest'                      : 'http://localhost:8004'   // path only
+}
 
-  // Custom router function (string target)
-  router: function(req) {
-      return 'http://localhost:8004';
-  }
+// Custom router function (string target)
+router: function(req) {
+    return 'http://localhost:8004';
+}
 
-  // Custom router function (target object)
-  router: function(req) {
-      return {
-          protocol: 'https:', // The : is required
-          host: 'localhost',
-          port: 8004
-      };
-  }
-
-  // Asynchronous router function which returns promise
-  router: async function(req) {
-      const url = await doSomeIO();
-      return url;
-  }
-  ```
-
-- **option.logLevel**: string, ['debug', 'info', 'warn', 'error', 'silent']. Default: `'info'`
-
-- **option.logProvider**: function, modify or replace log provider. Default: `console`.
-
-  ```javascript
-  // simple replace
-  function logProvider(provider) {
-    // replace the default console log provider.
-    return require('winston');
-  }
-  ```
-
-  ```javascript
-  // verbose replacement
-  function logProvider(provider) {
-    const logger = new (require('winston').Logger)();
-
-    const myCustomProvider = {
-      log: logger.log,
-      debug: logger.debug,
-      info: logger.info,
-      warn: logger.warn,
-      error: logger.error,
+// Custom router function (target object)
+router: function(req) {
+    return {
+        protocol: 'https:', // The : is required
+        host: 'localhost',
+        port: 8004
     };
-    return myCustomProvider;
-  }
-  ```
+}
 
-### http-proxy events
+// Asynchronous router function which returns promise
+router: async function(req) {
+    const url = await doSomeIO();
+    return url;
+}
+```
+
+### `logLevel` (string)
+
+Default: `'info'`
+
+Values: ['debug', 'info', 'warn', 'error', 'silent'].
+
+### `logProvider` (function)
+
+Modify or replace log provider. Default: `console`.
+
+```javascript
+// simple replace
+function logProvider(provider) {
+  // replace the default console log provider.
+  return require('winston');
+}
+```
+
+```javascript
+// verbose replacement
+function logProvider(provider) {
+  const logger = new (require('winston').Logger)();
+
+  const myCustomProvider = {
+    log: logger.log,
+    debug: logger.debug,
+    info: logger.info,
+    warn: logger.warn,
+    error: logger.error,
+  };
+  return myCustomProvider;
+}
+```
+
+## `http-proxy` events
 
 Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#listening-for-proxy-events):
 
@@ -355,7 +369,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   }
   ```
 
-### http-proxy options
+## `http-proxy` options
 
 The following options are provided by the underlying [http-proxy](https://github.com/nodejitsu/node-http-proxy#options) library.
 
@@ -431,7 +445,7 @@ The following options are provided by the underlying [http-proxy](https://github
 
 ```javascript
 // verbose api
-createProxyMiddleware('/', { target: 'http://echo.websocket.org', ws: true });
+createProxyMiddleware({ pathFilter: '/', target: 'http://echo.websocket.org', ws: true });
 ```
 
 ### External WebSocket upgrade
@@ -439,7 +453,7 @@ createProxyMiddleware('/', { target: 'http://echo.websocket.org', ws: true });
 In the previous WebSocket examples, http-proxy-middleware relies on a initial http request in order to listen to the http `upgrade` event. If you need to proxy WebSockets without the initial http request, you can subscribe to the server's http `upgrade` event manually.
 
 ```javascript
-const wsProxy = createProxyMiddleware('ws://echo.websocket.org', { changeOrigin: true });
+const wsProxy = createProxyMiddleware({ target: 'ws://echo.websocket.org', changeOrigin: true });
 
 const app = express();
 app.use(wsProxy);
