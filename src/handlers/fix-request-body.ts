@@ -5,8 +5,8 @@ import * as querystring from 'querystring';
 /**
  * Fix proxied body if bodyParser is involved.
  */
-export function fixRequestBody(proxyReq: http.ClientRequest, req: http.IncomingMessage): void {
-  const requestBody = (req as Request).body;
+export function fixRequestBody(proxyReq: http.ClientRequest, req: Request): void {
+  const requestBody = req.body;
 
   if (!requestBody) {
     return;

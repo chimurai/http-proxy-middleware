@@ -1,5 +1,4 @@
-import type * as express from 'express';
-import type { Options } from './types';
+import type { Request, Response, Options } from './types';
 import type * as httpProxy from 'http-proxy';
 import { getInstance } from './logger';
 const logger = getInstance();
@@ -53,7 +52,7 @@ export function getHandlers(options: Options) {
   return handlers;
 }
 
-function defaultErrorHandler(err, req: express.Request, res: express.Response) {
+function defaultErrorHandler(err, req: Request, res: Response) {
   // Re-throw error. Not recoverable since req & res are empty.
   if (!req && !res) {
     throw err; // "Error: Must provide a proper URL as target"

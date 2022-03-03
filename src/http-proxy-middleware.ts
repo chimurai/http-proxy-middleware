@@ -1,6 +1,6 @@
 import type * as https from 'https';
-import type * as express from 'express';
-import type { Request, RequestHandler, Response, Options, Filter } from './types';
+
+import type { Request, Response, Options, Filter, RequestMiddleware } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { matchPathFilter } from './path-filter';
@@ -35,7 +35,7 @@ export class HttpProxyMiddleware {
 
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
-    (this.middleware as any).upgrade = (req, socket, head) => {
+    this.middleware.upgrade = (req, socket, head) => {
       if (!this.wsInternalSubscribed) {
         this.handleUpgrade(req, socket, head);
       }
@@ -43,11 +43,7 @@ export class HttpProxyMiddleware {
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-  public middleware: RequestHandler = async (
-    req: Request,
-    res: Response,
-    next: express.NextFunction
-  ) => {
+  public middleware: RequestMiddleware = async (req, res, next) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       try {
         const activeProxyOptions = await this.prepareProxyRequest(req);
@@ -58,7 +54,6 @@ export class HttpProxyMiddleware {
     } else {
       next();
     }
-
     /**
      * Get the server object to subscribe to server events;
      * 'upgrade' for websocket and 'close' for graceful shutdown

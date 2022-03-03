@@ -15,4 +15,4 @@ export function createProxyMiddleware(options: Options) {
 
 export * from './handlers';
 
-export { Filter, Options, RequestHandler } from './types';
+export { Filter, Options, RequestMiddleware } from './types';

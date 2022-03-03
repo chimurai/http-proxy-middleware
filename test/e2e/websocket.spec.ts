@@ -3,7 +3,7 @@ import * as WebSocket from 'ws';
 import { Server as WebSocketServer } from 'ws';
 import * as getPort from 'get-port';
 import { createProxyMiddleware, createApp } from './test-kit';
-import type { RequestHandler } from '../../src/types';
+import type { RequestMiddleware } from '../../src/types';
 
 /********************************************************************
  * - Not possible to use `supertest` to test WebSockets
@@ -14,7 +14,7 @@ describe('E2E WebSocket proxy', () => {
   let proxyServer: http.Server;
   let ws: WebSocket;
   let wss: WebSocketServer;
-  let proxyMiddleware: RequestHandler;
+  let proxyMiddleware: RequestMiddleware;
   let WS_SERVER_PORT: number;
   let SERVER_PORT: number;
 
