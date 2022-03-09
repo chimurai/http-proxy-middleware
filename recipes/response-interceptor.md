@@ -144,11 +144,11 @@ const proxy = createProxyMiddleware({
   selfHandleResponse: true, // res.end() will be called internally by responseInterceptor()
 
   /**
-   * Intercept response and remove the 
+   * Intercept response and remove the
    **/
   onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
     res.removeHeader('content-security-policy'); // Remove the Content Security Policy header
-    res.setHeader('HPM-Header', 'Intercepted by HPM') // Set a new header and value
+    res.setHeader('HPM-Header', 'Intercepted by HPM'); // Set a new header and value
   }),
 });
 ```
