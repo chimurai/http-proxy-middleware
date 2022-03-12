@@ -5,10 +5,16 @@ import * as request from 'supertest';
 import * as getPort from 'get-port';
 
 describe('http integration', () => {
+  let server: http.Server | null = null;
+
+  afterEach(() => {
+    server?.close();
+  });
+
   it('should work with raw node http RequestHandler', async () => {
     await new Promise(async (resolve, reject) => {
       const port = await getPort();
-      const server = http
+      server = http
         .createServer((req, res) => {
           const proxyConfig: Options = {
             changeOrigin: true,
