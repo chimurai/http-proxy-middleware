@@ -3,37 +3,41 @@ import * as isGlob from 'is-glob';
 import * as micromatch from 'micromatch';
 import * as url from 'url';
 import { ERRORS } from './errors';
+import { getUrl } from './url';
 
-export function matchPathFilter(pathFilter: Filter = '/', uri: string, req: Request): boolean {
-  // single path
-  if (isStringPath(pathFilter as string)) {
-    return matchSingleStringPath(pathFilter as string, uri);
+/**
+ * Express mutates `Request::url`, demanding special case
+ * handling for this single field.
+ * {@link https://github.com/expressjs/express/issues/4854}
+ */
+
+export function matchPathFilter(pathFilter: Filter = '/', req: Request): boolean {
+  const url = getUrl(req);
+  switch (typeof pathFilter) {
+    case 'string':
+      // single glob path
+      if (isGlob(pathFilter)) {
+        return matchSingleGlobPath(pathFilter, url);
+      }
+      // single path
+      return matchSingleStringPath(pathFilter, url);
+    // custom matching
+    case 'function':
+      return pathFilter(getUrlPathName(url), req);
+    case 'object':
+      // multi path
+      if (Array.isArray(pathFilter)) {
+        if (pathFilter.every(isStringPath)) {
+          return matchMultiPath(pathFilter, url);
+        }
+        if (pathFilter.every((path) => isGlob(path))) {
+          return matchMultiGlobPath(pathFilter, url);
+        }
+        throw new Error(ERRORS.ERR_CONTEXT_MATCHER_INVALID_ARRAY);
+      }
+    default:
+      throw new Error(ERRORS.ERR_CONTEXT_MATCHER_GENERIC);
   }
-
-  // single glob path
-  if (isGlobPath(pathFilter as string)) {
-    return matchSingleGlobPath(pathFilter as unknown as string[], uri);
-  }
-
-  // multi path
-  if (Array.isArray(pathFilter)) {
-    if (pathFilter.every(isStringPath)) {
-      return matchMultiPath(pathFilter, uri);
-    }
-    if (pathFilter.every(isGlobPath)) {
-      return matchMultiGlobPath(pathFilter as string[], uri);
-    }
-
-    throw new Error(ERRORS.ERR_CONTEXT_MATCHER_INVALID_ARRAY);
-  }
-
-  // custom matching
-  if (typeof pathFilter === 'function') {
-    const pathname = getUrlPathName(uri);
-    return pathFilter(pathname, req);
-  }
-
-  throw new Error(ERRORS.ERR_CONTEXT_MATCHER_GENERIC);
 }
 
 /**
@@ -86,8 +90,4 @@ function getUrlPathName(uri: string) {
 
 function isStringPath(pathFilter: string) {
   return typeof pathFilter === 'string' && !isGlob(pathFilter);
-}
-
-function isGlobPath(pathFilter: string) {
-  return isGlob(pathFilter);
 }

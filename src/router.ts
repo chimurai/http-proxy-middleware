@@ -1,5 +1,6 @@
 import isPlainObj = require('is-plain-obj');
 import { getInstance } from './logger';
+import { getUrl } from './url';
 const logger = getInstance();
 
 export async function getTarget(req, config) {
@@ -18,7 +19,7 @@ export async function getTarget(req, config) {
 function getTargetFromProxyTable(req, table) {
   let result;
   const host = req.headers.host;
-  const path = req.url;
+  const path = getUrl(req);
 
   const hostAndPath = host + path;
 

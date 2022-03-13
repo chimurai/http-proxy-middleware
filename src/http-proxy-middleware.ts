@@ -1,6 +1,6 @@
 import type * as https from 'https';
 
-import type { Request, Response, Options, Filter, RequestMiddleware } from './types';
+import type { Request, Response, Options, RequestMiddleware } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { matchPathFilter } from './path-filter';
@@ -8,6 +8,8 @@ import * as handlers from './_handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
+import { getUrl } from './url';
+import { IncomingMessage } from 'http';
 
 export class HttpProxyMiddleware {
   private logger = getInstance();
@@ -98,10 +100,7 @@ export class HttpProxyMiddleware {
   /**
    * Determine whether request should be proxied.
    */
-  private shouldProxy = (pathFilter: Filter, req: Request): boolean => {
-    const path = req.originalUrl || req.url;
-    return matchPathFilter(pathFilter, path, req);
-  };
+  private shouldProxy = matchPathFilter;
 
   /**
    * Apply option.router and option.pathRewrite
@@ -112,12 +111,17 @@ export class HttpProxyMiddleware {
    * @return {Object} proxy options
    */
   private prepareProxyRequest = async (req: Request) => {
+    /**
+     * Store pathname before it gets rewritten for logging
+     * @warn May be hazardous to express users. HPM, Express, &
+     * http.IncomingMessage all write to this field.
+     */
+    const originalPath = getUrl(req);
+
     // https://github.com/chimurai/http-proxy-middleware/issues/17
     // https://github.com/chimurai/http-proxy-middleware/issues/94
-    req.url = req.originalUrl || req.url;
+    (req as IncomingMessage).url = originalPath;
 
-    // store uri before it gets rewritten for logging
-    const originalPath = req.url;
     const newProxyOptions = Object.assign({}, this.proxyOptions);
 
     // Apply in order:
@@ -130,7 +134,7 @@ export class HttpProxyMiddleware {
     if (this.proxyOptions.logLevel === 'debug') {
       const arrow = getArrow(
         originalPath,
-        req.url,
+        getUrl(req),
         this.proxyOptions.target,
         newProxyOptions.target
       );
@@ -162,20 +166,25 @@ export class HttpProxyMiddleware {
 
   // rewrite path
   private applyPathRewrite = async (req: Request, pathRewriter) => {
+    const url = getUrl(req);
     if (pathRewriter) {
-      const path = await pathRewriter(req.url, req);
+      const path = await pathRewriter(url, req);
 
       if (typeof path === 'string') {
-        req.url = path;
+        /**
+         * @warn May be hazardous to express users. HPM, Express, &
+         * http.IncomingMessage all write to this field.
+         */
+        (req as IncomingMessage).url = path;
       } else {
-        this.logger.info('[HPM] pathRewrite: No rewritten path found. (%s)', req.url);
+        this.logger.info('[HPM] pathRewrite: No rewritten path found. (%s)', url);
       }
     }
   };
 
   private logError = (err, req: Request, res: Response, target?) => {
-    const hostname = req.headers?.host || req.hostname || req.host; // (websocket) || (node0.10 || node 4/5)
-    const requestHref = `${hostname}${req.url}`;
+    const hostname = req.headers?.host;
+    const requestHref = `${hostname || ''}${getUrl(req)}`;
     const targetHref = `${target?.href}`; // target is undefined when websocket errors
 
     const errorMessage = '[HPM] Error occurred while proxying request %s to %s [%s] (%s)';

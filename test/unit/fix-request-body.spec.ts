@@ -18,7 +18,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(proxyRequest, { body: undefined } as Request);
+    fixRequestBody(proxyRequest, { body: undefined } as Partial<Request> as Request);
 
     expect(proxyRequest.setHeader).not.toHaveBeenCalled();
     expect(proxyRequest.write).not.toHaveBeenCalled();
@@ -31,7 +31,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(proxyRequest, { body: {} } as Request);
+    fixRequestBody(proxyRequest, { body: {} } as Partial<Request> as Request);
 
     expect(proxyRequest.setHeader).toHaveBeenCalled();
     expect(proxyRequest.write).toHaveBeenCalled();
