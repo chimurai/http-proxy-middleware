@@ -128,3 +128,27 @@ const proxy = createProxyMiddleware({
 
 // http://localhost:3000/wikipedia/en/7/7d/Lenna\_%28test_image%29.png
 ```
+
+## Manipulate response headers
+
+```js
+const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
+
+const proxy = createProxyMiddleware({
+  target: 'http://www.example.com',
+  changeOrigin: true, // for vhosted sites
+
+  /**
+   * IMPORTANT: avoid res.end being called automatically
+   **/
+  selfHandleResponse: true, // res.end() will be called internally by responseInterceptor()
+
+  /**
+   * Intercept response and remove the
+   **/
+  onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+    res.removeHeader('content-security-policy'); // Remove the Content Security Policy header
+    res.setHeader('HPM-Header', 'Intercepted by HPM'); // Set a new header and value
+  }),
+});
+```
