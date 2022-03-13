@@ -64,4 +64,18 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
+
+  it('should write when body is not empty and Content-Type includes application/x-www-form-urlencoded', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
+    jest.spyOn(proxyRequest, 'setHeader');
+    jest.spyOn(proxyRequest, 'write');
+
+    fixRequestBody(proxyRequest, { body: { someField: 'some value' } } as Request);
+
+    const expectedBody = querystring.stringify({ someField: 'some value' });
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
+    expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
+  });
 });

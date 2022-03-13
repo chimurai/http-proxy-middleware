@@ -23,7 +23,7 @@ export function fixRequestBody(proxyReq: http.ClientRequest, req: http.IncomingM
     writeBody(JSON.stringify(requestBody));
   }
 
-  if (contentType === 'application/x-www-form-urlencoded') {
+  if (contentType && contentType.includes('application/x-www-form-urlencoded')) {
     writeBody(querystring.stringify(requestBody));
   }
 }
