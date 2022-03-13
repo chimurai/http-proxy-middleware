@@ -18,7 +18,7 @@ describe('E2E http-proxy-middleware', () => {
 
   describe('pathFilter matching', () => {
     describe('do not proxy', () => {
-      const mockReq: Request = { url: '/foo/bar', originalUrl: '/foo/bar' } as Request;
+      const mockReq: Request = { url: '/foo/bar' } as Partial<Request> as Request;
       const mockRes: Response = {} as Response;
       const mockNext: NextFunction = jest.fn();
 
@@ -274,7 +274,7 @@ describe('E2E http-proxy-middleware', () => {
         );
       });
 
-      it('should handle errors when host is not reachable', async () => {
+      it.only('should handle errors when host is not reachable', async () => {
         const response = await agent.get(`/api/some/endpoint`).expect(504);
         expect(response.status).toBe(504);
       });
@@ -404,16 +404,14 @@ describe('E2E http-proxy-middleware', () => {
 
     describe('express with path + proxy', () => {
       beforeEach(() => {
-        agent = request(
-          createAppWithPath(
-            '/api',
-            createProxyMiddleware({ target: `http://localhost:${mockTargetServer.port}` })
-          )
-        );
+        const middleware = createProxyMiddleware({
+          target: `http://localhost:${mockTargetServer.port}`,
+        });
+        agent = request(createAppWithPath('/api', middleware));
       });
 
       it('should proxy to target with the baseUrl', async () => {
-        await mockTargetServer.get('/api/foo/bar').thenReply(200, 'HELLO /api/foo/bar');
+        await mockTargetServer.forGet('/api/foo/bar').thenReply(200, 'HELLO /api/foo/bar');
         const response = await agent.get(`/api/foo/bar`).expect(200);
         expect(response.text).toBe('HELLO /api/foo/bar');
       });

@@ -1,6 +1,7 @@
 import type { Request, Response, Options } from './types';
 import type * as httpProxy from 'http-proxy';
 import { getInstance } from './logger';
+import { getUrl } from './url';
 const logger = getInstance();
 
 export function init(proxy: httpProxy, option: Options): void {
@@ -78,7 +79,7 @@ function defaultErrorHandler(err, req: Request, res: Response) {
     }
   }
 
-  res.end(`Error occurred while trying to proxy: ${host}${req.url}`);
+  res.end(`Error occurred while trying to proxy: ${host}${getUrl(req)}`);
 }
 
 function logClose(req, socket, head) {

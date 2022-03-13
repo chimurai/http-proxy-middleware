@@ -9,22 +9,18 @@ import type * as httpProxy from 'http-proxy';
 import type * as net from 'net';
 import type * as url from 'url';
 
-export type Request = http.IncomingMessage;
-export type Response = http.ServerResponse;
-
 /**
- * http-proxy-middleware supports framework specific values. The following
- * values are primarily decorated onto IncomingMessage by express, but are
- * not required for use.
+ * @warn Hide `req.url`, as it's unsafe for use due to express
+ * mutation.
+ *
+ * {@link https://github.com/expressjs/express/issues/4854}
+ *
+ * Use getUrl(req) to get a x-server safe URL.
  */
-declare module 'http' {
-  interface IncomingMessage {
-    originalUrl?: string;
-    hostname?: string;
-    host?: string;
-    body?: Record<string, any>;
-  }
-}
+type ExpressCompatibleIncomingMessage = Omit<http.IncomingMessage, 'url'>;
+
+export type Request = ExpressCompatibleIncomingMessage;
+export type Response = http.ServerResponse;
 
 export type Next = (...args: unknown[]) => unknown;
 
