@@ -111,15 +111,14 @@ export class HttpProxyMiddleware {
    * @return {Object} proxy options
    */
   private prepareProxyRequest = async (req: Request) => {
+    // Store pathname before it gets rewritten for logging
+    const originalPath = getUrl(req);
     /**
-     * Store pathname before it gets rewritten for logging
      * @warn May be hazardous to express users. HPM, Express, &
      * http.IncomingMessage all write to this field.
+     * {@link https://github.com/chimurai/http-proxy-middleware/issues/17}
+     * {@link https://github.com/chimurai/http-proxy-middleware/issues/94}
      */
-    const originalPath = getUrl(req);
-
-    // https://github.com/chimurai/http-proxy-middleware/issues/17
-    // https://github.com/chimurai/http-proxy-middleware/issues/94
     (req as IncomingMessage).url = originalPath;
 
     const newProxyOptions = Object.assign({}, this.proxyOptions);
