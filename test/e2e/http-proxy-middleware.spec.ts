@@ -404,10 +404,14 @@ describe('E2E http-proxy-middleware', () => {
 
     describe('express with path + proxy', () => {
       beforeEach(() => {
-        const middleware = createProxyMiddleware({
-          target: `http://localhost:${mockTargetServer.port}`,
-        });
-        agent = request(createAppWithPath('/api', middleware));
+        agent = request(
+          createAppWithPath(
+            '/api',
+            createProxyMiddleware({
+              target: `http://localhost:${mockTargetServer.port}`,
+            })
+          )
+        );
       });
 
       it('should proxy to target with the baseUrl', async () => {
