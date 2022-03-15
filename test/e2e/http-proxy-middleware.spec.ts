@@ -1,8 +1,8 @@
 import { createProxyMiddleware, createApp, createAppWithPath, fixRequestBody } from './test-kit';
 import * as request from 'supertest';
 import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
-import { Request, Response } from '../../src/types';
-import { NextFunction } from 'express';
+import type { Request, Response } from '../../src/types';
+import type * as express from 'express';
 import * as bodyParser from 'body-parser';
 
 describe('E2E http-proxy-middleware', () => {
@@ -18,9 +18,12 @@ describe('E2E http-proxy-middleware', () => {
 
   describe('pathFilter matching', () => {
     describe('do not proxy', () => {
-      const mockReq: Request = { url: '/foo/bar', originalUrl: '/foo/bar' } as Request;
+      const mockReq: Request<express.Request> = {
+        url: '/foo/bar',
+        originalUrl: '/foo/bar',
+      } as Request<express.Request>;
       const mockRes: Response = {} as Response;
-      const mockNext: NextFunction = jest.fn();
+      const mockNext: express.NextFunction = jest.fn();
 
       beforeEach(() => {
         const middleware = createProxyMiddleware({
