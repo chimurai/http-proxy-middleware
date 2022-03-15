@@ -35,7 +35,7 @@ export class HttpProxyMiddleware {
 
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
-    (this.middleware as any).upgrade = (req, socket, head) => {
+    this.middleware.upgrade = (req, socket, head) => {
       if (!this.wsInternalSubscribed) {
         this.handleUpgrade(req, socket, head);
       }
@@ -43,20 +43,16 @@ export class HttpProxyMiddleware {
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-  public middleware: RequestHandler = async (
-    req: Request,
-    res: Response,
-    next: express.NextFunction
-  ) => {
+  public middleware: RequestHandler = async (req, res, next?) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       try {
         const activeProxyOptions = await this.prepareProxyRequest(req);
         this.proxy.web(req, res, activeProxyOptions);
       } catch (err) {
-        next(err);
+        next && next(err);
       }
     } else {
-      next();
+      next && next();
     }
 
     /**
@@ -104,7 +100,7 @@ export class HttpProxyMiddleware {
    * Determine whether request should be proxied.
    */
   private shouldProxy = (pathFilter: Filter, req: Request): boolean => {
-    const path = req.originalUrl || req.url;
+    const path = (req as Request<express.Request>).originalUrl || req.url;
     return matchPathFilter(pathFilter, path, req);
   };
 
@@ -119,7 +115,7 @@ export class HttpProxyMiddleware {
   private prepareProxyRequest = async (req: Request) => {
     // https://github.com/chimurai/http-proxy-middleware/issues/17
     // https://github.com/chimurai/http-proxy-middleware/issues/94
-    req.url = req.originalUrl || req.url;
+    req.url = (req as Request<express.Request>).originalUrl || req.url;
 
     // store uri before it gets rewritten for logging
     const originalPath = req.url;
@@ -179,7 +175,10 @@ export class HttpProxyMiddleware {
   };
 
   private logError = (err, req: Request, res: Response, target?) => {
-    const hostname = req.headers?.host || req.hostname || req.host; // (websocket) || (node0.10 || node 4/5)
+    const hostname =
+      req.headers?.host ||
+      (req as Request<express.Request>).hostname ||
+      (req as Request<express.Request>).host; // (websocket) || (node0.10 || node 4/5)
     const requestHref = `${hostname}${req.url}`;
     const targetHref = `${target?.href}`; // target is undefined when websocket errors
 

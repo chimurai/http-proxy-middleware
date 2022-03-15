@@ -5,16 +5,17 @@
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
-import type * as express from 'express';
 import type * as http from 'http';
 import type * as httpProxy from 'http-proxy';
 import type * as net from 'net';
 import type * as url from 'url';
 
-export interface Request extends express.Request {}
-export interface Response extends express.Response {}
+export type Request<T = http.IncomingMessage> = T;
+export type Response<T = http.ServerResponse> = T;
+export type NextFunction<T = (err?: any) => void> = T;
 
-export interface RequestHandler extends express.RequestHandler {
+export interface RequestHandler {
+  (req: Request, res: Response, next?: NextFunction): void | Promise<void>;
   upgrade?: (req: Request, socket: net.Socket, head: any) => void;
 }
 
