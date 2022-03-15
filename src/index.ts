@@ -1,7 +1,7 @@
 import { HttpProxyMiddleware } from './http-proxy-middleware';
-import { Options } from './types';
+import type { Options, RequestHandler } from './types';
 
-export function createProxyMiddleware(options: Options) {
+export function createProxyMiddleware(options: Options): RequestHandler {
   const { middleware } = new HttpProxyMiddleware(options);
   return middleware;
 }
@@ -15,4 +15,4 @@ export function createProxyMiddleware(options: Options) {
 
 export * from './handlers';
 
-export { Filter, Options, RequestHandler } from './types';
+export type { Filter, Options, RequestHandler } from './types';

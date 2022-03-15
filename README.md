@@ -5,7 +5,7 @@
 [![dependency Status](https://snyk.io/test/npm/http-proxy-middleware/badge.svg?style=flat-square)](https://snyk.io/test/npm/http-proxy-middleware)
 [![npm](https://img.shields.io/npm/v/http-proxy-middleware?color=%23CC3534&style=flat-square)](https://www.npmjs.com/package/http-proxy-middleware)
 
-Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/strongloop/express), [browser-sync](https://github.com/BrowserSync/browser-sync) and [many more](#compatible-servers).
+Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/expressjs/express), [next.js](https://github.com/vercel/next.js) and [many more](#compatible-servers).
 
 Powered by the popular Nodejitsu [`http-proxy`](https://github.com/nodejitsu/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy)
 
@@ -534,6 +534,7 @@ View the [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master
 
 - [connect](https://www.npmjs.com/package/connect)
 - [express](https://www.npmjs.com/package/express)
+- [next.js](https://www.npmjs.com/package/next)
 - [fastify](https://www.npmjs.com/package/fastify)
 - [browser-sync](https://www.npmjs.com/package/browser-sync)
 - [lite-server](https://www.npmjs.com/package/lite-server)

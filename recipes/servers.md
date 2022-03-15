@@ -4,10 +4,9 @@ Overview of `http-proxy-middleware` implementation in different servers.
 
 Missing a server? Feel free to extend this list of examples.
 
-<!-- TOC depthfrom:2 insertanchor:false -->
-
 - [Express](#express)
 - [Connect](#connect)
+- [Next.js](#nextjs)
 - [Browser-Sync](#browser-sync)
 - [fastify](#fastify)
 - [Polka](#polka)
@@ -16,8 +15,6 @@ Missing a server? Feel free to extend this list of examples.
 - [gulp-connect](#gulp-connect)
 - [grunt-browser-sync](#grunt-browser-sync)
 - [gulp-webserver](#gulp-webserver)
-
-<!-- /TOC -->
 
 ## Express
 
@@ -60,6 +57,38 @@ const app = connect();
 app.use(apiProxy);
 
 http.createServer(app).listen(3000);
+```
+
+## Next.js
+
+https://github.com/vercel/next.js
+[![GitHub stars](https://img.shields.io/github/stars/vercel/next.js.svg?style=social&label=Star)](https://github.com/vercel/next.js)
+![next.js downloads](https://img.shields.io/npm/dm/next)
+
+Next project: `/pages/api/users.ts`
+
+```typescript
+// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+
+const proxyMiddleware = createProxyMiddleware({
+  target: 'http://jsonplaceholder.typicode.com',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/users': '/users',
+  },
+});
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  proxyMiddleware(req, res, (result: unknown) => {
+    if (result instanceof Error) {
+      throw result;
+    }
+  });
+}
+
+// curl http://localhost:3000/api/users
 ```
 
 ## Browser-Sync
