@@ -18,10 +18,9 @@ describe('E2E http-proxy-middleware', () => {
 
   describe('pathFilter matching', () => {
     describe('do not proxy', () => {
-      const mockReq: Request<express.Request> = {
+      const mockReq: Request = {
         url: '/foo/bar',
-        originalUrl: '/foo/bar',
-      } as Request<express.Request>;
+      } as Request;
       const mockRes: Response = {} as Response;
       const mockNext: express.NextFunction = jest.fn();
 
@@ -410,7 +409,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createAppWithPath(
             '/api',
-            createProxyMiddleware({ target: `http://localhost:${mockTargetServer.port}` })
+            createProxyMiddleware({ target: `http://localhost:${mockTargetServer.port}/api` })
           )
         );
       });

@@ -26,14 +26,14 @@ https://github.com/expressjs/express
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', {
-  target: 'http://www.example.org',
+const apiProxy = createProxyMiddleware({
+  target: 'http://www.example.org/api',
   changeOrigin: true, // for vhosted sites
 });
 
 const app = express();
 
-app.use(apiProxy);
+app.use('/api', apiProxy);
 app.listen(3000);
 ```
 
@@ -48,13 +48,13 @@ const http = require('http');
 const connect = require('connect');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', {
-  target: 'http://www.example.org',
+const apiProxy = createProxyMiddleware({
+  target: 'http://www.example.org/api',
   changeOrigin: true, // for vhosted sites
 });
 
 const app = connect();
-app.use(apiProxy);
+app.use('/api', apiProxy);
 
 http.createServer(app).listen(3000);
 ```
@@ -88,6 +88,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   });
 }
 
+export const config = {
+  api: {
+    externalResolver: true,
+  },
+};
+
 // curl http://localhost:3000/api/users
 ```
 
@@ -101,9 +107,10 @@ https://github.com/BrowserSync/browser-sync
 const browserSync = require('browser-sync').create();
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', {
+const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
   changeOrigin: true, // for vhosted sites
+  pathFilter: '/api',
 });
 
 browserSync.init({
@@ -226,9 +233,10 @@ As a `function`:
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', {
+const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
   changeOrigin: true, // for vhosted sites
+  pathFilter: '/api',
 });
 
 grunt.initConfig({
@@ -262,9 +270,10 @@ gulp.task('connect', function () {
   connect.server({
     root: ['./app'],
     middleware: function (connect, opt) {
-      const apiProxy = createProxyMiddleware('/api', {
+      const apiProxy = createProxyMiddleware({
         target: 'http://www.example.org',
         changeOrigin: true, // for vhosted sites
+        pathFilter: '/api',
       });
 
       return [apiProxy];
@@ -284,9 +293,10 @@ https://github.com/BrowserSync/grunt-browser-sync
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', {
+const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
   changeOrigin: true, // for vhosted sites
+  pathFilter: '/api',
 });
 
 grunt.initConfig({

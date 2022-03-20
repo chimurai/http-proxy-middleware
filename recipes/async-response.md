@@ -4,7 +4,7 @@ Sometimes we need the ability to modify the response headers of the response of 
 
 ```javascript
 const myProxy = createProxyMiddleware({
-  target: 'http://www.example.com',
+  target: 'http://www.example.com/api',
   changeOrigin: true,
   selfHandleResponse: true,
   onProxyReq: (proxyReq, req, res) => {
@@ -45,7 +45,7 @@ const entryMiddleware = async (req, res, next) => {
 };
 
 const myProxy = createProxyMiddleware({
-  target: 'http://www.example.com',
+  target: 'http://www.example.com/api',
   changeOrigin: true,
   selfHandleResponse: true,
   onProxyReq: (proxyReq, req, res) => {
