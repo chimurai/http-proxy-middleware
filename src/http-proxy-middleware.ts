@@ -100,8 +100,7 @@ export class HttpProxyMiddleware {
    * Determine whether request should be proxied.
    */
   private shouldProxy = (pathFilter: Filter, req: Request): boolean => {
-    const path = (req as Request<express.Request>).originalUrl || req.url;
-    return matchPathFilter(pathFilter, path, req);
+    return matchPathFilter(pathFilter, req.url, req);
   };
 
   /**
@@ -113,10 +112,6 @@ export class HttpProxyMiddleware {
    * @return {Object} proxy options
    */
   private prepareProxyRequest = async (req: Request) => {
-    // https://github.com/chimurai/http-proxy-middleware/issues/17
-    // https://github.com/chimurai/http-proxy-middleware/issues/94
-    req.url = (req as Request<express.Request>).originalUrl || req.url;
-
     // store uri before it gets rewritten for logging
     const originalPath = req.url;
     const newProxyOptions = Object.assign({}, this.proxyOptions);

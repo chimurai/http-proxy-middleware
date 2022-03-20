@@ -28,10 +28,14 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
-app.use('/api', createProxyMiddleware({ target: 'http://www.example.org', changeOrigin: true }));
+app.use(
+  '/api',
+  createProxyMiddleware({ target: 'http://www.example.org/secret', changeOrigin: true })
+);
 app.listen(3000);
 
-// http://localhost:3000/api/foo/bar -> http://www.example.org/api/foo/bar
+// proxy and change the base path from "/api" to "/secret"
+// http://localhost:3000/api/foo/bar -> http://www.example.org/secret/foo/bar
 ```
 
 ```typescript
@@ -42,9 +46,13 @@ import { createProxyMiddleware, Filter, Options, RequestHandler } from 'http-pro
 
 const app = express();
 
-app.use('/api', createProxyMiddleware({ target: 'http://www.example.org', changeOrigin: true }));
+app.use(
+  '/api',
+  createProxyMiddleware({ target: 'http://www.example.org/api', changeOrigin: true })
+);
 app.listen(3000);
 
+// proxy and keep the same base path "/api"
 // http://localhost:3000/api/foo/bar -> http://www.example.org/api/foo/bar
 ```
 
@@ -57,7 +65,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 <!-- // spell-checker:disable -->
 
 - [Install](#install)
-- [Core concept](#core-concept)
+- [Basic usage](#basic-usage)
 - [Express Server Example](#express-server-example)
   - [app.use(path, proxy)](#appusepath-proxy)
 - [Options](#options)
@@ -87,7 +95,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 npm install --save-dev http-proxy-middleware
 ```
 
-## Core concept
+## Basic usage
 
 Create and configure a proxy middleware with: `createProxyMiddleware(config)`.
 
@@ -95,16 +103,15 @@ Create and configure a proxy middleware with: `createProxyMiddleware(config)`.
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware({
-  pathFilter: '/api',
   target: 'http://www.example.org',
+  changeOrigin: true,
 });
 
 // 'apiProxy' is now ready to be used as middleware in a server.
 ```
 
-- **options.pathFilter**: Determine which requests should be proxied to the target host.
-  (more on [path filter](#path-filter))
 - **options.target**: target host to proxy to. _(protocol + host)_
+- **options.changeOrigin**: for virtual hosted sites
 
 - see full list of [`http-proxy-middleware` configuration options](#options)
 
@@ -117,28 +124,19 @@ An example with `express` server.
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
+const app = express();
+
 // proxy middleware options
 /** @type {import('http-proxy-middleware/dist/types').Options} */
 const options = {
-  target: 'http://www.example.org', // target host
+  target: 'http://www.example.org/api', // target host with the same base path
   changeOrigin: true, // needed for virtual hosted sites
-  ws: true, // proxy websockets
-  pathRewrite: {
-    '^/api/old-path': '/api/new-path', // rewrite path
-    '^/api/remove/path': '/path', // remove base path
-  },
-  router: {
-    // when request.headers.host == 'dev.localhost:3000',
-    // override target 'http://www.example.org' to 'http://localhost:8000'
-    'dev.localhost:3000': 'http://localhost:8000',
-  },
 };
 
 // create the proxy
 const exampleProxy = createProxyMiddleware(options);
 
 // mount `exampleProxy` in web server
-const app = express();
 app.use('/api', exampleProxy);
 app.listen(3000);
 ```
@@ -149,7 +147,13 @@ If you want to use the server's `app.use` `path` parameter to match requests.
 Use `pathFilter` option to further include/exclude requests which you want to proxy.
 
 ```javascript
-app.use('/api', createProxyMiddleware({ target: 'http://www.example.org', changeOrigin: true }));
+app.use(
+  createProxyMiddleware({
+    target: 'http://www.example.org/api',
+    changeOrigin: true,
+    pathFilter: '/api/proxy-only-this-path',
+  })
+);
 ```
 
 `app.use` documentation:
@@ -164,20 +168,11 @@ http-proxy-middleware options:
 
 ### `pathFilter` (string, []string, glob, []glob, function)
 
-Decide which requests should be proxied; In case you are not able to use the server's [`path` parameter](http://expressjs.com/en/4x/api.html#app.use) to mount the proxy or when you need more flexibility.
-
-[RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is used in `pathFilter`.
-
-```ascii
-         foo://example.com:8042/over/there?name=ferret#nose
-         \_/   \______________/\_________/ \_________/ \__/
-          |           |            |            |        |
-       scheme     authority       path        query   fragment
-```
+Narrow down which requests should be proxied. The `path` used for filtering is the `request.url` pathname. In Express, this is the `path` relative to the mount-point of the proxy.
 
 - **path matching**
 
-  - `createProxyMiddleware({...})` - matches any path, all requests will be proxied.
+  - `createProxyMiddleware({...})` - matches any path, all requests will be proxied when `pathFilter` is not configured.
   - `createProxyMiddleware({ pathFilter: '/api', ...})` - matches paths starting with `/api`
 
 - **multiple path matching**
@@ -205,12 +200,13 @@ Decide which requests should be proxied; In case you are not able to use the ser
   /**
    * @return {Boolean}
    */
-  const filter = function (path, req) {
+  const pathFilter = function (path, req) {
     return path.match('^/api') && req.method === 'GET';
   };
 
-  const apiProxy = createProxyMiddleware(filter, {
+  const apiProxy = createProxyMiddleware({
     target: 'http://www.example.org',
+    pathFilter: pathFilter,
   });
   ```
 
