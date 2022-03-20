@@ -22,6 +22,11 @@ export interface RequestHandler {
 export type Filter = string | string[] | ((pathname: string, req: Request) => boolean);
 
 export interface Options extends httpProxy.ServerOptions {
+  /**
+   * Narrow down requests to proxy or not.
+   * Filter on {@link http.IncomingMessage.url `pathname`} which is relative to the proxy's "mounting" point in the server.
+   * Or use the {@link http.IncomingMessage `req`}  object for more complex filtering.
+   */
   pathFilter?: Filter;
   pathRewrite?:
     | { [regexp: string]: string }
