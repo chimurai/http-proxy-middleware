@@ -184,9 +184,10 @@ File: `bs-config.js`
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', {
+const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
   changeOrigin: true, // for vhosted sites
+  pathFilter: '/api',
 });
 
 module.exports = {
@@ -212,9 +213,10 @@ As an `Array`:
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', {
+const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
   changeOrigin: true, // for vhosted sites
+  pathFilter: '/api',
 });
 
 grunt.initConfig({
@@ -328,9 +330,10 @@ const webserver = require('gulp-webserver');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 gulp.task('webserver', function () {
-  const apiProxy = createProxyMiddleware('/api', {
+  const apiProxy = createProxyMiddleware({
     target: 'http://www.example.org',
     changeOrigin: true, // for vhosted sites
+    pathFilter: '/api',
   });
 
   gulp.src('app').pipe(

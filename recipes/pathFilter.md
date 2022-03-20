@@ -1,17 +1,8 @@
 # Path Filter
 
-Determine which requests should be proxied.
+Narrow down which requests should be proxied. The `path` used for filtering is the `request.url` pathname. In Express, this is the `path` relative to the mount-point of the proxy.
 
 `pathFilter` is optional and is useful in cases where you are not able to use the regular [middleware mounting](http://expressjs.com/en/4x/api.html#app.use).
-
-The [RFC 3986 `path`](https://tools.ietf.org/html/rfc3986#section-3.3) is used for `pathFilter`.
-
-```text
-         foo://example.com:8042/over/there?name=ferret#nose
-         \_/   \______________/\_________/ \_________/ \__/
-          |           |            |            |        |
-       scheme     authority       path        query   fragment
-```
 
 `http-proxy-middleware` offers several ways to do this:
 
@@ -30,8 +21,8 @@ This will match paths starting with `/api`
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware({
-  pathFilter: '/api',
   target: 'http://localhost:3000',
+  pathFilter: '/api',
 });
 
 // `/api/foo/bar` -> `http://localhost:3000/api/foo/bar`
@@ -45,8 +36,8 @@ This will match paths starting with `/api` or `/rest`
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware({
-  pathFilter: ['/api', '/rest'],
   target: 'http://localhost:3000',
+  pathFilter: ['/api', '/rest'],
 });
 
 // `/api/foo/bar` -> `http://localhost:3000/api/foo/bar`
@@ -61,8 +52,8 @@ This will match paths starting with `/api/` and should also end with `.json`
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware({
-  pathFilter: '/api/**/*.json',
   target: 'http://localhost:3000',
+  pathFilter: '/api/**/*.json',
 });
 ```
 
@@ -74,8 +65,8 @@ Multiple wildcards can be used.
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware({
-  pathFilter: ['/api/**/*.json', '/rest/**'],
   target: 'http://localhost:3000',
+  pathFilter: ['/api/**/*.json', '/rest/**'],
 });
 ```
 
@@ -87,8 +78,8 @@ This example will create a proxy with globs.
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware({
-  pathFilter: ['foo/*.js', '!bar.js'],
   target: 'http://localhost:3000',
+  pathFilter: ['foo/*.js', '!bar.js'],
 });
 ```
 
@@ -100,12 +91,12 @@ The request `pathname` and `req` object are provided to determine which requests
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const filter = function (pathname, req) {
+const pathFilter = function (pathname, req) {
   return pathname.match('^/api') && req.method === 'GET';
 };
 
 const apiProxy = createProxyMiddleware({
-  pathFilter: filter,
+  pathFilter: pathFilter,
   target: 'http://localhost:3000',
 });
 ```

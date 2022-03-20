@@ -2,12 +2,9 @@
 
 Allows you to route to a different `target` by using a table of a custom function.
 
-<!-- MarkdownTOC autolink=true bracket=round -->
-
 - [Custom router function](#custom-router-function)
 - [Proxy Table](#proxy-table)
-
-<!-- /MarkdownTOC -->
+  - [Example](#example)
 
 ## Custom router function
 
@@ -73,7 +70,7 @@ In the example above; all requests will be proxied to `http://localhost:8000`.
 
 When request's `Host HTTP header` and/or `path` match a configuration in the proxyTable, they will be send to matching target.
 
-```
+```text
 http://localhost:3000/lorum/ipsum             -> http://localhost:8000/lorum/ipsum
 http://integration.localhost:3000/lorum/ipsum -> http://localhost:8001/lorum/ipsum
 http://staging.localhost:3000/rest/foo/bar    -> http://localhost:8002/rest/foo/bar

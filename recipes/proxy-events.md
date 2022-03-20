@@ -16,7 +16,7 @@ const onError = function (err, req, res) {
 
 const options = { target: 'http://localhost:3000', onError: onError };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```
 
 ## onProxyReq
@@ -33,7 +33,7 @@ const onProxyReq = function (proxyReq, req, res) {
 
 const options = { target: 'http://localhost:3000', onProxyReq: onProxyReq };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```
 
 ## onProxyReqWs
@@ -50,7 +50,7 @@ const onProxyReqWs = function (proxyReq, req, socket, options, head) {
 
 const options = { target: 'http://localhost:3000', onProxyReqWs: onProxyReqWs };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```
 
 ## onProxyRes
@@ -70,5 +70,5 @@ const onProxyRes = function (proxyRes, req, res) {
 
 const options = { target: 'http://localhost:3000', onProxyRes: onProxyRes };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```
