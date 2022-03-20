@@ -15,7 +15,7 @@ const options = {
   },
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```
 
 ## Winston
@@ -43,7 +43,7 @@ const options = {
   logProvider: logProvider,
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```
 
 # Winston Multi Transport
@@ -72,5 +72,5 @@ const options = {
   logProvider: logProvider,
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```

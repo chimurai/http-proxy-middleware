@@ -16,5 +16,5 @@ const options = {
   agent: new HttpsProxyAgent(proxyServer),
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```

@@ -2,14 +2,10 @@
 
 Modify request paths before requests are send to the target.
 
-<!-- MarkdownTOC autolink=true bracket=round -->
-
 - [rewrite paths](#rewrite-paths)
 - [remove paths](#remove-paths)
 - [add paths](#add-paths)
 - [custom rewrite function](#custom-rewrite-function)
-
-<!-- /MarkdownTOC -->
 
 ## rewrite paths
 
@@ -25,7 +21,7 @@ const options = {
   },
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 
 // `/old/api/foo/bar` -> `http://localhost:3000/new/api/foo/bar`
 ```
@@ -44,7 +40,7 @@ const options = {
   },
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 
 // `/api/lorum/ipsum` -> `http://localhost:3000/lorum/ipsum`
 ```
@@ -63,7 +59,7 @@ const options = {
   },
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 
 // `/api/lorum/ipsum` -> `http://localhost:3000/extra/api/lorum/ipsum`
 ```
@@ -86,7 +82,7 @@ const options = {
   pathRewrite: rewriteFn,
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 
 // `/api/foo/lorum/ipsum` -> `http://localhost:3000/api/bar/lorum/ipsum`
 ```

@@ -14,5 +14,5 @@ const options = {
   changeOrigin: true,
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```

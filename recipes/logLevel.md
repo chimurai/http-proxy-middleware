@@ -22,7 +22,7 @@ const options = {
   logLevel: 'debug',
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```
 
 ## Level: silent
@@ -37,5 +37,5 @@ const options = {
   logLevel: 'silent',
 };
 
-const apiProxy = createProxyMiddleware('/api', options);
+const apiProxy = createProxyMiddleware(options);
 ```

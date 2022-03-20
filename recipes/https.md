@@ -9,7 +9,7 @@ All options are provided by [http-proxy](https://github.com/nodejitsu/node-http-
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', {
+const apiProxy = createProxyMiddleware({
   target: 'https://example.org',
   changeOrigin: true,
 });
@@ -21,7 +21,7 @@ const apiProxy = createProxyMiddleware('/api', {
 const fs = require('fs');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiProxy = createProxyMiddleware('/api', {
+const apiProxy = createProxyMiddleware({
   target: {
     protocol: 'https:',
     host: 'example.org',
