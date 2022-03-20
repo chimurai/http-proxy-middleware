@@ -25,6 +25,8 @@ export class HttpProxyMiddleware {
     this.proxy = httpProxy.createProxyServer({});
     this.logger.info(`[HPM] Proxy created: ${options.pathFilter ?? '/'}  -> ${options.target}`);
 
+    this.registerPlugins(this.proxy, this.proxyOptions);
+
     this.pathRewriter = PathRewriter.createPathRewriter(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
     // attach handler to http-proxy events
@@ -78,6 +80,11 @@ export class HttpProxyMiddleware {
       this.catchUpgradeRequest(server);
     }
   };
+
+  private registerPlugins(proxy: httpProxy, options: Options) {
+    const plugins = options.plugins ?? [];
+    plugins.forEach((plugin) => plugin(proxy, options));
+  }
 
   private catchUpgradeRequest = (server: https.Server) => {
     if (!this.wsInternalSubscribed) {

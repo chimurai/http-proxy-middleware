@@ -21,6 +21,8 @@ export interface RequestHandler {
 
 export type Filter = string | string[] | ((pathname: string, req: Request) => boolean);
 
+export type Plugin = (proxy: httpProxy, options: Options) => void;
+
 export interface Options extends httpProxy.ServerOptions {
   /**
    * Narrow down requests to proxy or not.
@@ -32,6 +34,10 @@ export interface Options extends httpProxy.ServerOptions {
     | { [regexp: string]: string }
     | ((path: string, req: Request) => string)
     | ((path: string, req: Request) => Promise<string>);
+  /**
+   * Plugins have access to the internal http-proxy instance to customize behavior.
+   */
+  plugins?: Plugin[];
   router?:
     | { [hostOrPath: string]: httpProxy.ServerOptions['target'] }
     | ((req: Request) => httpProxy.ServerOptions['target'])
