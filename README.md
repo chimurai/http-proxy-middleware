@@ -72,6 +72,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [`pathFilter` (string, []string, glob, []glob, function)](#pathfilter-string-string-glob-glob-function)
   - [`pathRewrite` (object/function)](#pathrewrite-objectfunction)
   - [`router` (object/function)](#router-objectfunction)
+  - [`plugins` (Array)](#plugins-array)
   - [`logLevel` (string)](#loglevel-string)
   - [`logProvider` (function)](#logprovider-function)
 - [`http-proxy` events](#http-proxy-events)
@@ -268,6 +269,22 @@ router: async function(req) {
     const url = await doSomeIO();
     return url;
 }
+```
+
+### `plugins` (Array)
+
+```js
+const simpleRequestLogger = (proxy, options) => {
+  proxy.on('proxyReq', (proxyReq, req, res) => {
+    console.log(`[HPM] [${req.method}] ${req.url}`); // outputs: [HPM] GET /users
+  });
+},
+
+const config = {
+  target: `http://example.org`,
+  changeOrigin: true,
+  plugins: [simpleRequestLogger],
+};
 ```
 
 ### `logLevel` (string)
