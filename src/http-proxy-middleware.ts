@@ -8,6 +8,7 @@ import * as handlers from './_handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
+import { debugProxyErrorsPlugin } from './plugins';
 
 export class HttpProxyMiddleware {
   private logger = getInstance();
@@ -82,8 +83,9 @@ export class HttpProxyMiddleware {
   };
 
   private registerPlugins(proxy: httpProxy, options: Options) {
+    const defaultPlugins = [debugProxyErrorsPlugin];
     const plugins = options.plugins ?? [];
-    plugins.forEach((plugin) => plugin(proxy, options));
+    [...defaultPlugins, ...plugins].forEach((plugin) => plugin(proxy, options));
   }
 
   private catchUpgradeRequest = (server: https.Server) => {
