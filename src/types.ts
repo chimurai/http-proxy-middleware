@@ -21,7 +21,7 @@ export interface RequestHandler {
 
 export type Filter = string | string[] | ((pathname: string, req: Request) => boolean);
 
-export type Plugin = (proxy: httpProxy, options: Options) => void;
+export type Plugin = (proxyServer: httpProxy, options: Options) => void;
 
 export interface Options extends httpProxy.ServerOptions {
   /**

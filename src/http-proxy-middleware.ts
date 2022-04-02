@@ -1,6 +1,5 @@
 import type * as https from 'https';
-import type * as express from 'express';
-import type { Request, RequestHandler, Response, Options, Filter } from './types';
+import type { Request, RequestHandler, Options, Filter } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { matchPathFilter } from './path-filter';
@@ -8,7 +7,7 @@ import * as handlers from './_handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
-import { debugProxyErrorsPlugin } from './plugins';
+import { debugProxyErrorsPlugin, createLoggerPlugin, errorResponsePlugin } from './plugins/default';
 
 export class HttpProxyMiddleware {
   private logger = getInstance();
@@ -32,9 +31,6 @@ export class HttpProxyMiddleware {
 
     // attach handler to http-proxy events
     handlers.init(this.proxy, this.proxyOptions);
-
-    // log errors for debug purpose
-    this.proxy.on('error', this.logError);
 
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
@@ -83,7 +79,7 @@ export class HttpProxyMiddleware {
   };
 
   private registerPlugins(proxy: httpProxy, options: Options) {
-    const defaultPlugins = [debugProxyErrorsPlugin];
+    const defaultPlugins = [debugProxyErrorsPlugin, createLoggerPlugin(), errorResponsePlugin];
     const plugins = options.plugins ?? [];
     [...defaultPlugins, ...plugins].forEach((plugin) => plugin(proxy, options));
   }
@@ -176,19 +172,5 @@ export class HttpProxyMiddleware {
         this.logger.info('[HPM] pathRewrite: No rewritten path found. (%s)', req.url);
       }
     }
-  };
-
-  private logError = (err, req: Request, res: Response, target?) => {
-    const hostname =
-      req.headers?.host ||
-      (req as Request<express.Request>).hostname ||
-      (req as Request<express.Request>).host; // (websocket) || (node0.10 || node 4/5)
-    const requestHref = `${hostname}${req.url}`;
-    const targetHref = `${target?.href}`; // target is undefined when websocket errors
-
-    const errorMessage = '[HPM] Error occurred while proxying request %s to %s [%s] (%s)';
-    const errReference = 'https://nodejs.org/api/errors.html#errors_common_system_errors'; // link to Node Common Systems Errors page
-
-    this.logger.error(errorMessage, requestHref, targetHref, err.code || err, errReference);
   };
 }

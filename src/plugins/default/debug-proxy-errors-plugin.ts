@@ -1,11 +1,11 @@
-import { debug } from '../debug';
-import { Plugin } from '../types';
+import { debug } from '../../debug';
+import { Plugin } from '../../types';
 
 const debugError = debug.extend('error-handlers-plugin');
 
 /**
- * Subscribe to http-proxy error events to prevent server from crashing
- * Errors are logged with `debug` library
+ * Subscribe to {@link https://www.npmjs.com/package/http-proxy#listening-for-proxy-events http-proxy error events} to prevent server from crashing.
+ * Errors are logged with {@link https://www.npmjs.com/package/debug debug} library.
  */
 export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
   /**
@@ -13,7 +13,7 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
    * Prevent server from crashing when http-proxy errors (uncaught errors)
    */
   proxyServer.on('error', (error, req, res, target) => {
-    debugError(`http-proxy error event: %O`, error);
+    debugError(`http-proxy error event: \n%O`, error);
   });
 
   proxyServer.on('proxyReq', (proxyReq, req, socket) => {
@@ -60,6 +60,6 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
   });
 
   proxyServer.on('econnreset', (error, req, res, target) => {
-    debugError(`http-proxy econnreset event: %O`, error);
+    debugError(`http-proxy econnreset event: \n%O`, error);
   });
 };

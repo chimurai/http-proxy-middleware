@@ -1,4 +1,4 @@
-import type { Options, Request, Response } from './types';
+import type { Options } from './types';
 import type * as httpProxy from 'http-proxy';
 import { getInstance } from './logger';
 const logger = getInstance();
@@ -40,48 +40,27 @@ export function getHandlers(options: Options) {
   }
 
   // add default error handler in absence of error handler
-  if (typeof handlers.error !== 'function') {
-    handlers.error = defaultErrorHandler;
-  }
-
-  // add default close handler in absence of close handler
-  if (typeof handlers.close !== 'function') {
-    handlers.close = logClose;
-  }
+  // if (typeof handlers.error !== 'function') {
+  //   handlers.error = defaultErrorHandler;
+  // }
 
   return handlers;
 }
 
-function defaultErrorHandler(err, req: Request, res: Response) {
-  // Re-throw error. Not recoverable since req & res are empty.
-  if (!req && !res) {
-    throw err; // "Error: Must provide a proper URL as target"
-  }
+// /**
+//  * Subscribes to http-proxy on('error') event
+//  */
+// function defaultErrorHandler(err, req: Request, res: Response) {
+//   // Re-throw error. Not recoverable since req & res are empty.
+//   if (!req && !res) {
+//     throw err; // "Error: Must provide a proper URL as target"
+//   }
 
-  const host = req.headers && req.headers.host;
-  const code = err.code;
+//   if (res.writeHead && !res.headersSent) {
+//     const statusCode = getStatusCode(err.code);
+//     res.writeHead(statusCode);
+//   }
 
-  if (res.writeHead && !res.headersSent) {
-    if (/HPE_INVALID/.test(code)) {
-      res.writeHead(502);
-    } else {
-      switch (code) {
-        case 'ECONNRESET':
-        case 'ENOTFOUND':
-        case 'ECONNREFUSED':
-        case 'ETIMEDOUT':
-          res.writeHead(504);
-          break;
-        default:
-          res.writeHead(500);
-      }
-    }
-  }
-
-  res.end(`Error occurred while trying to proxy: ${host}${req.url}`);
-}
-
-function logClose(req, socket, head) {
-  // view disconnected websocket connections
-  logger.info('[HPM] Client disconnected');
-}
+//   const host = req.headers && req.headers.host;
+//   res.end(`Error occurred while trying to proxy: ${host}${req.url}`);
+// }
