@@ -3,11 +3,15 @@ import type { Request, RequestHandler, Options, Filter } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { matchPathFilter } from './path-filter';
-import * as handlers from './_handlers';
 import { getArrow, getInstance } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
-import { debugProxyErrorsPlugin, createLoggerPlugin, errorResponsePlugin } from './plugins/default';
+import {
+  debugProxyErrorsPlugin,
+  createLoggerPlugin,
+  errorResponsePlugin,
+  proxyEventsPlugin,
+} from './plugins/default';
 
 export class HttpProxyMiddleware {
   private logger = getInstance();
@@ -28,9 +32,6 @@ export class HttpProxyMiddleware {
     this.registerPlugins(this.proxy, this.proxyOptions);
 
     this.pathRewriter = PathRewriter.createPathRewriter(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
-
-    // attach handler to http-proxy events
-    handlers.init(this.proxy, this.proxyOptions);
 
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
@@ -79,7 +80,12 @@ export class HttpProxyMiddleware {
   };
 
   private registerPlugins(proxy: httpProxy, options: Options) {
-    const defaultPlugins = [debugProxyErrorsPlugin, createLoggerPlugin(), errorResponsePlugin];
+    const defaultPlugins = [
+      debugProxyErrorsPlugin,
+      proxyEventsPlugin,
+      createLoggerPlugin(),
+      errorResponsePlugin,
+    ];
     const plugins = options.plugins ?? [];
     [...defaultPlugins, ...plugins].forEach((plugin) => plugin(proxy, options));
   }

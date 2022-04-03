@@ -92,7 +92,9 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              onProxyReq: fixRequestBody,
+              on: {
+                proxyReq: fixRequestBody,
+              },
             })
           )
         );
@@ -111,7 +113,9 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              onProxyReq: fixRequestBody,
+              on: {
+                proxyReq: fixRequestBody,
+              },
             })
           )
         );
@@ -289,11 +293,13 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              onProxyRes(proxyRes, req, res) {
-                // tslint:disable-next-line: no-string-literal
-                proxyRes['headers']['x-added'] = 'foobar'; // add custom header to response
-                // tslint:disable-next-line: no-string-literal
-                delete proxyRes['headers']['x-removed'];
+              on: {
+                proxyRes: (proxyRes, req, res) => {
+                  // tslint:disable-next-line: no-string-literal
+                  proxyRes['headers']['x-added'] = 'foobar'; // add custom header to response
+                  // tslint:disable-next-line: no-string-literal
+                  delete proxyRes['headers']['x-removed'];
+                },
               },
             })
           )
@@ -327,8 +333,10 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              onProxyReq(proxyReq, req, res) {
-                proxyReq.setHeader('x-added', 'added-from-hpm'); // add custom header to request
+              on: {
+                proxyReq: (proxyReq, req, res) => {
+                  proxyReq.setHeader('x-added', 'added-from-hpm'); // add custom header to request
+                },
               },
             })
           )

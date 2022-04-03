@@ -1,7 +1,7 @@
 import { debug } from '../../debug';
 import { Plugin } from '../../types';
 
-const debugError = debug.extend('error-handlers-plugin');
+const debugError = debug.extend('debug-proxy-errors-plugin');
 
 /**
  * Subscribe to {@link https://www.npmjs.com/package/http-proxy#listening-for-proxy-events http-proxy error events} to prevent server from crashing.
