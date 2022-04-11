@@ -274,8 +274,8 @@ router: async function(req) {
 ### `plugins` (Array)
 
 ```js
-const simpleRequestLogger = (proxy, options) => {
-  proxy.on('proxyReq', (proxyReq, req, res) => {
+const simpleRequestLogger = (proxyServer, options) => {
+  proxyServer.on('proxyReq', (proxyReq, req, res) => {
     console.log(`[HPM] [${req.method}] ${req.url}`); // outputs: [HPM] GET /users
   });
 },
@@ -323,9 +323,26 @@ function logProvider(provider) {
 
 ## `http-proxy` events
 
-Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#listening-for-proxy-events):
+Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#listening-for-proxy-events) with the `on` option:
 
-- **option.onError**: function, subscribe to http-proxy's `error` event for custom error handling.
+```js
+createProxyMiddleware({
+  target: 'http://www.example.org',
+  on: {
+    proxyReq: (proxyReq, req, res) => {
+      /* handle proxyReq */
+    },
+    proxyRes: (proxyRes, req, res) => {
+      /* handle proxyRes */
+    },
+    error: (err, req, res) => {
+      /* handle error */
+    },
+  },
+});
+```
+
+- **option.on.error**: function, subscribe to http-proxy's `error` event for custom error handling.
 
   ```javascript
   function onError(err, req, res, target) {
@@ -336,7 +353,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   }
   ```
 
-- **option.onProxyRes**: function, subscribe to http-proxy's `proxyRes` event.
+- **option.on.proxyRes**: function, subscribe to http-proxy's `proxyRes` event.
 
   ```javascript
   function onProxyRes(proxyRes, req, res) {
@@ -345,7 +362,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   }
   ```
 
-- **option.onProxyReq**: function, subscribe to http-proxy's `proxyReq` event.
+- **option.on.proxyReq**: function, subscribe to http-proxy's `proxyReq` event.
 
   ```javascript
   function onProxyReq(proxyReq, req, res) {
@@ -355,7 +372,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   }
   ```
 
-- **option.onProxyReqWs**: function, subscribe to http-proxy's `proxyReqWs` event.
+- **option.on.proxyReqWs**: function, subscribe to http-proxy's `proxyReqWs` event.
 
   ```javascript
   function onProxyReqWs(proxyReq, req, socket, options, head) {
@@ -364,7 +381,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   }
   ```
 
-- **option.onOpen**: function, subscribe to http-proxy's `open` event.
+- **option.on.open**: function, subscribe to http-proxy's `open` event.
 
   ```javascript
   function onOpen(proxySocket) {
@@ -373,7 +390,7 @@ Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#li
   }
   ```
 
-- **option.onClose**: function, subscribe to http-proxy's `close` event.
+- **option.on.close**: function, subscribe to http-proxy's `close` event.
 
   ```javascript
   function onClose(res, socket, head) {

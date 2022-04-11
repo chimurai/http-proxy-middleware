@@ -92,7 +92,9 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              onProxyReq: fixRequestBody,
+              on: {
+                proxyReq: fixRequestBody,
+              },
             })
           )
         );
@@ -111,7 +113,9 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              onProxyReq: fixRequestBody,
+              on: {
+                proxyReq: fixRequestBody,
+              },
             })
           )
         );
@@ -265,7 +269,7 @@ describe('E2E http-proxy-middleware', () => {
       });
     });
 
-    describe('option.onError - with default error handling', () => {
+    describe('default httpProxy on error handling', () => {
       beforeEach(() => {
         agent = request(
           createApp(
@@ -282,34 +286,6 @@ describe('E2E http-proxy-middleware', () => {
       });
     });
 
-    describe('option.onError - custom error handling', () => {
-      beforeEach(() => {
-        agent = request(
-          createApp(
-            createProxyMiddleware({
-              target: `http://localhost:666`, // unreachable host on port:666
-              onError(err, req, res) {
-                if (err) {
-                  res.writeHead(418); // different error code
-                  res.end("I'm a teapot"); // no response body
-                }
-              },
-            })
-          )
-        );
-      });
-
-      it('should respond with custom http status code', async () => {
-        const response = await agent.get(`/api/some/endpoint`).expect(418);
-        expect(response.status).toBe(418);
-      });
-
-      it('should respond with custom status message', async () => {
-        const response = await agent.get(`/api/some/endpoint`).expect(418);
-        expect(response.text).toBe("I'm a teapot");
-      });
-    });
-
     describe('option.onProxyRes', () => {
       beforeEach(() => {
         agent = request(
@@ -317,11 +293,13 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              onProxyRes(proxyRes, req, res) {
-                // tslint:disable-next-line: no-string-literal
-                proxyRes['headers']['x-added'] = 'foobar'; // add custom header to response
-                // tslint:disable-next-line: no-string-literal
-                delete proxyRes['headers']['x-removed'];
+              on: {
+                proxyRes: (proxyRes, req, res) => {
+                  // tslint:disable-next-line: no-string-literal
+                  proxyRes['headers']['x-added'] = 'foobar'; // add custom header to response
+                  // tslint:disable-next-line: no-string-literal
+                  delete proxyRes['headers']['x-removed'];
+                },
               },
             })
           )
@@ -355,8 +333,10 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              onProxyReq(proxyReq, req, res) {
-                proxyReq.setHeader('x-added', 'added-from-hpm'); // add custom header to request
+              on: {
+                proxyReq: (proxyReq, req, res) => {
+                  proxyReq.setHeader('x-added', 'added-from-hpm'); // add custom header to request
+                },
               },
             })
           )

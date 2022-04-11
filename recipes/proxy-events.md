@@ -1,8 +1,8 @@
 # Proxy Events
 
-Subscribe to [`http-proxy`](https://github.com/nodejitsu/node-http-proxy) [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy) events: `error`, `proxyReq`, `proxyReqWs`, `proxyRes`, `open`, `close`.
+Subscribe to [`http-proxy`](https://github.com/nodejitsu/node-http-proxy) [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy) events: `error`, `proxyReq`, `proxyReqWs`, `proxyRes`, `open`, `close`, `start`, `end`, `econnreset`.
 
-## onError
+## on.error
 
 Subscribe to http-proxy's [error event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
 
@@ -14,12 +14,15 @@ const onError = function (err, req, res) {
   console.log('And we are reporting a custom error message.');
 };
 
-const options = { target: 'http://localhost:3000', onError: onError };
+const options = {
+  target: 'http://localhost:3000',
+  on: { 'error', onError }
+};
 
 const apiProxy = createProxyMiddleware(options);
 ```
 
-## onProxyReq
+## on.proxyReq
 
 Subscribe to http-proxy's [proxyReq event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
 
@@ -31,12 +34,15 @@ const onProxyReq = function (proxyReq, req, res) {
   proxyReq.setHeader('x-added', 'foobar');
 };
 
-const options = { target: 'http://localhost:3000', onProxyReq: onProxyReq };
+const options = {
+  target: 'http://localhost:3000',
+  on: { 'proxyReq', onProxyReq }
+};
 
 const apiProxy = createProxyMiddleware(options);
 ```
 
-## onProxyReqWs
+## on.proxyReqWs
 
 Subscribe to http-proxy's [proxyReqWs event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
 
@@ -48,12 +54,15 @@ const onProxyReqWs = function (proxyReq, req, socket, options, head) {
   proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
 };
 
-const options = { target: 'http://localhost:3000', onProxyReqWs: onProxyReqWs };
+const options = {
+  target: 'http://localhost:3000',
+  on: { 'proxyReqWs', onProxyReqWs }
+};
 
 const apiProxy = createProxyMiddleware(options);
 ```
 
-## onProxyRes
+## on.proxyRes
 
 Subscribe to http-proxy's [proxyRes event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
 
@@ -68,7 +77,10 @@ const onProxyRes = function (proxyRes, req, res) {
   delete proxyRes.headers['x-removed'];
 };
 
-const options = { target: 'http://localhost:3000', onProxyRes: onProxyRes };
+const options = {
+  target: 'http://localhost:3000',
+  on: { 'proxyRes', onProxyRes }
+};
 
 const apiProxy = createProxyMiddleware(options);
 ```
