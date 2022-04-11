@@ -8,7 +8,6 @@
 import type * as http from 'http';
 import type * as httpProxy from 'http-proxy';
 import type * as net from 'net';
-import type * as url from 'url';
 
 export type Request<T = http.IncomingMessage> = T;
 export type Response<T = http.ServerResponse> = T;
@@ -21,7 +20,19 @@ export interface RequestHandler {
 
 export type Filter = string | string[] | ((pathname: string, req: Request) => boolean);
 
-export type Plugin = (proxy: httpProxy, options: Options) => void;
+export type Plugin = (proxyServer: httpProxy, options: Options) => void;
+
+export type OnProxyEvent = {
+  error?: httpProxy.ErrorCallback;
+  proxyReq?: httpProxy.ProxyReqCallback;
+  proxyReqWs?: httpProxy.ProxyReqWsCallback;
+  proxyRes?: httpProxy.ProxyResCallback;
+  open?: httpProxy.OpenCallback;
+  close?: httpProxy.CloseCallback;
+  start?: httpProxy.StartCallback;
+  end?: httpProxy.EndCallback;
+  econnreset?: httpProxy.EconnresetCallback;
+};
 
 export interface Options extends httpProxy.ServerOptions {
   /**
@@ -35,22 +46,41 @@ export interface Options extends httpProxy.ServerOptions {
     | ((path: string, req: Request) => string)
     | ((path: string, req: Request) => Promise<string>);
   /**
-   * Plugins have access to the internal http-proxy instance to customize behavior.
+   * Access the internal http-proxy server instance to customize behavior
+   *
+   * @example
+   * ```js
+   * createProxyMiddleware({
+   *   plugins: [(proxyServer, options) => {
+   *     proxyServer.on('error', (error, req, res) => {
+   *       console.error(error);
+   *     });
+   *   }]
+   * });
+   * ```
    */
   plugins?: Plugin[];
+  /**
+   * Listen to http-proxy events
+   * @see {@link OnProxyEvent} for available events
+   * @example
+   * ```js
+   * createProxyMiddleware({
+   *   on: {
+   *     error: (error, req, res, target) => {
+   *       console.error(error);
+   *     }
+   *   }
+   * });
+   * ```
+   */
+  on?: OnProxyEvent;
   router?:
     | { [hostOrPath: string]: httpProxy.ServerOptions['target'] }
     | ((req: Request) => httpProxy.ServerOptions['target'])
     | ((req: Request) => Promise<httpProxy.ServerOptions['target']>);
   logLevel?: 'debug' | 'info' | 'warn' | 'error' | 'silent';
   logProvider?: LogProviderCallback;
-
-  onError?: OnErrorCallback;
-  onProxyRes?: OnProxyResCallback;
-  onProxyReq?: OnProxyReqCallback;
-  onProxyReqWs?: OnProxyReqWsCallback;
-  onOpen?: OnOpenCallback;
-  onClose?: OnCloseCallback;
 }
 
 interface LogProvider {
@@ -64,35 +94,3 @@ interface LogProvider {
 type Logger = (...args: any[]) => void;
 
 export type LogProviderCallback = (provider: LogProvider) => LogProvider;
-
-/**
- * Use types based on the events listeners from http-proxy
- * https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51504fd999031b7f025220fab279f1b2155cbaff/types/http-proxy/index.d.ts
- */
-export type OnErrorCallback = (
-  err: Error,
-  req: Request,
-  res: Response,
-  target?: string | Partial<url.Url>
-) => void;
-export type OnProxyResCallback = (
-  proxyRes: http.IncomingMessage,
-  req: Request,
-  res: Response
-) => void;
-export type OnProxyReqCallback = (
-  proxyReq: http.ClientRequest,
-  req: Request,
-  res: Response,
-  options: httpProxy.ServerOptions
-) => void;
-export type OnProxyReqWsCallback = (
-  proxyReq: http.ClientRequest,
-  req: Request,
-  socket: net.Socket,
-  options: httpProxy.ServerOptions,
-  head: any
-) => void;
-export type OnCloseCallback = (proxyRes: Response, proxySocket: net.Socket, proxyHead: any) => void;
-
-export type OnOpenCallback = (proxySocket: net.Socket) => void;

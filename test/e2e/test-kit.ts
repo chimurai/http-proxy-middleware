@@ -1,9 +1,9 @@
 import * as express from 'express';
-import { Express, RequestHandler } from 'express';
+import { Express, RequestHandler, ErrorRequestHandler } from 'express';
 
 export { createProxyMiddleware, responseInterceptor, fixRequestBody } from '../../src/index';
 
-export function createApp(...middlewares: RequestHandler[]): Express {
+export function createApp(...middlewares: (RequestHandler | ErrorRequestHandler)[]): Express {
   const app = express();
   app.use(...middlewares);
   return app;

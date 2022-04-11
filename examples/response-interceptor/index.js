@@ -45,23 +45,25 @@ const jsonPlaceholderProxy = createProxyMiddleware({
   },
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
   selfHandleResponse: true, // manually call res.end(); IMPORTANT: res.end() is called internally by responseInterceptor()
-  onProxyRes: responseInterceptor(async (buffer, proxyRes, req, res) => {
-    // log original request and proxied request info
-    const exchange = `[DEBUG] ${req.method} ${req.path} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
-    console.log(exchange);
+  on: {
+    proxyRes: responseInterceptor(async (buffer, proxyRes, req, res) => {
+      // log original request and proxied request info
+      const exchange = `[DEBUG] ${req.method} ${req.path} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
+      console.log(exchange);
 
-    // log original response
-    // console.log(`[DEBUG] original response:\n${buffer.toString('utf8')}`);
+      // log original response
+      // console.log(`[DEBUG] original response:\n${buffer.toString('utf8')}`);
 
-    // set response content-type
-    res.setHeader('content-type', 'application/json; charset=utf-8');
+      // set response content-type
+      res.setHeader('content-type', 'application/json; charset=utf-8');
 
-    // set response status code
-    res.statusCode = 418;
+      // set response status code
+      res.statusCode = 418;
 
-    // return a complete different response
-    return JSON.stringify(favoriteFoods);
-  }),
+      // return a complete different response
+      return JSON.stringify(favoriteFoods);
+    }),
+  },
   logLevel: 'debug',
 });
 

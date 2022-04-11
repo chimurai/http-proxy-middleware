@@ -13,10 +13,12 @@ describe('responseInterceptor()', () => {
             target: `http://httpbin.org`,
             changeOrigin: true, // for vhosted sites, changes host header to match to target's host
             selfHandleResponse: true,
-            onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-              res.setHeader('content-type', 'application/json; charset=utf-8');
-              return JSON.stringify({ foo: 'bar', favorite: '叉燒包' });
-            }),
+            on: {
+              proxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+                res.setHeader('content-type', 'application/json; charset=utf-8');
+                return JSON.stringify({ foo: 'bar', favorite: '叉燒包' });
+              }),
+            },
           })
         )
       );
@@ -49,9 +51,11 @@ describe('responseInterceptor()', () => {
             target: `http://httpbin.org`,
             changeOrigin: true, // for vhosted sites, changes host header to match to target's host
             selfHandleResponse: true,
-            onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-              return responseBuffer;
-            }),
+            on: {
+              proxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+                return responseBuffer;
+              }),
+            },
           })
         )
       );
@@ -75,7 +79,9 @@ describe('responseInterceptor()', () => {
             target: `http://httpbin.org`,
             changeOrigin: true, // for vhosted sites, changes host header to match to target's host
             selfHandleResponse: true,
-            onProxyRes: responseInterceptor(async (buffer) => buffer),
+            on: {
+              proxyRes: responseInterceptor(async (buffer) => buffer),
+            },
           })
         )
       );

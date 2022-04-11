@@ -129,36 +129,24 @@ describe('http-proxy-middleware TypeScript Types', () => {
       });
     });
 
-    describe('HPM http-proxy events', () => {
-      it('should have onError type', () => {
-        options = { onError: (err, req, res) => {} };
-        expect(options).toBeDefined();
-      });
-
-      it('should have onProxyReq type', () => {
-        options = { onProxyReq: (proxyReq, req, res) => {} };
-        expect(options).toBeDefined();
-      });
-
-      it('should have onProxyRes type', () => {
-        options = { onProxyRes: (proxyRes, req, res) => {} };
-        expect(options).toBeDefined();
-      });
-
-      it('should have onProxyReqWs type', () => {
+    describe('on', () => {
+      it('should have on events', () => {
         options = {
-          onProxyReqWs: (proxyReq, req, socket, opts, head) => {},
+          on: {
+            error: (error, req, res, target) => {},
+            proxyReq: (proxyReq, req, res, options) => {},
+            proxyReqWs: (proxyReq, req, socket, options) => {},
+            proxyRes: (proxyRes, req, res) => {},
+            open: (proxySocket) => {},
+            close: (proxyRes, proxySocket, proxyHead) => {},
+            start: (req, res, target) => {},
+            end: (req, res, proxyRes) => {},
+            econnreset: (error, req, res, target) => {},
+
+            // @ts-expect-error explanation: should error when unknown event is passed
+            unknownEventName: () => {},
+          },
         };
-        expect(options).toBeDefined();
-      });
-
-      it('should have onOpen type', () => {
-        options = { onOpen: (proxySocket) => {} };
-        expect(options).toBeDefined();
-      });
-
-      it('should have onClose type', () => {
-        options = { onClose: (res, socket, head) => {} };
         expect(options).toBeDefined();
       });
     });
