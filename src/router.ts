@@ -1,6 +1,7 @@
 import isPlainObj = require('is-plain-obj');
-import { getInstance } from './logger';
-const logger = getInstance();
+import { debug } from './debug';
+
+const log = debug.extend('router');
 
 export async function getTarget(req, config) {
   let newTarget;
@@ -27,14 +28,14 @@ function getTargetFromProxyTable(req, table) {
       if (hostAndPath.indexOf(key) > -1) {
         // match 'localhost:3000/api'
         result = table[key];
-        logger.debug('[HPM] Router table match: "%s"', key);
+        log('router table match: "%s"', key);
         break;
       }
     } else {
       if (key === host) {
         // match 'localhost:3000'
         result = table[key];
-        logger.debug('[HPM] Router table match: "%s"', host);
+        log('router table match: "%s"', host);
         break;
       }
     }
