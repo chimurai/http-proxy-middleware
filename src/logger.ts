@@ -142,37 +142,3 @@ class Logger {
     return result;
   }
 }
-
-/**
- * -> normal proxy
- * => router
- * ~> pathRewrite
- * ≈> router + pathRewrite
- *
- * @param  {String} originalPath
- * @param  {String} newPath
- * @param  {String} originalTarget
- * @param  {String} newTarget
- * @return {String}
- */
-
-/**
- * @deprecated
- */
-export function getArrow(originalPath, newPath, originalTarget, newTarget) {
-  const arrow = ['>'];
-  const isNewTarget = originalTarget !== newTarget; // router
-  const isNewPath = originalPath !== newPath; // pathRewrite
-
-  if (isNewPath && !isNewTarget) {
-    arrow.unshift('~');
-  } else if (!isNewPath && isNewTarget) {
-    arrow.unshift('=');
-  } else if (isNewPath && isNewTarget) {
-    arrow.unshift('≈');
-  } else {
-    arrow.unshift('-');
-  }
-
-  return arrow.join('');
-}

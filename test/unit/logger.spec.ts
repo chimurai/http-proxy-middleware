@@ -1,4 +1,4 @@
-import { getArrow, getInstance } from '../../src/logger';
+import { getInstance } from '../../src/logger';
 
 describe('Logger', () => {
   let logger;
@@ -218,51 +218,6 @@ describe('Logger', () => {
       it('should throw an error', () => {
         expect(fn).toThrowError(Error);
       });
-    });
-  });
-});
-
-describe('getArrow', () => {
-  let arrow;
-  // scenario = [originalPath, newPath, originalTarget, newTarget]
-
-  describe('default arrow', () => {
-    beforeEach(() => {
-      arrow = getArrow('/api', '/api', 'localhost:1337', 'localhost:1337');
-    });
-
-    it('should return arrow:  "->"', () => {
-      expect(arrow).toBe('->');
-    });
-  });
-
-  describe('"pathRewrite" arrow', () => {
-    beforeEach(() => {
-      arrow = getArrow('/api', '/rest', 'localhost:1337', 'localhost:1337');
-    });
-
-    it('should return arrow:  "~>"', () => {
-      expect(arrow).toBe('~>');
-    });
-  });
-
-  describe('"router" arrow', () => {
-    beforeEach(() => {
-      arrow = getArrow('/api', '/api', 'localhost:1337', 'localhost:8888');
-    });
-
-    it('should return arrow:  "=>"', () => {
-      expect(arrow).toBe('=>');
-    });
-  });
-
-  describe('"pathRewrite" + "router" arrow', () => {
-    beforeEach(() => {
-      arrow = getArrow('/api', '/rest', 'localhost:1337', 'localhost:8888');
-    });
-
-    it('should return arrow:  "≈>"', () => {
-      expect(arrow).toBe('≈>');
     });
   });
 });

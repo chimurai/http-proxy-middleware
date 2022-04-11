@@ -16,6 +16,18 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
   });
 
   /**
+   * Log request and response
+   * @example
+   * ```shell
+   * [HPM] GET /users/ -> http://jsonplaceholder.typicode.com/users/ [304]
+   * ```
+   */
+  proxyServer.on('proxyRes', (proxyRes: any, req: any, res) => {
+    const exchange = `[HPM] ${req.method} ${req.baseUrl}${req.path} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
+    logger.log(exchange);
+  });
+
+  /**
    * When client closes WebSocket connection
    */
   proxyServer.on('close', (req, proxySocket, proxyHead) => {

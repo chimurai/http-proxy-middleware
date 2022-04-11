@@ -3,7 +3,7 @@ import type { Request, RequestHandler, Options, Filter } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { matchPathFilter } from './path-filter';
-import { getArrow, getLogger } from './logger';
+import { getLogger } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
 import {
@@ -124,8 +124,6 @@ export class HttpProxyMiddleware {
    * @return {Object} proxy options
    */
   private prepareProxyRequest = async (req: Request) => {
-    // store uri before it gets rewritten for logging
-    const originalPath = req.url;
     const newProxyOptions = Object.assign({}, this.proxyOptions);
 
     // Apply in order:
@@ -133,18 +131,6 @@ export class HttpProxyMiddleware {
     // 2. option.pathRewrite
     await this.applyRouter(req, newProxyOptions);
     await this.applyPathRewrite(req, this.pathRewriter);
-
-    // debug logging for both http(s) and websockets
-    // TODO: refactor to a logger plugin
-    if (this.proxyOptions.logLevel === 'debug') {
-      const arrow = getArrow(
-        originalPath,
-        req.url,
-        this.proxyOptions.target,
-        newProxyOptions.target
-      );
-      this.logger.log('[HPM] %s %s %s %s', req.method, originalPath, arrow, newProxyOptions.target);
-    }
 
     return newProxyOptions;
   };

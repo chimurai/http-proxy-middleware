@@ -428,9 +428,10 @@ describe('E2E http-proxy-middleware', () => {
         await agent.get(`/api/foo/bar`).expect(200);
 
         expect(logMessages).not.toBeUndefined();
-        expect(logMessages.length).toBe(2);
+        expect(logMessages.length).toBe(3);
         expect(logMessages[0]).toContain('[HPM] Proxy created:');
-        expect(logMessages[1]).toBe('[HPM] server close signal received: closing proxy server');
+        expect(logMessages[1]).toBe('[HPM] GET /api/foo/bar -> http://localhost/api/foo/bar [200]');
+        expect(logMessages[2]).toBe('[HPM] server close signal received: closing proxy server');
       });
     });
   });
