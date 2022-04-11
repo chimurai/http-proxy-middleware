@@ -1,6 +1,17 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable prefer-rest-params */
 
 import * as util from 'util';
+import { Options } from './types';
+
+const noopLogger = {
+  log: () => {},
+  error: () => {},
+};
+
+export function getLogger(options: Options): Partial<Console> {
+  return (options.logger as Partial<Console>) || noopLogger;
+}
 
 let loggerInstance;
 
@@ -22,6 +33,9 @@ enum LEVELS {
   silent = 80,
 }
 
+/**
+ * @deprecated
+ */
 export function getInstance() {
   if (!loggerInstance) {
     loggerInstance = new Logger();
@@ -30,6 +44,9 @@ export function getInstance() {
   return loggerInstance;
 }
 
+/**
+ * @deprecated
+ */
 class Logger {
   public logLevel;
   public provider;
@@ -137,6 +154,10 @@ class Logger {
  * @param  {String} originalTarget
  * @param  {String} newTarget
  * @return {String}
+ */
+
+/**
+ * @deprecated
  */
 export function getArrow(originalPath, newPath, originalTarget, newTarget) {
   const arrow = ['>'];

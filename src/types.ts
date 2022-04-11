@@ -79,6 +79,7 @@ export interface Options extends httpProxy.ServerOptions {
     | { [hostOrPath: string]: httpProxy.ServerOptions['target'] }
     | ((req: Request) => httpProxy.ServerOptions['target'])
     | ((req: Request) => Promise<httpProxy.ServerOptions['target']>);
+  logger?: Partial<Console> | any;
   logLevel?: 'debug' | 'info' | 'warn' | 'error' | 'silent';
   logProvider?: LogProviderCallback;
 }

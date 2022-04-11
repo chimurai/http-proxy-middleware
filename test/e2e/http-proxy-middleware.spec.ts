@@ -401,13 +401,15 @@ describe('E2E http-proxy-middleware', () => {
       });
     });
 
-    describe('option.logLevel & option.logProvider', () => {
+    describe('option.logger', () => {
       let logMessages: string[];
 
       beforeEach(() => {
         logMessages = [];
-        const customLogger = (message: string) => {
-          logMessages.push(message);
+        const customLogger = {
+          log: (message: string) => {
+            logMessages.push(message);
+          },
         };
 
         agent = request(
@@ -415,10 +417,7 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              logLevel: 'info',
-              logProvider(provider) {
-                return { ...provider, debug: customLogger, info: customLogger };
-              },
+              logger: customLogger,
             })
           )
         );

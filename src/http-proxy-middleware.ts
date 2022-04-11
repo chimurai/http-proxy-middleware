@@ -3,18 +3,18 @@ import type { Request, RequestHandler, Options, Filter } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { matchPathFilter } from './path-filter';
-import { getArrow, getInstance } from './logger';
+import { getArrow, getLogger } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
 import {
   debugProxyErrorsPlugin,
-  createLoggerPlugin,
+  loggerPlugin,
   errorResponsePlugin,
   proxyEventsPlugin,
 } from './plugins/default';
 
 export class HttpProxyMiddleware {
-  private logger = getInstance();
+  private logger: Partial<Console>;
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options;
@@ -23,11 +23,12 @@ export class HttpProxyMiddleware {
 
   constructor(options: Options) {
     verifyConfig(options);
+    this.logger = getLogger(options);
     this.proxyOptions = options;
 
     // create proxy
     this.proxy = httpProxy.createProxyServer({});
-    this.logger.info(`[HPM] Proxy created: ${options.pathFilter ?? '/'}  -> ${options.target}`);
+    this.logger.log(`[HPM] Proxy created: ${options.pathFilter ?? '/'}  -> ${options.target}`);
 
     this.registerPlugins(this.proxy, this.proxyOptions);
 
@@ -67,7 +68,7 @@ export class HttpProxyMiddleware {
 
     if (server && !this.serverOnCloseSubscribed) {
       server.on('close', () => {
-        this.logger.info('[HPM] server close signal received: closing proxy server');
+        this.logger.log('[HPM] server close signal received: closing proxy server');
         this.proxy.close();
       });
       this.serverOnCloseSubscribed = true;
@@ -83,7 +84,7 @@ export class HttpProxyMiddleware {
     const defaultPlugins = [
       debugProxyErrorsPlugin,
       proxyEventsPlugin,
-      createLoggerPlugin(),
+      loggerPlugin,
       errorResponsePlugin,
     ];
     const plugins = options.plugins ?? [];
@@ -103,7 +104,7 @@ export class HttpProxyMiddleware {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.ws(req, socket, head, activeProxyOptions);
-      this.logger.info('[HPM] Upgrading to WebSocket');
+      this.logger.log('[HPM] Upgrading to WebSocket');
     }
   };
 
@@ -134,6 +135,7 @@ export class HttpProxyMiddleware {
     await this.applyPathRewrite(req, this.pathRewriter);
 
     // debug logging for both http(s) and websockets
+    // TODO: refactor to a logger plugin
     if (this.proxyOptions.logLevel === 'debug') {
       const arrow = getArrow(
         originalPath,
@@ -141,13 +143,7 @@ export class HttpProxyMiddleware {
         this.proxyOptions.target,
         newProxyOptions.target
       );
-      this.logger.debug(
-        '[HPM] %s %s %s %s',
-        req.method,
-        originalPath,
-        arrow,
-        newProxyOptions.target
-      );
+      this.logger.log('[HPM] %s %s %s %s', req.method, originalPath, arrow, newProxyOptions.target);
     }
 
     return newProxyOptions;
@@ -161,7 +157,7 @@ export class HttpProxyMiddleware {
       newTarget = await Router.getTarget(req, options);
 
       if (newTarget) {
-        this.logger.debug('[HPM] Router new target: %s -> "%s"', options.target, newTarget);
+        this.logger.log('[HPM] Router new target: %s -> "%s"', options.target, newTarget);
         options.target = newTarget;
       }
     }
@@ -175,7 +171,7 @@ export class HttpProxyMiddleware {
       if (typeof path === 'string') {
         req.url = path;
       } else {
-        this.logger.info('[HPM] pathRewrite: No rewritten path found. (%s)', req.url);
+        this.logger.log('[HPM] pathRewrite: No rewritten path found. (%s)', req.url);
       }
     }
   };
