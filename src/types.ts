@@ -34,6 +34,8 @@ export type OnProxyEvent = {
   econnreset?: httpProxy.EconnresetCallback;
 };
 
+export type Logger = Pick<Console, 'info' | 'warn' | 'error'>;
+
 export interface Options extends httpProxy.ServerOptions {
   /**
    * Narrow down requests to proxy or not.
@@ -79,19 +81,14 @@ export interface Options extends httpProxy.ServerOptions {
     | { [hostOrPath: string]: httpProxy.ServerOptions['target'] }
     | ((req: Request) => httpProxy.ServerOptions['target'])
     | ((req: Request) => Promise<httpProxy.ServerOptions['target']>);
-  logger?: Partial<Console> | any;
-  logLevel?: 'debug' | 'info' | 'warn' | 'error' | 'silent';
-  logProvider?: LogProviderCallback;
+  /**
+   * Log information from http-proxy-middleware
+   * @example
+   * ```js
+   * createProxyMiddleware({
+   *  logger: console
+   * });
+   * ```
+   */
+  logger?: Logger | any;
 }
-
-interface LogProvider {
-  log: Logger;
-  debug?: Logger;
-  info?: Logger;
-  warn?: Logger;
-  error?: Logger;
-}
-
-type Logger = (...args: any[]) => void;
-
-export type LogProviderCallback = (provider: LogProvider) => LogProvider;

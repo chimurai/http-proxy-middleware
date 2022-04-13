@@ -407,9 +407,9 @@ describe('E2E http-proxy-middleware', () => {
       beforeEach(() => {
         logMessages = [];
         const customLogger = {
-          log: (message: string) => {
-            logMessages.push(message);
-          },
+          info: (message: string) => logMessages.push(message),
+          warn: (message: string) => logMessages.push(message),
+          error: (message: string) => logMessages.push(message),
         };
 
         agent = request(

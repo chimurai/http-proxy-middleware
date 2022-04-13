@@ -1,5 +1,5 @@
 import type * as https from 'https';
-import type { Request, RequestHandler, Options, Filter } from './types';
+import type { Request, RequestHandler, Options, Filter, Logger } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { matchPathFilter } from './path-filter';
@@ -14,7 +14,7 @@ import {
 } from './plugins/default';
 
 export class HttpProxyMiddleware {
-  private logger: Partial<Console>;
+  private logger: Logger;
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options;
@@ -28,7 +28,7 @@ export class HttpProxyMiddleware {
 
     // create proxy
     this.proxy = httpProxy.createProxyServer({});
-    this.logger.log(`[HPM] Proxy created: ${options.pathFilter ?? '/'}  -> ${options.target}`);
+    this.logger.info(`[HPM] Proxy created: %O`, options.target);
 
     this.registerPlugins(this.proxy, this.proxyOptions);
 
@@ -68,7 +68,7 @@ export class HttpProxyMiddleware {
 
     if (server && !this.serverOnCloseSubscribed) {
       server.on('close', () => {
-        this.logger.log('[HPM] server close signal received: closing proxy server');
+        this.logger.info('[HPM] server close signal received: closing proxy server');
         this.proxy.close();
       });
       this.serverOnCloseSubscribed = true;
@@ -104,7 +104,7 @@ export class HttpProxyMiddleware {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.ws(req, socket, head, activeProxyOptions);
-      this.logger.log('[HPM] Upgrading to WebSocket');
+      this.logger.info('[HPM] Upgrading to WebSocket');
     }
   };
 
@@ -143,7 +143,7 @@ export class HttpProxyMiddleware {
       newTarget = await Router.getTarget(req, options);
 
       if (newTarget) {
-        this.logger.log('[HPM] Router new target: %s -> "%s"', options.target, newTarget);
+        this.logger.info('[HPM] Router new target: %s -> "%s"', options.target, newTarget);
         options.target = newTarget;
       }
     }
@@ -157,7 +157,7 @@ export class HttpProxyMiddleware {
       if (typeof path === 'string') {
         req.url = path;
       } else {
-        this.logger.log('[HPM] pathRewrite: No rewritten path found. (%s)', req.url);
+        this.logger.info('[HPM] pathRewrite: No rewritten path found. (%s)', req.url);
       }
     }
   };

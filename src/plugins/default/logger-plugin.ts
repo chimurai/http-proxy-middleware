@@ -24,13 +24,13 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
    */
   proxyServer.on('proxyRes', (proxyRes: any, req: any, res) => {
     const exchange = `[HPM] ${req.method} ${req.baseUrl}${req.path} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
-    logger.log(exchange);
+    logger.info(exchange);
   });
 
   /**
    * When client closes WebSocket connection
    */
   proxyServer.on('close', (req, proxySocket, proxyHead) => {
-    logger.log('[HPM] Client disconnected');
+    logger.info('[HPM] Client disconnected');
   });
 };

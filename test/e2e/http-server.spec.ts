@@ -6,7 +6,6 @@ describe('http integration', () => {
   it('should work with raw node http RequestHandler', async () => {
     const handler = createProxyMiddleware({
       changeOrigin: true,
-      logLevel: 'silent',
       target: 'http://httpbin.org',
     });
 
