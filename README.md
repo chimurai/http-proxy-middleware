@@ -73,8 +73,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [`pathRewrite` (object/function)](#pathrewrite-objectfunction)
   - [`router` (object/function)](#router-objectfunction)
   - [`plugins` (Array)](#plugins-array)
-  - [`logLevel` (string)](#loglevel-string)
-  - [`logProvider` (function)](#logprovider-function)
+  - [`logger` (Object)](#logger-object)
 - [`http-proxy` events](#http-proxy-events)
 - [`http-proxy` options](#http-proxy-options)
 - [WebSocket](#websocket)
@@ -287,38 +286,16 @@ const config = {
 };
 ```
 
-### `logLevel` (string)
+### `logger` (Object)
 
-Default: `'info'`
+Configure a logger to output information from http-proxy-middleware: ie. `console`, `winston`, `pino`, `bunyan`, `log4js`, etc...
 
-Values: ['debug', 'info', 'warn', 'error', 'silent'].
-
-### `logProvider` (function)
-
-Modify or replace log provider. Default: `console`.
+See also logger recipes ([recipes/logger.md](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/logger.md)) for more details.
 
 ```javascript
-// simple replace
-function logProvider(provider) {
-  // replace the default console log provider.
-  return require('winston');
-}
-```
-
-```javascript
-// verbose replacement
-function logProvider(provider) {
-  const logger = new (require('winston').Logger)();
-
-  const myCustomProvider = {
-    log: logger.log,
-    debug: logger.debug,
-    info: logger.info,
-    warn: logger.warn,
-    error: logger.error,
-  };
-  return myCustomProvider;
-}
+createProxyMiddleware({
+  logger: console,
+});
 ```
 
 ## `http-proxy` events

@@ -1,7 +1,8 @@
 import isPlainObj = require('is-plain-obj');
 import { ERRORS } from './errors';
-import { getInstance } from './logger';
-const logger = getInstance();
+import { debug } from './debug';
+
+const log = debug.extend('path-rewriter');
 
 /**
  * Create rewrite function, to cache parsed rewrite rules.
@@ -30,7 +31,7 @@ export function createPathRewriter(rewriteConfig) {
     for (const rule of rulesCache) {
       if (rule.regex.test(path)) {
         result = result.replace(rule.regex, rule.value);
-        logger.debug('[HPM] Rewriting path from "%s" to "%s"', path, result);
+        log('rewriting path from "%s" to "%s"', path, result);
         break;
       }
     }
@@ -60,7 +61,7 @@ function parsePathRewriteRules(rewriteConfig) {
         regex: new RegExp(key),
         value: rewriteConfig[key],
       });
-      logger.info('[HPM] Proxy rewrite rule created: "%s" ~> "%s"', key, rewriteConfig[key]);
+      log('rewrite rule created: "%s" ~> "%s"', key, rewriteConfig[key]);
     }
   }
 

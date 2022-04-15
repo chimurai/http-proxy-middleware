@@ -28,7 +28,6 @@ describe('Usage in Express', () => {
        */
       const proxyConfig: Options = {
         changeOrigin: true,
-        logLevel: 'silent',
         target: 'http://jsonplaceholder.typicode.com',
         pathFilter: filter,
       };
