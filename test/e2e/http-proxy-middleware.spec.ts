@@ -401,13 +401,15 @@ describe('E2E http-proxy-middleware', () => {
       });
     });
 
-    describe('option.logLevel & option.logProvider', () => {
+    describe('option.logger', () => {
       let logMessages: string[];
 
       beforeEach(() => {
         logMessages = [];
-        const customLogger = (message: string) => {
-          logMessages.push(message);
+        const customLogger = {
+          info: (message: string) => logMessages.push(message),
+          warn: (message: string) => logMessages.push(message),
+          error: (message: string) => logMessages.push(message),
         };
 
         agent = request(
@@ -415,10 +417,7 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-              logLevel: 'info',
-              logProvider(provider) {
-                return { ...provider, debug: customLogger, info: customLogger };
-              },
+              logger: customLogger,
             })
           )
         );
@@ -429,9 +428,10 @@ describe('E2E http-proxy-middleware', () => {
         await agent.get(`/api/foo/bar`).expect(200);
 
         expect(logMessages).not.toBeUndefined();
-        expect(logMessages.length).toBe(2);
+        expect(logMessages.length).toBe(3);
         expect(logMessages[0]).toContain('[HPM] Proxy created:');
-        expect(logMessages[1]).toBe('[HPM] server close signal received: closing proxy server');
+        expect(logMessages[1]).toBe('[HPM] GET /api/foo/bar -> http://localhost/api/foo/bar [200]');
+        expect(logMessages[2]).toBe('[HPM] server close signal received: closing proxy server');
       });
     });
   });

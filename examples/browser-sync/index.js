@@ -11,7 +11,7 @@ const jsonPlaceholderProxy = createProxyMiddleware({
   target: 'http://jsonplaceholder.typicode.com',
   pathFilter: '/users',
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
-  logLevel: 'debug',
+  logger: console,
 });
 
 /**

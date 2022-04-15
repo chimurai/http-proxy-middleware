@@ -1,20 +1,20 @@
 import type * as https from 'https';
-import type { Request, RequestHandler, Options, Filter } from './types';
+import type { Request, RequestHandler, Options, Filter, Logger } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { matchPathFilter } from './path-filter';
-import { getArrow, getInstance } from './logger';
+import { getLogger } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
 import {
   debugProxyErrorsPlugin,
-  createLoggerPlugin,
+  loggerPlugin,
   errorResponsePlugin,
   proxyEventsPlugin,
 } from './plugins/default';
 
 export class HttpProxyMiddleware {
-  private logger = getInstance();
+  private logger: Logger;
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options;
@@ -23,11 +23,12 @@ export class HttpProxyMiddleware {
 
   constructor(options: Options) {
     verifyConfig(options);
+    this.logger = getLogger(options);
     this.proxyOptions = options;
 
     // create proxy
     this.proxy = httpProxy.createProxyServer({});
-    this.logger.info(`[HPM] Proxy created: ${options.pathFilter ?? '/'}  -> ${options.target}`);
+    this.logger.info(`[HPM] Proxy created: %O`, options.target);
 
     this.registerPlugins(this.proxy, this.proxyOptions);
 
@@ -83,7 +84,7 @@ export class HttpProxyMiddleware {
     const defaultPlugins = [
       debugProxyErrorsPlugin,
       proxyEventsPlugin,
-      createLoggerPlugin(),
+      loggerPlugin,
       errorResponsePlugin,
     ];
     const plugins = options.plugins ?? [];
@@ -123,8 +124,6 @@ export class HttpProxyMiddleware {
    * @return {Object} proxy options
    */
   private prepareProxyRequest = async (req: Request) => {
-    // store uri before it gets rewritten for logging
-    const originalPath = req.url;
     const newProxyOptions = Object.assign({}, this.proxyOptions);
 
     // Apply in order:
@@ -132,23 +131,6 @@ export class HttpProxyMiddleware {
     // 2. option.pathRewrite
     await this.applyRouter(req, newProxyOptions);
     await this.applyPathRewrite(req, this.pathRewriter);
-
-    // debug logging for both http(s) and websockets
-    if (this.proxyOptions.logLevel === 'debug') {
-      const arrow = getArrow(
-        originalPath,
-        req.url,
-        this.proxyOptions.target,
-        newProxyOptions.target
-      );
-      this.logger.debug(
-        '[HPM] %s %s %s %s',
-        req.method,
-        originalPath,
-        arrow,
-        newProxyOptions.target
-      );
-    }
 
     return newProxyOptions;
   };
@@ -161,7 +143,7 @@ export class HttpProxyMiddleware {
       newTarget = await Router.getTarget(req, options);
 
       if (newTarget) {
-        this.logger.debug('[HPM] Router new target: %s -> "%s"', options.target, newTarget);
+        this.logger.info('[HPM] Router new target: %s -> "%s"', options.target, newTarget);
         options.target = newTarget;
       }
     }

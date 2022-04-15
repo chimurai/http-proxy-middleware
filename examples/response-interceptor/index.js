@@ -64,7 +64,7 @@ const jsonPlaceholderProxy = createProxyMiddleware({
       return JSON.stringify(favoriteFoods);
     }),
   },
-  logLevel: 'debug',
+  logger: console,
 });
 
 const app = express();

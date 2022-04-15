@@ -95,36 +95,9 @@ describe('http-proxy-middleware TypeScript Types', () => {
       });
     });
 
-    describe('logLevel', () => {
-      it('should have logLevel Type', () => {
-        options = { logLevel: 'info' };
-        expect(options).toBeDefined();
-      });
-    });
-
-    describe('logProvider', () => {
-      it('should have logProvider Type', () => {
-        options = {
-          logProvider: (currentProvider) => {
-            return {
-              log: () => {
-                return;
-              },
-              debug: () => {
-                return;
-              },
-              info: () => {
-                return;
-              },
-              warn: () => {
-                return;
-              },
-              error: () => {
-                return;
-              },
-            };
-          },
-        };
+    describe('logger', () => {
+      it('should have logger option', () => {
+        options = { logger: console };
         expect(options).toBeDefined();
       });
     });
