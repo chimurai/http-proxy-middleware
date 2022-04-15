@@ -73,6 +73,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [`pathRewrite` (object/function)](#pathrewrite-objectfunction)
   - [`router` (object/function)](#router-objectfunction)
   - [`plugins` (Array)](#plugins-array)
+  - [`ejectPlugins` (boolean) default: `false`](#ejectplugins-boolean-default-false)
   - [`logger` (Object)](#logger-object)
 - [`http-proxy` events](#http-proxy-events)
 - [`http-proxy` options](#http-proxy-options)
@@ -284,6 +285,30 @@ const config = {
   changeOrigin: true,
   plugins: [simpleRequestLogger],
 };
+```
+
+### `ejectPlugins` (boolean) default: `false`
+
+If you're not satisfied with the pre-configured plugins, you can eject them by configuring `ejectPlugins: true`.
+
+NOTE: register your own error handlers to prevent server from crashing.
+
+```js
+// eject default plugins and manually add them back
+
+const {
+  debugProxyErrorsPlugin, // subscribe to proxy errors to prevent server from crashing
+  loggerPlugin, // log proxy events to a logger (ie. console)
+  errorResponsePlugin, // return 5xx response on proxy error
+  proxyEventsPlugin, // implements the "on:" option
+} = require('http-proxy-middleware/plugins/default');
+
+createProxyMiddleware({
+  target: `http://example.org`,
+  changeOrigin: true,
+  ejectPlugins: true,
+  plugins: [debugProxyErrorsPlugin, loggerPlugin, errorResponsePlugin, proxyEventsPlugin],
+});
 ```
 
 ### `logger` (Object)

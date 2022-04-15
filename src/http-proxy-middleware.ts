@@ -2,16 +2,11 @@ import type * as https from 'https';
 import type { Request, RequestHandler, Options, Filter, Logger } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
+import { getPlugins } from './get-plugins';
 import { matchPathFilter } from './path-filter';
 import { getLogger } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
-import {
-  debugProxyErrorsPlugin,
-  loggerPlugin,
-  errorResponsePlugin,
-  proxyEventsPlugin,
-} from './plugins/default';
 
 export class HttpProxyMiddleware {
   private logger: Logger;
@@ -81,14 +76,8 @@ export class HttpProxyMiddleware {
   };
 
   private registerPlugins(proxy: httpProxy, options: Options) {
-    const defaultPlugins = [
-      debugProxyErrorsPlugin,
-      proxyEventsPlugin,
-      loggerPlugin,
-      errorResponsePlugin,
-    ];
-    const plugins = options.plugins ?? [];
-    [...defaultPlugins, ...plugins].forEach((plugin) => plugin(proxy, options));
+    const plugins = getPlugins(options);
+    plugins.forEach((plugin) => plugin(proxy, options));
   }
 
   private catchUpgradeRequest = (server: https.Server) => {
