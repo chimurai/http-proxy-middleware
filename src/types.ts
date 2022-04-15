@@ -63,6 +63,13 @@ export interface Options extends httpProxy.ServerOptions {
    */
   plugins?: Plugin[];
   /**
+   * Eject pre-configured plugins.
+   * NOTE: register your own error handlers to prevent server from crashing.
+   *
+   * @since v3.0.0
+   */
+  ejectPlugins?: boolean;
+  /**
    * Listen to http-proxy events
    * @see {@link OnProxyEvent} for available events
    * @example
