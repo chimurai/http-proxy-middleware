@@ -56,4 +56,26 @@ describe('E2E pathRewrite', () => {
       expect(response.text).toBe('/API RESPONSE AFTER PATH REWRITE FUNCTION');
     });
   });
+
+  describe('Rewrite paths with function which return undefined', () => {
+    it('should proxy with requested path', async () => {
+      mockTargetServer
+        .get('/api/lorum/ipsum')
+        .thenReply(200, '/API RESPONSE AFTER PATH REWRITE FUNCTION');
+
+      const agent = request(
+        createApp(
+          createProxyMiddleware({
+            target: `http://localhost:${mockTargetServer.port}`,
+            pathRewrite(path, req) {
+              return undefined;
+            },
+          })
+        )
+      );
+
+      const response = await agent.get('/api/lorum/ipsum').expect(200);
+      expect(response.text).toBe('/API RESPONSE AFTER PATH REWRITE FUNCTION');
+    });
+  });
 });
