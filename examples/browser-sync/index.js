@@ -28,3 +28,6 @@ browserSync.init({
 
 console.log('[DEMO] Server: listening on port 3000');
 console.log('[DEMO] Opening: http://localhost:3000/users');
+
+process.on('SIGINT', () => browserSync.exit());
+process.on('SIGTERM', () => browserSync.exit());

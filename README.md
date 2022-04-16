@@ -81,6 +81,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [External WebSocket upgrade](#external-websocket-upgrade)
 - [Intercept and manipulate requests](#intercept-and-manipulate-requests)
 - [Intercept and manipulate responses](#intercept-and-manipulate-responses)
+- [Debugging](#debugging)
 - [Working examples](#working-examples)
 - [Recipes](#recipes)
 - [Compatible servers](#compatible-servers)
@@ -545,6 +546,19 @@ const proxy = createProxyMiddleware({
 ```
 
 Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md#readme) for more examples.
+
+## Debugging
+
+Configure the `DEBUG` environment variable enable debug logging.
+
+See [`debug`](https://github.com/debug-js/debug#readme) project for more options.
+
+```shell
+DEBUG=http-proxy-middleware* node server.js
+
+$ http-proxy-middleware proxy created +0ms
+$ http-proxy-middleware proxying request to target: 'http://www.example.org' +359ms
+```
 
 ## Working examples
 

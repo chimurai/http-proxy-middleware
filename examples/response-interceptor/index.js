@@ -47,20 +47,16 @@ const jsonPlaceholderProxy = createProxyMiddleware({
   selfHandleResponse: true, // manually call res.end(); IMPORTANT: res.end() is called internally by responseInterceptor()
   on: {
     proxyRes: responseInterceptor(async (buffer, proxyRes, req, res) => {
-      // log original request and proxied request info
-      const exchange = `[DEBUG] ${req.method} ${req.path} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
-      console.log(exchange);
-
       // log original response
       // console.log(`[DEBUG] original response:\n${buffer.toString('utf8')}`);
 
-      // set response content-type
+      console.log('change response content-type');
       res.setHeader('content-type', 'application/json; charset=utf-8');
 
-      // set response status code
+      console.log('change response status code');
       res.statusCode = 418;
 
-      // return a complete different response
+      console.log('return a complete different response');
       return JSON.stringify(favoriteFoods);
     }),
   },
@@ -74,7 +70,7 @@ const app = express();
  */
 app.use(jsonPlaceholderProxy);
 
-app.listen(3000);
+const server = app.listen(3000);
 
 console.log('[DEMO] Server: listening on port 3000');
 console.log('[DEMO] Open: http://localhost:3000/users');
@@ -83,3 +79,6 @@ console.log('[DEMO] Open: http://localhost:3000/gzip');
 console.log('[DEMO] Open: http://localhost:3000/deflate');
 
 require('open')('http://localhost:3000/users');
+
+process.on('SIGINT', () => server.close());
+process.on('SIGTERM', () => server.close());

@@ -23,14 +23,23 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
    * ```
    */
   proxyServer.on('proxyRes', (proxyRes: any, req: any, res) => {
-    const exchange = `[HPM] ${req.method} ${req.baseUrl}${req.path} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
+    // BrowserSync uses req.originalUrl
+    const originalUrl = req.originalUrl ?? `${req.baseUrl}${req.path}`;
+    const exchange = `[HPM] ${req.method} ${originalUrl} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
     logger.info(exchange);
+  });
+
+  /**
+   * When client opens WebSocket connection
+   */
+  proxyServer.on('open', (socket) => {
+    logger.info('[HPM] Client connected: %o', socket.address());
   });
 
   /**
    * When client closes WebSocket connection
    */
   proxyServer.on('close', (req, proxySocket, proxyHead) => {
-    logger.info('[HPM] Client disconnected');
+    logger.info('[HPM] Client disconnected: %o', proxySocket.address());
   });
 };

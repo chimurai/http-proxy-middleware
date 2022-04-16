@@ -1,7 +1,8 @@
-import { debug } from '../../debug';
+import { Debug } from '../../debug';
 import { Plugin } from '../../types';
+import { getFunctionName } from '../../utils/function';
 
-const log = debug.extend('proxy-events-plugin');
+const debug = Debug.extend('proxy-events-plugin');
 
 /**
  * Implements option.on object to subscribe to http-proxy events.
@@ -25,7 +26,7 @@ const log = debug.extend('proxy-events-plugin');
  */
 export const proxyEventsPlugin: Plugin = (proxyServer, options) => {
   Object.entries(options.on || {}).forEach(([eventName, handler]) => {
+    debug(`register event handler: "${eventName}" -> "${getFunctionName(handler)}"`);
     proxyServer.on(eventName, handler as (...args: unknown[]) => void);
-    log(`registered event handler: "${eventName}"`);
   });
 };
