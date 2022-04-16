@@ -21,9 +21,12 @@ const app = express();
  */
 app.use('/users', jsonPlaceholderProxy);
 
-app.listen(3000);
+const server = app.listen(3000);
 
 console.log('[DEMO] Server: listening on port 3000');
 console.log('[DEMO] Opening: http://localhost:3000/users');
 
 require('open')('http://localhost:3000/users');
+
+process.on('SIGINT', () => server.close());
+process.on('SIGTERM', () => server.close());

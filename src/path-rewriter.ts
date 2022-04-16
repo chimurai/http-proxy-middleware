@@ -1,8 +1,8 @@
 import isPlainObj = require('is-plain-obj');
 import { ERRORS } from './errors';
-import { debug } from './debug';
+import { Debug } from './debug';
 
-const log = debug.extend('path-rewriter');
+const debug = Debug.extend('path-rewriter');
 
 /**
  * Create rewrite function, to cache parsed rewrite rules.
@@ -31,7 +31,7 @@ export function createPathRewriter(rewriteConfig) {
     for (const rule of rulesCache) {
       if (rule.regex.test(path)) {
         result = result.replace(rule.regex, rule.value);
-        log('rewriting path from "%s" to "%s"', path, result);
+        debug('rewriting path from "%s" to "%s"', path, result);
         break;
       }
     }
@@ -56,12 +56,12 @@ function parsePathRewriteRules(rewriteConfig) {
   const rules = [];
 
   if (isPlainObj(rewriteConfig)) {
-    for (const [key] of Object.entries(rewriteConfig)) {
+    for (const [key, value] of Object.entries(rewriteConfig)) {
       rules.push({
         regex: new RegExp(key),
-        value: rewriteConfig[key],
+        value: value,
       });
-      log('rewrite rule created: "%s" ~> "%s"', key, rewriteConfig[key]);
+      debug('rewrite rule created: "%s" ~> "%s"', key, value);
     }
   }
 
