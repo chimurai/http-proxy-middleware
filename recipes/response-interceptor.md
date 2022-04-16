@@ -21,12 +21,14 @@ const proxy = createProxyMiddleware({
   /**
    * Intercept response and replace 'Hello' with 'Teapot' with 418 http response status code
    **/
-  onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-    res.statusCode = 418; // set different response status code
+  on: {
+    proxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+      res.statusCode = 418; // set different response status code
 
-    const response = responseBuffer.toString('utf8');
-    return response.replace('Hello', 'Teapot');
-  }),
+      const response = responseBuffer.toString('utf8');
+      return response.replace('Hello', 'Teapot');
+    }),
+  },
 });
 ```
 
@@ -39,17 +41,19 @@ const proxy = createProxyMiddleware({
 
   selfHandleResponse: true, // res.end() will be called internally by responseInterceptor()
 
-  onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-    // log original request and proxied request info
-    const exchange = `[DEBUG] ${req.method} ${req.path} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
-    console.log(exchange); // [DEBUG] GET / -> http://www.example.com [200]
+  on: {
+    proxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+      // log original request and proxied request info
+      const exchange = `[DEBUG] ${req.method} ${req.path} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
+      console.log(exchange); // [DEBUG] GET / -> http://www.example.com [200]
 
-    // log complete response
-    const response = responseBuffer.toString('utf8');
-    console.log(response); // log response body
+      // log complete response
+      const response = responseBuffer.toString('utf8');
+      console.log(response); // log response body
 
-    return responseBuffer;
-  }),
+      return responseBuffer;
+    }),
+  },
 });
 ```
 
@@ -62,21 +66,23 @@ const proxy = createProxyMiddleware({
 
   selfHandleResponse: true, // res.end() will be called internally by responseInterceptor()
 
-  onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-    // detect json responses
-    if (proxyRes.headers['content-type'] === 'application/json') {
-      let data = JSON.parse(responseBuffer.toString('utf8'));
+  on: {
+    proxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+      // detect json responses
+      if (proxyRes.headers['content-type'] === 'application/json') {
+        let data = JSON.parse(responseBuffer.toString('utf8'));
 
-      // manipulate JSON data here
-      data = Object.assign({}, data, { extra: 'foo bar' });
+        // manipulate JSON data here
+        data = Object.assign({}, data, { extra: 'foo bar' });
 
-      // return manipulated JSON
-      return JSON.stringify(data);
-    }
+        // return manipulated JSON
+        return JSON.stringify(data);
+      }
 
-    // return other content-types as-is
-    return responseBuffer;
-  }),
+      // return other content-types as-is
+      return responseBuffer;
+    }),
+  },
 });
 ```
 
@@ -107,23 +113,25 @@ const proxy = createProxyMiddleware({
 
   selfHandleResponse: true, // res.end() will be called internally by responseInterceptor()
 
-  onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-    const imageTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
+  on: {
+    proxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+      const imageTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
 
-    // detect image responses
-    if (imageTypes.includes(proxyRes.headers['content-type'])) {
-      try {
-        const image = await Jimp.read(responseBuffer);
-        image.flip(true, false).sepia().pixelate(5);
-        return image.getBufferAsync(Jimp.AUTO);
-      } catch (err) {
-        console.log('image processing error: ', err);
-        return responseBuffer;
+      // detect image responses
+      if (imageTypes.includes(proxyRes.headers['content-type'])) {
+        try {
+          const image = await Jimp.read(responseBuffer);
+          image.flip(true, false).sepia().pixelate(5);
+          return image.getBufferAsync(Jimp.AUTO);
+        } catch (err) {
+          console.log('image processing error: ', err);
+          return responseBuffer;
+        }
       }
-    }
 
-    return responseBuffer; // return other content-types as-is
-  }),
+      return responseBuffer; // return other content-types as-is
+    }),
+  },
 });
 
 // http://localhost:3000/wikipedia/en/7/7d/Lenna\_%28test_image%29.png
@@ -146,9 +154,11 @@ const proxy = createProxyMiddleware({
   /**
    * Intercept response and remove the
    **/
-  onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-    res.removeHeader('content-security-policy'); // Remove the Content Security Policy header
-    res.setHeader('HPM-Header', 'Intercepted by HPM'); // Set a new header and value
-  }),
+  on: {
+    proxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+      res.removeHeader('content-security-policy'); // Remove the Content Security Policy header
+      res.setHeader('HPM-Header', 'Intercepted by HPM'); // Set a new header and value
+    }),
+  },
 });
 ```

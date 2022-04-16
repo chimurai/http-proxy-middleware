@@ -7,23 +7,27 @@ const myProxy = createProxyMiddleware({
   target: 'http://www.example.com/api',
   changeOrigin: true,
   selfHandleResponse: true,
-  onProxyReq: (proxyReq, req, res) => {
-    // before
-    proxyReq.setHeader('mpth-1', 'da');
-  },
-  onProxyRes: async (proxyRes, req, res) => {
-    const da = await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve({ wei: 'wei' });
-      }, 200);
-    });
+  on: {
+    proxyReq: (proxyReq, req, res) => {
+      // before
+      proxyReq.setHeader('mpth-1', 'da');
+    },
+  }
+  on: {
+    proxyRes: async (proxyRes, req, res) => {
+      const da = await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({ wei: 'wei' });
+        }, 200);
+      });
 
-    // add your dynamic header
-    res.setHeader('mpth-2', da.wei);
+      // add your dynamic header
+      res.setHeader('mpth-2', da.wei);
 
-    // now pipe the response
-    proxyRes.pipe(res);
-  },
+      // now pipe the response
+      proxyRes.pipe(res);
+    },
+  }
 });
 
 app.use('/api', myProxy);
@@ -48,25 +52,29 @@ const myProxy = createProxyMiddleware({
   target: 'http://www.example.com/api',
   changeOrigin: true,
   selfHandleResponse: true,
-  onProxyReq: (proxyReq, req, res) => {
-    // before
-    // get something async from entry middleware before the proxy kicks in
-    console.log('proxyReq:', req.locals.da);
+  on: {
+    proxyReq: (proxyReq, req, res) => {
+      // before
+      // get something async from entry middleware before the proxy kicks in
+      console.log('proxyReq:', req.locals.da);
 
-    proxyReq.setHeader('mpth-1', req.locals.da);
-  },
-  onProxyRes: async (proxyRes, req, res) => {
-    const da = await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve({ wei: 'wei' });
-      }, 200);
-    });
+      proxyReq.setHeader('mpth-1', req.locals.da);
+    },
+  }
+  on: {
+    proxyRes: async (proxyRes, req, res) => {
+      const da = await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({ wei: 'wei' });
+        }, 200);
+      });
 
-    // end:
-    res.setHeader('mpth-2', da.wei);
+      // end:
+      res.setHeader('mpth-2', da.wei);
 
-    proxyRes.pipe(res);
-  },
+      proxyRes.pipe(res);
+    },
+  }
 });
 
 app.use('/api', entryMiddleware, myProxy);

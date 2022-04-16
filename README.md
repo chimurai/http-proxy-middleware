@@ -510,7 +510,9 @@ const proxy = createProxyMiddleware({
   /**
    * Fix bodyParser
    **/
-  onProxyReq: fixRequestBody,
+  on: {
+    proxyReq: fixRequestBody,
+  },
 });
 ```
 
@@ -538,10 +540,12 @@ const proxy = createProxyMiddleware({
   /**
    * Intercept response and replace 'Hello' with 'Goodbye'
    **/
-  onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-    const response = responseBuffer.toString('utf8'); // convert buffer to string
-    return response.replace('Hello', 'Goodbye'); // manipulate response and return the result
-  }),
+  on: {
+    proxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+      const response = responseBuffer.toString('utf8'); // convert buffer to string
+      return response.replace('Hello', 'Goodbye'); // manipulate response and return the result
+    }),
+  },
 });
 ```
 
