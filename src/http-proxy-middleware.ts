@@ -1,15 +1,15 @@
 import type * as https from 'https';
-import type { Request, RequestHandler, Options, Filter, Logger } from './types';
+import type { Request, RequestHandler, Options, Filter } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { getPlugins } from './get-plugins';
 import { matchPathFilter } from './path-filter';
-import { getLogger } from './logger';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
+import { Debug as debug } from './debug';
+import { getFunctionName } from './utils/function';
 
 export class HttpProxyMiddleware {
-  private logger: Logger;
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options;
@@ -18,12 +18,10 @@ export class HttpProxyMiddleware {
 
   constructor(options: Options) {
     verifyConfig(options);
-    this.logger = getLogger(options);
     this.proxyOptions = options;
 
-    // create proxy
+    debug(`create proxy server`);
     this.proxy = httpProxy.createProxyServer({});
-    this.logger.info(`[HPM] Proxy created: %O`, options.target);
 
     this.registerPlugins(this.proxy, this.proxyOptions);
 
@@ -43,6 +41,7 @@ export class HttpProxyMiddleware {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       try {
         const activeProxyOptions = await this.prepareProxyRequest(req);
+        debug(`proxy request to target: %O`, activeProxyOptions.target);
         this.proxy.web(req, res, activeProxyOptions);
       } catch (err) {
         next && next(err);
@@ -63,7 +62,7 @@ export class HttpProxyMiddleware {
 
     if (server && !this.serverOnCloseSubscribed) {
       server.on('close', () => {
-        this.logger.info('[HPM] server close signal received: closing proxy server');
+        debug('server close signal received: closing proxy server');
         this.proxy.close();
       });
       this.serverOnCloseSubscribed = true;
@@ -77,11 +76,15 @@ export class HttpProxyMiddleware {
 
   private registerPlugins(proxy: httpProxy, options: Options) {
     const plugins = getPlugins(options);
-    plugins.forEach((plugin) => plugin(proxy, options));
+    plugins.forEach((plugin) => {
+      debug(`register plugin: "${getFunctionName(plugin)}"`);
+      plugin(proxy, options);
+    });
   }
 
   private catchUpgradeRequest = (server: https.Server) => {
     if (!this.wsInternalSubscribed) {
+      debug('subscribing to server upgrade event');
       server.on('upgrade', this.handleUpgrade);
       // prevent duplicate upgrade handling;
       // in case external upgrade is also configured
@@ -93,7 +96,7 @@ export class HttpProxyMiddleware {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.ws(req, socket, head, activeProxyOptions);
-      this.logger.info('[HPM] Upgrading to WebSocket');
+      debug('server upgrade event received. Proxying WebSocket');
     }
   };
 
@@ -132,7 +135,7 @@ export class HttpProxyMiddleware {
       newTarget = await Router.getTarget(req, options);
 
       if (newTarget) {
-        this.logger.info('[HPM] Router new target: %s -> "%s"', options.target, newTarget);
+        debug('router new target: "%s"', newTarget);
         options.target = newTarget;
       }
     }
@@ -144,9 +147,10 @@ export class HttpProxyMiddleware {
       const path = await pathRewriter(req.url, req);
 
       if (typeof path === 'string') {
+        debug('pathRewrite new path: %s', req.url);
         req.url = path;
       } else {
-        this.logger.info('[HPM] pathRewrite: No rewritten path found. (%s)', req.url);
+        debug('pathRewrite: no rewritten path found: %s', req.url);
       }
     }
   };

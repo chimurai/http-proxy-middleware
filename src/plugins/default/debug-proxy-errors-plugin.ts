@@ -1,7 +1,7 @@
-import { debug } from '../../debug';
+import { Debug } from '../../debug';
 import { Plugin } from '../../types';
 
-const debugError = debug.extend('debug-proxy-errors-plugin');
+const debug = Debug.extend('debug-proxy-errors-plugin');
 
 /**
  * Subscribe to {@link https://www.npmjs.com/package/http-proxy#listening-for-proxy-events http-proxy error events} to prevent server from crashing.
@@ -13,12 +13,12 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
    * Prevent server from crashing when http-proxy errors (uncaught errors)
    */
   proxyServer.on('error', (error, req, res, target) => {
-    debugError(`http-proxy error event: \n%O`, error);
+    debug(`http-proxy error event: \n%O`, error);
   });
 
   proxyServer.on('proxyReq', (proxyReq, req, socket) => {
     socket.on('error', (error) => {
-      debugError('Socket error in proxyReq event: \n%O', error);
+      debug('Socket error in proxyReq event: \n%O', error);
     });
   });
 
@@ -30,7 +30,7 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
   proxyServer.on('proxyRes', (proxyRes, req, res) => {
     res.on('close', () => {
       if (!res.writableEnded) {
-        debugError('Destroying proxyRes in proxyRes close event');
+        debug('Destroying proxyRes in proxyRes close event');
         proxyRes.destroy();
       }
     });
@@ -43,23 +43,23 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
    */
   proxyServer.on('proxyReqWs', (proxyReq, req, socket) => {
     socket.on('error', (error) => {
-      debugError('Socket error in proxyReqWs event: \n%O', error);
+      debug('Socket error in proxyReqWs event: \n%O', error);
     });
   });
 
   proxyServer.on('open', (proxySocket) => {
     proxySocket.on('error', (error) => {
-      debugError('Socket error in open event: \n%O', error);
+      debug('Socket error in open event: \n%O', error);
     });
   });
 
   proxyServer.on('close', (req, socket, head) => {
     socket.on('error', (error) => {
-      debugError('Socket error in close event: \n%O', error);
+      debug('Socket error in close event: \n%O', error);
     });
   });
 
   proxyServer.on('econnreset', (error, req, res, target) => {
-    debugError(`http-proxy econnreset event: \n%O`, error);
+    debug(`http-proxy econnreset event: \n%O`, error);
   });
 };

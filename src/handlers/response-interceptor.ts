@@ -1,5 +1,9 @@
 import type * as http from 'http';
 import * as zlib from 'zlib';
+import { Debug } from '../debug';
+import { getFunctionName } from '../utils/function';
+
+const debug = Debug.extend('response-interceptor');
 
 type Interceptor = (
   buffer: Buffer,
@@ -16,11 +20,12 @@ type Interceptor = (
  * NOTE: must set options.selfHandleResponse=true (prevent automatic call of res.end())
  */
 export function responseInterceptor(interceptor: Interceptor) {
-  return async function proxyRes(
+  return async function proxyResResponseInterceptor(
     proxyRes: http.IncomingMessage,
     req: http.IncomingMessage,
     res: http.ServerResponse
   ): Promise<void> {
+    debug('intercept proxy response');
     const originalProxyRes = proxyRes;
     let buffer = Buffer.from('', 'utf8');
 
@@ -35,11 +40,14 @@ export function responseInterceptor(interceptor: Interceptor) {
       copyHeaders(proxyRes, res);
 
       // call interceptor with intercepted response (buffer)
+      debug('call interceptor function: %s', getFunctionName(interceptor));
       const interceptedBuffer = Buffer.from(await interceptor(buffer, originalProxyRes, req, res));
 
       // set correct content-length (with double byte character support)
+      debug('set content-length: %s', Buffer.byteLength(interceptedBuffer, 'utf8'));
       res.setHeader('content-length', Buffer.byteLength(interceptedBuffer, 'utf8'));
 
+      debug('write intercepted response');
       res.write(interceptedBuffer);
       res.end();
     });
@@ -73,6 +81,7 @@ function decompress(proxyRes: http.IncomingMessage, contentEncoding: string) {
   }
 
   if (decompress) {
+    debug(`decompress proxy response with 'content-encoding': %s`, contentEncoding);
     _proxyRes.pipe(decompress);
     _proxyRes = decompress;
   }
@@ -85,6 +94,8 @@ function decompress(proxyRes: http.IncomingMessage, contentEncoding: string) {
  * https://github.com/apache/superset/blob/9773aba522e957ed9423045ca153219638a85d2f/superset-frontend/webpack.proxy-config.js#L78
  */
 function copyHeaders(originalResponse, response) {
+  debug('copy original response headers');
+
   response.statusCode = originalResponse.statusCode;
   response.statusMessage = originalResponse.statusMessage;
 
