@@ -5,7 +5,7 @@ import {
   loggerPlugin,
   errorResponsePlugin,
   proxyEventsPlugin,
-} from '../../src/plugins/default';
+} from '../../src';
 
 describe('getPlugins', () => {
   let plugins: Plugin[];
