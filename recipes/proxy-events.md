@@ -1,6 +1,6 @@
 # Proxy Events
 
-Subscribe to [`http-proxy`](https://github.com/nodejitsu/node-http-proxy) [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy) events: `error`, `proxyReq`, `proxyReqWs`, `proxyRes`, `open`, `close`, `start`, `end`, `econnreset`.
+Subscribe to `http-proxy` events: `error`, `proxyReq`, `proxyReqWs`, `proxyRes`, `open`, `close`, `start`, `end`, `econnreset`.
 
 ## on.error
 

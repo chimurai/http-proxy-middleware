@@ -4,6 +4,7 @@
   - [`legacyCreateProxyMiddleware`](#legacycreateproxymiddleware)
 - [v3 breaking changes](#v3-breaking-changes)
   - [Removed `req.url` patching](#removed-requrl-patching)
+  - [`pathRewrite` (potential behavior change)](#pathrewrite-potential-behavior-change)
   - [Removed "shorthand" usage](#removed-shorthand-usage)
   - [Removed `context` argument](#removed-context-argument)
   - [Removed `logProvider` and `logLevel` options](#removed-logprovider-and-loglevel-options)
@@ -13,7 +14,7 @@
 
 ### `legacyCreateProxyMiddleware`
 
-Use the adapter to use v3 without changing too much of your v2 code and configuration.
+Use the adapter to use v3 with minimal changes to your v2 implementation.
 
 NOTE: `legacyCreateProxyMiddleware` will be removed in a future version.
 
@@ -53,7 +54,38 @@ app.use('/user', proxy({ target: 'http://www.example.org' }));
 app.use('/user', proxy({ target: 'http://www.example.org/user' }));
 ```
 
+### `pathRewrite` (potential behavior change)
+
+Related to removal of [`req.url` patching](#removed-requrl-patching).
+
+`pathRewrite` now only rewrites the `path` after the mount point.
+
+It was common to rewrite the `basePath` with the `pathRewrite` option:
+
+```js
+// before
+app.use('/user', proxy({
+  target: 'http://www.example.org'
+  pathRewrite: { '^/user': '/secret' }
+}));
+
+// after
+app.use('/user', proxy({ target: 'http://www.example.org/secret' }));
+```
+
+When proxy is mounted at the root, `pathRewrite` should still work as in v2.
+
+```js
+// not affected
+app.use(proxy({
+  target: 'http://www.example.org'
+  pathRewrite: { '^/user': '/secret' }
+}));
+```
+
 ### Removed "shorthand" usage
+
+Specify the `target` option.
 
 ```js
 // before
@@ -64,6 +96,10 @@ createProxyMiddleware({ target: 'http:/www.example.org' });
 ```
 
 ### Removed `context` argument
+
+The `context` argument has been moved to option: `pathFilter`.
+
+Functionality did not change.
 
 See [recipes/pathFilter.md](./recipes/pathFilter.md) for more information.
 
@@ -80,13 +116,11 @@ createProxyMiddleware({
 
 ### Removed `logProvider` and `logLevel` options
 
-Use your external logging library to control the logging level.
+Use your external logging library to _log_ and control the logging _level_.
 
 Only `info`, `warn`, `error` are used internally for compatibility across different loggers.
 
 If you use `winston`, make sure to enable interpolation: <https://github.com/winstonjs/winston#string-interpolation>
-
-````js
 
 See [recipes/logger.md](./recipes/logger.md) for more information.
 
@@ -96,7 +130,7 @@ createProxyMiddleware({
   target: 'http://www.example.org',
   logger: console,
 });
-````
+```
 
 ### Refactored proxy events
 

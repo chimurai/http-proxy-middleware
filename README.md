@@ -36,8 +36,12 @@ const app = express();
 
 app.use(
   '/api',
-  createProxyMiddleware({ target: 'http://www.example.org/secret', changeOrigin: true })
+  createProxyMiddleware({
+    target: 'http://www.example.org/secret',
+    changeOrigin: true,
+  })
 );
+
 app.listen(3000);
 
 // proxy and change the base path from "/api" to "/secret"
@@ -54,8 +58,12 @@ const app = express();
 
 app.use(
   '/api',
-  createProxyMiddleware({ target: 'http://www.example.org/api', changeOrigin: true })
+  createProxyMiddleware({
+    target: 'http://www.example.org/api',
+    changeOrigin: true,
+  })
 );
+
 app.listen(3000);
 
 // proxy and keep the same base path "/api"
