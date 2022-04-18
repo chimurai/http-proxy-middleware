@@ -286,6 +286,36 @@ describe('E2E http-proxy-middleware', () => {
       });
     });
 
+    describe('option.on.error - custom error handler', () => {
+      beforeEach(() => {
+        agent = request(
+          createApp(
+            createProxyMiddleware({
+              target: `http://localhost:666`, // unreachable host on port:666
+              on: {
+                error(err, req, res) {
+                  if (err) {
+                    (res as express.Response).writeHead(418); // different error code
+                    res.end("I'm a teapot"); // no response body
+                  }
+                },
+              },
+            })
+          )
+        );
+      });
+
+      it('should respond with custom http status code', async () => {
+        const response = await agent.get(`/api/some/endpoint`).expect(418);
+        expect(response.status).toBe(418);
+      });
+
+      it('should respond with custom status message', async () => {
+        const response = await agent.get(`/api/some/endpoint`).expect(418);
+        expect(response.text).toBe("I'm a teapot");
+      });
+    });
+
     describe('option.onProxyRes', () => {
       beforeEach(() => {
         agent = request(
