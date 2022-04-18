@@ -1,5 +1,5 @@
 import { createApp, createAppWithPath } from '../e2e/test-kit';
-import { legacyCreateProxyMiddleware } from '../../src/legacy';
+import { legacyCreateProxyMiddleware, LegacyOptions } from '../../src';
 import * as request from 'supertest';
 import { Mockttp, getLocal } from 'mockttp';
 
@@ -83,14 +83,16 @@ describe('legacyCreateProxyMiddleware()', () => {
       error: jest.fn(),
     };
 
-    const proxyMiddleware = legacyCreateProxyMiddleware({
+    const legacyOptions: LegacyOptions = {
       target: `http://localhost:${mockServer.port}`,
       logLevel: 'error',
       logProvider: () => mockLogger,
       onError(err, req, res) {
         res.status(500).send('my legacy error');
       },
-    });
+    };
+
+    const proxyMiddleware = legacyCreateProxyMiddleware(legacyOptions);
 
     const app = createAppWithPath('/users', proxyMiddleware);
     const response = await request(app).get('/users').expect(500);

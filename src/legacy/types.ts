@@ -1,6 +1,11 @@
 // import * as httpProxy from 'http-proxy';
 import { Options } from '..';
 
+/**
+ * @deprecated
+ *
+ * Will be removed in a future version.
+ */
 export interface LegacyOptions extends Options {
   /**
    * @deprecated
