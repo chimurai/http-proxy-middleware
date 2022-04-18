@@ -124,4 +124,23 @@ describe('http-proxy-middleware TypeScript Types', () => {
       });
     });
   });
+
+  describe('express request and response types', () => {
+    it('should get TypeScript errors when express specific properties are used', () => {
+      options = {
+        on: {
+          proxyReq(proxyReq, req, res, options) {
+            // @ts-expect-error explanation: should error when express properties are used
+            req.params;
+          },
+          proxyRes(proxyRes, req, res) {
+            // @ts-expect-error explanation: should error when express properties are used
+            res.status(200).send('OK');
+          },
+        },
+      };
+
+      expect(options).toBeDefined();
+    });
+  });
 });

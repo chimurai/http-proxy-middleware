@@ -5,8 +5,9 @@ This example will create a proxy middleware with websocket support.
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const socketProxy = createProxyMiddleware('/socket', {
+const socketProxy = createProxyMiddleware({
   target: 'http://localhost:3000',
+  pathFilter: '/socket',
   ws: true,
 });
 ```
@@ -21,12 +22,13 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const options = {
   target: 'http://localhost:3000',
   ws: true,
+  pathFilter: '/socket',
   pathRewrite: {
     '^/socket': '',
   },
 };
 
-const socketProxy = createProxyMiddleware('/socket', options);
+const socketProxy = createProxyMiddleware(options);
 ```
 
 ## WebSocket - Server update subscription
@@ -38,8 +40,9 @@ Subscribe to server's upgrade event.
 ```javascript
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const socketProxy = createProxyMiddleware('/socket', {
+const socketProxy = createProxyMiddleware({
   target: 'http://localhost:3000',
+  pathFilter: '/socket',
   ws: true,
 });
 

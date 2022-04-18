@@ -11,14 +11,20 @@ Powered by the popular Nodejitsu [`http-proxy`](https://github.com/nodejitsu/nod
 
 ## ⚠️ Note <!-- omit in toc -->
 
-This page is showing documentation for version v2.x.x ([release notes](https://github.com/chimurai/http-proxy-middleware/releases))
+This page is showing documentation for version v3.x.x ([release notes](https://github.com/chimurai/http-proxy-middleware/releases))
 
-If you're looking for v0.x documentation. Go to:
-https://github.com/chimurai/http-proxy-middleware/tree/v0.21.0#readme
+See [MIGRATION.md](https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md) for details on how to migrate from v2.x.x to v3.x.x
+
+If you're looking for older documentation. Go to:
+
+- <https://github.com/chimurai/http-proxy-middleware/tree/v2.0.4#readme>
+- <https://github.com/chimurai/http-proxy-middleware/tree/v0.21.0#readme>
 
 ## TL;DR <!-- omit in toc -->
 
 Proxy `/api` requests to `http://www.example.org`
+
+:bulb: **Tip:** Set the option `changeOrigin` to `true` for [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based).
 
 ```javascript
 // javascript
@@ -30,8 +36,12 @@ const app = express();
 
 app.use(
   '/api',
-  createProxyMiddleware({ target: 'http://www.example.org/secret', changeOrigin: true })
+  createProxyMiddleware({
+    target: 'http://www.example.org/secret',
+    changeOrigin: true,
+  })
 );
+
 app.listen(3000);
 
 // proxy and change the base path from "/api" to "/secret"
@@ -48,8 +58,12 @@ const app = express();
 
 app.use(
   '/api',
-  createProxyMiddleware({ target: 'http://www.example.org/api', changeOrigin: true })
+  createProxyMiddleware({
+    target: 'http://www.example.org/api',
+    changeOrigin: true,
+  })
 );
+
 app.listen(3000);
 
 // proxy and keep the same base path "/api"
@@ -57,8 +71,6 @@ app.listen(3000);
 ```
 
 _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#options) can be used, along with some extra `http-proxy-middleware` [options](#options).
-
-:bulb: **Tip:** Set the option `changeOrigin` to `true` for [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based).
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -160,9 +172,9 @@ app.use(
 
 `app.use` documentation:
 
-- express: http://expressjs.com/en/4x/api.html#app.use
-- connect: https://github.com/senchalabs/connect#mount-middleware
-- polka: https://github.com/lukeed/polka#usebase-fn
+- express: <http://expressjs.com/en/4x/api.html#app.use>
+- connect: <https://github.com/senchalabs/connect#mount-middleware>
+- polka: <https://github.com/lukeed/polka#usebase-fn>
 
 ## Options
 
@@ -302,7 +314,7 @@ const {
   loggerPlugin, // log proxy events to a logger (ie. console)
   errorResponsePlugin, // return 5xx response on proxy error
   proxyEventsPlugin, // implements the "on:" option
-} = require('http-proxy-middleware/plugins/default');
+} = require('http-proxy-middleware');
 
 createProxyMiddleware({
   target: `http://example.org`,
@@ -315,6 +327,10 @@ createProxyMiddleware({
 ### `logger` (Object)
 
 Configure a logger to output information from http-proxy-middleware: ie. `console`, `winston`, `pino`, `bunyan`, `log4js`, etc...
+
+Only `info`, `warn`, `error` are used internally for compatibility across different loggers.
+
+If you use `winston`, make sure to enable interpolation: <https://github.com/winstonjs/winston#string-interpolation>
 
 See also logger recipes ([recipes/logger.md](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/logger.md)) for more details.
 
@@ -424,10 +440,12 @@ The following options are provided by the underlying [http-proxy](https://github
 - **option.autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
 - **option.protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
 - **option.cookieDomainRewrite**: rewrites domain of `set-cookie` headers. Possible values:
+
   - `false` (default): disable cookie rewriting
   - String: new domain, for example `cookieDomainRewrite: "new.domain"`. To remove the domain, use `cookieDomainRewrite: ""`.
   - Object: mapping of domains to new domains, use `"*"` to match all domains.  
     For example keep one domain unchanged, rewrite one domain and remove other domains:
+
     ```json
     cookieDomainRewrite: {
       "unchanged.domain": "unchanged.domain",
@@ -435,11 +453,14 @@ The following options are provided by the underlying [http-proxy](https://github
       "*": ""
     }
     ```
+
 - **option.cookiePathRewrite**: rewrites path of `set-cookie` headers. Possible values:
+
   - `false` (default): disable cookie rewriting
   - String: new path, for example `cookiePathRewrite: "/newPath/"`. To remove the path, use `cookiePathRewrite: ""`. To set path to root use `cookiePathRewrite: "/"`.
   - Object: mapping of paths to new paths, use `"*"` to match all paths.
     For example, to keep one path unchanged, rewrite one path and remove other paths:
+
     ```json
     cookiePathRewrite: {
       "/unchanged.path/": "/unchanged.path/",
@@ -447,6 +468,7 @@ The following options are provided by the underlying [http-proxy](https://github
       "*": ""
     }
     ```
+
 - **option.headers**: object, adds [request headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields). (Example: `{host:'www.example.org'}`)
 - **option.proxyTimeout**: timeout (in millis) when proxy receives no response from target
 - **option.timeout**: timeout (in millis) for incoming requests

@@ -2,14 +2,21 @@
   "language": "en",
   "spellCheckDelayMs": 500,
   "dictionaries": ["node", "npm", "typescript", "contributors"],
-  "ignorePaths": ["node_modules/**", "coverage/**", "dist/**", "package.json", "yarn.lock"],
+  "ignorePaths": [
+    "node_modules/**",
+    "coverage/**",
+    "dist/**",
+    "package.json",
+    "yarn.lock",
+    "*.tgz"
+  ],
   "dictionaryDefinitions": [
     {
       "name": "contributors",
       "path": "CONTRIBUTORS.txt"
     }
   ],
-  "ignoreRegExpList": ["[a-z]+path"],
+  "ignoreRegExpList": ["[a-z]+path", "\\]\\(#[a-z-]+\\)"],
   "words": [
     "camelcase",
     "codesandbox",

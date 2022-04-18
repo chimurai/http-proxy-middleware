@@ -6,13 +6,16 @@ export function createProxyMiddleware(options: Options): RequestHandler {
   return middleware;
 }
 
-/**
- * @deprecated
- */
-// export function legacyCreateProxyMiddleware(pathFilter: Filter, options: Options) {
-//   return createProxyMiddleware({ ...options, pathFilter });
-// }
-
 export * from './handlers';
 
 export type { Filter, Options, RequestHandler } from './types';
+
+/**
+ * Default plugins
+ */
+export * from './plugins/default';
+
+/**
+ * Legacy exports
+ */
+export * from './legacy';

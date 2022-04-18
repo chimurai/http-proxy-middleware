@@ -5,7 +5,7 @@ import {
   loggerPlugin,
   errorResponsePlugin,
   proxyEventsPlugin,
-} from '../../src/plugins/default';
+} from '../../src';
 
 describe('getPlugins', () => {
   let plugins: Plugin[];
@@ -82,6 +82,26 @@ describe('getPlugins', () => {
         "errorResponsePlugin",
         "loggerPlugin",
         "proxyEventsPlugin",
+      ]
+    `);
+  });
+
+  it('should not configure errorResponsePlugin when user specifies their own error handler', () => {
+    const myErrorHandler = () => {
+      /* noop */
+    };
+    plugins = getPlugins({
+      on: {
+        error: myErrorHandler,
+      },
+    });
+
+    expect(plugins).toHaveLength(3);
+    expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
+      Array [
+        "debugProxyErrorsPlugin",
+        "proxyEventsPlugin",
+        "loggerPlugin",
       ]
     `);
   });
