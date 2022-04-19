@@ -11,6 +11,10 @@ export function init(proxy: httpProxy, option: Options): void {
     proxy.on(eventName, handlers[eventName]);
   }
 
+  proxy.on('econnreset', (err, req, res, target) => {
+    logger.error(`[HPM] ECONNRESET: %s`, err);
+  });
+
   logger.debug('[HPM] Subscribed to http-proxy events:', Object.keys(handlers));
 }
 
