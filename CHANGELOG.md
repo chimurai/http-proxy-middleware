@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.5)
+
+- fix(error handler): add default handler to econnreset ([#759](https://github.com/chimurai/http-proxy-middleware/pull/759))
+
 ## [v2.0.4](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.4)
 
 - fix(fix-request-body): improve content type check ([#725](https://github.com/chimurai/http-proxy-middleware/pull/725)) ([kevinxh](https://github.com/kevinxh))
