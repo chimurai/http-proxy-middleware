@@ -2,6 +2,8 @@ import * as url from 'url';
 import { Filter, Options } from '..';
 import { LegacyOptions } from './types';
 import { Debug } from '../debug';
+import { getLogger } from '../logger';
+import { Logger } from '../types';
 
 const debug = Debug.extend('legacy-options-adapter');
 
@@ -23,6 +25,7 @@ export function legacyOptionsAdapter(
   legacyOptions: LegacyOptions
 ): Options {
   let options: LegacyOptions;
+  let logger: Logger;
 
   // https://github.com/chimurai/http-proxy-middleware/pull/716
   if (typeof legacyContext === 'string' && !!url.parse(legacyContext).host) {
@@ -37,8 +40,21 @@ export function legacyOptionsAdapter(
   if (legacyContext && legacyOptions) {
     debug('map legacy context/filter to options.pathFilter');
     options = { ...legacyOptions, pathFilter: legacyContext as Filter };
+    logger = getLegacyLogger(options);
+
+    logger.warn(
+      `[http-proxy-middleware] Legacy "context" argument is deprecated. Migrate your "context" to "options.pathFilter":
+
+      const options = {
+        pathFilter: '${legacyContext}',
+      }
+
+      More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md
+      `
+    );
   } else if (legacyContext && !legacyOptions) {
     options = { ...(legacyContext as Options) };
+    logger = getLegacyLogger(options);
   }
 
   // map old event names to new event names
@@ -48,6 +64,19 @@ export function legacyOptionsAdapter(
       options.on = { ...options.on };
       options.on[proxyEventName] = options[legacyEventName];
       debug('map legacy event "%s" to "on.%s"', legacyEventName, proxyEventName);
+
+      logger.warn(
+        `[http-proxy-middleware] Legacy "${legacyEventName}" is deprecated. Migrate to "options.on.${proxyEventName}":
+
+        const options = {
+          on: {
+            ${proxyEventName}: () => {},
+          },
+        }
+
+        More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md
+        `
+      );
     }
   });
 
@@ -59,9 +88,27 @@ export function legacyOptionsAdapter(
   debug('legacy logProvider: %O', logProvider);
 
   if (typeof logLevel === 'string' && logLevel !== 'silent') {
-    options.logger = logProvider;
     debug('map "logProvider" to "logger"');
+
+    logger.warn(
+      `[http-proxy-middleware] Legacy "logLevel" and "logProvider" are deprecated. Migrate to "options.logger":
+
+      const options = {
+        logger: console,
+      }
+
+      More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md
+      `
+    );
   }
 
   return options;
+}
+
+function getLegacyLogger(options): Logger {
+  const legacyLogger = options.logProvider && options.logProvider();
+  if (legacyLogger) {
+    options.logger = legacyLogger;
+  }
+  return getLogger(options);
 }
