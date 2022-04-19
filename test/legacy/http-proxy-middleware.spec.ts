@@ -100,5 +100,6 @@ describe('legacyCreateProxyMiddleware()', () => {
     expect(response.text).toBe('my legacy error');
 
     expect(mockLogger.error).toHaveBeenCalledTimes(1);
+    expect(mockLogger.warn).toHaveBeenCalledTimes(2);
   });
 });
