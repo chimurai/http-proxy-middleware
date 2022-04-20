@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.6](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.6)
+
+- fix(proxyReqWs): catch socket errors ([#763](https://github.com/chimurai/http-proxy-middleware/pull/763))
+
 ## [v2.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.5)
 
 - fix(error handler): add default handler to econnreset ([#759](https://github.com/chimurai/http-proxy-middleware/pull/759))
