@@ -11,8 +11,16 @@ export function init(proxy: httpProxy, option: Options): void {
     proxy.on(eventName, handlers[eventName]);
   }
 
-  proxy.on('econnreset', (err, req, res, target) => {
-    logger.error(`[HPM] ECONNRESET: %s`, err);
+  // https://github.com/webpack/webpack-dev-server/issues/1642
+  proxy.on('econnreset', (error, req, res, target) => {
+    logger.error(`[HPM] ECONNRESET: %O`, error);
+  });
+
+  // https://github.com/webpack/webpack-dev-server/issues/1642#issuecomment-1104325120
+  proxy.on('proxyReqWs', (proxyReq, req, socket, options, head) => {
+    socket.on('error', (error) => {
+      logger.error(`[HPM] WebSocket error: %O`, error);
+    });
   });
 
   logger.debug('[HPM] Subscribed to http-proxy events:', Object.keys(handlers));
