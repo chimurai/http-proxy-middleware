@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "The one-liner node.js proxy middleware for connect, express and browser-sync",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
