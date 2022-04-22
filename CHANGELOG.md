@@ -5,7 +5,7 @@
 - chore(deps): update micromatch to 4.0.5
 - chore(package): bump devDependencies
 - feat(legacyCreateProxyMiddleware): show migration tips
-- feat(legacyCreateProxyMiddleware): adapter with v2 behaviour (#754)
+- feat(legacyCreateProxyMiddleware): adapter with v2 behavior (#754)
 - docs(proxy events): fix new syntax (#753)
 - feat(debug): improve troubleshooting (#752)
 - test(path-rewriter): improve coverage (#751)
