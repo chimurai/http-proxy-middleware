@@ -4,21 +4,21 @@
 
 - chore(deps): update micromatch to 4.0.5
 - chore(package): bump devDependencies
-- feat(legacyCreateProxyMiddleware): show migration tips
-- feat(legacyCreateProxyMiddleware): adapter with v2 behavior (#754)
-- docs(proxy events): fix new syntax (#753)
-- feat(debug): improve troubleshooting (#752)
-- test(path-rewriter): improve coverage (#751)
-- feat(ejectPlugins): skip registering default plugins (#750)
-- refactor: logging [BREAKING CHANGE] (#749)
-- refactor(handlers): refactor to plugins [BREAKING CHANGE] (#745)
-- feat(plugins): add support for plugins
+- feat(legacyCreateProxyMiddleware): show migration tips ([#756](https://github.com/chimurai/http-proxy-middleware/pull/756))
+- feat(legacyCreateProxyMiddleware): adapter with v2 behavior ([#754](https://github.com/chimurai/http-proxy-middleware/pull/754))
+- docs(proxy events): fix new syntax ([#753](https://github.com/chimurai/http-proxy-middleware/pull/753))
+- feat(debug): improve troubleshooting ([#752](https://github.com/chimurai/http-proxy-middleware/pull/752))
+- test(path-rewriter): improve coverage ([#751](https://github.com/chimurai/http-proxy-middleware/pull/751))
+- feat(ejectPlugins): skip registering default plugins ([#750](https://github.com/chimurai/http-proxy-middleware/pull/750))
+- refactor: logging [BREAKING CHANGE] ([#749](https://github.com/chimurai/http-proxy-middleware/pull/749))
+- refactor(handlers): refactor to plugins [BREAKING CHANGE] ([#745](https://github.com/chimurai/http-proxy-middleware/pull/745))
+- feat(plugins): add support for plugins ([#732](https://github.com/chimurai/http-proxy-middleware/pull/732))
 - docs: fix v3 documentation
-- fix: server mounting [BREAKING CHANGE]
+- fix: server mounting [BREAKING CHANGE] ([#731](https://github.com/chimurai/http-proxy-middleware/pull/731))
 - test(fixRequestBody): fix broken test
-- refactor: use node http base types [BREAKING CHANGE]
-- feat(option): refactor context to pathFilter option [BREAKING CHANGE] (#722)
-- feat: remove shorthand usage [BREAKING CHANGE] (#716)
+- refactor: use node http base types [BREAKING CHANGE] ([#730](https://github.com/chimurai/http-proxy-middleware/pull/730)) (special thanks: [@cdaringe](https://github.com/cdaringe) & [@devanshj](https://github.com/devanshj))
+- feat(option): refactor context to pathFilter option [BREAKING CHANGE] ([#722](https://github.com/chimurai/http-proxy-middleware/pull/722))
+- feat: remove shorthand usage [BREAKING CHANGE] ([#716](https://github.com/chimurai/http-proxy-middleware/pull/716))
 
 ## [v2.0.6](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.6)
 
