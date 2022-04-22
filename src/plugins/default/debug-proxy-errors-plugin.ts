@@ -59,6 +59,7 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
     });
   });
 
+  // https://github.com/webpack/webpack-dev-server/issues/1642#issuecomment-1103136590
   proxyServer.on('econnreset', (error, req, res, target) => {
     debug(`http-proxy econnreset event: \n%O`, error);
   });

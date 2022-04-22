@@ -1,5 +1,33 @@
 # Changelog
 
+## next
+
+- chore(deps): update micromatch to 4.0.5
+- chore(package): bump devDependencies
+- feat(legacyCreateProxyMiddleware): show migration tips
+- feat(legacyCreateProxyMiddleware): adapter with v2 behaviour (#754)
+- docs(proxy events): fix new syntax (#753)
+- feat(debug): improve troubleshooting (#752)
+- test(path-rewriter): improve coverage (#751)
+- feat(ejectPlugins): skip registering default plugins (#750)
+- refactor: logging [BREAKING CHANGE] (#749)
+- refactor(handlers): refactor to plugins [BREAKING CHANGE] (#745)
+- feat(plugins): add support for plugins
+- docs: fix v3 documentation
+- fix: server mounting [BREAKING CHANGE]
+- test(fixRequestBody): fix broken test
+- refactor: use node http base types [BREAKING CHANGE]
+- feat(option): refactor context to pathFilter option [BREAKING CHANGE] (#722)
+- feat: remove shorthand usage [BREAKING CHANGE] (#716)
+
+## [v2.0.6](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.6)
+
+- fix(proxyReqWs): catch socket errors ([#763](https://github.com/chimurai/http-proxy-middleware/pull/763))
+
+## [v2.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.5)
+
+- fix(error handler): add default handler to econnreset ([#759](https://github.com/chimurai/http-proxy-middleware/pull/759))
+
 ## [v2.0.4](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.4)
 
 - fix(fix-request-body): improve content type check ([#725](https://github.com/chimurai/http-proxy-middleware/pull/725)) ([kevinxh](https://github.com/kevinxh))
