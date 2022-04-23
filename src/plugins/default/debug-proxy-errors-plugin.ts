@@ -7,7 +7,7 @@ const debug = Debug.extend('debug-proxy-errors-plugin');
  * Subscribe to {@link https://www.npmjs.com/package/http-proxy#listening-for-proxy-events http-proxy error events} to prevent server from crashing.
  * Errors are logged with {@link https://www.npmjs.com/package/debug debug} library.
  */
-export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
+export const debugProxyErrorsPlugin: Plugin = (proxyServer, options): void => {
   /**
    * http-proxy doesn't handle any errors by default (https://github.com/http-party/node-http-proxy#listening-for-proxy-events)
    * Prevent server from crashing when http-proxy errors (uncaught errors)
@@ -22,16 +22,32 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
     });
   });
 
-  /**
-   * Fix SSE close events
-   * @link https://github.com/chimurai/http-proxy-middleware/issues/678
-   * @link https://github.com/http-party/node-http-proxy/issues/1520#issue-877626125
-   */
   proxyServer.on('proxyRes', (proxyRes, req, res) => {
+    /**
+     * Fix SSE close events
+     * @link https://github.com/chimurai/http-proxy-middleware/issues/678
+     * @link https://github.com/http-party/node-http-proxy/issues/1520#issue-877626125
+     */
     res.on('close', () => {
       if (!res.writableEnded) {
-        debug('Destroying proxyRes in proxyRes close event');
+        debug('res close event received, destroying proxyRes');
         proxyRes.destroy();
+      }
+    });
+
+    /**
+     * Fix SSE when backend closes/restarts
+     * @link https://github.com/chimurai/http-proxy-middleware/discussions/765
+     */
+    proxyRes.on('close', () => {
+      // don't destroy res when using it in response interceptor
+      if (options.selfHandleResponse) {
+        return;
+      }
+
+      if (!res.writableEnded) {
+        debug('proxyRes close event received, destroying res');
+        res.destroy();
       }
     });
   });
