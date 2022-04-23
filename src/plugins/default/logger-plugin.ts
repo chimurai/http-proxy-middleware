@@ -24,7 +24,8 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
    */
   proxyServer.on('proxyRes', (proxyRes: any, req: any, res) => {
     // BrowserSync uses req.originalUrl
-    const originalUrl = req.originalUrl ?? `${req.baseUrl}${req.path}`;
+    // Next.js doesn't have req.baseUrl
+    const originalUrl = req.originalUrl ?? `${req.baseUrl || ''}${req.url}`;
     const exchange = `[HPM] ${req.method} ${originalUrl} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
     logger.info(exchange);
   });
