@@ -65,14 +65,14 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should have response body: "HELLO WEB"', async () => {
-        await mockTargetServer.get('/api').thenReply(200, 'HELLO WEB');
+        await mockTargetServer.forGet('/api').thenReply(200, 'HELLO WEB');
         const response = await agent.get(`/api`).expect(200);
         expect(response.text).toBe('HELLO WEB');
       });
 
       it('should have proxied the uri-path and uri-query, but not the uri-hash', async () => {
         await mockTargetServer
-          .get('/api/b/c/dp')
+          .forGet('/api/b/c/dp')
           .withExactQuery('?q=1&r=[2,3]')
           .thenReply(200, 'OK');
 
@@ -99,8 +99,8 @@ describe('E2E http-proxy-middleware', () => {
           )
         );
 
-        await mockTargetServer.post('/api').thenCallback((req) => {
-          expect(req.body.text).toBe('foo=bar&bar=baz');
+        await mockTargetServer.forPost('/api').thenCallback(async (req) => {
+          expect(await req.body.getText()).toBe('foo=bar&bar=baz');
           return { status: 200 };
         });
         await agent.post('/api').send('foo=bar').send('bar=baz').expect(200);
@@ -120,8 +120,8 @@ describe('E2E http-proxy-middleware', () => {
           )
         );
 
-        await mockTargetServer.post('/api').thenCallback((req) => {
-          expect(req.body.json).toEqual({ foo: 'bar', bar: 'baz', doubleByte: '文' });
+        await mockTargetServer.forPost('/api').thenCallback(async (req) => {
+          expect(await req.body.getJson()).toEqual({ foo: 'bar', bar: 'baz', doubleByte: '文' });
           return { status: 200 };
         });
         await agent.post('/api').send({ foo: 'bar', bar: 'baz', doubleByte: '文' }).expect(200);
@@ -143,7 +143,7 @@ describe('E2E http-proxy-middleware', () => {
           )
         );
 
-        await mockTargetServer.get('/api/b/c/d').thenReply(200, 'HELLO WEB');
+        await mockTargetServer.forGet('/api/b/c/d').thenReply(200, 'HELLO WEB');
         const response = await agent.get(`/api/b/c/d`).expect(200);
         expect(response.text).toBe('HELLO WEB');
       });
@@ -162,7 +162,7 @@ describe('E2E http-proxy-middleware', () => {
           )
         );
 
-        await mockTargetServer.get('/api/b/c/d').thenReply(200, 'HELLO WEB');
+        await mockTargetServer.forGet('/api/b/c/d').thenReply(200, 'HELLO WEB');
         const response = await agent.get(`/api/b/c/d`).expect(404);
         expect(response.status).toBe(404);
       });
@@ -181,13 +181,13 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should proxy to path /api', async () => {
-        await mockTargetServer.get(/\/api\/.+/).thenReply(200, 'HELLO /API');
+        await mockTargetServer.forGet(/\/api\/.+/).thenReply(200, 'HELLO /API');
         const response = await agent.get(`/api/b/c/d`).expect(200);
         expect(response.text).toBe('HELLO /API');
       });
 
       it('should proxy to path /ajax', async () => {
-        await mockTargetServer.get(/\/ajax\/.+/).thenReply(200, 'HELLO /AJAX');
+        await mockTargetServer.forGet(/\/ajax\/.+/).thenReply(200, 'HELLO /AJAX');
         const response = await agent.get(`/ajax/b/c/d`).expect(200);
         expect(response.text).toBe('HELLO /AJAX');
       });
@@ -211,7 +211,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should proxy to path', async () => {
-        await mockTargetServer.get(/\/api\/.+/).thenReply(200, 'HELLO /api');
+        await mockTargetServer.forGet(/\/api\/.+/).thenReply(200, 'HELLO /api');
         const response = await agent.get(`/api/b/c/d`).expect(200);
         expect(response.text).toBe('HELLO /api');
       });
@@ -230,13 +230,13 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should proxy to paths ending with *.html', async () => {
-        await mockTargetServer.get(/.+html$/).thenReply(200, 'HELLO .html');
+        await mockTargetServer.forGet(/.+html$/).thenReply(200, 'HELLO .html');
         const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
         expect(response.text).toBe('HELLO .html');
       });
 
       it('should not proxy to paths ending with *.json', async () => {
-        await mockTargetServer.get(/.+json$/).thenReply(200, 'HELLO .html');
+        await mockTargetServer.forGet(/.+json$/).thenReply(200, 'HELLO .html');
         const response = await agent.get(`/api/some/endpoint/data.json`).expect(404);
         expect(response.status).toBe(404);
       });
@@ -258,7 +258,7 @@ describe('E2E http-proxy-middleware', () => {
       it('should send request header "host" to target server', async () => {
         let completedRequest: CompletedRequest;
 
-        await mockTargetServer.get().thenCallback((req) => {
+        await mockTargetServer.forGet().thenCallback((req) => {
           completedRequest = req;
           return { statusCode: 200, body: 'OK' };
         });
@@ -337,13 +337,13 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should add `x-added` as custom header to response"', async () => {
-        await mockTargetServer.get().thenReply(200, 'HELLO .html');
+        await mockTargetServer.forGet().thenReply(200, 'HELLO .html');
         const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
         expect(response.header['x-added']).toBe('foobar');
       });
 
       it('should remove `x-removed` field from response header"', async () => {
-        await mockTargetServer.get().thenCallback((req) => {
+        await mockTargetServer.forGet().thenCallback((req) => {
           return {
             statusCode: 200,
             headers: {
@@ -375,7 +375,7 @@ describe('E2E http-proxy-middleware', () => {
 
       it('should add `x-added` as custom header to request"', async () => {
         let completedRequest: CompletedRequest;
-        await mockTargetServer.get().thenCallback((req) => {
+        await mockTargetServer.forGet().thenCallback((req) => {
           completedRequest = req;
           return { statusCode: 200 };
         });
@@ -402,13 +402,13 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should have rewritten path from "/api/foo/bar" to "/rest/foo/bar"', async () => {
-        await mockTargetServer.get('/rest/foo/bar').thenReply(200, 'HELLO /rest/foo/bar');
+        await mockTargetServer.forGet('/rest/foo/bar').thenReply(200, 'HELLO /rest/foo/bar');
         const response = await agent.get(`/api/foo/bar`).expect(200);
         expect(response.text).toBe('HELLO /rest/foo/bar');
       });
 
       it('should have removed path from "/remove/api/lipsum" to "/api/lipsum"', async () => {
-        await mockTargetServer.get('/api/lipsum').thenReply(200, 'HELLO /api/lipsum');
+        await mockTargetServer.forGet('/api/lipsum').thenReply(200, 'HELLO /api/lipsum');
         const response = await agent.get(`/remove/api/lipsum`).expect(200);
         expect(response.text).toBe('HELLO /api/lipsum');
       });
@@ -425,7 +425,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should proxy to target with the baseUrl', async () => {
-        await mockTargetServer.get('/api/foo/bar').thenReply(200, 'HELLO /api/foo/bar');
+        await mockTargetServer.forGet('/api/foo/bar').thenReply(200, 'HELLO /api/foo/bar');
         const response = await agent.get(`/api/foo/bar`).expect(200);
         expect(response.text).toBe('HELLO /api/foo/bar');
       });
@@ -454,7 +454,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should have logged messages', async () => {
-        await mockTargetServer.get('/api/foo/bar').thenReply(200);
+        await mockTargetServer.forGet('/api/foo/bar').thenReply(200);
         await agent.get(`/api/foo/bar`).expect(200);
 
         expect(logMessages).not.toBeUndefined();
