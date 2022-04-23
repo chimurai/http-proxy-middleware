@@ -16,7 +16,9 @@ describe('E2E pathRewrite', () => {
 
   describe('Rewrite paths with rules table', () => {
     it('should remove "/foobar" from path', async () => {
-      mockTargetServer.get('/api/lorum/ipsum').thenReply(200, '/API RESPONSE AFTER PATH REWRITE');
+      mockTargetServer
+        .forGet('/api/lorum/ipsum')
+        .thenReply(200, '/API RESPONSE AFTER PATH REWRITE');
 
       const agent = request(
         createApp(
@@ -38,7 +40,7 @@ describe('E2E pathRewrite', () => {
   describe('Rewrite paths with function', () => {
     it('should remove "/foobar" from path', async () => {
       mockTargetServer
-        .get('/api/lorum/ipsum')
+        .forGet('/api/lorum/ipsum')
         .thenReply(200, '/API RESPONSE AFTER PATH REWRITE FUNCTION');
 
       const agent = request(
@@ -60,7 +62,7 @@ describe('E2E pathRewrite', () => {
   describe('Rewrite paths with function which return undefined', () => {
     it('should proxy with requested path', async () => {
       mockTargetServer
-        .get('/api/lorum/ipsum')
+        .forGet('/api/lorum/ipsum')
         .thenReply(200, '/API RESPONSE AFTER PATH REWRITE FUNCTION');
 
       const agent = request(

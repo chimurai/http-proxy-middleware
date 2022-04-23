@@ -27,23 +27,23 @@ describe('E2E router', () => {
     targetPortC = await getPort();
 
     await targetServerA
-      .anyRequest()
+      .forAnyRequest()
       .thenPassThrough({ ignoreHostCertificateErrors: ['localhost'] });
     await targetServerB
-      .anyRequest()
+      .forAnyRequest()
       .thenPassThrough({ ignoreHostCertificateErrors: ['localhost'] });
     await targetServerC
-      .anyRequest()
+      .forAnyRequest()
       .thenPassThrough({ ignoreHostCertificateErrors: ['localhost'] });
 
     await targetServerA
-      .anyRequest()
+      .forAnyRequest()
       .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'A' : 'NOT HTTPS A' }));
     await targetServerB
-      .anyRequest()
+      .forAnyRequest()
       .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'B' : 'NOT HTTPS B' }));
     await targetServerC
-      .anyRequest()
+      .forAnyRequest()
       .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'C' : 'NOT HTTPS C' }));
 
     await targetServerA.start(targetPortA);
