@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
+import * as express from 'express';
 import * as http from 'http';
 import { createProxyMiddleware as middleware } from '../src';
 import type { Options } from '../src/types';
@@ -126,7 +127,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
   });
 
   describe('express request and response types', () => {
-    it('should get TypeScript errors when express specific properties are used', () => {
+    it('should get TypeScript type errors when express specific properties are used with base types', () => {
       options = {
         on: {
           proxyReq(proxyReq, req, res, options) {
@@ -141,6 +142,32 @@ describe('http-proxy-middleware TypeScript Types', () => {
       };
 
       expect(options).toBeDefined();
+    });
+
+    it('should get express types from express server', () => {
+      const app = express();
+      app.use(
+        middleware({
+          // @ts-check
+          router: (req) => req.params,
+          // @ts-check
+          pathFilter: (pathname, req) => !!req.params,
+
+          // TODO: @types/http-proxy is missing generics
+          // on: {
+          //   proxyReq(proxyReq, req, res, options) {
+          //     // @ts-check
+          //     req.params;
+          //   },
+          //   proxyRes(proxyRes, req, res) {
+          //     // @ts-check
+          //     res.status(200).send('OK');
+          //   },
+          // },
+        })
+      );
+
+      expect(app).toBeDefined();
     });
   });
 });

@@ -6,13 +6,13 @@ import {
   proxyEventsPlugin,
 } from './plugins/default';
 
-export function getPlugins(options: Options): Plugin[] {
+export function getPlugins<TReq, TRes>(options: Options<TReq, TRes>): Plugin<TReq, TRes>[] {
   // don't load default errorResponsePlugin if user has specified their own
   const maybeErrorResponsePlugin = !!options.on?.error ? [] : [errorResponsePlugin];
 
-  const defaultPlugins: Plugin[] = !!options.ejectPlugins
+  const defaultPlugins = !!options.ejectPlugins
     ? [] // no default plugins when ejecting
     : [debugProxyErrorsPlugin, proxyEventsPlugin, loggerPlugin, ...maybeErrorResponsePlugin];
-  const userPlugins: Plugin[] = options.plugins ?? [];
-  return [...defaultPlugins, ...userPlugins];
+  const userPlugins: Plugin<TReq, TRes>[] = options.plugins ?? [];
+  return [...defaultPlugins, ...userPlugins] as unknown as Plugin<TReq, TRes>[];
 }

@@ -4,7 +4,11 @@ import * as micromatch from 'micromatch';
 import * as url from 'url';
 import { ERRORS } from './errors';
 
-export function matchPathFilter(pathFilter: Filter = '/', uri: string, req: Request): boolean {
+export function matchPathFilter<TReq>(
+  pathFilter: Filter<TReq> = '/',
+  uri: string,
+  req: Request
+): boolean {
   // single path
   if (isStringPath(pathFilter as string)) {
     return matchSingleStringPath(pathFilter as string, uri);
@@ -30,7 +34,7 @@ export function matchPathFilter(pathFilter: Filter = '/', uri: string, req: Requ
   // custom matching
   if (typeof pathFilter === 'function') {
     const pathname = getUrlPathName(uri);
-    return pathFilter(pathname, req);
+    return pathFilter(pathname, req as unknown as TReq);
   }
 
   throw new Error(ERRORS.ERR_CONTEXT_MATCHER_GENERIC);

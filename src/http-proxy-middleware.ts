@@ -9,15 +9,15 @@ import * as Router from './router';
 import { Debug as debug } from './debug';
 import { getFunctionName } from './utils/function';
 
-export class HttpProxyMiddleware {
+export class HttpProxyMiddleware<TReq, TRes> {
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
-  private proxyOptions: Options;
+  private proxyOptions: Options<TReq, TRes>;
   private proxy: httpProxy;
   private pathRewriter;
 
-  constructor(options: Options) {
-    verifyConfig(options);
+  constructor(options: Options<TReq, TRes>) {
+    verifyConfig<TReq, TRes>(options);
     this.proxyOptions = options;
 
     debug(`create proxy server`);
@@ -74,8 +74,8 @@ export class HttpProxyMiddleware {
     }
   };
 
-  private registerPlugins(proxy: httpProxy, options: Options) {
-    const plugins = getPlugins(options);
+  private registerPlugins(proxy: httpProxy, options: Options<TReq, TRes>) {
+    const plugins = getPlugins<TReq, TRes>(options);
     plugins.forEach((plugin) => {
       debug(`register plugin: "${getFunctionName(plugin)}"`);
       plugin(proxy, options);
@@ -103,7 +103,7 @@ export class HttpProxyMiddleware {
   /**
    * Determine whether request should be proxied.
    */
-  private shouldProxy = (pathFilter: Filter, req: Request): boolean => {
+  private shouldProxy = (pathFilter: Filter<TReq>, req: Request): boolean => {
     return matchPathFilter(pathFilter, req.url, req);
   };
 
