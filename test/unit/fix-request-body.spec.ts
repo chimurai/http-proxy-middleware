@@ -3,7 +3,6 @@ import * as querystring from 'querystring';
 
 import { fixRequestBody } from '../../src/handlers/fix-request-body';
 import type * as express from 'express';
-import type { Request } from '../../src/types';
 
 const fakeProxyRequest = () => {
   const proxyRequest = new ClientRequest('http://some-host');
@@ -19,7 +18,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(proxyRequest, { body: undefined } as Request<express.Request>);
+    fixRequestBody(proxyRequest, { body: undefined } as express.Request);
 
     expect(proxyRequest.setHeader).not.toHaveBeenCalled();
     expect(proxyRequest.write).not.toHaveBeenCalled();
@@ -32,7 +31,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(proxyRequest, { body: {} } as Request<express.Request>);
+    fixRequestBody(proxyRequest, { body: {} } as express.Request);
 
     expect(proxyRequest.setHeader).toHaveBeenCalled();
     expect(proxyRequest.write).toHaveBeenCalled();
@@ -45,7 +44,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(proxyRequest, { body: { someField: 'some value' } } as Request<express.Request>);
+    fixRequestBody(proxyRequest, { body: { someField: 'some value' } } as express.Request);
 
     const expectedBody = JSON.stringify({ someField: 'some value' });
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
@@ -59,7 +58,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(proxyRequest, { body: { someField: 'some value' } } as Request<express.Request>);
+    fixRequestBody(proxyRequest, { body: { someField: 'some value' } } as express.Request);
 
     const expectedBody = querystring.stringify({ someField: 'some value' });
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
@@ -73,7 +72,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(proxyRequest, { body: { someField: 'some value' } } as Request<express.Request>);
+    fixRequestBody(proxyRequest, { body: { someField: 'some value' } } as express.Request);
 
     const expectedBody = querystring.stringify({ someField: 'some value' });
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);

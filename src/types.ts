@@ -9,13 +9,15 @@ import type * as http from 'http';
 import type * as httpProxy from 'http-proxy';
 import type * as net from 'net';
 
-export type Request<T = http.IncomingMessage> = T;
-export type Response<T = http.ServerResponse> = T;
 export type NextFunction<T = (err?: any) => void> = T;
 
-export interface RequestHandler<TReq = http.IncomingMessage, TRes = http.ServerResponse> {
-  (req: TReq, res: TRes, next?: NextFunction): void | Promise<void>;
-  upgrade?: (req: Request, socket: net.Socket, head: any) => void;
+export interface RequestHandler<
+  TReq = http.IncomingMessage,
+  TRes = http.ServerResponse,
+  TNext = NextFunction
+> {
+  (req: TReq, res: TRes, next?: TNext): void | Promise<void>;
+  upgrade?: (req: http.IncomingMessage, socket: net.Socket, head: any) => void;
 }
 
 export type Filter<TReq = http.IncomingMessage> =

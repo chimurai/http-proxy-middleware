@@ -1,8 +1,9 @@
 import { getStatusCode } from '../../status-code';
-import { Plugin, Response } from '../../types';
+import { Plugin } from '../../types';
+import type * as http from 'http';
 
 export const errorResponsePlugin: Plugin = (proxyServer, options) => {
-  proxyServer.on('error', (err, req, res: Response, target?) => {
+  proxyServer.on('error', (err, req, res: http.ServerResponse, target?) => {
     // Re-throw error. Not recoverable since req & res are empty.
     if (!req && !res) {
       throw err; // "Error: Must provide a proper URL as target"

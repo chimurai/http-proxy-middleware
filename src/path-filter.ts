@@ -1,13 +1,14 @@
-import type { Filter, Request } from './types';
+import type { Filter } from './types';
 import * as isGlob from 'is-glob';
 import * as micromatch from 'micromatch';
 import * as url from 'url';
 import { ERRORS } from './errors';
+import type * as http from 'http';
 
-export function matchPathFilter<TReq>(
+export function matchPathFilter<TReq = http.IncomingMessage>(
   pathFilter: Filter<TReq> = '/',
   uri: string,
-  req: Request
+  req: http.IncomingMessage
 ): boolean {
   // single path
   if (isStringPath(pathFilter as string)) {
