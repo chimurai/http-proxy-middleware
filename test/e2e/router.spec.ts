@@ -26,15 +26,9 @@ describe('E2E router', () => {
     targetPortB = await getPort();
     targetPortC = await getPort();
 
-    await targetServerA
-      .forAnyRequest()
-      .thenPassThrough({ ignoreHostCertificateErrors: ['localhost'] });
-    await targetServerB
-      .forAnyRequest()
-      .thenPassThrough({ ignoreHostCertificateErrors: ['localhost'] });
-    await targetServerC
-      .forAnyRequest()
-      .thenPassThrough({ ignoreHostCertificateErrors: ['localhost'] });
+    await targetServerA.forAnyRequest().thenPassThrough({ ignoreHostHttpsErrors: ['localhost'] });
+    await targetServerB.forAnyRequest().thenPassThrough({ ignoreHostHttpsErrors: ['localhost'] });
+    await targetServerC.forAnyRequest().thenPassThrough({ ignoreHostHttpsErrors: ['localhost'] });
 
     await targetServerA
       .forAnyRequest()
