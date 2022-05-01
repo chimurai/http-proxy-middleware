@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rm -rf dist && rm -rf coverage",
+    "clean": "rm -rf dist coverage",
     "lint": "yarn prettier && yarn eslint",
     "lint:fix": "yarn prettier:fix && yarn eslint:fix",
     "eslint": "eslint '{src,test}/**/*.ts'",
@@ -17,9 +17,7 @@
     "prettier:fix": "prettier --write \"**/*.{js,ts,md,yml,json,html}\"",
     "prebuild": "yarn clean",
     "build": "tsc",
-    "pretest": "yarn build",
     "test": "jest",
-    "precoverage": "yarn build",
     "coverage": "jest --coverage --coverageReporters=lcov",
     "prepare": "husky install",
     "prepack": "yarn build && rm dist/tsconfig.tsbuildinfo",
