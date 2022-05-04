@@ -5,11 +5,11 @@ import { getFunctionName } from '../utils/function';
 
 const debug = Debug.extend('response-interceptor');
 
-type Interceptor = (
+type Interceptor<TReq = http.IncomingMessage, TRes = http.ServerResponse> = (
   buffer: Buffer,
-  proxyRes: http.IncomingMessage,
-  req: http.IncomingMessage,
-  res: http.ServerResponse
+  proxyRes: TReq,
+  req: TReq,
+  res: TRes
 ) => Promise<Buffer | string>;
 
 /**
@@ -19,18 +19,21 @@ type Interceptor = (
  *
  * NOTE: must set options.selfHandleResponse=true (prevent automatic call of res.end())
  */
-export function responseInterceptor(interceptor: Interceptor) {
+export function responseInterceptor<
+  TReq extends http.IncomingMessage = http.IncomingMessage,
+  TRes extends http.ServerResponse = http.ServerResponse
+>(interceptor: Interceptor<TReq, TRes>) {
   return async function proxyResResponseInterceptor(
-    proxyRes: http.IncomingMessage,
-    req: http.IncomingMessage,
-    res: http.ServerResponse
+    proxyRes: TReq,
+    req: TReq,
+    res: TRes
   ): Promise<void> {
     debug('intercept proxy response');
     const originalProxyRes = proxyRes;
     let buffer = Buffer.from('', 'utf8');
 
     // decompress proxy response
-    const _proxyRes = decompress(proxyRes, proxyRes.headers['content-encoding']);
+    const _proxyRes = decompress<TReq>(proxyRes, proxyRes.headers['content-encoding']);
 
     // concat data stream
     _proxyRes.on('data', (chunk) => (buffer = Buffer.concat([buffer, chunk])));
@@ -62,7 +65,10 @@ export function responseInterceptor(interceptor: Interceptor) {
  * Streaming decompression of proxy response
  * source: https://github.com/apache/superset/blob/9773aba522e957ed9423045ca153219638a85d2f/superset-frontend/webpack.proxy-config.js#L116
  */
-function decompress(proxyRes: http.IncomingMessage, contentEncoding: string) {
+function decompress<TReq extends http.IncomingMessage = http.IncomingMessage>(
+  proxyRes: TReq,
+  contentEncoding: string
+): TReq {
   let _proxyRes = proxyRes;
   let decompress;
 
@@ -93,7 +99,7 @@ function decompress(proxyRes: http.IncomingMessage, contentEncoding: string) {
  * Copy original headers
  * https://github.com/apache/superset/blob/9773aba522e957ed9423045ca153219638a85d2f/superset-frontend/webpack.proxy-config.js#L78
  */
-function copyHeaders(originalResponse, response) {
+function copyHeaders(originalResponse, response): void {
   debug('copy original response headers');
 
   response.statusCode = originalResponse.statusCode;

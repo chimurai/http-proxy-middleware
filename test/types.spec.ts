@@ -2,7 +2,7 @@
 
 import * as express from 'express';
 import * as http from 'http';
-import { createProxyMiddleware as middleware } from '../src';
+import { createProxyMiddleware as middleware, fixRequestBody, responseInterceptor } from '../src';
 import type { Options, RequestHandler } from '../src/types';
 
 describe('http-proxy-middleware TypeScript Types', () => {
@@ -189,7 +189,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
       expect(app).toBeDefined();
     });
 
-    it('should work with generic custom req & res types', () => {
+    it('should work with explicit generic custom req & res types', () => {
       interface MyRequest extends http.IncomingMessage {
         myRequestParams: { [key: string]: string };
       }
@@ -235,6 +235,53 @@ describe('http-proxy-middleware TypeScript Types', () => {
             res.myResponseParams;
           },
         },
+      });
+
+      expect(proxy).toBeDefined();
+    });
+
+    it('should work with custom req & res types in responseInterceptor', () => {
+      interface MyRequest extends http.IncomingMessage {
+        myRequestParams: { [key: string]: string };
+      }
+
+      interface MyResponse extends http.ServerResponse {
+        myResponseParams: { [key: string]: string };
+      }
+
+      const proxy: RequestHandler<MyRequest, MyResponse> = middleware({
+        target: 'http://www.example.org',
+        on: {
+          proxyRes: responseInterceptor(async (buffer, proxyRes, req, res) => {
+            req.myRequestParams;
+            res.myResponseParams;
+            return buffer;
+          }),
+        },
+      });
+
+      expect(proxy).toBeDefined();
+    });
+
+    it('should work with express.Request with fixRequestBody', () => {
+      const proxy: RequestHandler<express.Request> = middleware({
+        target: 'http://www.example.org',
+        on: {
+          proxyReq: fixRequestBody,
+        },
+      });
+
+      expect(proxy).toBeDefined();
+    });
+
+    it('should work with express.Request with fixRequestBody in plugins', () => {
+      const proxy: RequestHandler<express.Request> = middleware({
+        target: 'http://www.example.org',
+        plugins: [
+          (proxyServer, options) => {
+            proxyServer.on('proxyReq', fixRequestBody);
+          },
+        ],
       });
 
       expect(proxy).toBeDefined();
