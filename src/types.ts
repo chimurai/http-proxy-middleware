@@ -29,16 +29,16 @@ export interface Plugin<TReq = http.IncomingMessage, TRes = http.ServerResponse>
   (proxyServer: httpProxy, options: Options<TReq, TRes>): void;
 }
 
-export interface OnProxyEvent {
-  error?: httpProxy.ErrorCallback;
-  proxyReq?: httpProxy.ProxyReqCallback;
-  proxyReqWs?: httpProxy.ProxyReqWsCallback;
-  proxyRes?: httpProxy.ProxyResCallback;
+export interface OnProxyEvent<TReq = http.IncomingMessage, TRes = http.ServerResponse> {
+  error?: httpProxy.ErrorCallback<Error, TReq, TRes>;
+  proxyReq?: httpProxy.ProxyReqCallback<http.ClientRequest, TReq, TRes>;
+  proxyReqWs?: httpProxy.ProxyReqWsCallback<http.ClientRequest, TReq>;
+  proxyRes?: httpProxy.ProxyResCallback<TReq, TRes>;
   open?: httpProxy.OpenCallback;
-  close?: httpProxy.CloseCallback;
-  start?: httpProxy.StartCallback;
-  end?: httpProxy.EndCallback;
-  econnreset?: httpProxy.EconnresetCallback;
+  close?: httpProxy.CloseCallback<TReq>;
+  start?: httpProxy.StartCallback<TReq, TRes>;
+  end?: httpProxy.EndCallback<TReq, TRes>;
+  econnreset?: httpProxy.EconnresetCallback<Error, TReq, TRes>;
 }
 
 export type Logger = Pick<Console, 'info' | 'warn' | 'error'>;
@@ -91,7 +91,7 @@ export interface Options<TReq = http.IncomingMessage, TRes = http.ServerResponse
    * });
    * ```
    */
-  on?: OnProxyEvent;
+  on?: OnProxyEvent<TReq, TRes>;
   router?:
     | { [hostOrPath: string]: httpProxy.ServerOptions['target'] }
     | ((req: TReq) => httpProxy.ServerOptions['target'])

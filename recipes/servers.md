@@ -72,7 +72,7 @@ Next project: `/pages/api/users.ts`
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const proxyMiddleware = createProxyMiddleware({
+const proxyMiddleware = createProxyMiddleware<NextApiRequest, NextApiResponse>({
   target: 'http://jsonplaceholder.typicode.com',
   changeOrigin: true,
   pathRewrite: {

@@ -3,7 +3,7 @@
 import * as express from 'express';
 import * as http from 'http';
 import { createProxyMiddleware as middleware } from '../src';
-import type { Options } from '../src/types';
+import type { Options, RequestHandler } from '../src/types';
 
 describe('http-proxy-middleware TypeScript Types', () => {
   let options: Options;
@@ -144,30 +144,100 @@ describe('http-proxy-middleware TypeScript Types', () => {
       expect(options).toBeDefined();
     });
 
-    it('should get express types from express server', () => {
+    it('should get implicit express types from express server', () => {
       const app = express();
       app.use(
         middleware({
-          // @ts-check
           router: (req) => req.params,
-          // @ts-check
           pathFilter: (pathname, req) => !!req.params,
-
-          // TODO: @types/http-proxy is missing generics
-          // on: {
-          //   proxyReq(proxyReq, req, res, options) {
-          //     // @ts-check
-          //     req.params;
-          //   },
-          //   proxyRes(proxyRes, req, res) {
-          //     // @ts-check
-          //     res.status(200).send('OK');
-          //   },
-          // },
+          on: {
+            error(error, req, res, target) {
+              req.params;
+              (res as express.Response).status(200).send('OK');
+            },
+            proxyReq(proxyReq, req, res, options) {
+              req.params;
+              res.status(200).send('OK');
+            },
+            proxyReqWs(proxyReq, req, socket, options, head) {
+              req.params;
+            },
+            proxyRes(proxyRes, req, res) {
+              req.params;
+              res.status(200).send('OK');
+            },
+            close(proxyRes, proxySocket, proxyHead) {
+              proxyRes.params;
+            },
+            start(req, res, target) {
+              req.params;
+              res.status(200).send('OK');
+            },
+            end(req, res, proxyRes) {
+              req.params;
+              res.status(200).send('OK');
+              proxyRes.params;
+            },
+            econnreset(error, req, res, target) {
+              req.params;
+              res.status(200).send('OK');
+            },
+          },
         })
       );
 
       expect(app).toBeDefined();
+    });
+
+    it('should work with generic custom req & res types', () => {
+      interface MyRequest extends http.IncomingMessage {
+        myRequestParams: { [key: string]: string };
+      }
+
+      interface MyResponse extends http.ServerResponse {
+        myResponseParams: { [key: string]: string };
+      }
+
+      const proxy: RequestHandler<MyRequest, MyResponse> = middleware({
+        router: (req) => req.myRequestParams,
+        pathFilter: (pathname, req) => !!req.myRequestParams,
+
+        on: {
+          error(error, req, res, target) {
+            req.myRequestParams;
+            (res as MyResponse).myResponseParams;
+          },
+          proxyReq(proxyReq, req, res, options) {
+            req.myRequestParams;
+            res.myResponseParams;
+          },
+          proxyReqWs(proxyReq, req, socket, options, head) {
+            req.myRequestParams;
+          },
+          proxyRes(proxyRes, req, res) {
+            req.myRequestParams;
+            res.myResponseParams;
+          },
+          close(proxyRes, proxySocket, proxyHead) {
+            proxyRes.myRequestParams;
+          },
+          start(req, res, target) {
+            req.myRequestParams;
+            res.myResponseParams;
+          },
+          end(req, res, proxyRes) {
+            req.myRequestParams;
+            res.myResponseParams;
+            proxyRes.myRequestParams;
+          },
+          econnreset(error, req, res, target) {
+            req.myRequestParams;
+            res.myResponseParams;
+          },
+        },
+      });
+
+      expect(proxy).toBeDefined();
     });
   });
 });

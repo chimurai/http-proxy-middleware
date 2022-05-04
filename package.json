@@ -83,7 +83,7 @@
     "ws": "8.10.0"
   },
   "dependencies": {
-    "@types/http-proxy": "^1.17.8",
+    "@types/http-proxy": "^1.17.9",
     "debug": "^4.3.4",
     "http-proxy": "^1.18.1",
     "is-glob": "^4.0.1",
