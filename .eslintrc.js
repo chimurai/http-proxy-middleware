@@ -20,5 +20,11 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 'off',
       },
     },
+    {
+      files: ['src/**/*.ts'],
+      rules: {
+        'no-restricted-imports': ['error', { paths: ['express'] }],
+      },
+    },
   ],
 };
