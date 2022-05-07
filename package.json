@@ -19,7 +19,7 @@
     "test": "jest",
     "coverage": "jest --coverage --coverageReporters=lcov",
     "prepare": "husky install",
-    "prepack": "yarn clean && yarn build",
+    "prepack": "yarn clean && yarn test && yarn build",
     "spellcheck": "npx --yes cspell --show-context --show-suggestions '**/*.*'"
   },
   "repository": {
