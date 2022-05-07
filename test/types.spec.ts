@@ -144,7 +144,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
       expect(options).toBeDefined();
     });
 
-    it('should get implicit express types from express server', () => {
+    it('should get contextual types from express server', () => {
       const app = express();
       app.use(
         middleware({
@@ -153,7 +153,11 @@ describe('http-proxy-middleware TypeScript Types', () => {
           on: {
             error(error, req, res, target) {
               req.params;
-              (res as express.Response).status(200).send('OK');
+
+              // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+              if (res instanceof http.ServerResponse) {
+                res.status(200).send('OK');
+              }
             },
             proxyReq(proxyReq, req, res, options) {
               req.params;
@@ -205,7 +209,11 @@ describe('http-proxy-middleware TypeScript Types', () => {
         on: {
           error(error, req, res, target) {
             req.myRequestParams;
-            (res as MyResponse).myResponseParams;
+
+            // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+            if (res instanceof http.ServerResponse) {
+              res.myResponseParams;
+            }
           },
           proxyReq(proxyReq, req, res, options) {
             req.myRequestParams;
