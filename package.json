@@ -15,7 +15,7 @@
     "eslint:fix": "yarn eslint --fix",
     "prettier": "prettier --list-different \"**/*.{js,ts,md,yml,json,html}\"",
     "prettier:fix": "prettier --write \"**/*.{js,ts,md,yml,json,html}\"",
-    "build": "tsc",
+    "build": "tsc --build",
     "test": "jest",
     "coverage": "jest --coverage --coverageReporters=lcov",
     "prepare": "husky install",
