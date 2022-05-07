@@ -8,19 +8,18 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rm -rf dist coverage",
+    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo .eslintcache",
     "lint": "yarn prettier && yarn eslint",
     "lint:fix": "yarn prettier:fix && yarn eslint:fix",
-    "eslint": "eslint '{src,test}/**/*.ts'",
+    "eslint": "eslint '{src,test}/**/*.ts' --cache",
     "eslint:fix": "yarn eslint --fix",
     "prettier": "prettier --list-different \"**/*.{js,ts,md,yml,json,html}\"",
     "prettier:fix": "prettier --write \"**/*.{js,ts,md,yml,json,html}\"",
-    "prebuild": "yarn clean",
-    "build": "tsc",
+    "build": "tsc --build",
     "test": "jest",
     "coverage": "jest --coverage --coverageReporters=lcov",
     "prepare": "husky install",
-    "prepack": "yarn build && rm dist/tsconfig.tsbuildinfo",
+    "prepack": "yarn clean && yarn test && yarn build",
     "spellcheck": "npx --yes cspell --show-context --show-suggestions '**/*.*'"
   },
   "repository": {
