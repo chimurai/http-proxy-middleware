@@ -17,7 +17,7 @@
     "prettier:fix": "prettier --write \"**/*.{js,ts,md,yml,json,html}\"",
     "build": "tsc --build",
     "test": "jest",
-    "coverage": "jest --coverage --coverageReporters=lcov",
+    "coverage": "jest --coverage",
     "prepare": "husky install",
     "prepack": "yarn clean && yarn test && yarn build",
     "spellcheck": "npx --yes cspell --show-context --show-suggestions '**/*.*'"
