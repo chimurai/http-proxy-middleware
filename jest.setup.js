@@ -1,3 +1,5 @@
+jest.retryTimes(3);
+
 /**
  * Uncomment the following lines for less noise in test output
  */
