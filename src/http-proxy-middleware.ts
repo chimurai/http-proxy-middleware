@@ -8,6 +8,7 @@ import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
 import { Debug as debug } from './debug';
 import { getFunctionName } from './utils/function';
+import { getLogger } from './logger';
 
 export class HttpProxyMiddleware {
   private wsInternalSubscribed = false;
@@ -15,6 +16,7 @@ export class HttpProxyMiddleware {
   private proxyOptions: Options;
   private proxy: httpProxy;
   private pathRewriter;
+  private logger = getLogger({ logger: console });
 
   constructor(options: Options) {
     verifyConfig(options);
@@ -95,7 +97,10 @@ export class HttpProxyMiddleware {
   private handleUpgrade = async (req: Request, socket, head) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
-      this.proxy.ws(req, socket, head, activeProxyOptions);
+      this.proxy.ws(req, socket, head, activeProxyOptions, (err, req, socket) => {
+        this.logger.error('[HPM] Upgrading to WebSocket Error:', err, req, socket);
+      });
+
       debug('server upgrade event received. Proxying WebSocket');
     }
   };
