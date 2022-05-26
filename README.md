@@ -580,7 +580,7 @@ That said, proxiying to `localhost` hostname will probably won't work, and it wi
 The easiet ways to avoid this problem are:
 
 1. Replace all proxy to `localhost` into proxy to `127.0.0.1`.
-3. (Not recommended) Add this flag when running node on locally: `node index.js --dns-result-order=ipv4first`.
+2. (Not recommended) Add this flag when running node on locally: `node index.js --dns-result-order=ipv4first`.
 
 ## Debugging
 
