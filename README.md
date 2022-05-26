@@ -574,11 +574,13 @@ const proxy = createProxyMiddleware({
 Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md#readme) for more examples.
 
 ## Issues over IPv6 and localhost
+
 From Node 17+: `For dns lookups, Node.js no longer prefers IPv4 over IPV6`.
-That said, `localhost` is not a valid hostname to proxy to, since it's only exists on IPv4.
-It will probably affect your development environment (if not already), and the easiet ways to avoid this problem are:
-1. Replace all proxy to `localhost` into proxy to `127.0.0.1`
-2. (Not recommended) Add this flag when running node on locally: `node index.js --dns-result-order=ipv4first`
+That said, proxiying to `localhost` hostname will probably won't work, and it will probably affect your development environment (if not already).
+The easiet ways to avoid this problem are:
+
+1. Replace all proxy to `localhost` into proxy to `127.0.0.1`.
+3. (Not recommended) Add this flag when running node on locally: `node index.js --dns-result-order=ipv4first`.
 
 ## Debugging
 
