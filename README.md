@@ -81,7 +81,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 - [Express Server Example](#express-server-example)
   - [app.use(path, proxy)](#appusepath-proxy)
 - [Options](#options)
-  - [`pathFilter` (string, []string, glob, []glob, function)](#pathfilter-string-string-glob-glob-function)
+  - [`pathFilter` (string, \[\]string, glob, \[\]glob, function)](#pathfilter-string-string-glob-glob-function)
   - [`pathRewrite` (object/function)](#pathrewrite-objectfunction)
   - [`router` (object/function)](#router-objectfunction)
   - [`plugins` (Array)](#plugins-array)
@@ -93,6 +93,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [External WebSocket upgrade](#external-websocket-upgrade)
 - [Intercept and manipulate requests](#intercept-and-manipulate-requests)
 - [Intercept and manipulate responses](#intercept-and-manipulate-responses)
+- [Node.js 17+: Issues over IPv6 and localhost (#705)](#nodejs-17-issues-over-ipv6-and-localhost-705)
 - [Debugging](#debugging)
 - [Working examples](#working-examples)
 - [Recipes](#recipes)
@@ -573,14 +574,15 @@ const proxy = createProxyMiddleware({
 
 Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md#readme) for more examples.
 
-## Issues over IPv6 and localhost ([#705](https://github.com/chimurai/http-proxy-middleware/issues/705))
+## Node.js 17+: Issues over IPv6 and localhost ([#705](https://github.com/chimurai/http-proxy-middleware/issues/705))
 
-From Node 17+: `For dns lookups, Node.js no longer prefers IPv4 over IPV6`.
-E.g. It's not guaranteed `localhost` will be resolved to `127.0.0.1`. (Can be either `127.0.0.1`, `::1` or some other IP-address).
+From Node.js 17+: `For dns lookups, Node.js no longer prefers IPv4 over IPV6`.
+E.g. It's **not** guaranteed `localhost` will be resolved to `127.0.0.1`. (Can be either `127.0.0.1`, `::1` or some other IP-address).
+
 To solve it:
 
-1. Change target: `http://localhost` to target: `http://127.0.0.1` (IPv4).
-2. (Not recommended) Add this flag when running node locally: `node index.js --dns-result-order=ipv4first`.
+- Change `target: http://localhost` to `target: http://127.0.0.1` (IPv4).
+- Add this flag when running node locally: `node index.js --dns-result-order=ipv4first`. (Not recommended)
 
 ## Debugging
 
