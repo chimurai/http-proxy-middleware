@@ -45,7 +45,7 @@ app.use(
 app.listen(3000);
 
 // proxy and change the base path from "/api" to "/secret"
-// http://localhost:3000/api/foo/bar -> http://www.example.org/secret/foo/bar
+// http://127.0.0.1:3000/api/foo/bar -> http://www.example.org/secret/foo/bar
 ```
 
 ```typescript
@@ -67,7 +67,7 @@ app.use(
 app.listen(3000);
 
 // proxy and keep the same base path "/api"
-// http://localhost:3000/api/foo/bar -> http://www.example.org/api/foo/bar
+// http://127.0.0.1:3000/api/foo/bar -> http://www.example.org/api/foo/bar
 ```
 
 _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#options) can be used, along with some extra `http-proxy-middleware` [options](#options).
@@ -257,22 +257,22 @@ Re-target `option.target` for specific requests.
 // Use `host` and/or `path` to match requests. First match will be used.
 // The order of the configuration matters.
 router: {
-    'integration.localhost:3000' : 'http://localhost:8001',  // host only
-    'staging.localhost:3000'     : 'http://localhost:8002',  // host only
-    'localhost:3000/api'         : 'http://localhost:8003',  // host + path
-    '/rest'                      : 'http://localhost:8004'   // path only
+    'integration.localhost:3000' : 'http://127.0.0.1:8001',  // host only
+    'staging.localhost:3000'     : 'http://127.0.0.1:8002',  // host only
+    'localhost:3000/api'         : 'http://127.0.0.1:8003',  // host + path
+    '/rest'                      : 'http://127.0.0.1:8004'   // path only
 }
 
 // Custom router function (string target)
 router: function(req) {
-    return 'http://localhost:8004';
+    return 'http://127.0.0.1:8004';
 }
 
 // Custom router function (target object)
 router: function(req) {
     return {
         protocol: 'https:', // The : is required
-        host: 'localhost',
+        host: '127.0.0.1',
         port: 8004
     };
 }
@@ -488,7 +488,7 @@ The following options are provided by the underlying [http-proxy](https://github
       req,
       res,
       {
-        target: 'http://localhost:4003/',
+        target: 'http://127.0.0.1:4003/',
         buffer: streamify(req.rawBody),
       },
       next
@@ -572,6 +572,13 @@ const proxy = createProxyMiddleware({
 ```
 
 Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md#readme) for more examples.
+
+## Issues over IPv6 and localhost
+From Node 17+: `For dns lookups, Node.js no longer prefers IPv4 over IPV6`.
+That said, `localhost` is not a valid hostname to proxy to, since it's only exists on IPv4.
+It will probably affect your development environment (if not already), and the easiet ways to avoid this problem are:
+1. Replace all proxy to `localhost` into proxy to `127.0.0.1`
+2. (Not recommended) Add this flag when running node on locally: `node index.js --dns-result-order=ipv4first`
 
 ## Debugging
 
