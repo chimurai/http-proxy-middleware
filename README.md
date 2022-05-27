@@ -574,16 +574,20 @@ const proxy = createProxyMiddleware({
 
 Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md#readme) for more examples.
 
-## Node.js 17+: Issues over IPv6 and localhost ([#705](https://github.com/chimurai/http-proxy-middleware/issues/705))
+## Node.js 17+: ECONNREFUSED issue with IPv6 and localhost ([#705](https://github.com/chimurai/http-proxy-middleware/issues/705))
 
-From Node.js 17+: `For dns lookups, Node.js no longer prefers IPv4 over IPV6`.
-E.g. It's **not** guaranteed `localhost` will be resolved to `127.0.0.1`. (Can be either `127.0.0.1`, `::1` or some other IP-address).
+Node.js 17+ no longer prefers IPv4 over IPv6 for DNS lookups.
+E.g. It's **not** guaranteed that `localhost` will be resolved to `127.0.0.1` – it might just as well be `::1` (or some other IP address).
 
-To solve it:
+If your target server only accepts IPv4 connections, trying to proxy to `localhost` will fail if resolved to `::1` (IPv6).
 
-- Change `target: http://localhost` to `target: http://127.0.0.1` (IPv4).
-- Add this flag when running node locally: `node index.js --dns-result-order=ipv4first`. (Not recommended)
+Ways to solve it:
 
+- Change `target: "http://localhost"` to `target: "http://127.0.0.1"` (IPv4).
+- Change the target server to (also) accept IPv6 connections.
+- Add this flag when running `node`: `node index.js --dns-result-order=ipv4first`. (Not recommended.)
+
+> Note: There’s a thing called [Happy Eyeballs](https://en.wikipedia.org/wiki/Happy_Eyeballs) which means connecting to both IPv4 and IPv6 in parallel, which Node.js doesn’t have, but explains why for example `curl` can connect.
 ## Debugging
 
 Configure the `DEBUG` environment variable enable debug logging.
