@@ -45,7 +45,7 @@ app.use(
 app.listen(3000);
 
 // proxy and change the base path from "/api" to "/secret"
-// http://localhost:3000/api/foo/bar -> http://www.example.org/secret/foo/bar
+// http://127.0.0.1:3000/api/foo/bar -> http://www.example.org/secret/foo/bar
 ```
 
 ```typescript
@@ -67,7 +67,7 @@ app.use(
 app.listen(3000);
 
 // proxy and keep the same base path "/api"
-// http://localhost:3000/api/foo/bar -> http://www.example.org/api/foo/bar
+// http://127.0.0.1:3000/api/foo/bar -> http://www.example.org/api/foo/bar
 ```
 
 _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#options) can be used, along with some extra `http-proxy-middleware` [options](#options).
@@ -81,7 +81,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 - [Express Server Example](#express-server-example)
   - [app.use(path, proxy)](#appusepath-proxy)
 - [Options](#options)
-  - [`pathFilter` (string, []string, glob, []glob, function)](#pathfilter-string-string-glob-glob-function)
+  - [`pathFilter` (string, \[\]string, glob, \[\]glob, function)](#pathfilter-string-string-glob-glob-function)
   - [`pathRewrite` (object/function)](#pathrewrite-objectfunction)
   - [`router` (object/function)](#router-objectfunction)
   - [`plugins` (Array)](#plugins-array)
@@ -93,6 +93,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [External WebSocket upgrade](#external-websocket-upgrade)
 - [Intercept and manipulate requests](#intercept-and-manipulate-requests)
 - [Intercept and manipulate responses](#intercept-and-manipulate-responses)
+- [Node.js 17+: ECONNREFUSED issue with IPv6 and localhost (#705)](#nodejs-17-econnrefused-issue-with-ipv6-and-localhost-705)
 - [Debugging](#debugging)
 - [Working examples](#working-examples)
 - [Recipes](#recipes)
@@ -257,22 +258,22 @@ Re-target `option.target` for specific requests.
 // Use `host` and/or `path` to match requests. First match will be used.
 // The order of the configuration matters.
 router: {
-    'integration.localhost:3000' : 'http://localhost:8001',  // host only
-    'staging.localhost:3000'     : 'http://localhost:8002',  // host only
-    'localhost:3000/api'         : 'http://localhost:8003',  // host + path
-    '/rest'                      : 'http://localhost:8004'   // path only
+    'integration.localhost:3000' : 'http://127.0.0.1:8001',  // host only
+    'staging.localhost:3000'     : 'http://127.0.0.1:8002',  // host only
+    'localhost:3000/api'         : 'http://127.0.0.1:8003',  // host + path
+    '/rest'                      : 'http://127.0.0.1:8004'   // path only
 }
 
 // Custom router function (string target)
 router: function(req) {
-    return 'http://localhost:8004';
+    return 'http://127.0.0.1:8004';
 }
 
 // Custom router function (target object)
 router: function(req) {
     return {
         protocol: 'https:', // The : is required
-        host: 'localhost',
+        host: '127.0.0.1',
         port: 8004
     };
 }
@@ -488,7 +489,7 @@ The following options are provided by the underlying [http-proxy](https://github
       req,
       res,
       {
-        target: 'http://localhost:4003/',
+        target: 'http://127.0.0.1:4003/',
         buffer: streamify(req.rawBody),
       },
       next
@@ -572,6 +573,21 @@ const proxy = createProxyMiddleware({
 ```
 
 Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md#readme) for more examples.
+
+## Node.js 17+: ECONNREFUSED issue with IPv6 and localhost ([#705](https://github.com/chimurai/http-proxy-middleware/issues/705))
+
+Node.js 17+ no longer prefers IPv4 over IPv6 for DNS lookups.
+E.g. It's **not** guaranteed that `localhost` will be resolved to `127.0.0.1` – it might just as well be `::1` (or some other IP address).
+
+If your target server only accepts IPv4 connections, trying to proxy to `localhost` will fail if resolved to `::1` (IPv6).
+
+Ways to solve it:
+
+- Change `target: "http://localhost"` to `target: "http://127.0.0.1"` (IPv4).
+- Change the target server to (also) accept IPv6 connections.
+- Add this flag when running `node`: `node index.js --dns-result-order=ipv4first`. (Not recommended.)
+
+> Note: There’s a thing called [Happy Eyeballs](https://en.wikipedia.org/wiki/Happy_Eyeballs) which means connecting to both IPv4 and IPv6 in parallel, which Node.js doesn’t have, but explains why for example `curl` can connect.
 
 ## Debugging
 
