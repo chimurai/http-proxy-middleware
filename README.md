@@ -93,7 +93,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [External WebSocket upgrade](#external-websocket-upgrade)
 - [Intercept and manipulate requests](#intercept-and-manipulate-requests)
 - [Intercept and manipulate responses](#intercept-and-manipulate-responses)
-- [Node.js 17+: Issues over IPv6 and localhost (#705)](#nodejs-17-issues-over-ipv6-and-localhost-705)
+- [Node.js 17+: ECONNREFUSED issue with IPv6 and localhost (#705)](#nodejs-17-econnrefused-issue-with-ipv6-and-localhost-705)
 - [Debugging](#debugging)
 - [Working examples](#working-examples)
 - [Recipes](#recipes)
