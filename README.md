@@ -588,6 +588,7 @@ Ways to solve it:
 - Add this flag when running `node`: `node index.js --dns-result-order=ipv4first`. (Not recommended.)
 
 > Note: There’s a thing called [Happy Eyeballs](https://en.wikipedia.org/wiki/Happy_Eyeballs) which means connecting to both IPv4 and IPv6 in parallel, which Node.js doesn’t have, but explains why for example `curl` can connect.
+
 ## Debugging
 
 Configure the `DEBUG` environment variable enable debug logging.
