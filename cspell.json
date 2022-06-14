@@ -6,6 +6,7 @@
     "node_modules/**",
     "coverage/**",
     "dist/**",
+    "tsconfig.tsbuildinfo",
     "package.json",
     "yarn.lock",
     "*.tgz"
