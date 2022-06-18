@@ -1,0 +1,29 @@
+# https://gitpod.io/#https://github.com/chimurai/http-proxy-middleware
+# https://www.gitpod.io/docs/config-gitpod-file
+
+tasks:
+  - init: |
+      yarn install
+      yarn build
+      yarn test --maxWorkers=30%
+
+github:
+  # https://www.gitpod.io/docs/prebuilds/#configure-prebuilds
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
+    pullRequestsFromForks: true
+    addCheck: true
+    addComment: false
+    addBadge: true
+
+vscode:
+  extensions:
+    - bierner.markdown-preview-github-styles
+    - dbaeumer.vscode-eslint
+    - eamodio.gitlens
+    - EditorConfig.EditorConfig
+    - esbenp.prettier-vscode
+    - streetsidesoftware.code-spell-checker
+    - yzhang.markdown-all-in-one
