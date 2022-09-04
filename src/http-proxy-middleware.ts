@@ -93,10 +93,16 @@ export class HttpProxyMiddleware {
   };
 
   private handleUpgrade = async (req: Request, socket, head) => {
-    if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
-      const activeProxyOptions = await this.prepareProxyRequest(req);
-      this.proxy.ws(req, socket, head, activeProxyOptions);
-      debug('server upgrade event received. Proxying WebSocket');
+    try {
+      if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
+        const activeProxyOptions = await this.prepareProxyRequest(req);
+        this.proxy.ws(req, socket, head, activeProxyOptions);
+        debug('server upgrade event received. Proxying WebSocket');
+      }
+    } catch (err) {
+      // This error does not include the URL as the fourth argument as we won't
+      // have the URL if `this.prepareProxyRequest` throws an error.
+      this.proxy.emit('error', err, req, socket);
     }
   };
 
