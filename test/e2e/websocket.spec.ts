@@ -97,15 +97,14 @@ describe('E2E WebSocket proxy', () => {
 
   describe('with router and pathRewrite', () => {
     beforeEach(() => {
-      // override
-      proxyServer = createApp(
+      const proxyMiddleware = createProxyMiddleware({
         // cSpell:ignore notworkinghost
-        createProxyMiddleware({
-          target: 'ws://notworkinghost:6789',
-          router: { '/socket': `ws://localhost:${WS_SERVER_PORT}` },
-          pathRewrite: { '^/socket': '' },
-        })
-      ).listen(SERVER_PORT);
+        target: 'ws://notworkinghost:6789',
+        router: { '/socket': `ws://localhost:${WS_SERVER_PORT}` },
+        pathRewrite: { '^/socket': '' },
+      });
+
+      proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
 
       proxyServer.on('upgrade', proxyMiddleware.upgrade);
     });
@@ -122,6 +121,31 @@ describe('E2E WebSocket proxy', () => {
         done();
       });
       ws.send('foobar');
+    });
+  });
+
+  describe('with error in router', () => {
+    beforeEach(() => {
+      const proxyMiddleware = createProxyMiddleware({
+        // cSpell:ignore notworkinghost
+        target: `http://notworkinghost:6789`,
+        router: async () => {
+          throw new Error('error');
+        },
+      });
+
+      proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
+
+      proxyServer.on('upgrade', proxyMiddleware.upgrade);
+    });
+
+    it('should handle error', (done) => {
+      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
+
+      ws.on('error', (err) => {
+        expect(err).toBeTruthy();
+        done();
+      });
     });
   });
 });
