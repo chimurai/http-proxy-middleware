@@ -15,7 +15,7 @@ describe('getPlugins', () => {
 
     expect(plugins).toHaveLength(4);
     expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      Array [
+      [
         "debugProxyErrorsPlugin",
         "proxyEventsPlugin",
         "loggerPlugin",
@@ -42,7 +42,7 @@ describe('getPlugins', () => {
 
     expect(plugins).toHaveLength(5);
     expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      Array [
+      [
         "debugProxyErrorsPlugin",
         "proxyEventsPlugin",
         "loggerPlugin",
@@ -63,7 +63,7 @@ describe('getPlugins', () => {
 
     expect(plugins).toHaveLength(1);
     expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      Array [
+      [
         "myPlugin",
       ]
     `);
@@ -77,7 +77,7 @@ describe('getPlugins', () => {
 
     expect(plugins).toHaveLength(4);
     expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      Array [
+      [
         "debugProxyErrorsPlugin",
         "errorResponsePlugin",
         "loggerPlugin",
@@ -98,7 +98,7 @@ describe('getPlugins', () => {
 
     expect(plugins).toHaveLength(3);
     expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      Array [
+      [
         "debugProxyErrorsPlugin",
         "proxyEventsPlugin",
         "loggerPlugin",

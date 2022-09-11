@@ -9,7 +9,7 @@ describe('Logger', () => {
   it('should return noop logger when not configured in Options', () => {
     const logger = getLogger({});
     expect(Object.keys(logger)).toMatchInlineSnapshot(`
-      Array [
+      [
         "info",
         "warn",
         "error",
