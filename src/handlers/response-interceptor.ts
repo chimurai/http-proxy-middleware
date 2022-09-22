@@ -12,6 +12,19 @@ type Interceptor = (
   res: http.ServerResponse
 ) => Promise<Buffer | string>;
 
+const TrailerDisallowHeaders: string[] = [
+  'content-length',
+  'host',
+  'content-type',
+  'authorization',
+  'cache-control',
+  'max-forwards',
+  'te',
+  'set-cookie',
+  'content-encoding',
+  'content-range',
+];
+
 /**
  * Intercept responses from upstream.
  * Automatically decompress (deflate, gzip, brotli).
@@ -45,8 +58,14 @@ export function responseInterceptor(interceptor: Interceptor) {
 
       // set correct content-length (with double byte character support)
       debug('set content-length: %s', Buffer.byteLength(interceptedBuffer, 'utf8'));
-      res.setHeader('content-length', Buffer.byteLength(interceptedBuffer, 'utf8'));
-
+      // some headers are disallowed when response headers contains trailer
+      if (proxyRes.headers.trailer === undefined) {
+        res.setHeader('content-length', Buffer.byteLength(interceptedBuffer, 'utf8'));
+      } else {
+        TrailerDisallowHeaders.forEach((value) => {
+          res.removeHeader(value);
+        });
+      }
       debug('write intercepted response');
       res.write(interceptedBuffer);
       res.end();
