@@ -12,6 +12,10 @@ type Interceptor = (
   res: http.ServerResponse
 ) => Promise<Buffer | string>;
 
+/**
+ * Disallow headers when response contains trailer
+ * source: https://developer.mozilla.org/docs/Web/HTTP/Headers/Trailer
+ */
 const TrailerDisallowHeaders: string[] = [
   'content-length',
   'host',
