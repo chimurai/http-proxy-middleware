@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "2.0.6",
+  "version": "2.1.0",
   "description": "The one-liner node.js proxy middleware for connect, express and browser-sync",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rm -rf dist && rm -rf coverage",
+    "clean": "rm -r dist && rm -r coverage",
     "lint": "yarn prettier && yarn eslint",
     "lint:fix": "yarn prettier:fix && yarn eslint:fix",
     "eslint": "eslint '{src,test}/**/*.ts'",
