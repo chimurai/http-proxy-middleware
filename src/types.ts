@@ -10,6 +10,7 @@ import type * as http from 'http';
 import type * as httpProxy from 'http-proxy';
 import type * as net from 'net';
 import type * as url from 'url';
+import Server = require('http-proxy');
 
 export interface Request extends express.Request {}
 export interface Response extends express.Response {}
@@ -38,6 +39,7 @@ export interface Options extends httpProxy.ServerOptions {
   onProxyReqWs?: OnProxyReqWsCallback;
   onOpen?: OnOpenCallback;
   onClose?: OnCloseCallback;
+  changeProxyOptions: (req: Request, options: Server.ServerOptions) => void;
 }
 
 interface LogProvider {
