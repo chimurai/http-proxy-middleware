@@ -39,7 +39,7 @@ export interface Options extends httpProxy.ServerOptions {
   onProxyReqWs?: OnProxyReqWsCallback;
   onOpen?: OnOpenCallback;
   onClose?: OnCloseCallback;
-  changeProxyOptions: (options: Server.ServerOptions) => void;
+  changeProxyOptions: (req: Request, options: Server.ServerOptions) => void;
 }
 
 interface LogProvider {

@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rm -r dist && rm -r coverage",
+    "clean": "rm -rf dist && rm -rf coverage",
     "lint": "yarn prettier && yarn eslint",
     "lint:fix": "yarn prettier:fix && yarn eslint:fix",
     "eslint": "eslint '{src,test}/**/*.ts'",
