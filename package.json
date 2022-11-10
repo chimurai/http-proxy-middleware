@@ -51,36 +51,36 @@
   },
   "homepage": "https://github.com/chimurai/http-proxy-middleware#readme",
   "devDependencies": {
-    "@commitlint/cli": "16.2.3",
-    "@commitlint/config-conventional": "16.2.1",
+    "@commitlint/cli": "17.1.2",
+    "@commitlint/config-conventional": "17.1.0",
     "@types/debug": "4.1.7",
-    "@types/express": "4.17.13",
+    "@types/express": "4.17.14",
     "@types/is-glob": "4.0.2",
-    "@types/jest": "29.0.0",
+    "@types/jest": "29.2.0",
     "@types/micromatch": "4.0.2",
-    "@types/node": "17.0.25",
+    "@types/node": "18.11.5",
     "@types/supertest": "2.0.12",
     "@types/ws": "8.5.3",
-    "@typescript-eslint/eslint-plugin": "5.20.0",
-    "@typescript-eslint/parser": "5.20.0",
-    "body-parser": "1.20.0",
-    "browser-sync": "2.27.9",
+    "@typescript-eslint/eslint-plugin": "5.41.0",
+    "@typescript-eslint/parser": "5.41.0",
+    "body-parser": "1.20.1",
+    "browser-sync": "2.27.10",
     "connect": "3.7.0",
-    "eslint": "8.13.0",
+    "eslint": "8.26.0",
     "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-prettier": "4.0.0",
-    "express": "4.17.3",
+    "eslint-plugin-prettier": "4.2.1",
+    "express": "4.18.2",
     "get-port": "5.1.1",
-    "husky": "7.0.4",
-    "jest": "29.0.2",
-    "lint-staged": "12.3.8",
-    "mockttp": "2.7.0",
+    "husky": "8.0.1",
+    "jest": "29.2.2",
+    "lint-staged": "13.0.3",
+    "mockttp": "3.4.0",
     "open": "8.4.0",
-    "prettier": "2.6.2",
-    "supertest": "6.2.2",
-    "ts-jest": "29.0.0",
-    "typescript": "4.6.3",
-    "ws": "8.5.0"
+    "prettier": "2.7.1",
+    "supertest": "6.3.1",
+    "ts-jest": "29.0.3",
+    "typescript": "4.8.4",
+    "ws": "8.10.0"
   },
   "dependencies": {
     "@types/http-proxy": "^1.17.8",
@@ -97,9 +97,6 @@
     "@types/express": {
       "optional": true
     }
-  },
-  "resolutions": {
-    "browser-sync/portscanner": "2.2.0"
   },
   "engines": {
     "node": ">=12.0.0"
