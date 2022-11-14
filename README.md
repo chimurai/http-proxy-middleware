@@ -3,7 +3,8 @@
 [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/chimurai/http-proxy-middleware/CI/master?style=flat-square&logo=github-actions&logoColor=white)](https://github.com/chimurai/http-proxy-middleware/actions?query=branch%3Amaster)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square&logo=coveralls)](https://coveralls.io/r/chimurai/http-proxy-middleware)
 ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/chimurai/http-proxy-middleware?logo=snyk&style=flat-square)
-[![npm](https://img.shields.io/npm/v/http-proxy-middleware?color=%23CC3534&style=flat-square&logo=npm)](https://www.npmjs.com/package/http-proxy-middleware)
+[![npm](https://img.shields.io/npm/v/http-proxy-middleware?color=%23CC3534&style=flat-square&logo=npm&label=stable)](https://www.npmjs.com/package/http-proxy-middleware)
+[![npm](https://img.shields.io/static/v1?color=%23CC3534&style=flat-square&logo=npm&label=latest&message=3.0.0-beta.0)](https://www.npmjs.com/package/http-proxy-middleware/v/3.0.0-beta.0)
 
 Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/expressjs/express), [next.js](https://github.com/vercel/next.js) and [many more](#compatible-servers).
 
@@ -11,7 +12,7 @@ Powered by the popular Nodejitsu [`http-proxy`](https://github.com/nodejitsu/nod
 
 ## ⚠️ Note <!-- omit in toc -->
 
-This page is showing documentation for version v3.x.x ([release notes](https://github.com/chimurai/http-proxy-middleware/releases))
+This page is showing documentation for version **v3.0.0-beta.0** ([release notes](https://github.com/chimurai/http-proxy-middleware/releases))
 
 See [MIGRATION.md](https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md) for details on how to migrate from v2.x.x to v3.x.x
 
@@ -107,7 +108,7 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
 ## Install
 
 ```shell
-npm install --save-dev http-proxy-middleware
+npm install --save-dev http-proxy-middleware@3.0.0-beta.0
 ```
 
 ## Basic usage
