@@ -34,7 +34,9 @@ function responseInterceptor(interceptor) {
             }
             else
             {
-                interceptedBuffer=buffer
+                bufferArray.forEach(chunk => {
+                    buffer = Buffer.concat([buffer,chunk])
+                })
             }
             res.setHeader('content-length', Buffer.byteLength(interceptedBuffer));
             res.write(interceptedBuffer);
