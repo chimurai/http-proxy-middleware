@@ -53,10 +53,10 @@ export class HttpProxyMiddleware {
         const activeProxyOptions = await this.prepareProxyRequest(req);
         this.proxy.web(req, res, activeProxyOptions);
       } catch (err) {
-        next(err);
+        next && next(err);
       }
     } else {
-      next();
+      next && next();
     }
 
     /**
