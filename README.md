@@ -1,6 +1,6 @@
 # http-proxy-middleware
 
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/chimurai/http-proxy-middleware/CI/master?style=flat-square&logo=github-actions&logoColor=white)](https://github.com/chimurai/http-proxy-middleware/actions?query=branch%3Amaster)
+![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/chimurai/http-proxy-middleware/ci.yml?branch=master&logo=github-actions&logoColor=white&style=flat-square)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square&logo=coveralls)](https://coveralls.io/r/chimurai/http-proxy-middleware)
 ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/chimurai/http-proxy-middleware?logo=snyk&style=flat-square)
 [![npm](https://img.shields.io/npm/v/http-proxy-middleware?color=%23CC3534&style=flat-square&logo=npm)](https://www.npmjs.com/package/http-proxy-middleware)
