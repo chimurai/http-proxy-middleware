@@ -1,13 +1,13 @@
 # http-proxy-middleware
 
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/chimurai/http-proxy-middleware/CI/master?style=flat-square&logo=github-actions&logoColor=white)](https://github.com/chimurai/http-proxy-middleware/actions?query=branch%3Amaster)
+[![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/chimurai/http-proxy-middleware/ci.yml?branch=master&logo=github-actions&logoColor=white&style=flat-square)](https://github.com/chimurai/http-proxy-middleware/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square&logo=coveralls)](https://coveralls.io/r/chimurai/http-proxy-middleware)
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/chimurai/http-proxy-middleware?logo=snyk&style=flat-square)
+[![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/chimurai/http-proxy-middleware?logo=snyk&style=flat-square)](https://security.snyk.io/package/npm/http-proxy-middleware)
 [![npm](https://img.shields.io/npm/v/http-proxy-middleware?color=%23CC3534&style=flat-square&logo=npm)](https://www.npmjs.com/package/http-proxy-middleware)
 
 Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/expressjs/express), [next.js](https://github.com/vercel/next.js) and [many more](#compatible-servers).
 
-Powered by the popular Nodejitsu [`http-proxy`](https://github.com/nodejitsu/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/nodejitsu/node-http-proxy.svg?style=social&label=Star)](https://github.com/nodejitsu/node-http-proxy)
+Powered by the popular Nodejitsu [`http-proxy`](https://github.com/http-party/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/http-party/node-http-proxy.svg?style=social&label=Star)](https://github.com/http-party/node-http-proxy)
 
 ## ⚠️ Note <!-- omit in toc -->
 
