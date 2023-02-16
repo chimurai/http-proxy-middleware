@@ -23,15 +23,6 @@ export function fixRequestBody<TReq = http.IncomingMessage>(
     proxyReq.write(bodyData);
   };
 
-  const handlerFormDataBodyData = (contentType: string, data: any) => {
-    const boundary = contentType.replace(/^.*boundary=(.*)$/, '$1');
-    let str = '';
-    for (const [key, value] of Object.entries(data)) {
-      str += `--${boundary}\r\nContent-Disposition: form-data; name="${key}"\r\n\r\n${value}\r\n`;
-    }
-    return str;
-  };
-
   if (contentType && contentType.includes('application/json')) {
     writeBody(JSON.stringify(requestBody));
   }
@@ -43,4 +34,19 @@ export function fixRequestBody<TReq = http.IncomingMessage>(
   if (contentType && contentType.includes('multipart/form-data')) {
     writeBody(handlerFormDataBodyData(contentType, requestBody));
   }
+}
+
+/**
+ * format FormData data
+ * @param contentType
+ * @param data
+ * @returns
+ */
+function handlerFormDataBodyData(contentType: string, data: any) {
+  const boundary = contentType.replace(/^.*boundary=(.*)$/, '$1');
+  let str = '';
+  for (const [key, value] of Object.entries(data)) {
+    str += `--${boundary}\r\nContent-Disposition: form-data; name="${key}"\r\n\r\n${value}\r\n`;
+  }
+  return str;
 }
