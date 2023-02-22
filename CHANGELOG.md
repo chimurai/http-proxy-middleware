@@ -2,6 +2,7 @@
 
 ## next
 
+- feat(typescript): type improvements ([#882](https://github.com/chimurai/http-proxy-middleware/pull/882))
 - chore(deps): update micromatch to 4.0.5
 - chore(package): bump devDependencies
 - feat(legacyCreateProxyMiddleware): show migration tips ([#756](https://github.com/chimurai/http-proxy-middleware/pull/756))

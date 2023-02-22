@@ -26,7 +26,7 @@ export type Filter<TReq = http.IncomingMessage> =
   | ((pathname: string, req: TReq) => boolean);
 
 export interface Plugin<TReq = http.IncomingMessage, TRes = http.ServerResponse> {
-  (proxyServer: httpProxy, options: Options<TReq, TRes>): void;
+  (proxyServer: httpProxy<TReq, TRes>, options: Options<TReq, TRes>): void;
 }
 
 export interface OnProxyEvent<TReq = http.IncomingMessage, TRes = http.ServerResponse> {

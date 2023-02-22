@@ -14,7 +14,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options<TReq, TRes>;
-  private proxy: httpProxy;
+  private proxy: httpProxy<TReq, TRes>;
   private pathRewriter;
 
   constructor(options: Options<TReq, TRes>) {
@@ -75,7 +75,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     }
   };
 
-  private registerPlugins(proxy: httpProxy, options: Options<TReq, TRes>) {
+  private registerPlugins(proxy: httpProxy<TReq, TRes>, options: Options<TReq, TRes>) {
     const plugins = getPlugins<TReq, TRes>(options);
     plugins.forEach((plugin) => {
       debug(`register plugin: "${getFunctionName(plugin)}"`);
