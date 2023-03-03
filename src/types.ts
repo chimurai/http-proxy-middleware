@@ -49,8 +49,22 @@ export interface Options<TReq = http.IncomingMessage, TRes = http.ServerResponse
    * Narrow down requests to proxy or not.
    * Filter on {@link http.IncomingMessage.url `pathname`} which is relative to the proxy's "mounting" point in the server.
    * Or use the {@link http.IncomingMessage `req`}  object for more complex filtering.
+   * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/pathFilter.md
+   * @since v3.0.0
    */
   pathFilter?: Filter<TReq>;
+  /**
+   * Modify request paths before requests are send to the target.
+   * @example
+   * ```js
+   * createProxyMiddleware({
+   *   pathRewrite: {
+   *     '^/api/old-path': '/api/new-path', // rewrite path
+   *   }
+   * });
+   * ```
+   * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/pathRewrite.md
+   */
   pathRewrite?:
     | { [regexp: string]: string }
     | ((path: string, req: TReq) => string)
@@ -68,12 +82,15 @@ export interface Options<TReq = http.IncomingMessage, TRes = http.ServerResponse
    *   }]
    * });
    * ```
+   * @link https://github.com/chimurai/http-proxy-middleware#plugins-array
+   * @since v3.0.0
    */
   plugins?: Plugin<TReq, TRes>[];
   /**
    * Eject pre-configured plugins.
    * NOTE: register your own error handlers to prevent server from crashing.
    *
+   * @link https://github.com/chimurai/http-proxy-middleware#ejectplugins-boolean-default-false
    * @since v3.0.0
    */
   ejectPlugins?: boolean;
@@ -90,8 +107,22 @@ export interface Options<TReq = http.IncomingMessage, TRes = http.ServerResponse
    *   }
    * });
    * ```
+   * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/proxy-events.md
+   * @since v3.0.0
    */
   on?: OnProxyEvent<TReq, TRes>;
+  /**
+   * Dynamically set the {@link Options.target `options.target`}.
+   * @example
+   * ```js
+   * createProxyMiddleware({
+   *   router: async (req) => {
+   *     return 'http://127:0.0.1:3000';
+   *   }
+   * });
+   * ```
+   * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/router.md
+   */
   router?:
     | { [hostOrPath: string]: httpProxy.ServerOptions['target'] }
     | ((req: TReq) => httpProxy.ServerOptions['target'])
@@ -104,6 +135,8 @@ export interface Options<TReq = http.IncomingMessage, TRes = http.ServerResponse
    *  logger: console
    * });
    * ```
+   * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/logger.md
+   * @since v3.0.0
    */
   logger?: Logger | any;
 }
