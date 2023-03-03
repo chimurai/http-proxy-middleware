@@ -1,10 +1,15 @@
-import type { Filter, Request } from './types';
+import type { Filter } from './types';
 import * as isGlob from 'is-glob';
 import * as micromatch from 'micromatch';
 import * as url from 'url';
 import { ERRORS } from './errors';
+import type * as http from 'http';
 
-export function matchPathFilter(pathFilter: Filter = '/', uri: string, req: Request): boolean {
+export function matchPathFilter<TReq = http.IncomingMessage>(
+  pathFilter: Filter<TReq> = '/',
+  uri: string,
+  req: http.IncomingMessage
+): boolean {
   // single path
   if (isStringPath(pathFilter as string)) {
     return matchSingleStringPath(pathFilter as string, uri);
@@ -30,7 +35,7 @@ export function matchPathFilter(pathFilter: Filter = '/', uri: string, req: Requ
   // custom matching
   if (typeof pathFilter === 'function') {
     const pathname = getUrlPathName(uri);
-    return pathFilter(pathname, req);
+    return pathFilter(pathname, req as unknown as TReq);
   }
 
   throw new Error(ERRORS.ERR_CONTEXT_MATCHER_GENERIC);

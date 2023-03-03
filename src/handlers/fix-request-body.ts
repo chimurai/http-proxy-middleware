@@ -1,13 +1,16 @@
 import type * as http from 'http';
-import type * as express from 'express';
-import type { Request } from '../types';
 import * as querystring from 'querystring';
+
+export type BodyParserLikeRequest = http.IncomingMessage & { body: any };
 
 /**
  * Fix proxied body if bodyParser is involved.
  */
-export function fixRequestBody(proxyReq: http.ClientRequest, req: Request): void {
-  const requestBody = (req as Request<express.Request>).body;
+export function fixRequestBody<TReq = http.IncomingMessage>(
+  proxyReq: http.ClientRequest,
+  req: TReq
+): void {
+  const requestBody = (req as unknown as BodyParserLikeRequest).body;
 
   if (!requestBody) {
     return;

@@ -20,11 +20,11 @@ const proxyEventMap = {
 /**
  * Convert {@link LegacyOptions legacy Options} to new {@link Options}
  */
-export function legacyOptionsAdapter(
-  legacyContext: Filter | LegacyOptions,
-  legacyOptions: LegacyOptions
-): Options {
-  let options: LegacyOptions;
+export function legacyOptionsAdapter<TReq, TRes>(
+  legacyContext: Filter<TReq> | LegacyOptions<TReq, TRes>,
+  legacyOptions: LegacyOptions<TReq, TRes>
+): Options<TReq, TRes> {
+  let options: LegacyOptions<TReq, TRes>;
   let logger: Logger;
 
   // https://github.com/chimurai/http-proxy-middleware/pull/716
@@ -39,7 +39,7 @@ export function legacyOptionsAdapter(
   // https://github.com/chimurai/http-proxy-middleware/pull/722/files#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L4
   if (legacyContext && legacyOptions) {
     debug('map legacy context/filter to options.pathFilter');
-    options = { ...legacyOptions, pathFilter: legacyContext as Filter };
+    options = { ...legacyOptions, pathFilter: legacyContext as Filter<TReq> };
     logger = getLegacyLogger(options);
 
     logger.warn(
@@ -53,7 +53,7 @@ export function legacyOptionsAdapter(
       `
     );
   } else if (legacyContext && !legacyOptions) {
-    options = { ...(legacyContext as Options) };
+    options = { ...(legacyContext as LegacyOptions<TReq, TRes>) };
     logger = getLegacyLogger(options);
   }
 

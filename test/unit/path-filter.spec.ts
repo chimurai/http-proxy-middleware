@@ -1,8 +1,8 @@
-import type { Request } from '../../src/types';
+import type * as http from 'http';
 import { matchPathFilter } from '../../src/path-filter';
 
 describe('Path Filter', () => {
-  const fakeReq = {} as Request;
+  const fakeReq = {} as http.IncomingMessage;
 
   describe('String path matching', () => {
     let result;
