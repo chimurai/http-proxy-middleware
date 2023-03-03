@@ -25,43 +25,45 @@ const proxy_options = {
   pathRewrite: {
     '^/docs': '/java/rep/server1', // Host path & target path conversion
   },
-  onError(err, req, res) {
-    res.writeHead(500, {
-      'Content-Type': 'text/plain',
-    });
-    res.end('Something went wrong. And we are reporting a custom error message.' + err);
-  },
-  onProxyReq(proxyReq, req, res) {
-    if (req.method == 'POST' && req.body) {
-      // Add req.body logic here if needed....
+  on: {
+    error(err, req, res) {
+      res.writeHead(500, {
+        'Content-Type': 'text/plain',
+      });
+      res.end('Something went wrong. And we are reporting a custom error message.' + err);
+    },
+    proxyReq(proxyReq, req, res) {
+      if (req.method == 'POST' && req.body) {
+        // Add req.body logic here if needed....
 
-      // ....
+        // ....
 
-      // Remove body-parser body object from the request
-      if (req.body) delete req.body;
+        // Remove body-parser body object from the request
+        if (req.body) delete req.body;
 
-      // Make any needed POST parameter changes
-      let body = new Object();
+        // Make any needed POST parameter changes
+        let body = new Object();
 
-      body.filename = 'reports/statistics/summary_2016.pdf';
-      body.routeId = 's003b012d002';
-      body.authId = 'bac02c1d-258a-4177-9da6-862580154960';
+        body.filename = 'reports/statistics/summary_2016.pdf';
+        body.routeId = 's003b012d002';
+        body.authId = 'bac02c1d-258a-4177-9da6-862580154960';
 
-      // URI encode JSON object
-      body = Object.keys(body)
-        .map(function (key) {
-          return encodeURIComponent(key) + '=' + encodeURIComponent(body[key]);
-        })
-        .join('&');
+        // URI encode JSON object
+        body = Object.keys(body)
+          .map(function (key) {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(body[key]);
+          })
+          .join('&');
 
-      // Update header
-      proxyReq.setHeader('content-type', 'application/x-www-form-urlencoded');
-      proxyReq.setHeader('content-length', body.length);
+        // Update header
+        proxyReq.setHeader('content-type', 'application/x-www-form-urlencoded');
+        proxyReq.setHeader('content-length', body.length);
 
-      // Write out body changes to the proxyReq stream
-      proxyReq.write(body);
-      proxyReq.end();
-    }
+        // Write out body changes to the proxyReq stream
+        proxyReq.write(body);
+        proxyReq.end();
+      }
+    },
   },
 };
 
