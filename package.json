@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0-beta.1",
   "description": "The one-liner node.js proxy middleware for connect, express, next.js and more",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
