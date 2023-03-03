@@ -12,8 +12,6 @@ const myProxy = createProxyMiddleware({
       // before
       proxyReq.setHeader('mpth-1', 'da');
     },
-  }
-  on: {
     proxyRes: async (proxyRes, req, res) => {
       const da = await new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -27,7 +25,7 @@ const myProxy = createProxyMiddleware({
       // now pipe the response
       proxyRes.pipe(res);
     },
-  }
+  },
 });
 
 app.use('/api', myProxy);
@@ -60,8 +58,6 @@ const myProxy = createProxyMiddleware({
 
       proxyReq.setHeader('mpth-1', req.locals.da);
     },
-  }
-  on: {
     proxyRes: async (proxyRes, req, res) => {
       const da = await new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -74,7 +70,7 @@ const myProxy = createProxyMiddleware({
 
       proxyRes.pipe(res);
     },
-  }
+  },
 });
 
 app.use('/api', entryMiddleware, myProxy);
