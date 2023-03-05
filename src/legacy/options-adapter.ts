@@ -31,7 +31,10 @@ export function legacyOptionsAdapter<TReq, TRes>(
   if (typeof legacyContext === 'string' && !!url.parse(legacyContext).host) {
     throw new Error(
       `Shorthand syntax is removed from legacyCreateProxyMiddleware().
-      Please use "legacyCreateProxyMiddleware({ target: 'http://www.example.org' })" instead.`
+      Please use "legacyCreateProxyMiddleware({ target: 'http://www.example.org' })" instead.
+
+      More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md#removed-shorthand-usage
+      `
     );
   }
 
@@ -49,7 +52,7 @@ export function legacyOptionsAdapter<TReq, TRes>(
         pathFilter: '${legacyContext}',
       }
 
-      More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md
+      More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md#removed-context-argument
       `
     );
   } else if (legacyContext && !legacyOptions) {
@@ -74,7 +77,7 @@ export function legacyOptionsAdapter<TReq, TRes>(
           },
         }
 
-        More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md
+        More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md#refactored-proxy-events
         `
       );
     }
@@ -97,7 +100,7 @@ export function legacyOptionsAdapter<TReq, TRes>(
         logger: console,
       }
 
-      More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md
+      More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md#removed-logprovider-and-loglevel-options
       `
     );
   }

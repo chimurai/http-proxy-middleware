@@ -13,7 +13,10 @@ describe('legacyCreateProxyMiddleware()', () => {
     expect(() => legacyCreateProxyMiddleware(`http://localhost:${mockServer.port}`))
       .toThrowErrorMatchingInlineSnapshot(`
       "Shorthand syntax is removed from legacyCreateProxyMiddleware().
-            Please use "legacyCreateProxyMiddleware({ target: 'http://www.example.org' })" instead."
+            Please use "legacyCreateProxyMiddleware({ target: 'http://www.example.org' })" instead.
+
+            More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md#removed-shorthand-usage
+            "
     `);
   });
 
