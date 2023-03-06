@@ -67,9 +67,9 @@ export function responseInterceptor<
  */
 function decompress<TReq extends http.IncomingMessage = http.IncomingMessage>(
   proxyRes: TReq,
-  contentEncoding: string
-): TReq {
-  let _proxyRes = proxyRes;
+  contentEncoding?: string
+): TReq | zlib.Gunzip | zlib.Inflate | zlib.BrotliDecompress {
+  let _proxyRes: TReq | zlib.Gunzip | zlib.Inflate | zlib.BrotliDecompress = proxyRes;
   let decompress;
 
   switch (contentEncoding) {
