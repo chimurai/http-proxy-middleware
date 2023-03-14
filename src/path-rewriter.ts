@@ -4,6 +4,8 @@ import { Debug } from './debug';
 
 const debug = Debug.extend('path-rewriter');
 
+type RewriteRule = { regex: RegExp; value: string };
+
 /**
  * Create rewrite function, to cache parsed rewrite rules.
  *
@@ -11,7 +13,7 @@ const debug = Debug.extend('path-rewriter');
  * @return {Function} Function to rewrite paths; This function should accept `path` (request.url) as parameter
  */
 export function createPathRewriter(rewriteConfig) {
-  let rulesCache;
+  let rulesCache: RewriteRule[];
 
   if (!isValidRewriteConfig(rewriteConfig)) {
     return;
@@ -52,8 +54,8 @@ function isValidRewriteConfig(rewriteConfig) {
   }
 }
 
-function parsePathRewriteRules(rewriteConfig) {
-  const rules = [];
+function parsePathRewriteRules(rewriteConfig: Record<string, string>) {
+  const rules: RewriteRule[] = [];
 
   if (isPlainObj(rewriteConfig)) {
     for (const [key, value] of Object.entries(rewriteConfig)) {
