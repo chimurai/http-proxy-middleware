@@ -256,7 +256,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should send request header "host" to target server', async () => {
-        let completedRequest: CompletedRequest;
+        let completedRequest: CompletedRequest | undefined;
 
         await mockTargetServer.forGet().thenCallback((req) => {
           completedRequest = req;
@@ -265,7 +265,7 @@ describe('E2E http-proxy-middleware', () => {
 
         const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
         expect(response.text).toBe('OK');
-        expect(completedRequest.headers.host).toBe('foobar.dev');
+        expect(completedRequest?.headers.host).toBe('foobar.dev');
       });
     });
 
@@ -374,7 +374,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should add `x-added` as custom header to request"', async () => {
-        let completedRequest: CompletedRequest;
+        let completedRequest: CompletedRequest | undefined;
         await mockTargetServer.forGet().thenCallback((req) => {
           completedRequest = req;
           return { statusCode: 200 };
@@ -382,7 +382,7 @@ describe('E2E http-proxy-middleware', () => {
 
         await agent.get(`/api/foo/bar`).expect(200);
 
-        expect(completedRequest.headers['x-added']).toBe('added-from-hpm');
+        expect(completedRequest?.headers['x-added']).toBe('added-from-hpm');
       });
     });
 

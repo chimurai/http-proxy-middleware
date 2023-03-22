@@ -1,3 +1,4 @@
+import type * as net from 'net';
 import type * as http from 'http';
 import type * as https from 'https';
 import type { RequestHandler, Options, Filter } from './types';
@@ -38,7 +39,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-  public middleware: RequestHandler = async (req, res, next?) => {
+  public middleware: RequestHandler = (async (req, res, next?) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       try {
         const activeProxyOptions = await this.prepareProxyRequest(req);
@@ -73,7 +74,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
       // use initial request to access the server object to subscribe to http upgrade event
       this.catchUpgradeRequest(server);
     }
-  };
+  }) as RequestHandler;
 
   private registerPlugins(proxy: httpProxy<TReq, TRes>, options: Options<TReq, TRes>) {
     const plugins = getPlugins<TReq, TRes>(options);
@@ -93,7 +94,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     }
   };
 
-  private handleUpgrade = async (req: http.IncomingMessage, socket, head) => {
+  private handleUpgrade = async (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       const activeProxyOptions = await this.prepareProxyRequest(req);
       this.proxy.ws(req, socket, head, activeProxyOptions);
@@ -104,7 +105,10 @@ export class HttpProxyMiddleware<TReq, TRes> {
   /**
    * Determine whether request should be proxied.
    */
-  private shouldProxy = (pathFilter: Filter<TReq>, req: http.IncomingMessage): boolean => {
+  private shouldProxy = (
+    pathFilter: Filter<TReq> | undefined,
+    req: http.IncomingMessage
+  ): boolean => {
     return matchPathFilter(pathFilter, req.url, req);
   };
 
@@ -138,7 +142,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
   };
 
   // Modify option.target when router present.
-  private applyRouter = async (req: http.IncomingMessage, options) => {
+  private applyRouter = async (req: http.IncomingMessage, options: Options<TReq, TRes>) => {
     let newTarget;
 
     if (options.router) {

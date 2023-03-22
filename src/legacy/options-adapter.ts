@@ -24,7 +24,7 @@ export function legacyOptionsAdapter<TReq, TRes>(
   legacyContext: Filter<TReq> | LegacyOptions<TReq, TRes>,
   legacyOptions: LegacyOptions<TReq, TRes>
 ): Options<TReq, TRes> {
-  let options: LegacyOptions<TReq, TRes>;
+  let options: LegacyOptions<TReq, TRes> = {};
   let logger: Logger;
 
   // https://github.com/chimurai/http-proxy-middleware/pull/716
@@ -58,6 +58,8 @@ export function legacyOptionsAdapter<TReq, TRes>(
   } else if (legacyContext && !legacyOptions) {
     options = { ...(legacyContext as LegacyOptions<TReq, TRes>) };
     logger = getLegacyLogger(options);
+  } else {
+    logger = getLegacyLogger({}) as never;
   }
 
   // map old event names to new event names

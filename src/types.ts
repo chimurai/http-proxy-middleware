@@ -17,7 +17,7 @@ export interface RequestHandler<
   TNext = NextFunction
 > {
   (req: TReq, res: TRes, next?: TNext): void | Promise<void>;
-  upgrade?: (req: http.IncomingMessage, socket: net.Socket, head: any) => void;
+  upgrade: (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => void;
 }
 
 export type Filter<TReq = http.IncomingMessage> =
@@ -67,7 +67,7 @@ export interface Options<TReq = http.IncomingMessage, TRes = http.ServerResponse
    */
   pathRewrite?:
     | { [regexp: string]: string }
-    | ((path: string, req: TReq) => string)
+    | ((path: string, req: TReq) => string | undefined)
     | ((path: string, req: TReq) => Promise<string>);
   /**
    * Access the internal http-proxy server instance to customize behavior
