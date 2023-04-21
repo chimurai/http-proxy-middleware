@@ -91,7 +91,7 @@
     "micromatch": "^4.0.5"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": "^14.15.0 || ^16.10.0 || >=18.0.0"
   },
   "commitlint": {
     "extends": [
