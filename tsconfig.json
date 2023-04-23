@@ -8,6 +8,7 @@
     "target": "es2021",
     "incremental": true,
     "declaration": true,
+    "skipLibCheck": true,
     "strict": true,
     "noImplicitAny": false
   },
