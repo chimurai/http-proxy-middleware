@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: streetsidesoftware/cspell-action@main
+      - uses: streetsidesoftware/cspell-action@v2
         with:
           # Github token used to fetch the list of changed files in the commit.
           # Default: ${{ github.token }}
