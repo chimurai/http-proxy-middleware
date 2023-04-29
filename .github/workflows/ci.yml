@@ -3,6 +3,35 @@ name: CI
 on: ['push', 'pull_request']
 
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: yarn install
+        if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
+        run: yarn install --frozen-lockfile --ignore-scripts
+
+      - name: yarn build
+        run: yarn build
+
+        env:
+          CI: true
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
