@@ -89,7 +89,7 @@ jobs:
         run: yarn install --frozen-lockfile --ignore-scripts
 
       - name: yarn test
-        run: yarn test --reporters="default" --reporters="github-actions"
+        run: yarn test --ci --reporters="default" --reporters="github-actions"
 
         env:
           CI: true
