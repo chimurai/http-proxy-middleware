@@ -84,7 +84,7 @@
   "dependencies": {
     "@types/http-proxy": "^1.17.7",
     "http-proxy": "^1.18.1",
-    "is-glob": "^4.0.1",
+    "is-glob": "^4.0.2",
     "is-plain-obj": "^3.0.0",
     "micromatch": "^4.0.2"
   },
