@@ -36,7 +36,7 @@ const onProxyReq = function (proxyReq, req, res) {
 
 const options = {
   target: 'http://localhost:3000',
-  on: { 'proxyReq', onProxyReq }
+  on: { proxyReq: onProxyReq }
 };
 
 const apiProxy = createProxyMiddleware(options);
@@ -56,7 +56,7 @@ const onProxyReqWs = function (proxyReq, req, socket, options, head) {
 
 const options = {
   target: 'http://localhost:3000',
-  on: { 'proxyReqWs', onProxyReqWs }
+  on: { proxyReqWs: onProxyReqWs }
 };
 
 const apiProxy = createProxyMiddleware(options);
@@ -79,7 +79,7 @@ const onProxyRes = function (proxyRes, req, res) {
 
 const options = {
   target: 'http://localhost:3000',
-  on: { 'proxyRes', onProxyRes }
+  on: { proxyRes: onProxyRes }
 };
 
 const apiProxy = createProxyMiddleware(options);
