@@ -1,9 +1,10 @@
 import { IncomingMessage, ServerResponse } from 'http';
+import { Socket } from 'net';
 
 import { responseInterceptor } from '../../src/handlers/response-interceptor';
 
 const fakeProxyResponse = () => {
-  const httpIncomingMessage = new IncomingMessage(null);
+  const httpIncomingMessage = new IncomingMessage(new Socket());
   httpIncomingMessage._read = () => ({});
   return httpIncomingMessage;
 };
@@ -24,38 +25,32 @@ const waitInterceptorHandler = (ms = 1): Promise<void> =>
 
 describe('responseInterceptor', () => {
   it('should write body on end proxy event', async () => {
-    const httpIncomingMessage = fakeProxyResponse();
-    const response = fakeResponse();
+    const proxyRes = fakeProxyResponse();
+    const req = fakeProxyResponse();
+    const res = fakeResponse();
 
-    responseInterceptor(async () => JSON.stringify({ someField: '' }))(
-      httpIncomingMessage,
-      null,
-      response
-    );
+    responseInterceptor(async () => JSON.stringify({ someField: '' }))(proxyRes, req, res);
 
-    httpIncomingMessage.emit('end');
+    proxyRes.emit('end');
     await waitInterceptorHandler();
 
     const expectedBody = JSON.stringify({ someField: '' });
-    expect(response.setHeader).toHaveBeenCalledWith('content-length', expectedBody.length);
-    expect(response.write).toHaveBeenCalledWith(Buffer.from(expectedBody));
-    expect(response.end).toHaveBeenCalledWith();
+    expect(res.setHeader).toHaveBeenCalledWith('content-length', expectedBody.length);
+    expect(res.write).toHaveBeenCalledWith(Buffer.from(expectedBody));
+    expect(res.end).toHaveBeenCalledWith();
   });
 
   it('should end with error when receive a proxy error event', async () => {
-    const httpIncomingMessage = fakeProxyResponse();
-    const response = fakeResponse();
+    const proxyRes = fakeProxyResponse();
+    const req = fakeProxyResponse();
+    const res = fakeResponse();
 
-    responseInterceptor(async () => JSON.stringify({ someField: '' }))(
-      httpIncomingMessage,
-      null,
-      response
-    );
+    responseInterceptor(async () => JSON.stringify({ someField: '' }))(proxyRes, req, res);
 
-    httpIncomingMessage.emit('error', new Error('some error message'));
+    proxyRes.emit('error', new Error('some error message'));
 
-    expect(response.setHeader).not.toHaveBeenCalled();
-    expect(response.write).not.toHaveBeenCalled();
-    expect(response.end).toHaveBeenCalledWith('Error fetching proxied request: some error message');
+    expect(res.setHeader).not.toHaveBeenCalled();
+    expect(res.write).not.toHaveBeenCalled();
+    expect(res.end).toHaveBeenCalledWith('Error fetching proxied request: some error message');
   });
 });

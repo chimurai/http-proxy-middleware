@@ -18,7 +18,7 @@ describe('express error middleware', () => {
     const app = createApp(proxyMiddleware, errorMiddleware);
     const response = await request(app).get('/get').expect(504);
 
-    expect(httpProxyError.message).toBe('Must provide a proper URL as target');
+    expect(httpProxyError?.message).toBe('Must provide a proper URL as target');
     expect(response.text).toBe('Something broke!');
   });
 });

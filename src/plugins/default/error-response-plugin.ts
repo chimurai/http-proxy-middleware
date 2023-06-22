@@ -1,8 +1,9 @@
+import type * as http from 'http';
 import type { Socket } from 'net';
 import { getStatusCode } from '../../status-code';
-import { Plugin, Response } from '../../types';
+import { Plugin } from '../../types';
 
-function isResponseLike(obj: any): obj is Response {
+function isResponseLike(obj: any): obj is http.ServerResponse {
   return obj && typeof obj.writeHead === 'function';
 }
 
@@ -11,7 +12,7 @@ function isSocketLike(obj: any): obj is Socket {
 }
 
 export const errorResponsePlugin: Plugin = (proxyServer, options) => {
-  proxyServer.on('error', (err, req, res: Response | Socket, target?) => {
+  proxyServer.on('error', (err, req, res, target?) => {
     // Re-throw error. Not recoverable since req & res are empty.
     if (!req && !res) {
       throw err; // "Error: Must provide a proper URL as target"

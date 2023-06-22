@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0-beta.1",
   "description": "The one-liner node.js proxy middleware for connect, express, next.js and more",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -51,58 +51,47 @@
   },
   "homepage": "https://github.com/chimurai/http-proxy-middleware#readme",
   "devDependencies": {
-    "@commitlint/cli": "16.2.3",
-    "@commitlint/config-conventional": "16.2.1",
+    "@commitlint/cli": "17.6.1",
+    "@commitlint/config-conventional": "17.6.1",
     "@types/debug": "4.1.7",
-    "@types/express": "4.17.13",
+    "@types/express": "4.17.17",
     "@types/is-glob": "4.0.2",
-    "@types/jest": "29.0.0",
+    "@types/jest": "29.5.1",
     "@types/micromatch": "4.0.2",
-    "@types/node": "17.0.25",
+    "@types/node": "18.16.0",
     "@types/supertest": "2.0.12",
-    "@types/ws": "8.5.3",
-    "@typescript-eslint/eslint-plugin": "5.20.0",
-    "@typescript-eslint/parser": "5.20.0",
-    "body-parser": "1.20.0",
-    "browser-sync": "2.27.9",
+    "@types/ws": "8.5.4",
+    "@typescript-eslint/eslint-plugin": "5.59.0",
+    "@typescript-eslint/parser": "5.59.0",
+    "body-parser": "1.20.2",
+    "browser-sync": "2.29.1",
     "connect": "3.7.0",
-    "eslint": "8.13.0",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-prettier": "4.0.0",
-    "express": "4.17.3",
+    "eslint": "8.39.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "express": "4.18.2",
     "get-port": "5.1.1",
-    "husky": "7.0.4",
-    "jest": "29.0.2",
-    "lint-staged": "12.3.8",
-    "mockttp": "2.7.0",
-    "open": "8.4.0",
-    "prettier": "2.6.2",
-    "supertest": "6.2.2",
-    "ts-jest": "29.0.0",
-    "typescript": "4.6.3",
-    "ws": "8.5.0"
+    "husky": "8.0.3",
+    "jest": "29.5.0",
+    "lint-staged": "13.2.1",
+    "mockttp": "3.7.1",
+    "open": "8.4.2",
+    "prettier": "2.8.8",
+    "supertest": "6.3.3",
+    "ts-jest": "29.1.0",
+    "typescript": "5.0.4",
+    "ws": "8.13.0"
   },
   "dependencies": {
-    "@types/http-proxy": "^1.17.8",
+    "@types/http-proxy": "^1.17.10",
     "debug": "^4.3.4",
     "http-proxy": "^1.18.1",
     "is-glob": "^4.0.1",
     "is-plain-obj": "^3.0.0",
     "micromatch": "^4.0.5"
   },
-  "peerDependencies": {
-    "@types/express": "^4.17.13"
-  },
-  "peerDependenciesMeta": {
-    "@types/express": {
-      "optional": true
-    }
-  },
-  "resolutions": {
-    "browser-sync/portscanner": "2.2.0"
-  },
   "engines": {
-    "node": ">=12.0.0"
+    "node": "^14.15.0 || ^16.10.0 || >=18.0.0"
   },
   "commitlint": {
     "extends": [

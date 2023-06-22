@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
+import * as express from 'express';
 import * as http from 'http';
-import { createProxyMiddleware as middleware } from '../src';
-import type { Options } from '../src/types';
+import { createProxyMiddleware as middleware, fixRequestBody, responseInterceptor } from '../src';
+import type { Options, RequestHandler } from '../src/types';
 
 describe('http-proxy-middleware TypeScript Types', () => {
   let options: Options;
@@ -126,7 +127,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
   });
 
   describe('express request and response types', () => {
-    it('should get TypeScript errors when express specific properties are used', () => {
+    it('should get TypeScript type errors when express specific properties are used with base types', () => {
       options = {
         on: {
           proxyReq(proxyReq, req, res, options) {
@@ -141,6 +142,241 @@ describe('http-proxy-middleware TypeScript Types', () => {
       };
 
       expect(options).toBeDefined();
+    });
+
+    it('should get contextual types from express server', () => {
+      const app = express();
+      app.use(
+        middleware({
+          router: (req) => req.params,
+          pathFilter: (pathname, req) => !!req.params,
+          on: {
+            error(error, req, res, target) {
+              req.params;
+
+              // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+              if (res instanceof http.ServerResponse) {
+                res.status(200).send('OK');
+              }
+            },
+            proxyReq(proxyReq, req, res, options) {
+              req.params;
+              res.status(200).send('OK');
+            },
+            proxyReqWs(proxyReq, req, socket, options, head) {
+              req.params;
+            },
+            proxyRes(proxyRes, req, res) {
+              req.params;
+              res.status(200).send('OK');
+            },
+            close(proxyRes, proxySocket, proxyHead) {
+              proxyRes.params;
+            },
+            start(req, res, target) {
+              req.params;
+              res.status(200).send('OK');
+            },
+            end(req, res, proxyRes) {
+              req.params;
+              res.status(200).send('OK');
+              proxyRes.params;
+            },
+            econnreset(error, req, res, target) {
+              req.params;
+              res.status(200).send('OK');
+            },
+          },
+        })
+      );
+
+      expect(app).toBeDefined();
+    });
+
+    // FIXME: contextual types should work with express path middleware
+    // it('should get contextual types from express server', () => {
+    //   const app = express();
+    //   app.use(
+    //     '/',
+    //     middleware({
+    //       router: (req) => req.params,
+    //       pathFilter: (pathname, req) => !!req.params,
+    //       on: {
+    //         error(error, req, res, target) {
+    //           req.params;
+
+    //           // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+    //           if (res instanceof http.ServerResponse) {
+    //             res.status(200).send('OK');
+    //           }
+    //         },
+    //         proxyReq(proxyReq, req, res, options) {
+    //           req.params;
+    //           res.status(200).send('OK');
+    //         },
+    //         proxyReqWs(proxyReq, req, socket, options, head) {
+    //           req.params;
+    //         },
+    //         proxyRes(proxyRes, req, res) {
+    //           req.params;
+    //           res.status(200).send('OK');
+    //         },
+    //         close(proxyRes, proxySocket, proxyHead) {
+    //           proxyRes.params;
+    //         },
+    //         start(req, res, target) {
+    //           req.params;
+    //           res.status(200).send('OK');
+    //         },
+    //         end(req, res, proxyRes) {
+    //           req.params;
+    //           res.status(200).send('OK');
+    //           proxyRes.params;
+    //         },
+    //         econnreset(error, req, res, target) {
+    //           req.params;
+    //           res.status(200).send('OK');
+    //         },
+    //       },
+    //     })
+    //   );
+
+    //   expect(app).toBeDefined();
+    // });
+
+    it('should work with explicit generic custom req & res types', () => {
+      interface MyRequest extends http.IncomingMessage {
+        myRequestParams: { [key: string]: string };
+      }
+
+      interface MyResponse extends http.ServerResponse {
+        myResponseParams: { [key: string]: string };
+      }
+
+      const proxy: RequestHandler<MyRequest, MyResponse> = middleware({
+        router: (req) => req.myRequestParams,
+        pathFilter: (pathname, req) => !!req.myRequestParams,
+
+        on: {
+          error(error, req, res, target) {
+            req.myRequestParams;
+
+            // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+            if (res instanceof http.ServerResponse) {
+              res.myResponseParams;
+            }
+          },
+          proxyReq(proxyReq, req, res, options) {
+            req.myRequestParams;
+            res.myResponseParams;
+          },
+          proxyReqWs(proxyReq, req, socket, options, head) {
+            req.myRequestParams;
+          },
+          proxyRes(proxyRes, req, res) {
+            req.myRequestParams;
+            res.myResponseParams;
+          },
+          close(proxyRes, proxySocket, proxyHead) {
+            proxyRes.myRequestParams;
+          },
+          start(req, res, target) {
+            req.myRequestParams;
+            res.myResponseParams;
+          },
+          end(req, res, proxyRes) {
+            req.myRequestParams;
+            res.myResponseParams;
+            proxyRes.myRequestParams;
+          },
+          econnreset(error, req, res, target) {
+            req.myRequestParams;
+            res.myResponseParams;
+          },
+        },
+      });
+
+      expect(proxy).toBeDefined();
+    });
+
+    it('should work with custom req & res types in responseInterceptor', () => {
+      interface MyRequest extends http.IncomingMessage {
+        myRequestParams: { [key: string]: string };
+      }
+
+      interface MyResponse extends http.ServerResponse {
+        myResponseParams: { [key: string]: string };
+      }
+
+      const proxy: RequestHandler<MyRequest, MyResponse> = middleware({
+        target: 'http://www.example.org',
+        on: {
+          error: (err: Error & { code?: string }, req, res) => {
+            err.code;
+          },
+          proxyRes: responseInterceptor(async (buffer, proxyRes, req, res) => {
+            req.myRequestParams;
+            res.myResponseParams;
+            return buffer;
+          }),
+        },
+      });
+
+      expect(proxy).toBeDefined();
+    });
+
+    it('should work with express.Request with fixRequestBody', () => {
+      const proxy: RequestHandler<express.Request> = middleware({
+        target: 'http://www.example.org',
+        on: {
+          proxyReq: fixRequestBody,
+        },
+      });
+
+      expect(proxy).toBeDefined();
+    });
+
+    it('should work with generic types in plugins', () => {
+      const proxy: RequestHandler<express.Request, express.Response> = middleware({
+        target: 'http://www.example.org',
+        plugins: [
+          (proxyServer, options) => {
+            proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
+              req.params;
+              res.status(200).send('OK');
+            });
+          },
+        ],
+      });
+
+      expect(proxy).toBeDefined();
+    });
+
+    it('should work with contextual Express types with shipped plugins', () => {
+      const app = express();
+      app.use(
+        middleware({
+          target: 'http://www.example.org',
+          plugins: [
+            (proxyServer, options) => {
+              // fixRequestBody
+              proxyServer.on('proxyReq', fixRequestBody);
+
+              // responseInterceptor
+              proxyServer.on(
+                'proxyRes',
+                responseInterceptor(async (buffer, proxyRes, req, res) => {
+                  req.params;
+                  res.status(200).send('OK');
+                  return buffer;
+                })
+              );
+            },
+          ],
+        })
+      );
+
+      expect(app).toBeDefined();
     });
   });
 });

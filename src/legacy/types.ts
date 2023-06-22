@@ -1,4 +1,4 @@
-// import * as httpProxy from 'http-proxy';
+import type * as http from 'http';
 import { Options } from '..';
 
 /**
@@ -6,7 +6,8 @@ import { Options } from '..';
  *
  * Will be removed in a future version.
  */
-export interface LegacyOptions extends Options {
+export interface LegacyOptions<TReq = http.IncomingMessage, TRes = http.ServerResponse>
+  extends Options<TReq, TRes> {
   /**
    * @deprecated
    * Use `on.error` instead.

@@ -16,8 +16,8 @@ describe('E2E Plugins', () => {
   });
 
   it('should register a plugin and access the http-proxy object', async () => {
-    let proxyReqUrl: string;
-    let responseStatusCode: number;
+    let proxyReqUrl: string | undefined;
+    let responseStatusCode: number | undefined;
 
     mockTargetServer.forGet('/users/1').thenReply(200, '{"userName":"John"}');
 

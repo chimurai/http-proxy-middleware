@@ -1,10 +1,15 @@
-import type { Filter, Request } from './types';
+import type { Filter } from './types';
 import * as isGlob from 'is-glob';
 import * as micromatch from 'micromatch';
 import * as url from 'url';
 import { ERRORS } from './errors';
+import type * as http from 'http';
 
-export function matchPathFilter(pathFilter: Filter = '/', uri: string, req: Request): boolean {
+export function matchPathFilter<TReq = http.IncomingMessage>(
+  pathFilter: Filter<TReq> = '/',
+  uri: string | undefined,
+  req: http.IncomingMessage
+): boolean {
   // single path
   if (isStringPath(pathFilter as string)) {
     return matchSingleStringPath(pathFilter as string, uri);
@@ -29,8 +34,8 @@ export function matchPathFilter(pathFilter: Filter = '/', uri: string, req: Requ
 
   // custom matching
   if (typeof pathFilter === 'function') {
-    const pathname = getUrlPathName(uri);
-    return pathFilter(pathname, req);
+    const pathname = getUrlPathName(uri) as string;
+    return pathFilter(pathname, req as TReq);
   }
 
   throw new Error(ERRORS.ERR_CONTEXT_MATCHER_GENERIC);
@@ -41,18 +46,18 @@ export function matchPathFilter(pathFilter: Filter = '/', uri: string, req: Requ
  * @param  {String} uri     'http://example.org/api/b/c/d.html'
  * @return {Boolean}
  */
-function matchSingleStringPath(pathFilter: string, uri: string) {
+function matchSingleStringPath(pathFilter: string, uri?: string) {
   const pathname = getUrlPathName(uri);
-  return pathname.indexOf(pathFilter) === 0;
+  return pathname?.indexOf(pathFilter) === 0;
 }
 
-function matchSingleGlobPath(pattern: string | string[], uri: string) {
-  const pathname = getUrlPathName(uri);
+function matchSingleGlobPath(pattern: string | string[], uri?: string) {
+  const pathname = getUrlPathName(uri) as string;
   const matches = micromatch([pathname], pattern);
   return matches && matches.length > 0;
 }
 
-function matchMultiGlobPath(patternList: string | string[], uri: string) {
+function matchMultiGlobPath(patternList: string | string[], uri?: string) {
   return matchSingleGlobPath(patternList, uri);
 }
 
@@ -61,7 +66,7 @@ function matchMultiGlobPath(patternList: string | string[], uri: string) {
  * @param  {String} uri     'http://example.org/api/b/c/d.html'
  * @return {Boolean}
  */
-function matchMultiPath(pathFilterList: string[], uri: string) {
+function matchMultiPath(pathFilterList: string[], uri?: string) {
   let isMultiPath = false;
 
   for (const context of pathFilterList) {
@@ -80,7 +85,7 @@ function matchMultiPath(pathFilterList: string[], uri: string) {
  * @param  {String} uri from req.url
  * @return {String}     RFC 3986 path
  */
-function getUrlPathName(uri: string) {
+function getUrlPathName(uri?: string) {
   return uri && url.parse(uri).pathname;
 }
 

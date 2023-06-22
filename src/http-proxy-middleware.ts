@@ -1,5 +1,7 @@
+import type * as net from 'net';
+import type * as http from 'http';
 import type * as https from 'https';
-import type { Request, RequestHandler, Options, Filter } from './types';
+import type { RequestHandler, Options, Filter } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { getPlugins } from './get-plugins';
@@ -9,15 +11,15 @@ import * as Router from './router';
 import { Debug as debug } from './debug';
 import { getFunctionName } from './utils/function';
 
-export class HttpProxyMiddleware {
+export class HttpProxyMiddleware<TReq, TRes> {
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
-  private proxyOptions: Options;
-  private proxy: httpProxy;
+  private proxyOptions: Options<TReq, TRes>;
+  private proxy: httpProxy<TReq, TRes>;
   private pathRewriter;
 
-  constructor(options: Options) {
-    verifyConfig(options);
+  constructor(options: Options<TReq, TRes>) {
+    verifyConfig<TReq, TRes>(options);
     this.proxyOptions = options;
 
     debug(`create proxy server`);
@@ -37,7 +39,7 @@ export class HttpProxyMiddleware {
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-  public middleware: RequestHandler = async (req, res, next?) => {
+  public middleware: RequestHandler = (async (req, res, next?) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       try {
         const activeProxyOptions = await this.prepareProxyRequest(req);
@@ -72,10 +74,10 @@ export class HttpProxyMiddleware {
       // use initial request to access the server object to subscribe to http upgrade event
       this.catchUpgradeRequest(server);
     }
-  };
+  }) as RequestHandler;
 
-  private registerPlugins(proxy: httpProxy, options: Options) {
-    const plugins = getPlugins(options);
+  private registerPlugins(proxy: httpProxy<TReq, TRes>, options: Options<TReq, TRes>) {
+    const plugins = getPlugins<TReq, TRes>(options);
     plugins.forEach((plugin) => {
       debug(`register plugin: "${getFunctionName(plugin)}"`);
       plugin(proxy, options);
@@ -92,7 +94,7 @@ export class HttpProxyMiddleware {
     }
   };
 
-  private handleUpgrade = async (req: Request, socket, head) => {
+  private handleUpgrade = async (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
     try {
       if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
         const activeProxyOptions = await this.prepareProxyRequest(req);
@@ -109,7 +111,10 @@ export class HttpProxyMiddleware {
   /**
    * Determine whether request should be proxied.
    */
-  private shouldProxy = (pathFilter: Filter, req: Request): boolean => {
+  private shouldProxy = (
+    pathFilter: Filter<TReq> | undefined,
+    req: http.IncomingMessage
+  ): boolean => {
     return matchPathFilter(pathFilter, req.url, req);
   };
 
@@ -121,7 +126,7 @@ export class HttpProxyMiddleware {
    * @param {Object} req
    * @return {Object} proxy options
    */
-  private prepareProxyRequest = async (req: Request) => {
+  private prepareProxyRequest = async (req: http.IncomingMessage) => {
     /**
      * Incorrect usage confirmed: https://github.com/expressjs/express/issues/4854#issuecomment-1066171160
      * Temporary restore req.url patch for {@link src/legacy/create-proxy-middleware.ts legacyCreateProxyMiddleware()}
@@ -143,7 +148,7 @@ export class HttpProxyMiddleware {
   };
 
   // Modify option.target when router present.
-  private applyRouter = async (req: Request, options) => {
+  private applyRouter = async (req: http.IncomingMessage, options: Options<TReq, TRes>) => {
     let newTarget;
 
     if (options.router) {
@@ -157,7 +162,7 @@ export class HttpProxyMiddleware {
   };
 
   // rewrite path
-  private applyPathRewrite = async (req: Request, pathRewriter) => {
+  private applyPathRewrite = async (req: http.IncomingMessage, pathRewriter) => {
     if (pathRewriter) {
       const path = await pathRewriter(req.url, req);
 

@@ -72,7 +72,7 @@ Next project: `/pages/api/users.ts`
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const proxyMiddleware = createProxyMiddleware({
+const proxyMiddleware = createProxyMiddleware<NextApiRequest, NextApiResponse>({
   target: 'http://jsonplaceholder.typicode.com',
   changeOrigin: true,
   pathRewrite: {
@@ -91,6 +91,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 export const config = {
   api: {
     externalResolver: true,
+    // Uncomment to fix stalled POST requests
+    // https://github.com/chimurai/http-proxy-middleware/issues/795#issuecomment-1314464432
+    // bodyParser: false,
   },
 };
 

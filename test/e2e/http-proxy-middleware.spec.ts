@@ -1,7 +1,7 @@
 import { createProxyMiddleware, createApp, createAppWithPath, fixRequestBody } from './test-kit';
 import * as request from 'supertest';
 import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
-import type { Request, Response } from '../../src/types';
+import type * as http from 'http';
 import type * as express from 'express';
 import * as bodyParser from 'body-parser';
 
@@ -18,10 +18,10 @@ describe('E2E http-proxy-middleware', () => {
 
   describe('pathFilter matching', () => {
     describe('do not proxy', () => {
-      const mockReq: Request = {
+      const mockReq: http.IncomingMessage = {
         url: '/foo/bar',
-      } as Request;
-      const mockRes: Response = {} as Response;
+      } as http.IncomingMessage;
+      const mockRes: http.ServerResponse = {} as http.ServerResponse;
       const mockNext: express.NextFunction = jest.fn();
 
       beforeEach(() => {
@@ -256,7 +256,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should send request header "host" to target server', async () => {
-        let completedRequest: CompletedRequest;
+        let completedRequest: CompletedRequest | undefined;
 
         await mockTargetServer.forGet().thenCallback((req) => {
           completedRequest = req;
@@ -265,7 +265,7 @@ describe('E2E http-proxy-middleware', () => {
 
         const response = await agent.get(`/api/some/endpoint/index.html`).expect(200);
         expect(response.text).toBe('OK');
-        expect(completedRequest.headers.host).toBe('foobar.dev');
+        expect(completedRequest?.headers.host).toBe('foobar.dev');
       });
     });
 
@@ -374,7 +374,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should add `x-added` as custom header to request"', async () => {
-        let completedRequest: CompletedRequest;
+        let completedRequest: CompletedRequest | undefined;
         await mockTargetServer.forGet().thenCallback((req) => {
           completedRequest = req;
           return { statusCode: 200 };
@@ -382,7 +382,7 @@ describe('E2E http-proxy-middleware', () => {
 
         await agent.get(`/api/foo/bar`).expect(200);
 
-        expect(completedRequest.headers['x-added']).toBe('added-from-hpm');
+        expect(completedRequest?.headers['x-added']).toBe('added-from-hpm');
       });
     });
 
