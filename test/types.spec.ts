@@ -187,7 +187,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
               res.status(200).send('OK');
             },
           },
-        })
+        }),
       );
 
       expect(app).toBeDefined();
@@ -369,11 +369,11 @@ describe('http-proxy-middleware TypeScript Types', () => {
                   req.params;
                   res.status(200).send('OK');
                   return buffer;
-                })
+                }),
               );
             },
           ],
-        })
+        }),
       );
 
       expect(app).toBeDefined();

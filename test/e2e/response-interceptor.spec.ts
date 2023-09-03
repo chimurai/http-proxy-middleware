@@ -19,8 +19,8 @@ describe('responseInterceptor()', () => {
                 return JSON.stringify({ foo: 'bar', favorite: '叉燒包' });
               }),
             },
-          })
-        )
+          }),
+        ),
       );
     });
 
@@ -56,8 +56,8 @@ describe('responseInterceptor()', () => {
                 return responseBuffer;
               }),
             },
-          })
-        )
+          }),
+        ),
       );
     });
 
@@ -82,8 +82,8 @@ describe('responseInterceptor()', () => {
             on: {
               proxyRes: responseInterceptor(async (buffer) => buffer),
             },
-          })
-        )
+          }),
+        ),
       );
     });
 

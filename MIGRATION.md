@@ -64,10 +64,13 @@ It was common to rewrite the `basePath` with the `pathRewrite` option:
 
 ```js
 // before
-app.use('/user', proxy({
-  target: 'http://www.example.org'
-  pathRewrite: { '^/user': '/secret' }
-}));
+app.use(
+  '/user',
+  proxy({
+    target: 'http://www.example.org',
+    pathRewrite: { '^/user': '/secret' },
+  }),
+);
 
 // after
 app.use('/user', proxy({ target: 'http://www.example.org/secret' }));
@@ -77,10 +80,12 @@ When proxy is mounted at the root, `pathRewrite` should still work as in v2.
 
 ```js
 // not affected
-app.use(proxy({
-  target: 'http://www.example.org'
-  pathRewrite: { '^/user': '/secret' }
-}));
+app.use(
+  proxy({
+    target: 'http://www.example.org',
+    pathRewrite: { '^/user': '/secret' },
+  }),
+);
 ```
 
 ### Removed "shorthand" usage

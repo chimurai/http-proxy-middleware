@@ -107,7 +107,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
    */
   private shouldProxy = (
     pathFilter: Filter<TReq> | undefined,
-    req: http.IncomingMessage
+    req: http.IncomingMessage,
   ): boolean => {
     return matchPathFilter(pathFilter, req.url, req);
   };

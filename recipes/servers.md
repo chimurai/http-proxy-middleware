@@ -170,7 +170,7 @@ app.use(
   createProxyMiddleware({
     target: 'http://www.example.org',
     changeOrigin: true,
-  })
+  }),
 );
 
 app.listen(3000);
@@ -345,7 +345,7 @@ gulp.task('webserver', function () {
       directoryListing: true,
       open: true,
       middleware: [apiProxy],
-    })
+    }),
   );
 });
 

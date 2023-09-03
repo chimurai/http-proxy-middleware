@@ -27,8 +27,8 @@ describe('E2E pathRewrite', () => {
             pathRewrite: {
               '^/foobar/api/': '/api/',
             },
-          })
-        )
+          }),
+        ),
       );
 
       const response = await agent.get('/foobar/api/lorum/ipsum').expect(200);
@@ -50,8 +50,8 @@ describe('E2E pathRewrite', () => {
             pathRewrite(path, req) {
               return path.replace('/foobar', '');
             },
-          })
-        )
+          }),
+        ),
       );
 
       const response = await agent.get('/foobar/api/lorum/ipsum').expect(200);
@@ -72,8 +72,8 @@ describe('E2E pathRewrite', () => {
             pathRewrite(path, req) {
               return undefined;
             },
-          })
-        )
+          }),
+        ),
       );
 
       const response = await agent.get('/api/lorum/ipsum').expect(200);
