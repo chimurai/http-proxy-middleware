@@ -40,7 +40,7 @@ app.use(
   createProxyMiddleware({
     target: 'http://www.example.org/secret',
     changeOrigin: true,
-  })
+  }),
 );
 
 app.listen(3000);
@@ -62,7 +62,7 @@ app.use(
   createProxyMiddleware({
     target: 'http://www.example.org/api',
     changeOrigin: true,
-  })
+  }),
 );
 
 app.listen(3000);
@@ -165,7 +165,7 @@ app.use(
     target: 'http://www.example.org/api',
     changeOrigin: true,
     pathFilter: '/api/proxy-only-this-path',
-  })
+  }),
 );
 ```
 
@@ -490,7 +490,7 @@ The following options are provided by the underlying [http-proxy](https://github
         target: 'http://127.0.0.1:4003/',
         buffer: streamify(req.rawBody),
       },
-      next
+      next,
     );
   };
   ```

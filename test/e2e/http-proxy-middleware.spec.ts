@@ -59,8 +59,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -95,8 +95,8 @@ describe('E2E http-proxy-middleware', () => {
               on: {
                 proxyReq: fixRequestBody,
               },
-            })
-          )
+            }),
+          ),
         );
 
         await mockTargetServer.forPost('/api').thenCallback(async (req) => {
@@ -116,8 +116,8 @@ describe('E2E http-proxy-middleware', () => {
               on: {
                 proxyReq: fixRequestBody,
               },
-            })
-          )
+            }),
+          ),
         );
 
         await mockTargetServer.forPost('/api').thenCallback(async (req) => {
@@ -139,8 +139,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: filter,
-            })
-          )
+            }),
+          ),
         );
 
         await mockTargetServer.forGet('/api/b/c/d').thenReply(200, 'HELLO WEB');
@@ -158,8 +158,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: filter,
-            })
-          )
+            }),
+          ),
         );
 
         await mockTargetServer.forGet('/api/b/c/d').thenReply(200, 'HELLO WEB');
@@ -175,8 +175,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: ['/api', '/ajax'],
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -205,8 +205,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api/**',
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -224,8 +224,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: ['**/*.html', '!**.json'],
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -250,8 +250,8 @@ describe('E2E http-proxy-middleware', () => {
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
               headers: { host: 'foobar.dev' },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -275,8 +275,8 @@ describe('E2E http-proxy-middleware', () => {
           createApp(
             createProxyMiddleware({
               target: `http://localhost:666`, // unreachable host on port:666
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -300,8 +300,8 @@ describe('E2E http-proxy-middleware', () => {
                   }
                 },
               },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -331,8 +331,8 @@ describe('E2E http-proxy-middleware', () => {
                   delete proxyRes['headers']['x-removed'];
                 },
               },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -368,8 +368,8 @@ describe('E2E http-proxy-middleware', () => {
                   proxyReq.setHeader('x-added', 'added-from-hpm'); // add custom header to request
                 },
               },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -396,8 +396,8 @@ describe('E2E http-proxy-middleware', () => {
                 '^/api': '/rest',
                 '^/remove': '',
               },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -419,8 +419,8 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createAppWithPath(
             '/api',
-            createProxyMiddleware({ target: `http://localhost:${mockTargetServer.port}/api` })
-          )
+            createProxyMiddleware({ target: `http://localhost:${mockTargetServer.port}/api` }),
+          ),
         );
       });
 
@@ -448,8 +448,8 @@ describe('E2E http-proxy-middleware', () => {
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
               logger: customLogger,
-            })
-          )
+            }),
+          ),
         );
       });
 

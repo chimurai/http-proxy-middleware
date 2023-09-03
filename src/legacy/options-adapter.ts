@@ -22,7 +22,7 @@ const proxyEventMap = {
  */
 export function legacyOptionsAdapter<TReq, TRes>(
   legacyContext: Filter<TReq> | LegacyOptions<TReq, TRes>,
-  legacyOptions: LegacyOptions<TReq, TRes>
+  legacyOptions: LegacyOptions<TReq, TRes>,
 ): Options<TReq, TRes> {
   let options: LegacyOptions<TReq, TRes> = {};
   let logger: Logger;
@@ -34,7 +34,7 @@ export function legacyOptionsAdapter<TReq, TRes>(
       Please use "legacyCreateProxyMiddleware({ target: 'http://www.example.org' })" instead.
 
       More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md#removed-shorthand-usage
-      `
+      `,
     );
   }
 
@@ -53,7 +53,7 @@ export function legacyOptionsAdapter<TReq, TRes>(
       }
 
       More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md#removed-context-argument
-      `
+      `,
     );
   } else if (legacyContext && !legacyOptions) {
     options = { ...(legacyContext as LegacyOptions<TReq, TRes>) };
@@ -80,7 +80,7 @@ export function legacyOptionsAdapter<TReq, TRes>(
         }
 
         More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md#refactored-proxy-events
-        `
+        `,
       );
     }
   });
@@ -103,7 +103,7 @@ export function legacyOptionsAdapter<TReq, TRes>(
       }
 
       More details: https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md#removed-logprovider-and-loglevel-options
-      `
+      `,
     );
   }
 

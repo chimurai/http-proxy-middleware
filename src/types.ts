@@ -14,7 +14,7 @@ export type NextFunction<T = (err?: any) => void> = T;
 export interface RequestHandler<
   TReq = http.IncomingMessage,
   TRes = http.ServerResponse,
-  TNext = NextFunction
+  TNext = NextFunction,
 > {
   (req: TReq, res: TRes, next?: TNext): void | Promise<void>;
   upgrade: (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => void;

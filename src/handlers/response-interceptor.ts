@@ -9,7 +9,7 @@ type Interceptor<TReq = http.IncomingMessage, TRes = http.ServerResponse> = (
   buffer: Buffer,
   proxyRes: TReq,
   req: TReq,
-  res: TRes
+  res: TRes,
 ) => Promise<Buffer | string>;
 
 /**
@@ -21,12 +21,12 @@ type Interceptor<TReq = http.IncomingMessage, TRes = http.ServerResponse> = (
  */
 export function responseInterceptor<
   TReq extends http.IncomingMessage = http.IncomingMessage,
-  TRes extends http.ServerResponse = http.ServerResponse
+  TRes extends http.ServerResponse = http.ServerResponse,
 >(interceptor: Interceptor<TReq, TRes>) {
   return async function proxyResResponseInterceptor(
     proxyRes: TReq,
     req: TReq,
-    res: TRes
+    res: TRes,
   ): Promise<void> {
     debug('intercept proxy response');
     const originalProxyRes = proxyRes;
@@ -67,7 +67,7 @@ export function responseInterceptor<
  */
 function decompress<TReq extends http.IncomingMessage = http.IncomingMessage>(
   proxyRes: TReq,
-  contentEncoding?: string
+  contentEncoding?: string,
 ): TReq | zlib.Gunzip | zlib.Inflate | zlib.BrotliDecompress {
   let _proxyRes: TReq | zlib.Gunzip | zlib.Inflate | zlib.BrotliDecompress = proxyRes;
   let decompress;

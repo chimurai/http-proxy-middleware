@@ -15,22 +15,22 @@ const debug = Debug.extend('legacy-create-proxy-middleware');
  */
 export function legacyCreateProxyMiddleware<
   TReq = http.IncomingMessage,
-  TRes = http.ServerResponse
+  TRes = http.ServerResponse,
 >(shortHand: string): RequestHandler<TReq, TRes>;
 export function legacyCreateProxyMiddleware<
   TReq = http.IncomingMessage,
-  TRes = http.ServerResponse
+  TRes = http.ServerResponse,
 >(legacyOptions: LegacyOptions<TReq, TRes>): RequestHandler<TReq, TRes>;
 export function legacyCreateProxyMiddleware<
   TReq = http.IncomingMessage,
-  TRes = http.ServerResponse
+  TRes = http.ServerResponse,
 >(
   legacyContext: Filter<TReq>,
-  legacyOptions: LegacyOptions<TReq, TRes>
+  legacyOptions: LegacyOptions<TReq, TRes>,
 ): RequestHandler<TReq, TRes>;
 export function legacyCreateProxyMiddleware<
   TReq = http.IncomingMessage,
-  TRes = http.ServerResponse
+  TRes = http.ServerResponse,
 >(legacyContext, legacyOptions?): RequestHandler<TReq, TRes> {
   debug('init');
 

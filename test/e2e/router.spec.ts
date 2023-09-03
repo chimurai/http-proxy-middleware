@@ -61,7 +61,7 @@ describe('E2E router', () => {
           router(req) {
             return `https://localhost:${targetPortC}`;
           },
-        })
+        }),
       );
 
       const agent = request(app);
@@ -78,7 +78,7 @@ describe('E2E router', () => {
           router(req) {
             return { host: 'localhost', port: targetPortC, protocol: 'https:' };
           },
-        })
+        }),
       );
       const agent = request(app);
       const response = await agent.get('/api').expect(200);
@@ -93,10 +93,10 @@ describe('E2E router', () => {
           changeOrigin: true,
           router: async (req) => {
             return new Promise((resolve) =>
-              resolve({ host: 'localhost', port: targetPortC, protocol: 'https:' })
+              resolve({ host: 'localhost', port: targetPortC, protocol: 'https:' }),
             );
           },
-        })
+        }),
       );
 
       const agent = request(app);
@@ -113,7 +113,7 @@ describe('E2E router', () => {
           router: async (req) => {
             throw new Error('An error thrown in the router');
           },
-        })
+        }),
       );
       const errorHandler: ErrorRequestHandler = (err: Error, req, res, next) => {
         res.status(502).send(err.message);
@@ -133,10 +133,10 @@ describe('E2E router', () => {
           changeOrigin: true,
           router: async (req) => {
             return new Promise((resolve) =>
-              resolve({ host: 'localhost', port: targetPortC, protocol: 'https' })
+              resolve({ host: 'localhost', port: targetPortC, protocol: 'https' }),
             );
           },
-        })
+        }),
       );
 
       const agent = request(app);
@@ -160,7 +160,7 @@ describe('E2E router', () => {
             'beta.localhost:6000': `https://localhost:${targetPortB}`,
             'localhost:6000/api': `https://localhost:${targetPortC}`,
           },
-        })
+        }),
       );
 
       agent = request(app);

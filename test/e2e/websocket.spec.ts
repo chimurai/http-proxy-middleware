@@ -104,7 +104,7 @@ describe('E2E WebSocket proxy', () => {
           target: 'ws://notworkinghost:6789',
           router: { '/socket': `ws://localhost:${WS_SERVER_PORT}` },
           pathRewrite: { '^/socket': '' },
-        })
+        }),
       ).listen(SERVER_PORT);
 
       proxyServer.on('upgrade', proxyMiddleware.upgrade);
