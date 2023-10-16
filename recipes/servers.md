@@ -65,20 +65,26 @@ https://github.com/vercel/next.js
 [![GitHub stars](https://img.shields.io/github/stars/vercel/next.js.svg?style=social&label=Star)](https://github.com/vercel/next.js)
 ![next.js downloads](https://img.shields.io/npm/dm/next)
 
-Next project: `/pages/api/users.ts`
-
 ```typescript
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
+// Next project: `/pages/api/users.proxy.ts`
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const proxyMiddleware = createProxyMiddleware<NextApiRequest, NextApiResponse>({
+// singleton
+export const proxyMiddleware = createProxyMiddleware<NextApiRequest, NextApiResponse>({
   target: 'http://jsonplaceholder.typicode.com',
   changeOrigin: true,
   pathRewrite: {
     '^/api/users': '/users',
   },
 });
+```
+
+```typescript
+// Next project: `/pages/api/users.ts`
+
+// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { proxyMiddleware } from './users.proxy';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   proxyMiddleware(req, res, (result: unknown) => {
