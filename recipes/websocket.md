@@ -46,5 +46,5 @@ const socketProxy = createProxyMiddleware({
   ws: true,
 });
 
-server.on('upgrade', proxy.upgrade); // <-- subscribe to http 'upgrade'
+server.on('upgrade', socketProxy.upgrade); // <-- subscribe to http 'upgrade'
 ```
