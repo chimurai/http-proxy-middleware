@@ -45,6 +45,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
         const activeProxyOptions = await this.prepareProxyRequest(req);
         debug(`proxy request to target: %O`, activeProxyOptions.target);
         this.proxy.web(req, res, activeProxyOptions);
+        return new Promise(r=>this.proxy.web.on('end',()=>r()));
       } catch (err) {
         next && next(err);
       }
