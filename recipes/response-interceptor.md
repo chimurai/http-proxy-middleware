@@ -158,6 +158,7 @@ const proxy = createProxyMiddleware({
     proxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
       res.removeHeader('content-security-policy'); // Remove the Content Security Policy header
       res.setHeader('HPM-Header', 'Intercepted by HPM'); // Set a new header and value
+      return responseBuffer;
     }),
   },
 });
