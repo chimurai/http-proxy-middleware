@@ -1,6 +1,11 @@
 # Changelog
 
-## next
+## [v3.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.0)
+
+This release contains some breaking changes.
+
+Please read the V3 discussion <https://github.com/chimurai/http-proxy-middleware/discussions/768>
+or follow the [MIGRATION.md](https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md) guide.
 
 - feat(typescript): type improvements ([#882](https://github.com/chimurai/http-proxy-middleware/pull/882))
 - chore(deps): update micromatch to 4.0.5

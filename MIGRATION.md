@@ -1,5 +1,6 @@
 # Migration guide
 
+- [v3 changes and discussions](#v3-changes-and-discussions)
 - [v2 to v3 adapter](#v2-to-v3-adapter)
   - [`legacyCreateProxyMiddleware`](#legacycreateproxymiddleware)
 - [v3 breaking changes](#v3-breaking-changes)
@@ -10,11 +11,19 @@
   - [Removed `logProvider` and `logLevel` options](#removed-logprovider-and-loglevel-options)
   - [Refactored proxy events](#refactored-proxy-events)
 
+## v3 changes and discussions
+
+See list of changes in V3:
+
+<https://github.com/chimurai/http-proxy-middleware/discussions/768>
+
 ## v2 to v3 adapter
 
 ### `legacyCreateProxyMiddleware`
 
 Use the adapter to use v3 with minimal changes to your v2 implementation.
+
+💡 When you use `legacyCreateProxyMiddleware` it will print out console messages in run-time to guide you on how to migrate legacy configurations.
 
 NOTE: `legacyCreateProxyMiddleware` will be removed in a future version.
 
@@ -45,6 +54,8 @@ legacyCreateProxyMiddleware(...);
 ## v3 breaking changes
 
 ### Removed `req.url` patching
+
+When proxy is mounted on a path, this path should be provided in the target.
 
 ```js
 // before
