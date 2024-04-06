@@ -1,5 +1,9 @@
 # Changelog
 
+## [next](https://github.com/chimurai/http-proxy-middleware/releases)
+
+- fix(type): fix RequestHandler return type
+
 ## [v3.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.0)
 
 This release contains some breaking changes.

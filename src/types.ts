@@ -16,7 +16,7 @@ export interface RequestHandler<
   TRes = http.ServerResponse,
   TNext = NextFunction,
 > {
-  (req: TReq, res: TRes, next?: TNext): void | Promise<void>;
+  (req: TReq, res: TRes, next?: TNext): Promise<void>;
   upgrade: (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => void;
 }
 
