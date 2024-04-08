@@ -59,7 +59,7 @@
     "@types/jest": "29.5.12",
     "@types/micromatch": "4.0.6",
     "@types/node": "20.11.30",
-    "@types/supertest": "2.0.12",
+    "@types/supertest": "6.0.2",
     "@types/ws": "8.5.10",
     "@typescript-eslint/eslint-plugin": "7.4.0",
     "@typescript-eslint/parser": "7.4.0",

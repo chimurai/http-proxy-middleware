@@ -5,7 +5,7 @@ import { Options } from '../../src/index';
 
 describe('Usage in Express', () => {
   let app: express.Express;
-  let agent: request.SuperTest<request.Test>;
+  let agent: request.Agent;
 
   beforeEach(() => {
     app = express();

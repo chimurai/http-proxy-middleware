@@ -3,7 +3,7 @@ import { createApp } from './test-kit';
 import * as request from 'supertest';
 
 describe('responseInterceptor()', () => {
-  let agent: request.SuperTest<request.Test>;
+  let agent: request.Agent;
 
   describe('intercept responses', () => {
     beforeEach(() => {
