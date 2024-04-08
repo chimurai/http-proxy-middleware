@@ -41,7 +41,7 @@ describe('E2E http-proxy-middleware', () => {
 
   describe('http-proxy-middleware in actual server', () => {
     let mockTargetServer: Mockttp;
-    let agent: request.SuperTest<request.Test>;
+    let agent: request.Agent;
 
     beforeEach(async () => {
       mockTargetServer = getLocal();
