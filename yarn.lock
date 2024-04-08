@@ -1431,7 +1431,14 @@ async-each-series@0.1.1:
   resolved "https://registry.yarnpkg.com/async-each-series/-/async-each-series-0.1.1.tgz#7617c1917401fd8ca4a28aadce3dbae98afeb432"
   integrity sha512-p4jj6Fws4Iy2m0iCmI2am2ZNZCgbdgE+P8F/8csmn2vx7ixXrO2zGcuNsD46X5uZSVecmkEy/M06X2vG8KD6dQ==
 
-async@^2.6.0, async@^2.6.2:
+async-mutex@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/async-mutex/-/async-mutex-0.5.0.tgz#353c69a0b9e75250971a64ac203b0ebfddd75482"
+  integrity sha512-1A94B18jkJ3DYq284ohPxoXbfTA5HsQ7/Mf4DEhcyLx3Bz27Rh59iScbB6EPiP+B+joue6YCxcMXSbFC1tZKwA==
+  dependencies:
+    tslib "^2.4.0"
+
+async@^2.6.0, async@^2.6.4:
   version "2.6.4"
   resolved "https://registry.yarnpkg.com/async/-/async-2.6.4.tgz#706b7ff6084664cd7eae713f6f965433b5504221"
   integrity sha512-mzo5dfJYwAn29PeiJ0zvwTo04zj8HDJj0Mn8TD7sno7q12prdbnasKJHhkm2c1LgrhlJ0teaea8860oxi51mGA==
@@ -2045,7 +2052,7 @@ debug@4, debug@4.3.4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, de
   dependencies:
     ms "2.1.2"
 
-debug@^3.1.1:
+debug@^3.2.7:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz#72580b7e9145fb39b6676f9c5e5fb100b934179a"
   integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
@@ -4061,17 +4068,17 @@ mitt@^1.1.3:
   resolved "https://registry.yarnpkg.com/mitt/-/mitt-1.2.0.tgz#cb24e6569c806e31bd4e3995787fe38a04fdf90d"
   integrity sha512-r6lj77KlwqLhIUku9UWYes7KJtsczvolZkzp8hbaDPPaE24OmWl5s539Mytlj22siEQKosZ26qCBgda2PKwoJw==
 
-mkdirp@^0.5.5:
+mkdirp@^0.5.6:
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.6.tgz#7def03d2432dcae4ba1d611445c48396062255f6"
   integrity sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==
   dependencies:
     minimist "^1.2.6"
 
-mockttp@3.10.1:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/mockttp/-/mockttp-3.10.1.tgz#58bc026a3c2bde2bf5bacb5c6f292d5c6aa62bd8"
-  integrity sha512-D+8uEDJr/DDEzQ6Weg2w1hw+vA/+FzfltOUpqpjCxbaqRrDvQrfOkkYgtx4jlp7b3tfxJBMTO4MwuBhhfY93WQ==
+mockttp@3.10.2:
+  version "3.10.2"
+  resolved "https://registry.yarnpkg.com/mockttp/-/mockttp-3.10.2.tgz#c4226f20d9c2528549863137515b2c3d4c8f0c3d"
+  integrity sha512-0tBe/r5VN1LaybYDNGR0Vgl1WSdAzgNDyH/lQ34MY6fzmTStGB3r9K5l+4YtFENVBfopsW77GRl1D81CuXwyvw==
   dependencies:
     "@graphql-tools/schema" "^8.5.0"
     "@graphql-tools/utils" "^8.8.0"
@@ -4080,6 +4087,7 @@ mockttp@3.10.1:
     "@httptoolkit/websocket-stream" "^6.0.1"
     "@types/cors" "^2.8.6"
     "@types/node" "*"
+    async-mutex "^0.5.0"
     base64-arraybuffer "^0.1.5"
     body-parser "^1.15.2"
     cacheable-lookup "^6.0.0"
@@ -4105,7 +4113,7 @@ mockttp@3.10.1:
     pac-proxy-agent "^7.0.0"
     parse-multipart-data "^1.4.0"
     performance-now "^2.1.0"
-    portfinder "1.0.28"
+    portfinder "^1.0.32"
     read-tls-client-hello "^1.0.0"
     semver "^7.5.3"
     socks-proxy-agent "^7.0.0"
@@ -4436,14 +4444,14 @@ pkg-dir@^4.2.0:
   dependencies:
     find-up "^4.0.0"
 
-portfinder@1.0.28:
-  version "1.0.28"
-  resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.28.tgz#67c4622852bd5374dd1dd900f779f53462fac778"
-  integrity sha512-Se+2isanIcEqf2XMHjyUKskczxbPH7dQnlMjXX6+dybayyHvAf/TCgyMRlzf/B6QDhAEFOGes0pzRo3by4AbMA==
+portfinder@^1.0.32:
+  version "1.0.32"
+  resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.32.tgz#2fe1b9e58389712429dc2bea5beb2146146c7f81"
+  integrity sha512-on2ZJVVDXRADWE6jnQaX0ioEylzgBpQk8r55NE4wjXW1ZxO+BgDlY6DXwj20i0V8eB4SenDQ00WEaxfiIQPcxg==
   dependencies:
-    async "^2.6.2"
-    debug "^3.1.1"
-    mkdirp "^0.5.5"
+    async "^2.6.4"
+    debug "^3.2.7"
+    mkdirp "^0.5.6"
 
 portscanner@2.2.0:
   version "2.2.0"
@@ -5240,10 +5248,10 @@ typed-error@^3.0.2:
   resolved "https://registry.yarnpkg.com/typed-error/-/typed-error-3.2.2.tgz#3c03a80bd724ddb12c86432a573d230250c1029a"
   integrity sha512-Z48LU67/qJ+vyA7lh3ozELqpTp3pvQoY5RtLi5wQ/UGSrEidBhlVSqhjr8B3iqbGpjqAoJYrtSYXWMDtidWGkA==
 
-typescript@5.4.3:
-  version "5.4.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.3.tgz#5c6fedd4c87bee01cd7a528a30145521f8e0feff"
-  integrity sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg==
+typescript@5.4.4:
+  version "5.4.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.4.tgz#eb2471e7b0a5f1377523700a21669dce30c2d952"
+  integrity sha512-dGE2Vv8cpVvw28v8HCPqyb08EzbBURxDpuhJvTrusShUfGnhHBafDsLdS1EhhxyL6BJQE+2cT3dDPAv+MQ6oLw==
 
 ua-parser-js@^1.0.33:
   version "1.0.35"
