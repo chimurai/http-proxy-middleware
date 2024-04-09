@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-
 import * as express from 'express';
 import * as http from 'http';
 import { createProxyMiddleware as middleware, fixRequestBody, responseInterceptor } from '../src';

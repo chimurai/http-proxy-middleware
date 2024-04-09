@@ -246,7 +246,6 @@ describe('Path Filter', () => {
       });
 
       it('should not throw error with Function', () => {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         expect(testPathFilter(() => {})).not.toThrowError(Error);
       });
     });

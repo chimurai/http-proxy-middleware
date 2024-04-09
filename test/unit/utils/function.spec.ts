@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { getFunctionName } from '../../../src/utils/function';
 
 describe('getFunctionName()', () => {
