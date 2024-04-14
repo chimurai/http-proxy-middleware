@@ -29,7 +29,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
 
     this.pathRewriter = PathRewriter.createPathRewriter(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
-    this.setFollowRedirectOptions(options);
+    this.setFollowRedirectsOptions(options);
 
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
@@ -89,7 +89,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
   /**
    Sets follow-redirects module global options used internally by http-proxy. When followRedirects is true, http-proxy uses the http and https agents of the follow-redirects module https://github.com/http-party/node-http-proxy/blob/9b96cd725127a024dabebec6c7ea8c807272223d/lib/http-proxy/passes/web-incoming.js#L105
   */
-  private setFollowRedirectOptions = (options: Options<TReq, TRes>) => {
+  private setFollowRedirectsOptions = (options: Options<TReq, TRes>) => {
     if (!options.followRedirectsOpts) {
       return;
     }
