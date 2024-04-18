@@ -3,6 +3,7 @@
 ## [next](https://github.com/chimurai/http-proxy-middleware/releases)
 
 - fix(type): fix RequestHandler return type
+- refactor(errors): improve pathFilter error message
 
 ## [v3.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.0)
 
