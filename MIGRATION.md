@@ -105,10 +105,10 @@ Specify the `target` option.
 
 ```js
 // before
-createProxyMiddleware('http:/www.example.org');
+createProxyMiddleware('http://www.example.org');
 
 // after
-createProxyMiddleware({ target: 'http:/www.example.org' });
+createProxyMiddleware({ target: 'http://www.example.org' });
 ```
 
 ### Removed `context` argument
