@@ -1,5 +1,20 @@
+import { URL } from 'url';
 import { Plugin } from '../../types';
 import { getLogger } from '../../logger';
+import type { IncomingMessage } from 'node:http';
+
+type ExpressRequest = {
+  /** Express req.baseUrl */
+  baseUrl?: string;
+};
+
+type BrowserSyncRequest = {
+  /** BrowserSync req.originalUrl */
+  originalUrl?: string;
+};
+
+/** Request Types from different server libs */
+type FrameworkRequest = IncomingMessage & ExpressRequest & BrowserSyncRequest;
 
 export const loggerPlugin: Plugin = (proxyServer, options) => {
   const logger = getLogger(options);
@@ -22,11 +37,17 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
    * [HPM] GET /users/ -> http://jsonplaceholder.typicode.com/users/ [304]
    * ```
    */
-  proxyServer.on('proxyRes', (proxyRes: any, req: any, res) => {
+  proxyServer.on('proxyRes', (proxyRes: any, req: FrameworkRequest, res) => {
     // BrowserSync uses req.originalUrl
     // Next.js doesn't have req.baseUrl
     const originalUrl = req.originalUrl ?? `${req.baseUrl || ''}${req.url}`;
-    const exchange = `[HPM] ${req.method} ${originalUrl} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path} [${proxyRes.statusCode}]`;
+
+    // construct targetUrl
+    const target = new URL(options.target as URL);
+    target.pathname = proxyRes.req.path;
+    const targetUrl = target.toString();
+
+    const exchange = `[HPM] ${req.method} ${originalUrl} -> ${targetUrl} [${proxyRes.statusCode}]`;
     logger.info(exchange);
   });
 

@@ -459,7 +459,9 @@ describe('E2E http-proxy-middleware', () => {
 
         expect(logMessages).not.toBeUndefined();
         expect(logMessages.length).toBe(1);
-        expect(logMessages[0]).toBe('[HPM] GET /api/foo/bar -> http://localhost/api/foo/bar [200]');
+        expect(logMessages.at(0)).toBe(
+          `[HPM] GET /api/foo/bar -> http://localhost:${mockTargetServer.port}/api/foo/bar [200]`,
+        );
       });
     });
   });
