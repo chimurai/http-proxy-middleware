@@ -21,7 +21,10 @@
   <body>
     <h2>WebSocket demo</h2>
 
-    <p>Proxy <code>ws://localhost:3000</code> to <code>ws://ws.ifelse.io</code></p>
+    <p>
+      Proxy <code id="codeblock-ws-location">ws://localhost:3000</code> ➡
+      <code>ws://ws.ifelse.io</code>
+    </p>
 
     <fieldset id="configuration">
       <p>
@@ -48,12 +51,20 @@
         // elements
         const configuration = document.getElementById('configuration');
         const location = document.getElementById('location');
+        const codeblockWsLocation = document.getElementById('codeblock-ws-location');
         const connectBtn = document.getElementById('connectBtn');
         const disconnectBtn = document.getElementById('disconnectBtn');
         const messaging = document.getElementById('messaging');
         const message = document.getElementById('message');
         const sendBtn = document.getElementById('sendBtn');
         const logger = document.getElementById('logger');
+
+        const documentUrl = new URL(document.location);
+        const wsProtocol = documentUrl.protocol.includes('https') ? 'wss:' : 'ws:';
+        const wsPort = documentUrl.port ? `:${documentUrl.port}` : '';
+        const locationValue = `${wsProtocol}//${documentUrl.host}${wsPort}`;
+        location.value = locationValue;
+        codeblockWsLocation.innerText = locationValue;
 
         // ws
         let socket;
