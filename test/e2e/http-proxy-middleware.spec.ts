@@ -4,6 +4,7 @@ import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
 import type * as http from 'http';
 import type * as express from 'express';
 import * as bodyParser from 'body-parser';
+import type { Logger } from '../../src/types';
 
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {
@@ -433,15 +434,18 @@ describe('E2E http-proxy-middleware', () => {
 
     describe('option.logger', () => {
       let logMessages: string[];
+      let customLogger: Logger;
 
       beforeEach(() => {
         logMessages = [];
-        const customLogger = {
+        customLogger = {
           info: (message: string) => logMessages.push(message),
           warn: (message: string) => logMessages.push(message),
           error: (message: string) => logMessages.push(message),
         };
+      });
 
+      it('should have logged messages', async () => {
         agent = request(
           createApp(
             createProxyMiddleware({
@@ -451,9 +455,28 @@ describe('E2E http-proxy-middleware', () => {
             }),
           ),
         );
+
+        await mockTargetServer.forGet('/api/foo/bar').thenReply(200);
+        await agent.get(`/api/foo/bar`).expect(200);
+
+        expect(logMessages).not.toBeUndefined();
+        expect(logMessages.length).toBe(1);
+        expect(logMessages.at(0)).toBe(
+          `[HPM] GET /api/foo/bar -> http://localhost:${mockTargetServer.port}/api/foo/bar [200]`,
+        );
       });
 
-      it('should have logged messages', async () => {
+      it('should have logged messages when router used', async () => {
+        agent = request(
+          createApp(
+            createProxyMiddleware({
+              router: () => `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api',
+              logger: customLogger,
+            }),
+          ),
+        );
+
         await mockTargetServer.forGet('/api/foo/bar').thenReply(200);
         await agent.get(`/api/foo/bar`).expect(200);
 

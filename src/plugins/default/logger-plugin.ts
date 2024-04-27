@@ -43,8 +43,18 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
     const originalUrl = req.originalUrl ?? `${req.baseUrl || ''}${req.url}`;
 
     // construct targetUrl
-    const target = new URL(options.target as URL);
-    target.pathname = proxyRes.req.path;
+    // const port = proxyRes.req?.socket?.autoSelectFamilyAttemptedAddresses?.[0]?.split(':')?.reverse()[0]; //.at(-1),
+    const port = Object.keys(proxyRes.req?.agent?.sockets || {})?.[0]?.split(':')[1];
+
+    const obj = {
+      protocol: proxyRes.req.protocol,
+      host: proxyRes.req.host,
+      port: port,
+      pathname: proxyRes.req.path,
+    } as URL;
+
+    const target = new URL(`${obj.protocol}//${obj.host}${obj.pathname}`);
+    target.port = obj.port; // optional port
     const targetUrl = target.toString();
 
     const exchange = `[HPM] ${req.method} ${originalUrl} -> ${targetUrl} [${proxyRes.statusCode}]`;
