@@ -4,6 +4,7 @@ Overview of `http-proxy-middleware` implementation in different servers.
 
 Missing a server? Feel free to extend this list of examples.
 
+- [http.createServer](#httpcreateserver)
 - [Express](#express)
 - [Connect](#connect)
 - [Next.js](#nextjs)
@@ -15,6 +16,27 @@ Missing a server? Feel free to extend this list of examples.
 - [gulp-connect](#gulp-connect)
 - [grunt-browser-sync](#grunt-browser-sync)
 - [gulp-webserver](#gulp-webserver)
+
+## http.createServer
+
+Vanilla http server implementation with [`http.createServer`](https://nodejs.org/docs/latest/api/http.html#httpcreateserveroptions-requestlistener)
+
+```javascript
+const http = require('node:http');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+/**
+ * Configure proxy middleware
+ */
+const apiProxy = createProxyMiddleware({
+  target: 'http://www.example.com',
+  changeOrigin: true, // for vhosted sites, changes host header to match to target's host
+});
+
+const server = http.createServer(jsonPlaceholderProxy);
+
+server.listen(3000);
+```
 
 ## Express
 
