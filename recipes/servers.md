@@ -87,6 +87,8 @@ https://github.com/vercel/next.js
 [![GitHub stars](https://img.shields.io/github/stars/vercel/next.js.svg?style=social&label=Star)](https://github.com/vercel/next.js)
 ![next.js downloads](https://img.shields.io/npm/dm/next)
 
+See working Next.js example in [/examples/next-app/pages/api/users.ts](https://github.com/chimurai/http-proxy-middleware/blob/master/examples/next-app/pages/api/users.ts)
+
 ```typescript
 // Next project: `/pages/api/users.proxy.ts`
 import { createProxyMiddleware } from 'http-proxy-middleware';
