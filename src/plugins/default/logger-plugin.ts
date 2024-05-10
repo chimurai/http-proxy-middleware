@@ -2,6 +2,7 @@ import { URL } from 'url';
 import { Plugin } from '../../types';
 import { getLogger } from '../../logger';
 import type { IncomingMessage } from 'node:http';
+import { getPort } from '../../utils/logger-plugin';
 
 type ExpressRequest = {
   /** Express req.baseUrl */
@@ -43,8 +44,19 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
     const originalUrl = req.originalUrl ?? `${req.baseUrl || ''}${req.url}`;
 
     // construct targetUrl
-    const target = new URL(options.target as URL);
-    target.pathname = proxyRes.req.path;
+    const port = getPort(proxyRes.req?.agent?.sockets);
+
+    const obj = {
+      protocol: proxyRes.req.protocol,
+      host: proxyRes.req.host,
+      pathname: proxyRes.req.path,
+    } as URL;
+
+    const target = new URL(`${obj.protocol}//${obj.host}${obj.pathname}`);
+
+    if (port) {
+      target.port = port;
+    }
     const targetUrl = target.toString();
 
     const exchange = `[HPM] ${req.method} ${originalUrl} -> ${targetUrl} [${proxyRes.statusCode}]`;
