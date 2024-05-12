@@ -8,8 +8,8 @@ Missing a server? Feel free to extend this list of examples.
 - [Express](#express)
 - [Connect](#connect)
 - [Next.js](#nextjs)
-- [Browser-Sync](#browser-sync)
 - [fastify](#fastify)
+- [Browser-Sync](#browser-sync)
 - [Polka](#polka)
 - [lite-server](#lite-server)
 - [grunt-contrib-connect](#grunt-contrib-connect)
@@ -130,6 +130,36 @@ export const config = {
 // curl http://localhost:3000/api/users
 ```
 
+## fastify
+
+<https://github.com/fastify/fastify> [![GitHub stars](https://img.shields.io/github/stars/fastify/fastify.svg?style=social&label=Star)](https://github.com/fastify/fastify)
+![fastify downloads](https://img.shields.io/npm/dm/fastify)
+
+See working example in [/examples/fastify/index.js](https://github.com/chimurai/http-proxy-middleware/blob/master/examples/fastify/index.js)
+
+```javascript
+const fastify = require('fastify')({ logger: true });
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+(async () => {
+  await fastify.register(require('@fastify/express'));
+
+  const proxy = createProxyMiddleware({
+    target: 'http://jsonplaceholder.typicode.com',
+    changeOrigin: true,
+  });
+
+  fastify.use(proxy);
+
+  fastify.listen({ port: 3000 }, (err, address) => {
+    if (err) throw err;
+    fastify.log.info(`server listening on ${address}`);
+  });
+})();
+
+// curl http://localhost:3000/users
+```
+
 ## Browser-Sync
 
 https://github.com/BrowserSync/browser-sync
@@ -154,34 +184,6 @@ browserSync.init({
   },
   startPath: '/api',
 });
-```
-
-## fastify
-
-https://github.com/fastify/fastify [![GitHub stars](https://img.shields.io/github/stars/fastify/fastify.svg?style=social&label=Star)](https://github.com/fastify/fastify)
-![fastify downloads](https://img.shields.io/npm/dm/fastify)
-
-```javascript
-const fastify = require('fastify')({ logger: true });
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
-(async () => {
-  await fastify.register(require('fastify-express'));
-
-  const proxy = createProxyMiddleware({
-    target: 'http://jsonplaceholder.typicode.com',
-    changeOrigin: true,
-  });
-
-  fastify.use(proxy);
-
-  fastify.listen(3000, (err, address) => {
-    if (err) throw err;
-    fastify.log.info(`server listening on ${address}`);
-  });
-})();
-
-// curl http://localhost:3000/users
 ```
 
 ## Polka
