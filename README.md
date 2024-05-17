@@ -26,48 +26,29 @@ Proxy `/api` requests to `http://www.example.org`
 
 :bulb: **Tip:** Set the option `changeOrigin` to `true` for [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based).
 
-```javascript
-// javascript
-
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
-const app = express();
-
-app.use(
-  '/api',
-  createProxyMiddleware({
-    target: 'http://www.example.org/secret',
-    changeOrigin: true,
-  }),
-);
-
-app.listen(3000);
-
-// proxy and change the base path from "/api" to "/secret"
-// http://127.0.0.1:3000/api/foo/bar -> http://www.example.org/secret/foo/bar
-```
-
 ```typescript
 // typescript
 
 import * as express from 'express';
-import { createProxyMiddleware, Filter, Options, RequestHandler } from 'http-proxy-middleware';
+import type { Request, Response, NextFunction } from 'express';
+
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import type { Filter, Options, RequestHandler } from 'http-proxy-middleware';
 
 const app = express();
 
-app.use(
-  '/api',
-  createProxyMiddleware({
+const proxyMiddleware = createProxyMiddleware<Request, Response>({
     target: 'http://www.example.org/api',
     changeOrigin: true,
   }),
-);
+
+app.use('/api', proxyMiddleware);
 
 app.listen(3000);
 
 // proxy and keep the same base path "/api"
 // http://127.0.0.1:3000/api/foo/bar -> http://www.example.org/api/foo/bar
+
 ```
 
 _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#options) can be used, along with some extra `http-proxy-middleware` [options](#options).
