@@ -1,0 +1,16 @@
+{
+  "name": "hono",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.11.1",
+    "hono": "^4.3.5"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}
