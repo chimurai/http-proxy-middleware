@@ -7,6 +7,7 @@
 - fix(logger-plugin): fix missing target port
 - ci(package): npm package provenance
 - fix(logger-plugin): log target port when router option is used
+- refactor: fix circular dependencies
 
 ## [v3.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.0)
 
