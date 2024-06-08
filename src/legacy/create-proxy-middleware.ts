@@ -1,4 +1,4 @@
-import { createProxyMiddleware } from '..';
+import { createProxyMiddleware } from '../factory';
 import { Debug } from '../debug';
 import { Filter, RequestHandler } from '../types';
 import { legacyOptionsAdapter } from './options-adapter';

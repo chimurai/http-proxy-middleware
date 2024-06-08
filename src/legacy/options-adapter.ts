@@ -1,5 +1,5 @@
 import * as url from 'url';
-import { Filter, Options } from '..';
+import { Filter, Options } from '../types';
 import { LegacyOptions } from './types';
 import { Debug } from '../debug';
 import { getLogger } from '../logger';

@@ -1,5 +1,5 @@
 import type * as http from 'http';
-import { Options } from '..';
+import { Options } from '../types';
 
 /**
  * @deprecated
