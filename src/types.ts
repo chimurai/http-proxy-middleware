@@ -139,4 +139,15 @@ export interface Options<TReq = http.IncomingMessage, TRes = http.ServerResponse
    * @since v3.0.0
    */
   logger?: Logger | any;
+
+  /**
+   * Configures options for follow-redirects when followRedirects is true.
+   * @property {number} [maxRedirects] - The maximum number of redirects to follow.
+   * @property {number} [maxBodyLength] - The maximum allowed size of the response body in bytes.
+   * @see {@link https://github.com/follow-redirects/follow-redirects?tab=readme-ov-file#global-options}
+   */
+  followRedirectsOpts?: {
+    maxRedirects?: number;
+    maxBodyLength?: number;
+  };
 }
