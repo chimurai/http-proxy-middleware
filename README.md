@@ -38,9 +38,9 @@ import type { Filter, Options, RequestHandler } from 'http-proxy-middleware';
 const app = express();
 
 const proxyMiddleware = createProxyMiddleware<Request, Response>({
-    target: 'http://www.example.org/api',
-    changeOrigin: true,
-  }),
+  target: 'http://www.example.org/api',
+  changeOrigin: true,
+});
 
 app.use('/api', proxyMiddleware);
 
