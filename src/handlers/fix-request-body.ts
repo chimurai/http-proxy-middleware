@@ -23,7 +23,7 @@ export function fixRequestBody<TReq = http.IncomingMessage>(
     proxyReq.write(bodyData);
   };
 
-  if (contentType && contentType.includes('application/json')) {
+  if (contentType && (contentType.includes('application/json') || contentType.endsWith('+json'))) {
     writeBody(JSON.stringify(requestBody));
   }
 
