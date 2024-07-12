@@ -14,6 +14,6 @@
     "browser-sync": "3.0.2",
     "connect": "3.7.0",
     "express": "4.19.2",
-    "fastify": "4.27.0"
+    "fastify": "4.28.1"
   }
 }
