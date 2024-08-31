@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- refactor(dependency): replace is-plain-obj with is-plain-object
+
 ## [v3.0.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.1)
 
 - fix(type): fix RequestHandler return type ([#980](https://github.com/chimurai/http-proxy-middleware/pull/980))
