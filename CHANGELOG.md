@@ -1,14 +1,14 @@
 # Changelog
 
-## [next](https://github.com/chimurai/http-proxy-middleware/releases)
+## [v3.0.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.1)
 
-- fix(type): fix RequestHandler return type
-- refactor(errors): improve pathFilter error message
-- fix(logger-plugin): fix missing target port
-- ci(package): npm package provenance
-- fix(logger-plugin): log target port when router option is used
-- refactor: fix circular dependencies
-- fix(fix-request-body): support '+json' content-type suffix
+- fix(type): fix RequestHandler return type ([#980](https://github.com/chimurai/http-proxy-middleware/pull/980))
+- refactor(errors): improve pathFilter error message ([#987](https://github.com/chimurai/http-proxy-middleware/pull/987))
+- fix(logger-plugin): fix missing target port ([#989](https://github.com/chimurai/http-proxy-middleware/pull/989))
+- ci(package): npm package provenance ([#991](https://github.com/chimurai/http-proxy-middleware/pull/1015))
+- fix(logger-plugin): log target port when router option is used ([#1001](https://github.com/chimurai/http-proxy-middleware/pull/1001))
+- refactor: fix circular dependencies ([#1010](https://github.com/chimurai/http-proxy-middleware/pull/1010))
+- fix(fix-request-body): support '+json' content-type suffix ([#1015](https://github.com/chimurai/http-proxy-middleware/pull/1015))
 
 ## [v3.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.0)
 
