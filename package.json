@@ -86,12 +86,12 @@
     "ws": "8.18.0"
   },
   "dependencies": {
-    "@types/http-proxy": "^1.17.14",
-    "debug": "^4.3.5",
+    "@types/http-proxy": "^1.17.15",
+    "debug": "^4.3.6",
     "http-proxy": "^1.18.1",
     "is-glob": "^4.0.3",
     "is-plain-obj": "^3.0.0",
-    "micromatch": "^4.0.7"
+    "micromatch": "^4.0.8"
   },
   "engines": {
     "node": "^14.15.0 || ^16.10.0 || >=18.0.0"
