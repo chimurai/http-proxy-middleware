@@ -90,7 +90,7 @@
     "debug": "^4.3.6",
     "http-proxy": "^1.18.1",
     "is-glob": "^4.0.3",
-    "is-plain-obj": "^3.0.0",
+    "is-plain-object": "^5.0.0",
     "micromatch": "^4.0.8"
   },
   "engines": {
