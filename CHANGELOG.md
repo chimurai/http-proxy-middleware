@@ -3,6 +3,7 @@
 ## next
 
 - refactor(dependency): replace is-plain-obj with is-plain-object
+- chore(package): upgrade to eslint v9
 
 ## [v3.0.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.1)
 

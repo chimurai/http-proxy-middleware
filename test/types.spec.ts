@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 
 import * as express from 'express';
 import * as http from 'http';
