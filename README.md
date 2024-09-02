@@ -48,7 +48,6 @@ app.listen(3000);
 
 // proxy and keep the same base path "/api"
 // http://127.0.0.1:3000/api/foo/bar -> http://www.example.org/api/foo/bar
-
 ```
 
 _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#options) can be used, along with some extra `http-proxy-middleware` [options](#options).
