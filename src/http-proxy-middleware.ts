@@ -46,10 +46,10 @@ export class HttpProxyMiddleware<TReq, TRes> {
         debug(`proxy request to target: %O`, activeProxyOptions.target);
         this.proxy.web(req, res, activeProxyOptions);
       } catch (err) {
-        next && next(err);
+        next?.(err);
       }
     } else {
-      next && next();
+      next?.();
     }
 
     /**

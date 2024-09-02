@@ -1,4 +1,4 @@
-import isPlainObj = require('is-plain-obj');
+import { isPlainObject } from 'is-plain-object';
 import { Debug } from './debug';
 
 const debug = Debug.extend('router');
@@ -7,7 +7,7 @@ export async function getTarget(req, config) {
   let newTarget;
   const router = config.router;
 
-  if (isPlainObj(router)) {
+  if (isPlainObject(router)) {
     newTarget = getTargetFromProxyTable(req, router);
   } else if (typeof router === 'function') {
     newTarget = await router(req);
