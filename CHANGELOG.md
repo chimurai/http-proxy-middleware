@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.7](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.7)
+
+- ci(github actions): add publish.yml
+
 ## [v2.0.6](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.6)
 
 - fix(proxyReqWs): catch socket errors ([#763](https://github.com/chimurai/http-proxy-middleware/pull/763))
