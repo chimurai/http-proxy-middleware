@@ -1,5 +1,9 @@
 # Changelog
 
+## [v3.0.3](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.3)
+
+- fix(pathFilter): handle errors
+
 ## [v3.0.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.2)
 
 - refactor(dependency): replace is-plain-obj with is-plain-object ([#1031](https://github.com/chimurai/http-proxy-middleware/pull/1031))
