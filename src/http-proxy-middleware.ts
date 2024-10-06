@@ -1,7 +1,7 @@
 import type * as net from 'net';
 import type * as http from 'http';
 import type * as https from 'https';
-import type { RequestHandler, Options, Filter } from './types';
+import type { RequestHandler, Options, Filter, Logger } from './types';
 import * as httpProxy from 'http-proxy';
 import { verifyConfig } from './configuration';
 import { getPlugins } from './get-plugins';
@@ -10,6 +10,7 @@ import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
 import { Debug as debug } from './debug';
 import { getFunctionName } from './utils/function';
+import { getLogger } from './logger';
 
 export class HttpProxyMiddleware<TReq, TRes> {
   private wsInternalSubscribed = false;
@@ -17,10 +18,12 @@ export class HttpProxyMiddleware<TReq, TRes> {
   private proxyOptions: Options<TReq, TRes>;
   private proxy: httpProxy<TReq, TRes>;
   private pathRewriter;
+  private logger: Logger;
 
   constructor(options: Options<TReq, TRes>) {
     verifyConfig<TReq, TRes>(options);
     this.proxyOptions = options;
+    this.logger = getLogger(options as unknown as Options);
 
     debug(`create proxy server`);
     this.proxy = httpProxy.createProxyServer({});
@@ -109,7 +112,13 @@ export class HttpProxyMiddleware<TReq, TRes> {
     pathFilter: Filter<TReq> | undefined,
     req: http.IncomingMessage,
   ): boolean => {
-    return matchPathFilter(pathFilter, req.url, req);
+    try {
+      return matchPathFilter(pathFilter, req.url, req);
+    } catch (err) {
+      debug('Error: matchPathFilter() called with request url: ', `"${req.url}"`);
+      this.logger.error(err);
+      return false;
+    }
   };
 
   /**
