@@ -28,6 +28,6 @@ jobs:
 
       - name: Publish to NPM (stable)
         if: '!github.event.release.prerelease'
-        run: npm publish --provenance --access public --tag v2
+        run: npm publish --provenance --access public --tag v2-latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
