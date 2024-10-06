@@ -153,6 +153,34 @@ describe('E2E http-proxy-middleware', () => {
         const response = await agent.get(`/api/b/c/d`).expect(404);
         expect(response.status).toBe(404);
       });
+
+      it('should not proxy when filter throws Error', async () => {
+        const myError = new Error('MY_ERROR');
+        const filter = (path, req) => {
+          throw myError;
+        };
+
+        const logger = {
+          log: jest.fn(),
+          info: jest.fn(),
+          warn: jest.fn(),
+          error: jest.fn(),
+        };
+
+        agent = request(
+          createApp(
+            createProxyMiddleware(filter, {
+              target: `http://localhost:${mockTargetServer.port}`,
+              logProvider: () => logger,
+            })
+          )
+        );
+
+        await mockTargetServer.get('/api/b/c/d').thenReply(200, 'HELLO WEB');
+        const response = await agent.get(`/api/b/c/d`).expect(404);
+        expect(response.status).toBe(404);
+        expect(logger.error).toHaveBeenCalledWith(expect.objectContaining(myError));
+      });
     });
 
     describe('multi path', () => {

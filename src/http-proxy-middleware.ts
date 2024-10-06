@@ -109,8 +109,13 @@ export class HttpProxyMiddleware {
    * @return {Boolean}
    */
   private shouldProxy = (context, req: Request): boolean => {
-    const path = req.originalUrl || req.url;
-    return contextMatcher.match(context, path, req);
+    try {
+      const path = req.originalUrl || req.url;
+      return contextMatcher.match(context, path, req);
+    } catch (error) {
+      this.logger.error(error);
+      return false;
+    }
   };
 
   /**

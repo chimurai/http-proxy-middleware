@@ -3,6 +3,7 @@
 ## [v2.0.7](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.7)
 
 - ci(github actions): add publish.yml
+- fix(filter): handle errors
 
 ## [v2.0.6](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.6)
 
