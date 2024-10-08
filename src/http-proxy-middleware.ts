@@ -32,6 +32,8 @@ export class HttpProxyMiddleware<TReq, TRes> {
 
     this.pathRewriter = PathRewriter.createPathRewriter(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
+    this.setFollowRedirectsOptions(options);
+
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
     this.middleware.upgrade = (req, socket, head) => {
@@ -86,6 +88,30 @@ export class HttpProxyMiddleware<TReq, TRes> {
       plugin(proxy, options);
     });
   }
+
+  /**
+   Sets follow-redirects module global options used internally by http-proxy. When followRedirects is true, http-proxy uses the http and https agents of the follow-redirects module https://github.com/http-party/node-http-proxy/blob/9b96cd725127a024dabebec6c7ea8c807272223d/lib/http-proxy/passes/web-incoming.js#L105
+  */
+  private setFollowRedirectsOptions = (options: Options<TReq, TRes>) => {
+    if (!options.followRedirectsOpts) {
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const followRedirects = require('follow-redirects'); // Since there is no way to access the module from http-proxy and also given that http-proxy is unmaintained.
+    if (!followRedirects) {
+      return;
+    }
+    // Sets follow-redirects global options according to https://github.com/follow-redirects/follow-redirects?tab=readme-ov-file#global-options
+    // This is a workaround, the options are set globally, ideally follow redirect options should be set through the http-proxy.
+    if (options.followRedirectsOpts.maxRedirects) {
+      followRedirects.maxRedirects = options.followRedirectsOpts.maxRedirects;
+      debug('set followRedirects.maxRedirects globally', followRedirects.maxRedirects);
+    }
+    if (options.followRedirectsOpts.maxBodyLength) {
+      followRedirects.maxBodyLength = options.followRedirectsOpts.maxBodyLength;
+      debug('set followRedirects.maxBodyLength globally', followRedirects.maxBodyLength);
+    }
+  };
 
   private catchUpgradeRequest = (server: https.Server) => {
     if (!this.wsInternalSubscribed) {
