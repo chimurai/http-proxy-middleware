@@ -3,8 +3,6 @@
  * https://github.com/DefinitelyTyped/DefinitelyTyped/blob/6f529c6c67a447190f86bfbf894d1061e41e07b7/types/http-proxy-middleware/index.d.ts
  */
 
-/* eslint-disable @typescript-eslint/no-empty-interface */
-
 import type * as http from 'http';
 import type * as httpProxy from 'http-proxy';
 import type * as net from 'net';
@@ -14,9 +12,9 @@ export type NextFunction<T = (err?: any) => void> = T;
 export interface RequestHandler<
   TReq = http.IncomingMessage,
   TRes = http.ServerResponse,
-  TNext = NextFunction
+  TNext = NextFunction,
 > {
-  (req: TReq, res: TRes, next?: TNext): void | Promise<void>;
+  (req: TReq, res: TRes, next?: TNext): Promise<void>;
   upgrade: (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => void;
 }
 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 
 import * as express from 'express';
 import * as http from 'http';
@@ -187,62 +187,62 @@ describe('http-proxy-middleware TypeScript Types', () => {
               res.status(200).send('OK');
             },
           },
-        })
+        }),
       );
 
       expect(app).toBeDefined();
     });
 
-    // FIXME: contextual types should work with express path middleware
-    // it('should get contextual types from express server', () => {
-    //   const app = express();
-    //   app.use(
-    //     '/',
-    //     middleware({
-    //       router: (req) => req.params,
-    //       pathFilter: (pathname, req) => !!req.params,
-    //       on: {
-    //         error(error, req, res, target) {
-    //           req.params;
+    it('should get contextual types from express server', () => {
+      const app = express();
+      app.use(
+        '/',
+        // FIXME: contextual types should work with express path middleware (without providing explicit types)
+        middleware<express.Request, express.Response>({
+          router: (req) => req.params,
+          pathFilter: (pathname, req) => !!req.params,
+          on: {
+            error(error, req, res, target) {
+              req.params;
 
-    //           // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
-    //           if (res instanceof http.ServerResponse) {
-    //             res.status(200).send('OK');
-    //           }
-    //         },
-    //         proxyReq(proxyReq, req, res, options) {
-    //           req.params;
-    //           res.status(200).send('OK');
-    //         },
-    //         proxyReqWs(proxyReq, req, socket, options, head) {
-    //           req.params;
-    //         },
-    //         proxyRes(proxyRes, req, res) {
-    //           req.params;
-    //           res.status(200).send('OK');
-    //         },
-    //         close(proxyRes, proxySocket, proxyHead) {
-    //           proxyRes.params;
-    //         },
-    //         start(req, res, target) {
-    //           req.params;
-    //           res.status(200).send('OK');
-    //         },
-    //         end(req, res, proxyRes) {
-    //           req.params;
-    //           res.status(200).send('OK');
-    //           proxyRes.params;
-    //         },
-    //         econnreset(error, req, res, target) {
-    //           req.params;
-    //           res.status(200).send('OK');
-    //         },
-    //       },
-    //     })
-    //   );
+              // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+              if (res instanceof http.ServerResponse) {
+                res.status(200).send('OK');
+              }
+            },
+            proxyReq(proxyReq, req, res, options) {
+              req.params;
+              res.status(200).send('OK');
+            },
+            proxyReqWs(proxyReq, req, socket, options, head) {
+              req.params;
+            },
+            proxyRes(proxyRes, req, res) {
+              req.params;
+              res.status(200).send('OK');
+            },
+            close(proxyRes, proxySocket, proxyHead) {
+              proxyRes.params;
+            },
+            start(req, res, target) {
+              req.params;
+              res.status(200).send('OK');
+            },
+            end(req, res, proxyRes) {
+              req.params;
+              res.status(200).send('OK');
+              proxyRes.params;
+            },
+            econnreset(error, req, res, target) {
+              req.params;
+              res.status(200).send('OK');
+            },
+          },
+        }),
+      );
 
-    //   expect(app).toBeDefined();
-    // });
+      expect(app).toBeDefined();
+    });
 
     it('should work with explicit generic custom req & res types', () => {
       interface MyRequest extends http.IncomingMessage {
@@ -369,11 +369,11 @@ describe('http-proxy-middleware TypeScript Types', () => {
                   req.params;
                   res.status(200).send('OK');
                   return buffer;
-                })
+                }),
               );
             },
           ],
-        })
+        }),
       );
 
       expect(app).toBeDefined();

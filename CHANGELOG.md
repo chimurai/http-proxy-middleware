@@ -1,6 +1,31 @@
 # Changelog
 
-## next
+## [v3.0.3](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.3)
+
+- fix(pathFilter): handle errors
+
+## [v3.0.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.2)
+
+- refactor(dependency): replace is-plain-obj with is-plain-object ([#1031](https://github.com/chimurai/http-proxy-middleware/pull/1031))
+- chore(package): upgrade to eslint v9 ([#1032](https://github.com/chimurai/http-proxy-middleware/pull/1032))
+- fix(logger-plugin): handle undefined protocol and hostname ([#1036](https://github.com/chimurai/http-proxy-middleware/pull/1036))
+
+## [v3.0.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.1)
+
+- fix(type): fix RequestHandler return type ([#980](https://github.com/chimurai/http-proxy-middleware/pull/980))
+- refactor(errors): improve pathFilter error message ([#987](https://github.com/chimurai/http-proxy-middleware/pull/987))
+- fix(logger-plugin): fix missing target port ([#989](https://github.com/chimurai/http-proxy-middleware/pull/989))
+- ci(package): npm package provenance ([#991](https://github.com/chimurai/http-proxy-middleware/pull/1015))
+- fix(logger-plugin): log target port when router option is used ([#1001](https://github.com/chimurai/http-proxy-middleware/pull/1001))
+- refactor: fix circular dependencies ([#1010](https://github.com/chimurai/http-proxy-middleware/pull/1010))
+- fix(fix-request-body): support '+json' content-type suffix ([#1015](https://github.com/chimurai/http-proxy-middleware/pull/1015))
+
+## [v3.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.0)
+
+This release contains some breaking changes.
+
+Please read the V3 discussion <https://github.com/chimurai/http-proxy-middleware/discussions/768>
+or follow the [MIGRATION.md](https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md) guide.
 
 - feat(typescript): type improvements ([#882](https://github.com/chimurai/http-proxy-middleware/pull/882))
 - chore(deps): update micromatch to 4.0.5

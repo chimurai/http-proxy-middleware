@@ -2,9 +2,8 @@
 
 [![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/chimurai/http-proxy-middleware/ci.yml?branch=master&logo=github-actions&logoColor=white&style=flat-square)](https://github.com/chimurai/http-proxy-middleware/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Coveralls](https://img.shields.io/coveralls/chimurai/http-proxy-middleware.svg?style=flat-square&logo=coveralls)](https://coveralls.io/r/chimurai/http-proxy-middleware)
-[![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/chimurai/http-proxy-middleware?logo=snyk&style=flat-square)](https://security.snyk.io/package/npm/http-proxy-middleware)
+[![Known Vulnerabilities](https://snyk.io/test/github/chimurai/http-proxy-middleware/badge.svg)](https://snyk.io/test/github/chimurai/http-proxy-middleware)
 [![npm](https://img.shields.io/npm/v/http-proxy-middleware?color=%23CC3534&style=flat-square&logo=npm)](https://www.npmjs.com/package/http-proxy-middleware)
-[![npm (tag)](https://img.shields.io/npm/v/http-proxy-middleware/beta?color=CC3534&logo=npm&style=flat-square)](https://github.com/chimurai/http-proxy-middleware/discussions/768)
 
 Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/expressjs/express), [next.js](https://github.com/vercel/next.js) and [many more](#compatible-servers).
 
@@ -27,43 +26,23 @@ Proxy `/api` requests to `http://www.example.org`
 
 :bulb: **Tip:** Set the option `changeOrigin` to `true` for [name-based virtual hosted sites](http://en.wikipedia.org/wiki/Virtual_hosting#Name-based).
 
-```javascript
-// javascript
-
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
-const app = express();
-
-app.use(
-  '/api',
-  createProxyMiddleware({
-    target: 'http://www.example.org/secret',
-    changeOrigin: true,
-  })
-);
-
-app.listen(3000);
-
-// proxy and change the base path from "/api" to "/secret"
-// http://127.0.0.1:3000/api/foo/bar -> http://www.example.org/secret/foo/bar
-```
-
 ```typescript
 // typescript
 
 import * as express from 'express';
-import { createProxyMiddleware, Filter, Options, RequestHandler } from 'http-proxy-middleware';
+import type { Request, Response, NextFunction } from 'express';
+
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import type { Filter, Options, RequestHandler } from 'http-proxy-middleware';
 
 const app = express();
 
-app.use(
-  '/api',
-  createProxyMiddleware({
-    target: 'http://www.example.org/api',
-    changeOrigin: true,
-  })
-);
+const proxyMiddleware = createProxyMiddleware<Request, Response>({
+  target: 'http://www.example.org/api',
+  changeOrigin: true,
+});
+
+app.use('/api', proxyMiddleware);
 
 app.listen(3000);
 
@@ -165,7 +144,7 @@ app.use(
     target: 'http://www.example.org/api',
     changeOrigin: true,
     pathFilter: '/api/proxy-only-this-path',
-  })
+  }),
 );
 ```
 
@@ -490,7 +469,7 @@ The following options are provided by the underlying [http-proxy](https://github
         target: 'http://127.0.0.1:4003/',
         buffer: streamify(req.rawBody),
       },
-      next
+      next,
     );
   };
   ```
@@ -665,4 +644,4 @@ $ yarn spellcheck
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2022 Steven Chim
+Copyright (c) 2015-2024 Steven Chim

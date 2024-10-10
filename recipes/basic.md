@@ -19,6 +19,10 @@ app.use('/api', createProxyMiddleware({ target: 'http://localhost:3000/api', cha
 
 ```javascript
 app.use(
-  createProxyMiddleware({ target: 'http://localhost:3000', changeOrigin: true, pathFilter: '/api' })
+  createProxyMiddleware({
+    target: 'http://localhost:3000',
+    changeOrigin: true,
+    pathFilter: '/api',
+  }),
 );
 ```

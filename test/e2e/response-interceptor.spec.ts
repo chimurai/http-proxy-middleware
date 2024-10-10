@@ -3,7 +3,7 @@ import { createApp } from './test-kit';
 import * as request from 'supertest';
 
 describe('responseInterceptor()', () => {
-  let agent: request.SuperTest<request.Test>;
+  let agent: request.Agent;
 
   describe('intercept responses', () => {
     beforeEach(() => {
@@ -19,8 +19,8 @@ describe('responseInterceptor()', () => {
                 return JSON.stringify({ foo: 'bar', favorite: '叉燒包' });
               }),
             },
-          })
-        )
+          }),
+        ),
       );
     });
 
@@ -56,8 +56,8 @@ describe('responseInterceptor()', () => {
                 return responseBuffer;
               }),
             },
-          })
-        )
+          }),
+        ),
       );
     });
 
@@ -82,8 +82,8 @@ describe('responseInterceptor()', () => {
             on: {
               proxyRes: responseInterceptor(async (buffer) => buffer),
             },
-          })
-        )
+          }),
+        ),
       );
     });
 

@@ -4,6 +4,7 @@ import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
 import type * as http from 'http';
 import type * as express from 'express';
 import * as bodyParser from 'body-parser';
+import type { Logger } from '../../src/types';
 
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {
@@ -41,7 +42,7 @@ describe('E2E http-proxy-middleware', () => {
 
   describe('http-proxy-middleware in actual server', () => {
     let mockTargetServer: Mockttp;
-    let agent: request.SuperTest<request.Test>;
+    let agent: request.Agent;
 
     beforeEach(async () => {
       mockTargetServer = getLocal();
@@ -59,8 +60,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -95,8 +96,8 @@ describe('E2E http-proxy-middleware', () => {
               on: {
                 proxyReq: fixRequestBody,
               },
-            })
-          )
+            }),
+          ),
         );
 
         await mockTargetServer.forPost('/api').thenCallback(async (req) => {
@@ -116,8 +117,8 @@ describe('E2E http-proxy-middleware', () => {
               on: {
                 proxyReq: fixRequestBody,
               },
-            })
-          )
+            }),
+          ),
         );
 
         await mockTargetServer.forPost('/api').thenCallback(async (req) => {
@@ -139,8 +140,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: filter,
-            })
-          )
+            }),
+          ),
         );
 
         await mockTargetServer.forGet('/api/b/c/d').thenReply(200, 'HELLO WEB');
@@ -158,13 +159,41 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: filter,
-            })
-          )
+            }),
+          ),
         );
 
         await mockTargetServer.forGet('/api/b/c/d').thenReply(200, 'HELLO WEB');
         const response = await agent.get(`/api/b/c/d`).expect(404);
         expect(response.status).toBe(404);
+      });
+
+      it('should not proxy when filter throws Error', async () => {
+        const myError = new Error('MY_ERROR');
+        const filter = (path, req) => {
+          throw myError;
+        };
+
+        const logger: Logger = {
+          info: jest.fn(),
+          warn: jest.fn(),
+          error: jest.fn(),
+        };
+
+        agent = request(
+          createApp(
+            createProxyMiddleware({
+              target: `http://localhost:${mockTargetServer.port}`,
+              pathFilter: filter,
+              logger: logger,
+            }),
+          ),
+        );
+
+        await mockTargetServer.forGet('/api/b/c/d').thenReply(200, 'HELLO WEB');
+        const response = await agent.get(`/api/b/c/d`).expect(404);
+        expect(response.status).toBe(404);
+        expect(logger.error).toHaveBeenCalledWith(myError);
       });
     });
 
@@ -175,8 +204,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: ['/api', '/ajax'],
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -205,8 +234,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api/**',
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -224,8 +253,8 @@ describe('E2E http-proxy-middleware', () => {
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: ['**/*.html', '!**.json'],
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -250,8 +279,8 @@ describe('E2E http-proxy-middleware', () => {
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
               headers: { host: 'foobar.dev' },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -275,8 +304,8 @@ describe('E2E http-proxy-middleware', () => {
           createApp(
             createProxyMiddleware({
               target: `http://localhost:666`, // unreachable host on port:666
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -300,8 +329,8 @@ describe('E2E http-proxy-middleware', () => {
                   }
                 },
               },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -331,8 +360,8 @@ describe('E2E http-proxy-middleware', () => {
                   delete proxyRes['headers']['x-removed'];
                 },
               },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -368,8 +397,8 @@ describe('E2E http-proxy-middleware', () => {
                   proxyReq.setHeader('x-added', 'added-from-hpm'); // add custom header to request
                 },
               },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -396,8 +425,8 @@ describe('E2E http-proxy-middleware', () => {
                 '^/api': '/rest',
                 '^/remove': '',
               },
-            })
-          )
+            }),
+          ),
         );
       });
 
@@ -419,8 +448,8 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createAppWithPath(
             '/api',
-            createProxyMiddleware({ target: `http://localhost:${mockTargetServer.port}/api` })
-          )
+            createProxyMiddleware({ target: `http://localhost:${mockTargetServer.port}/api` }),
+          ),
         );
       });
 
@@ -433,33 +462,57 @@ describe('E2E http-proxy-middleware', () => {
 
     describe('option.logger', () => {
       let logMessages: string[];
+      let customLogger: Logger;
 
       beforeEach(() => {
         logMessages = [];
-        const customLogger = {
+        customLogger = {
           info: (message: string) => logMessages.push(message),
           warn: (message: string) => logMessages.push(message),
           error: (message: string) => logMessages.push(message),
         };
+      });
 
+      it('should have logged messages', async () => {
         agent = request(
           createApp(
             createProxyMiddleware({
               target: `http://localhost:${mockTargetServer.port}`,
               pathFilter: '/api',
               logger: customLogger,
-            })
-          )
+            }),
+          ),
         );
-      });
 
-      it('should have logged messages', async () => {
         await mockTargetServer.forGet('/api/foo/bar').thenReply(200);
         await agent.get(`/api/foo/bar`).expect(200);
 
         expect(logMessages).not.toBeUndefined();
         expect(logMessages.length).toBe(1);
-        expect(logMessages[0]).toBe('[HPM] GET /api/foo/bar -> http://localhost/api/foo/bar [200]');
+        expect(logMessages.at(0)).toBe(
+          `[HPM] GET /api/foo/bar -> http://localhost:${mockTargetServer.port}/api/foo/bar [200]`,
+        );
+      });
+
+      it('should have logged messages when router used', async () => {
+        agent = request(
+          createApp(
+            createProxyMiddleware({
+              router: () => `http://localhost:${mockTargetServer.port}`,
+              pathFilter: '/api',
+              logger: customLogger,
+            }),
+          ),
+        );
+
+        await mockTargetServer.forGet('/api/foo/bar').thenReply(200);
+        await agent.get(`/api/foo/bar`).expect(200);
+
+        expect(logMessages).not.toBeUndefined();
+        expect(logMessages.length).toBe(1);
+        expect(logMessages.at(0)).toBe(
+          `[HPM] GET /api/foo/bar -> http://localhost:${mockTargetServer.port}/api/foo/bar [200]`,
+        );
       });
     });
   });

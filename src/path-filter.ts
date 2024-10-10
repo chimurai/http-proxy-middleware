@@ -8,7 +8,7 @@ import type * as http from 'http';
 export function matchPathFilter<TReq = http.IncomingMessage>(
   pathFilter: Filter<TReq> = '/',
   uri: string | undefined,
-  req: http.IncomingMessage
+  req: http.IncomingMessage,
 ): boolean {
   // single path
   if (isStringPath(pathFilter as string)) {

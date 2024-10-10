@@ -1,5 +1,6 @@
 # Migration guide
 
+- [v3 changes and discussions](#v3-changes-and-discussions)
 - [v2 to v3 adapter](#v2-to-v3-adapter)
   - [`legacyCreateProxyMiddleware`](#legacycreateproxymiddleware)
 - [v3 breaking changes](#v3-breaking-changes)
@@ -10,11 +11,19 @@
   - [Removed `logProvider` and `logLevel` options](#removed-logprovider-and-loglevel-options)
   - [Refactored proxy events](#refactored-proxy-events)
 
+## v3 changes and discussions
+
+See list of changes in V3:
+
+<https://github.com/chimurai/http-proxy-middleware/discussions/768>
+
 ## v2 to v3 adapter
 
 ### `legacyCreateProxyMiddleware`
 
 Use the adapter to use v3 with minimal changes to your v2 implementation.
+
+💡 When you use `legacyCreateProxyMiddleware` it will print out console messages in run-time to guide you on how to migrate legacy configurations.
 
 NOTE: `legacyCreateProxyMiddleware` will be removed in a future version.
 
@@ -46,6 +55,8 @@ legacyCreateProxyMiddleware(...);
 
 ### Removed `req.url` patching
 
+When proxy is mounted on a path, this path should be provided in the target.
+
 ```js
 // before
 app.use('/user', proxy({ target: 'http://www.example.org' }));
@@ -64,10 +75,13 @@ It was common to rewrite the `basePath` with the `pathRewrite` option:
 
 ```js
 // before
-app.use('/user', proxy({
-  target: 'http://www.example.org'
-  pathRewrite: { '^/user': '/secret' }
-}));
+app.use(
+  '/user',
+  proxy({
+    target: 'http://www.example.org',
+    pathRewrite: { '^/user': '/secret' },
+  }),
+);
 
 // after
 app.use('/user', proxy({ target: 'http://www.example.org/secret' }));
@@ -77,10 +91,12 @@ When proxy is mounted at the root, `pathRewrite` should still work as in v2.
 
 ```js
 // not affected
-app.use(proxy({
-  target: 'http://www.example.org'
-  pathRewrite: { '^/user': '/secret' }
-}));
+app.use(
+  proxy({
+    target: 'http://www.example.org',
+    pathRewrite: { '^/user': '/secret' },
+  }),
+);
 ```
 
 ### Removed "shorthand" usage
@@ -89,10 +105,10 @@ Specify the `target` option.
 
 ```js
 // before
-createProxyMiddleware('http:/www.example.org');
+createProxyMiddleware('http://www.example.org');
 
 // after
-createProxyMiddleware({ target: 'http:/www.example.org' });
+createProxyMiddleware({ target: 'http://www.example.org' });
 ```
 
 ### Removed `context` argument
