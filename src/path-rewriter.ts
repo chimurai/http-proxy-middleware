@@ -1,4 +1,4 @@
-import isPlainObj = require('is-plain-obj');
+import { isPlainObject } from 'is-plain-object';
 import { ERRORS } from './errors';
 import { Debug } from './debug';
 
@@ -45,7 +45,7 @@ export function createPathRewriter(rewriteConfig) {
 function isValidRewriteConfig(rewriteConfig) {
   if (typeof rewriteConfig === 'function') {
     return true;
-  } else if (isPlainObj(rewriteConfig)) {
+  } else if (isPlainObject(rewriteConfig)) {
     return Object.keys(rewriteConfig).length !== 0;
   } else if (rewriteConfig === undefined || rewriteConfig === null) {
     return false;
@@ -57,7 +57,7 @@ function isValidRewriteConfig(rewriteConfig) {
 function parsePathRewriteRules(rewriteConfig: Record<string, string>) {
   const rules: RewriteRule[] = [];
 
-  if (isPlainObj(rewriteConfig)) {
+  if (isPlainObject(rewriteConfig)) {
     for (const [key, value] of Object.entries(rewriteConfig)) {
       rules.push({
         regex: new RegExp(key),

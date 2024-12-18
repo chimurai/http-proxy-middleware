@@ -28,6 +28,7 @@
     "fastify",
     "globbing",
     "gzipped",
+    "jsonplaceholder",
     "lcov",
     "Lenna",
     "lipsum",
@@ -45,6 +46,8 @@
     "restream",
     "snyk",
     "streamify",
+    "tseslint",
+    "typicode",
     "vhosted",
     "websockets",
     "xfwd"

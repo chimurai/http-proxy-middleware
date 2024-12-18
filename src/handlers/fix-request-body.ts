@@ -8,7 +8,7 @@ export type BodyParserLikeRequest = http.IncomingMessage & { body: any };
  */
 export function fixRequestBody<TReq = http.IncomingMessage>(
   proxyReq: http.ClientRequest,
-  req: TReq
+  req: TReq,
 ): void {
   const requestBody = (req as unknown as BodyParserLikeRequest).body;
 
@@ -23,7 +23,7 @@ export function fixRequestBody<TReq = http.IncomingMessage>(
     proxyReq.write(bodyData);
   };
 
-  if (contentType && contentType.includes('application/json')) {
+  if (contentType && (contentType.includes('application/json') || contentType.includes('+json'))) {
     writeBody(JSON.stringify(requestBody));
   }
 

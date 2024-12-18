@@ -4,29 +4,33 @@ View working examples of `http-proxy-middleware` implemented in popular servers.
 
 To run and view the [examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples); Clone the `http-proxy-middleware` repo and install the dependencies:
 
-```bash
-$ git clone https://github.com/chimurai/http-proxy-middleware.git
-$ cd http-proxy-middleware
-$ yarn
-$ yarn build
+## Install
+
+```shell
+# git clone https://github.com/chimurai/http-proxy-middleware.git
+
+yarn install:all
+yarn build
 ```
+
+## Run examples
 
 Run the example from root folder:
 
-```bash
-$ node examples/browser-sync
+```shell
+node examples/browser-sync
 ```
 
-```bash
-$ node examples/connect
+```shell
+node examples/connect
 ```
 
-```bash
-$ node examples/express
+```shell
+node examples/express
 ```
 
-```bash
-$ node examples/websocket
+```shell
+node examples/websocket
 ```
 
 ## Server recipes

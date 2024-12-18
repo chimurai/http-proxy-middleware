@@ -114,6 +114,19 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
 
+  it('should write when body is not empty and Content-Type ends with +json', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/merge-patch+json; charset=utf-8');
+
+    jest.spyOn(proxyRequest, 'setHeader');
+    jest.spyOn(proxyRequest, 'write');
+
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
+    const expectedBody = JSON.stringify({ someField: 'some value' });
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
+    expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
+  });
+
   it('should write when body is not empty and Content-Type is application/x-www-form-urlencoded', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded');

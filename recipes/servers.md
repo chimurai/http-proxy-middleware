@@ -4,17 +4,39 @@ Overview of `http-proxy-middleware` implementation in different servers.
 
 Missing a server? Feel free to extend this list of examples.
 
+- [http.createServer](#httpcreateserver)
 - [Express](#express)
 - [Connect](#connect)
 - [Next.js](#nextjs)
-- [Browser-Sync](#browser-sync)
 - [fastify](#fastify)
+- [Browser-Sync](#browser-sync)
 - [Polka](#polka)
 - [lite-server](#lite-server)
 - [grunt-contrib-connect](#grunt-contrib-connect)
 - [gulp-connect](#gulp-connect)
 - [grunt-browser-sync](#grunt-browser-sync)
 - [gulp-webserver](#gulp-webserver)
+
+## http.createServer
+
+Vanilla http server implementation with [`http.createServer`](https://nodejs.org/docs/latest/api/http.html#httpcreateserveroptions-requestlistener)
+
+```javascript
+const http = require('node:http');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+/**
+ * Configure proxy middleware
+ */
+const apiProxy = createProxyMiddleware({
+  target: 'http://www.example.com',
+  changeOrigin: true, // for vhosted sites, changes host header to match to target's host
+});
+
+const server = http.createServer(jsonPlaceholderProxy);
+
+server.listen(3000);
+```
 
 ## Express
 
@@ -65,20 +87,28 @@ https://github.com/vercel/next.js
 [![GitHub stars](https://img.shields.io/github/stars/vercel/next.js.svg?style=social&label=Star)](https://github.com/vercel/next.js)
 ![next.js downloads](https://img.shields.io/npm/dm/next)
 
-Next project: `/pages/api/users.ts`
+See working Next.js example in [/examples/next-app/pages/api/users.ts](https://github.com/chimurai/http-proxy-middleware/blob/master/examples/next-app/pages/api/users.ts)
 
 ```typescript
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
+// Next project: `/pages/api/users.proxy.ts`
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const proxyMiddleware = createProxyMiddleware<NextApiRequest, NextApiResponse>({
+// singleton
+export const proxyMiddleware = createProxyMiddleware<NextApiRequest, NextApiResponse>({
   target: 'http://jsonplaceholder.typicode.com',
   changeOrigin: true,
   pathRewrite: {
     '^/api/users': '/users',
   },
 });
+```
+
+```typescript
+// Next project: `/pages/api/users.ts`
+
+// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { proxyMiddleware } from './users.proxy';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   proxyMiddleware(req, res, (result: unknown) => {
@@ -98,6 +128,36 @@ export const config = {
 };
 
 // curl http://localhost:3000/api/users
+```
+
+## fastify
+
+<https://github.com/fastify/fastify> [![GitHub stars](https://img.shields.io/github/stars/fastify/fastify.svg?style=social&label=Star)](https://github.com/fastify/fastify)
+![fastify downloads](https://img.shields.io/npm/dm/fastify)
+
+See working example in [/examples/fastify/index.js](https://github.com/chimurai/http-proxy-middleware/blob/master/examples/fastify/index.js)
+
+```javascript
+const fastify = require('fastify')({ logger: true });
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+(async () => {
+  await fastify.register(require('@fastify/express'));
+
+  const proxy = createProxyMiddleware({
+    target: 'http://jsonplaceholder.typicode.com',
+    changeOrigin: true,
+  });
+
+  fastify.use(proxy);
+
+  fastify.listen({ port: 3000 }, (err, address) => {
+    if (err) throw err;
+    fastify.log.info(`server listening on ${address}`);
+  });
+})();
+
+// curl http://localhost:3000/users
 ```
 
 ## Browser-Sync
@@ -126,34 +186,6 @@ browserSync.init({
 });
 ```
 
-## fastify
-
-https://github.com/fastify/fastify [![GitHub stars](https://img.shields.io/github/stars/fastify/fastify.svg?style=social&label=Star)](https://github.com/fastify/fastify)
-![fastify downloads](https://img.shields.io/npm/dm/fastify)
-
-```javascript
-const fastify = require('fastify')({ logger: true });
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
-(async () => {
-  await fastify.register(require('fastify-express'));
-
-  const proxy = createProxyMiddleware({
-    target: 'http://jsonplaceholder.typicode.com',
-    changeOrigin: true,
-  });
-
-  fastify.use(proxy);
-
-  fastify.listen(3000, (err, address) => {
-    if (err) throw err;
-    fastify.log.info(`server listening on ${address}`);
-  });
-})();
-
-// curl http://localhost:3000/users
-```
-
 ## Polka
 
 https://github.com/lukeed/polka
@@ -170,7 +202,7 @@ app.use(
   createProxyMiddleware({
     target: 'http://www.example.org',
     changeOrigin: true,
-  })
+  }),
 );
 
 app.listen(3000);
@@ -345,7 +377,7 @@ gulp.task('webserver', function () {
       directoryListing: true,
       open: true,
       middleware: [apiProxy],
-    })
+    }),
   );
 });
 

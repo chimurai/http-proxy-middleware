@@ -171,12 +171,10 @@ describe('Path rewriting', () => {
     });
 
     it('should not throw when function config is provided', () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       expect(badFn(() => {})).not.toThrowError(Error);
     });
 
     it('should not throw when async function config is provided', () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       expect(badFn(async () => {})).not.toThrowError(Error);
     });
   });
