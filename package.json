@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "clean": "rm -rf dist coverage tsconfig.tsbuildinfo .eslintcache",
+    "postinstall": "patch-package",
     "install:all": "yarn && (cd examples && yarn)",
     "lint": "yarn prettier && yarn eslint",
     "lint:fix": "yarn prettier:fix && yarn eslint:fix",
@@ -80,6 +81,7 @@
     "lint-staged": "15.5.0",
     "mockttp": "3.17.0",
     "open": "8.4.2",
+    "patch-package": "8.0.0",
     "prettier": "3.5.3",
     "supertest": "7.1.0",
     "ts-jest": "29.2.6",
