@@ -2,5 +2,16 @@
   "printWidth": 100,
   "tabWidth": 2,
   "semi": true,
-  "singleQuote": true
+  "singleQuote": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "overrides": [
+    {
+      "files": ["*.js, *.ts"],
+      "options": {
+        "importOrder": ["^node:.*$", "<THIRD_PARTY_MODULES>", "^[./]"],
+        "importOrderSeparation": true,
+        "importOrderSortSpecifiers": true
+      }
+    }
+  ]
 }

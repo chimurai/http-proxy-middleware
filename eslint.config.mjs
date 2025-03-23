@@ -1,9 +1,7 @@
 // @ts-check
-
 import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   // replacement of legacy `.eslintignore`
@@ -13,7 +11,6 @@ export default tseslint.config(
   // extends...
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
-  eslintPluginPrettierRecommended,
   // base config
   {
     languageOptions: {
@@ -37,7 +34,6 @@ export default tseslint.config(
         'error',
         { vars: 'all', args: 'none', ignoreRestSiblings: false },
       ],
-      'prettier/prettier': 'warn',
     },
   },
   {
