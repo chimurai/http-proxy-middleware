@@ -3,9 +3,36 @@ name: CI
 on: ['push', 'pull_request']
 
 jobs:
+  dependencies:
+    name: Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - uses: actions/cache@v4
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: yarn install
+        if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
+        run: yarn install --frozen-lockfile --ignore-scripts
+
+        env:
+          CI: true
+
   build:
     name: Build
     runs-on: ubuntu-latest
+    needs: [dependencies]
 
     steps:
       - uses: actions/checkout@v4
@@ -32,9 +59,42 @@ jobs:
         env:
           CI: true
 
+  pkg-pr-new:
+    name: pkg-pr-new
+    if: github.repository == 'chimurai/http-proxy-middleware'
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - uses: actions/cache@v4
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: yarn install
+        if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
+        run: yarn install --frozen-lockfile --ignore-scripts
+
+      - name: pkg-pr-new - publish for testing purposes
+        run: npx pkg-pr-new publish --compact --no-template
+
+        env:
+          CI: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    needs: [dependencies]
 
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +124,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    needs: [dependencies]
 
     strategy:
       matrix:
@@ -97,6 +158,7 @@ jobs:
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
+    needs: [dependencies]
 
     steps:
       - uses: actions/checkout@v4
