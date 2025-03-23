@@ -82,6 +82,7 @@
     "mockttp": "3.17.0",
     "open": "8.4.2",
     "patch-package": "8.0.0",
+    "pkg-pr-new": "0.0.41",
     "prettier": "3.5.3",
     "supertest": "7.1.0",
     "ts-jest": "29.2.6",
