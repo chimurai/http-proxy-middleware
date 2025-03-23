@@ -10,7 +10,6 @@
   ],
   "scripts": {
     "clean": "rm -rf dist coverage tsconfig.tsbuildinfo .eslintcache",
-    "postinstall": "patch-package",
     "install:all": "yarn && (cd examples && yarn)",
     "lint": "yarn prettier && yarn eslint",
     "lint:fix": "yarn prettier:fix && yarn eslint:fix",
@@ -21,7 +20,7 @@
     "build": "tsc --build",
     "test": "jest",
     "coverage": "jest --coverage",
-    "prepare": "husky",
+    "prepare": "husky && patch-package",
     "prepack": "yarn clean && yarn test && yarn build",
     "spellcheck": "npx --yes cspell --show-context --show-suggestions '**/*.*'"
   },
