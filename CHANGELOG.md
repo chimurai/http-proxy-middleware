@@ -1,5 +1,14 @@
 # Changelog
 
+## next
+
+- fix(fixRequestBody): handle invalid request ([#1092](https://github.com/chimurai/http-proxy-middleware/pull/1092))
+- fix(fixRequestBody): prevent multiple .write() calls ([#1089](https://github.com/chimurai/http-proxy-middleware/pull/1089))
+- fix(websocket): handle errors in handleUpgrade ([#823](https://github.com/chimurai/http-proxy-middleware/pull/823))
+- ci(package): patch http-proxy ([#1084](https://github.com/chimurai/http-proxy-middleware/pull/1084))
+- fix(fixRequestBody): support multipart/form-data ([#896](https://github.com/chimurai/http-proxy-middleware/pull/896))
+- feat(types): export Plugin type ([#1071](https://github.com/chimurai/http-proxy-middleware/pull/1071))
+
 ## [v3.0.3](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.3)
 
 - fix(pathFilter): handle errors
