@@ -1,5 +1,11 @@
 # Changelog
 
+## next
+
+- ci(package): patch http-proxy ([#1084](https://github.com/chimurai/http-proxy-middleware/pull/1084))
+- fix(fixRequestBody): support multipart/form-data ([#896](https://github.com/chimurai/http-proxy-middleware/pull/896))
+- feat(types): export Plugin type ([#1071](https://github.com/chimurai/http-proxy-middleware/pull/1071))
+
 ## [v3.0.3](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.3)
 
 - fix(pathFilter): handle errors
