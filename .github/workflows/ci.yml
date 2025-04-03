@@ -194,10 +194,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: streetsidesoftware/cspell-action@v6
         with:
-          # Github token used to fetch the list of changed files in the commit.
-          # Default: ${{ github.token }}
-          github_token: ${{ github.token }}
-
           # Define glob patterns to filter the files to be checked. Use a new line between patterns to define multiple patterns.
           # The default is to check ALL files that were changed in in the pull_request or push.
           # Note: `ignorePaths` defined in cspell.json still apply.
