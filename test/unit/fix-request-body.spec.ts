@@ -78,4 +78,19 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
+
+  it('should parse json and call write() once with incorrect content-type application/x-www-form-urlencoded+application/json', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded+application/json');
+
+    jest.spyOn(proxyRequest, 'setHeader');
+    jest.spyOn(proxyRequest, 'write');
+
+    fixRequestBody(proxyRequest, { body: { someField: 'some value' } } as Request);
+
+    const expectedBody = JSON.stringify({ someField: 'some value' });
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
+    expect(proxyRequest.write).toHaveBeenCalledTimes(1);
+    expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
+  });
 });
