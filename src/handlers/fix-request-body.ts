@@ -17,21 +17,23 @@ export function fixRequestBody<TReq = http.IncomingMessage>(
   }
 
   const contentType = proxyReq.getHeader('Content-Type') as string;
+
+  if (!contentType) {
+    return;
+  }
+
   const writeBody = (bodyData: string) => {
-    // deepcode ignore ContentLengthInCode: bodyParser fix
     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
     proxyReq.write(bodyData);
   };
 
-  if (contentType && (contentType.includes('application/json') || contentType.includes('+json'))) {
+  // Use if-elseif to prevent multiple writeBody/setHeader calls:
+  // Error: "Cannot set headers after they are sent to the client"
+  if (contentType.includes('application/json') || contentType.includes('+json')) {
     writeBody(JSON.stringify(requestBody));
-  }
-
-  if (contentType && contentType.includes('application/x-www-form-urlencoded')) {
+  } else if (contentType.includes('application/x-www-form-urlencoded')) {
     writeBody(querystring.stringify(requestBody));
-  }
-
-  if (contentType && contentType.includes('multipart/form-data')) {
+  } else if (contentType.includes('multipart/form-data')) {
     writeBody(handlerFormDataBodyData(contentType, requestBody));
   }
 }
