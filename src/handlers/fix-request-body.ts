@@ -13,17 +13,20 @@ export function fixRequestBody(proxyReq: http.ClientRequest, req: http.IncomingM
   }
 
   const contentType = proxyReq.getHeader('Content-Type') as string;
+
+  if (!contentType) {
+    return;
+  }
+
   const writeBody = (bodyData: string) => {
     // deepcode ignore ContentLengthInCode: bodyParser fix
     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
     proxyReq.write(bodyData);
   };
 
-  if (contentType && contentType.includes('application/json')) {
+  if (contentType.includes('application/json')) {
     writeBody(JSON.stringify(requestBody));
-  }
-
-  if (contentType && contentType.includes('application/x-www-form-urlencoded')) {
+  } else if (contentType.includes('application/x-www-form-urlencoded')) {
     writeBody(querystring.stringify(requestBody));
   }
 }
