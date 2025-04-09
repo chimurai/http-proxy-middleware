@@ -1,5 +1,10 @@
 # Changelog
 
+## [v2.0.8](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.8)
+
+- fix(fixRequestBody): prevent multiple .write() calls
+- fix(fixRequestBody): handle invalid request
+
 ## [v2.0.7](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.7)
 
 - ci(github actions): add publish.yml
