@@ -38,7 +38,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(proxyRequest, createRequestWithBody(undefined), fakeProxyResponse(), {});
+    fixRequestBody(proxyRequest, createRequestWithBody(undefined));
 
     expect(proxyRequest.setHeader).not.toHaveBeenCalled();
     expect(proxyRequest.write).not.toHaveBeenCalled();
@@ -51,7 +51,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(proxyRequest, createRequestWithBody({}), fakeProxyResponse(), {});
+    fixRequestBody(proxyRequest, createRequestWithBody({}));
 
     expect(proxyRequest.setHeader).toHaveBeenCalled();
     expect(proxyRequest.write).toHaveBeenCalled();
@@ -64,12 +64,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(
-      proxyRequest,
-      createRequestWithBody({ someField: 'some value' }),
-      fakeProxyResponse(),
-      {},
-    );
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
     const expectedBody = JSON.stringify({ someField: 'some value' });
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
@@ -83,12 +78,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(
-      proxyRequest,
-      createRequestWithBody({ someField: 'some value' }),
-      fakeProxyResponse(),
-      {},
-    );
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
     const expectedBody = handlerFormDataBodyData('multipart/form-data', {
       someField: 'some value',
@@ -112,12 +102,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(
-      proxyRequest,
-      createRequestWithBody({ someField: 'some value' }),
-      fakeProxyResponse(),
-      {},
-    );
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
     const expectedBody = handlerFormDataBodyData('multipart/form-data', {
       someField: 'some value',
@@ -142,12 +127,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(
-      proxyRequest,
-      createRequestWithBody({ someField: 'some value' }),
-      fakeProxyResponse(),
-      {},
-    );
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
     const expectedBody = JSON.stringify({ someField: 'some value' });
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
@@ -160,12 +140,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(
-      proxyRequest,
-      createRequestWithBody({ someField: 'some value' }),
-      fakeProxyResponse(),
-      {},
-    );
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
     const expectedBody = querystring.stringify({ someField: 'some value' });
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
@@ -179,12 +154,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(
-      proxyRequest,
-      createRequestWithBody({ someField: 'some value' }),
-      fakeProxyResponse(),
-      {},
-    );
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
     const expectedBody = querystring.stringify({ someField: 'some value' });
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
@@ -198,12 +168,7 @@ describe('fixRequestBody', () => {
     jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
 
-    fixRequestBody(
-      proxyRequest,
-      createRequestWithBody({ someField: 'some value' }),
-      fakeProxyResponse(),
-      {},
-    );
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
     const expectedBody = JSON.stringify({ someField: 'some value' });
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
@@ -211,56 +176,26 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
 
-  it('should return 400 and abort request on "Connection: Upgrade" header', () => {
+  it('should not fixRequestBody() when there bodyParser fails', () => {
     const proxyRequest = fakeProxyRequest();
-    const request = createRequestWithBody({ someField: 'some value' });
-    const proxyResponse = fakeProxyResponse();
-    proxyRequest.setHeader('connection', 'upgrade');
-    proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded');
+    const request = {
+      get readableLength() {
+        return 4444; // simulate bodyParser failure
+      },
+    } as BodyParserLikeRequest;
 
-    jest.spyOn(proxyRequest, 'destroy');
-    jest.spyOn(request, 'destroy');
-    jest.spyOn(proxyResponse, 'writeHead');
-    jest.spyOn(proxyResponse, 'end');
-
-    const logger = {
-      error: jest.fn(),
-    };
-
-    fixRequestBody(proxyRequest, request, proxyResponse, { logger });
-
-    expect(proxyResponse.writeHead).toHaveBeenCalledWith(400);
-    expect(proxyResponse.end).toHaveBeenCalledTimes(1);
-    expect(proxyRequest.destroy).toHaveBeenCalledTimes(1);
-    expect(request.destroy).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(
-      `[HPM] HPM_UNEXPECTED_CONNECTION_UPGRADE_HEADER. Aborted request: /test_path`,
-    );
-  });
-
-  it('should return 400 and abort request on invalid request data', () => {
-    const proxyRequest = fakeProxyRequest();
-    const request = createRequestWithBody({ 'INVALID \n\r DATA': '' });
     const proxyResponse = fakeProxyResponse();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded');
 
+    jest.spyOn(proxyRequest, 'write');
     jest.spyOn(proxyRequest, 'destroy');
-    jest.spyOn(request, 'destroy');
     jest.spyOn(proxyResponse, 'writeHead');
     jest.spyOn(proxyResponse, 'end');
 
-    const logger = {
-      error: jest.fn(),
-    };
+    fixRequestBody(proxyRequest, request);
 
-    fixRequestBody(proxyRequest, request, proxyResponse, { logger });
-
-    expect(proxyResponse.writeHead).toHaveBeenCalledWith(400);
-    expect(proxyResponse.end).toHaveBeenCalledTimes(1);
-    expect(proxyRequest.destroy).toHaveBeenCalledTimes(1);
-    expect(request.destroy).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(
-      `[HPM] HPM_INVALID_REQUEST_DATA. Aborted request: /test_path`,
-    );
+    expect(proxyResponse.end).toHaveBeenCalledTimes(0);
+    expect(proxyRequest.write).toHaveBeenCalledTimes(0);
+    expect(proxyRequest.destroy).toHaveBeenCalledTimes(0);
   });
 });
