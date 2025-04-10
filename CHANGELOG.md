@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.9](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.9)
+
+- fix(fixRequestBody): check readableLength
+
 ## [v2.0.8](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.8)
 
 - fix(fixRequestBody): prevent multiple .write() calls
