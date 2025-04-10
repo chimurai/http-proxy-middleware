@@ -1,5 +1,9 @@
 # Changelog
 
+## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
+
+- fix(fixRequestBody): check readableLength ([#1096](https://github.com/chimurai/http-proxy-middleware/pull/1096))
+
 ## [v3.0.4](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.4)
 
 - fix(fixRequestBody): handle invalid request ([#1092](https://github.com/chimurai/http-proxy-middleware/pull/1092))
