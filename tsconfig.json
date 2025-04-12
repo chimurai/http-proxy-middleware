@@ -9,7 +9,8 @@
     "incremental": true,
     "declaration": true,
     "strict": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "types": ["node"],
   },
   "include": ["./src"]
 }

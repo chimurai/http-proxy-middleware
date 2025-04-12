@@ -65,7 +65,7 @@
     "@types/is-glob": "4.0.4",
     "@types/jest": "29.5.14",
     "@types/micromatch": "4.0.9",
-    "@types/node": "22.10.2",
+    "@types/node": "^22.10.2",
     "@types/supertest": "6.0.2",
     "@types/ws": "8.18.0",
     "body-parser": "1.20.3",
