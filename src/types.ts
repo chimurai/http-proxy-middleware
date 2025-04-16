@@ -136,5 +136,5 @@ export interface Options<TReq = http.IncomingMessage, TRes = http.ServerResponse
    * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/logger.md
    * @since v3.0.0
    */
-  logger?: Logger | any;
+  logger?: Logger;
 }
