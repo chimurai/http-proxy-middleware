@@ -40,6 +40,8 @@ export function fixRequestBody<TReq extends BodyParserLikeRequest = BodyParserLi
     writeBody(querystring.stringify(requestBody));
   } else if (contentType.includes('multipart/form-data')) {
     writeBody(handlerFormDataBodyData(contentType, requestBody));
+  } else if (contentType.includes('text/plain')) {
+    writeBody(requestBody);
   }
 }
 
