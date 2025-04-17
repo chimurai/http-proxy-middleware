@@ -57,6 +57,20 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).toHaveBeenCalled();
   });
 
+  it('should write when body is not empty and Content-Type is text/plain', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'text/plain; charset=utf-8');
+
+    jest.spyOn(proxyRequest, 'setHeader');
+    jest.spyOn(proxyRequest, 'write');
+
+    fixRequestBody(proxyRequest, createRequestWithBody('some string'));
+
+    const expectedBody = 'some string';
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
+    expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
+  });
+
   it('should write when body is not empty and Content-Type is application/json', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
