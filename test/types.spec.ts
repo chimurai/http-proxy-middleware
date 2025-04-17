@@ -101,6 +101,33 @@ describe('http-proxy-middleware TypeScript Types', () => {
         options = { logger: console };
         expect(options).toBeDefined();
       });
+
+      it('should allow custom logger option', () => {
+        const customLogger = {
+          info: () => {},
+          warn: () => {},
+          error: () => {},
+        };
+        options = { logger: customLogger };
+        expect(options).toBeDefined();
+      });
+
+      it('should fail when custom logger has missing log function', () => {
+        const customLogger = {
+          info: () => {},
+          // warn: () => {},
+          error: () => {},
+        };
+        // @ts-expect-error explanation: should error when customLogger has a missing log function
+        options = { logger: customLogger };
+        expect(options).toBeDefined();
+      });
+
+      it('should fail when invalid logger is provided', () => {
+        // @ts-expect-error explanation: should error when invalid logger is provided
+        options = { logger: 500 };
+        expect(options).toBeDefined();
+      });
     });
 
     describe('on', () => {

@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- fix(types): fix Logger type
+
 ## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
 
 - fix(fixRequestBody): check readableLength ([#1096](https://github.com/chimurai/http-proxy-middleware/pull/1096))
