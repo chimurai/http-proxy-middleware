@@ -1,0 +1,24 @@
+diff --git a/node_modules/uri-js/dist/esnext/schemes/mailto.js b/node_modules/uri-js/dist/esnext/schemes/mailto.js
+index 2553713..df0ecfd 100755
+--- a/node_modules/uri-js/dist/esnext/schemes/mailto.js
++++ b/node_modules/uri-js/dist/esnext/schemes/mailto.js
+@@ -1,5 +1,5 @@
+ import { pctEncChar, pctDecChars, unescapeComponent } from "../uri";
+-import punycode from "punycode";
++import punycode from "punycode/";
+ import { merge, subexp, toUpperCase, toArray } from "../util";
+ const O = {};
+ const isIRI = true;
+diff --git a/node_modules/uri-js/dist/esnext/uri.js b/node_modules/uri-js/dist/esnext/uri.js
+index 659ce26..1806aa5 100755
+--- a/node_modules/uri-js/dist/esnext/uri.js
++++ b/node_modules/uri-js/dist/esnext/uri.js
+@@ -34,7 +34,7 @@
+  */
+ import URI_PROTOCOL from "./regexps-uri";
+ import IRI_PROTOCOL from "./regexps-iri";
+-import punycode from "punycode";
++import punycode from "punycode/";
+ import { toUpperCase, typeOf, assign } from "./util";
+ export const SCHEMES = {};
+ export function pctEncChar(chr) {

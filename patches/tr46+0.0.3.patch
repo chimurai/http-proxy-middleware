@@ -1,0 +1,12 @@
+diff --git a/node_modules/tr46/index.js b/node_modules/tr46/index.js
+index 9ce12ca..7c3b5d7 100644
+--- a/node_modules/tr46/index.js
++++ b/node_modules/tr46/index.js
+@@ -1,6 +1,6 @@
+ "use strict";
+ 
+-var punycode = require("punycode");
++var punycode = require("punycode/");
+ var mappingTable = require("./lib/mappingTable.json");
+ 
+ var PROCESSING_OPTIONS = {
