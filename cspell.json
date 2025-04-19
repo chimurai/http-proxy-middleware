@@ -1,6 +1,5 @@
 {
   "language": "en",
-  "spellCheckDelayMs": 500,
   "dictionaries": ["node", "npm", "typescript", "contributors"],
   "ignorePaths": [
     "node_modules/**",
@@ -46,6 +45,7 @@
     "restream",
     "snyk",
     "streamify",
+    "trivago",
     "tseslint",
     "typicode",
     "vhosted",

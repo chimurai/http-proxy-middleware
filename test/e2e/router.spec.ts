@@ -1,8 +1,9 @@
-import { createProxyMiddleware, createApp, createAppWithPath } from './test-kit';
 import { ErrorRequestHandler } from 'express';
-import * as request from 'supertest';
-import { getLocal, generateCACertificate, Mockttp } from 'mockttp';
 import * as getPort from 'get-port';
+import { Mockttp, generateCACertificate, getLocal } from 'mockttp';
+import * as request from 'supertest';
+
+import { createApp, createAppWithPath, createProxyMiddleware } from './test-kit';
 
 const untrustedCACert = generateCACertificate({ bits: 1024 });
 

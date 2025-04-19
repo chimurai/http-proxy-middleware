@@ -1,7 +1,8 @@
-import { createApp, createAppWithPath } from '../e2e/test-kit';
-import { legacyCreateProxyMiddleware, LegacyOptions } from '../../src';
-import * as request from 'supertest';
 import { Mockttp, getLocal } from 'mockttp';
+import * as request from 'supertest';
+
+import { LegacyOptions, legacyCreateProxyMiddleware } from '../../src';
+import { createApp, createAppWithPath } from '../e2e/test-kit';
 
 describe('legacyCreateProxyMiddleware()', () => {
   const mockServer: Mockttp = getLocal();

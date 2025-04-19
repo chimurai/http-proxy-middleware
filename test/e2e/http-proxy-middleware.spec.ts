@@ -1,10 +1,11 @@
-import { createProxyMiddleware, createApp, createAppWithPath, fixRequestBody } from './test-kit';
-import * as request from 'supertest';
-import { Mockttp, getLocal, CompletedRequest } from 'mockttp';
-import type * as http from 'http';
-import type * as express from 'express';
 import * as bodyParser from 'body-parser';
+import type * as express from 'express';
+import type * as http from 'http';
+import { CompletedRequest, Mockttp, getLocal } from 'mockttp';
+import * as request from 'supertest';
+
 import type { Logger } from '../../src/types';
+import { createApp, createAppWithPath, createProxyMiddleware, fixRequestBody } from './test-kit';
 
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {

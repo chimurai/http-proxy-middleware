@@ -1,6 +1,7 @@
 import * as http from 'http';
-import { createProxyMiddleware } from './test-kit';
 import * as request from 'supertest';
+
+import { createProxyMiddleware } from './test-kit';
 
 describe('http integration', () => {
   it('should work with raw node http RequestHandler', async () => {

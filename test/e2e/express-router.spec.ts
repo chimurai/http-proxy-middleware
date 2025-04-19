@@ -1,7 +1,8 @@
 import * as express from 'express';
 import * as request from 'supertest';
-import { createProxyMiddleware } from './test-kit';
+
 import { Options } from '../../src/index';
+import { createProxyMiddleware } from './test-kit';
 
 describe('Usage in Express', () => {
   let app: express.Express;

@@ -1,6 +1,7 @@
+import * as request from 'supertest';
+
 import { createProxyMiddleware, responseInterceptor } from '../../src';
 import { createApp } from './test-kit';
-import * as request from 'supertest';
 
 describe('responseInterceptor()', () => {
   let agent: request.Agent;

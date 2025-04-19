@@ -1,7 +1,8 @@
-import { createProxyMiddleware, createApp } from './test-kit';
+import { Mockttp, getLocal } from 'mockttp';
 import * as request from 'supertest';
-import { getLocal, Mockttp } from 'mockttp';
+
 import type { Options, Plugin } from '../../src/types';
+import { createApp, createProxyMiddleware } from './test-kit';
 
 describe('E2E Plugins', () => {
   let mockTargetServer: Mockttp;

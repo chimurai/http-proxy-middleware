@@ -105,9 +105,9 @@ export const proxyMiddleware = createProxyMiddleware<NextApiRequest, NextApiResp
 
 ```typescript
 // Next project: `/pages/api/users.ts`
-
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { proxyMiddleware } from './users.proxy';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {

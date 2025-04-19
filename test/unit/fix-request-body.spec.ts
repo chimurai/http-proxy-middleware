@@ -1,7 +1,8 @@
-import { Socket } from 'net';
 import { ClientRequest, IncomingMessage, ServerResponse } from 'http';
+import { Socket } from 'net';
 import * as querystring from 'querystring';
-import { fixRequestBody, BodyParserLikeRequest } from '../../src/handlers/fix-request-body';
+
+import { BodyParserLikeRequest, fixRequestBody } from '../../src/handlers/fix-request-body';
 
 const fakeProxyRequest = (): ClientRequest => {
   const proxyRequest = new ClientRequest('http://some-host');

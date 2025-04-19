@@ -1,4 +1,5 @@
 import type * as http from 'http';
+
 import { matchPathFilter } from '../../src/path-filter';
 
 describe('Path Filter', () => {

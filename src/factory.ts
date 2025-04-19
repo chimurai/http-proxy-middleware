@@ -1,6 +1,7 @@
-import { HttpProxyMiddleware } from './http-proxy-middleware';
-import type { Options, RequestHandler, NextFunction } from './types';
 import type * as http from 'http';
+
+import { HttpProxyMiddleware } from './http-proxy-middleware';
+import type { NextFunction, Options, RequestHandler } from './types';
 
 export function createProxyMiddleware<
   TReq = http.IncomingMessage,

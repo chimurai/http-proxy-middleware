@@ -1,9 +1,10 @@
-import type { Filter } from './types';
+import type * as http from 'http';
 import * as isGlob from 'is-glob';
 import * as micromatch from 'micromatch';
 import * as url from 'url';
+
 import { ERRORS } from './errors';
-import type * as http from 'http';
+import type { Filter } from './types';
 
 export function matchPathFilter<TReq = http.IncomingMessage>(
   pathFilter: Filter<TReq> = '/',

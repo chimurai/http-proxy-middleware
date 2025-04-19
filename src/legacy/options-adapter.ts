@@ -1,9 +1,10 @@
 import * as url from 'url';
-import { Filter, Options } from '../types';
-import { LegacyOptions } from './types';
+
 import { Debug } from '../debug';
 import { getLogger } from '../logger';
+import { Filter, Options } from '../types';
 import { Logger } from '../types';
+import { LegacyOptions } from './types';
 
 const debug = Debug.extend('legacy-options-adapter');
 

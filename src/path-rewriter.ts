@@ -1,6 +1,7 @@
 import { isPlainObject } from 'is-plain-object';
-import { ERRORS } from './errors';
+
 import { Debug } from './debug';
+import { ERRORS } from './errors';
 
 const debug = Debug.extend('path-rewriter');
 

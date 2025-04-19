@@ -28,10 +28,8 @@ Proxy `/api` requests to `http://www.example.org`
 
 ```typescript
 // typescript
-
 import * as express from 'express';
-import type { Request, Response, NextFunction } from 'express';
-
+import type { NextFunction, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import type { Filter, Options, RequestHandler } from 'http-proxy-middleware';
 

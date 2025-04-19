@@ -1,9 +1,10 @@
-import { createProxyMiddleware } from '../factory';
+import type * as http from 'http';
+
 import { Debug } from '../debug';
+import { createProxyMiddleware } from '../factory';
 import { Filter, RequestHandler } from '../types';
 import { legacyOptionsAdapter } from './options-adapter';
 import { LegacyOptions } from './types';
-import type * as http from 'http';
 
 const debug = Debug.extend('legacy-create-proxy-middleware');
 

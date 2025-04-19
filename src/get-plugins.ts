@@ -1,10 +1,10 @@
-import type { Options, Plugin } from './types';
 import {
   debugProxyErrorsPlugin,
-  loggerPlugin,
   errorResponsePlugin,
+  loggerPlugin,
   proxyEventsPlugin,
 } from './plugins/default';
+import type { Options, Plugin } from './types';
 
 export function getPlugins<TReq, TRes>(options: Options<TReq, TRes>): Plugin<TReq, TRes>[] {
   // don't load default errorResponsePlugin if user has specified their own

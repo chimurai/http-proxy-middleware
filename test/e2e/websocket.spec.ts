@@ -1,9 +1,10 @@
+import * as getPort from 'get-port';
 import * as http from 'http';
 import * as WebSocket from 'ws';
 import { Server as WebSocketServer } from 'ws';
-import * as getPort from 'get-port';
-import { createProxyMiddleware, createApp } from './test-kit';
+
 import type { RequestHandler } from '../../src/types';
+import { createApp, createProxyMiddleware } from './test-kit';
 
 /********************************************************************
  * - Not possible to use `supertest` to test WebSockets

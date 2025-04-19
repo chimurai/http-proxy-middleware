@@ -1,4 +1,5 @@
 import { isPlainObject } from 'is-plain-object';
+
 import { Debug } from './debug';
 
 const debug = Debug.extend('router');
