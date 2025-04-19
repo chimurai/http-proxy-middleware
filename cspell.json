@@ -5,6 +5,7 @@
     "node_modules/**",
     "coverage/**",
     "dist/**",
+    "patches/**",
     "tsconfig.tsbuildinfo",
     "package.json",
     "yarn.lock",
