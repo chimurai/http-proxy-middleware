@@ -1,5 +1,6 @@
-import { createApp, createProxyMiddleware } from './test-kit';
 import * as request from 'supertest';
+
+import { createApp, createProxyMiddleware } from './test-kit';
 
 describe('express error middleware', () => {
   it('should propagate error to express', async () => {

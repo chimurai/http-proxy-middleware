@@ -1,5 +1,6 @@
 import type * as http from 'http';
 import type { Socket } from 'net';
+
 import { getStatusCode } from '../../status-code';
 import { Plugin } from '../../types';
 

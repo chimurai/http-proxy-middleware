@@ -1,4 +1,5 @@
 import type * as http from 'http';
+
 import { Options } from '../types';
 
 /**

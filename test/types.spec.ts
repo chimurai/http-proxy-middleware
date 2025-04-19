@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-
 import * as express from 'express';
 import * as http from 'http';
-import { createProxyMiddleware as middleware, fixRequestBody, responseInterceptor } from '../src';
+
+import { fixRequestBody, createProxyMiddleware as middleware, responseInterceptor } from '../src';
 import type { Options, RequestHandler } from '../src/types';
 
 describe('http-proxy-middleware TypeScript Types', () => {

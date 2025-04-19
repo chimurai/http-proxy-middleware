@@ -1,16 +1,17 @@
-import type * as net from 'net';
 import type * as http from 'http';
-import type * as https from 'https';
-import type { RequestHandler, Options, Filter, Logger } from './types';
 import * as httpProxy from 'http-proxy';
+import type * as https from 'https';
+import type * as net from 'net';
+
 import { verifyConfig } from './configuration';
+import { Debug as debug } from './debug';
 import { getPlugins } from './get-plugins';
+import { getLogger } from './logger';
 import { matchPathFilter } from './path-filter';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
-import { Debug as debug } from './debug';
+import type { Filter, Logger, Options, RequestHandler } from './types';
 import { getFunctionName } from './utils/function';
-import { getLogger } from './logger';
 
 export class HttpProxyMiddleware<TReq, TRes> {
   private wsInternalSubscribed = false;

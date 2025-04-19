@@ -1,11 +1,11 @@
-import { Plugin } from '../../src/types';
-import { getPlugins } from '../../src/get-plugins';
 import {
   debugProxyErrorsPlugin,
-  loggerPlugin,
   errorResponsePlugin,
+  loggerPlugin,
   proxyEventsPlugin,
 } from '../../src';
+import { getPlugins } from '../../src/get-plugins';
+import { Plugin } from '../../src/types';
 
 describe('getPlugins', () => {
   let plugins: Plugin[];

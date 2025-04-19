@@ -1,4 +1,4 @@
-import { getPort, type Sockets } from '../../../src/utils/logger-plugin';
+import { type Sockets, getPort } from '../../../src/utils/logger-plugin';
 
 describe('getPort()', () => {
   it('should return port from proxyRes.req.agent.sockets', () => {
