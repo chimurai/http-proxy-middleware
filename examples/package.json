@@ -11,9 +11,9 @@
   "license": "MIT",
   "devDependencies": {
     "@fastify/express": "4.0.2",
-    "browser-sync": "3.0.3",
+    "browser-sync": "3.0.4",
     "connect": "3.7.0",
     "express": "4.21.2",
-    "fastify": "5.3.1"
+    "fastify": "5.3.2"
   }
 }
