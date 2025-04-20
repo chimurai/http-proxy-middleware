@@ -22,7 +22,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
   private logger: Logger;
 
   constructor(options: Options<TReq, TRes>) {
-    verifyConfig<TReq, TRes>(options);
+    verifyConfig<TReq, TRes>(options)
     this.proxyOptions = options;
     this.logger = getLogger(options as unknown as Options);
 
