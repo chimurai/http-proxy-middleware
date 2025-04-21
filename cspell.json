@@ -9,6 +9,7 @@
     "tsconfig.tsbuildinfo",
     "package.json",
     "yarn.lock",
+    "devcontainer.json",
     ".gitpod.yml",
     "*.tgz"
   ],
