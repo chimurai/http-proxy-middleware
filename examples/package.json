@@ -13,7 +13,7 @@
     "@fastify/express": "4.0.2",
     "browser-sync": "3.0.4",
     "connect": "3.7.0",
-    "express": "4.21.2",
-    "fastify": "5.3.2"
+    "express": "5.1.0",
+    "fastify": "5.3.3"
   }
 }
