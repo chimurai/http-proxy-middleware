@@ -12,7 +12,7 @@ describe('configFactory', () => {
       });
 
       it('should throw an error when target and router option are missing', () => {
-        expect(fn).toThrowError(Error);
+        expect(fn).toThrow(Error);
       });
     });
 
@@ -29,7 +29,7 @@ describe('configFactory', () => {
       });
 
       it('should not throw an error when target option is missing when router is used', () => {
-        expect(fn).not.toThrowError(Error);
+        expect(fn).not.toThrow(Error);
       });
     });
   });

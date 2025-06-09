@@ -214,40 +214,40 @@ describe('Path Filter', () => {
 
     describe('Throw error', () => {
       it('should throw error with null', () => {
-        expect(testPathFilter(null)).toThrowError(Error);
+        expect(testPathFilter(null)).toThrow(Error);
       });
 
       it('should throw error with object literal', () => {
-        expect(testPathFilter(fakeReq)).toThrowError(Error);
+        expect(testPathFilter(fakeReq)).toThrow(Error);
       });
 
       it('should throw error with integers', () => {
-        expect(testPathFilter(123)).toThrowError(Error);
+        expect(testPathFilter(123)).toThrow(Error);
       });
 
       it('should throw error with mixed string and glob pattern', () => {
-        expect(testPathFilter(['/api', '!*.html'])).toThrowError(Error);
+        expect(testPathFilter(['/api', '!*.html'])).toThrow(Error);
       });
     });
 
     describe('Do not throw error', () => {
       it('should not throw error with string', () => {
-        expect(testPathFilter('/123')).not.toThrowError(Error);
+        expect(testPathFilter('/123')).not.toThrow(Error);
       });
 
       it('should not throw error with Array', () => {
-        expect(testPathFilter(['/123'])).not.toThrowError(Error);
+        expect(testPathFilter(['/123'])).not.toThrow(Error);
       });
       it('should not throw error with glob', () => {
-        expect(testPathFilter('/**')).not.toThrowError(Error);
+        expect(testPathFilter('/**')).not.toThrow(Error);
       });
 
       it('should not throw error with Array of globs', () => {
-        expect(testPathFilter(['/**', '!*.html'])).not.toThrowError(Error);
+        expect(testPathFilter(['/**', '!*.html'])).not.toThrow(Error);
       });
 
       it('should not throw error with Function', () => {
-        expect(testPathFilter(() => {})).not.toThrowError(Error);
+        expect(testPathFilter(() => {})).not.toThrow(Error);
       });
     });
   });
