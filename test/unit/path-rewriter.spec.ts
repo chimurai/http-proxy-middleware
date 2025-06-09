@@ -160,22 +160,22 @@ describe('Path rewriting', () => {
     });
 
     it('should throw when bad config is provided', () => {
-      expect(badFn(123)).toThrowError(Error);
-      expect(badFn('abc')).toThrowError(Error);
-      expect(badFn([])).toThrowError(Error);
-      expect(badFn([1, 2, 3])).toThrowError(Error);
+      expect(badFn(123)).toThrow(Error);
+      expect(badFn('abc')).toThrow(Error);
+      expect(badFn([])).toThrow(Error);
+      expect(badFn([1, 2, 3])).toThrow(Error);
     });
 
     it('should not throw when empty Object config is provided', () => {
-      expect(badFn({})).not.toThrowError(Error);
+      expect(badFn({})).not.toThrow(Error);
     });
 
     it('should not throw when function config is provided', () => {
-      expect(badFn(() => {})).not.toThrowError(Error);
+      expect(badFn(() => {})).not.toThrow(Error);
     });
 
     it('should not throw when async function config is provided', () => {
-      expect(badFn(async () => {})).not.toThrowError(Error);
+      expect(badFn(async () => {})).not.toThrow(Error);
     });
   });
 });

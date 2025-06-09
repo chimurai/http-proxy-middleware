@@ -36,7 +36,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should not proxy requests when request url does not match pathFilter', () => {
-        expect(mockNext).toBeCalled();
+        expect(mockNext).toHaveBeenCalled();
       });
     });
   });
