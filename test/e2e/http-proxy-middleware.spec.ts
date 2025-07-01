@@ -103,7 +103,7 @@ describe('E2E http-proxy-middleware', () => {
 
         await mockTargetServer.forPost('/api').thenCallback(async (req) => {
           expect(await req.body.getText()).toBe('foo=bar&bar=baz');
-          return { status: 200 };
+          return { statusCode: 200 };
         });
         await agent.post('/api').send('foo=bar').send('bar=baz').expect(200);
       });
@@ -124,7 +124,7 @@ describe('E2E http-proxy-middleware', () => {
 
         await mockTargetServer.forPost('/api').thenCallback(async (req) => {
           expect(await req.body.getJson()).toEqual({ foo: 'bar', bar: 'baz', doubleByte: '文' });
-          return { status: 200 };
+          return { statusCode: 200 };
         });
         await agent.post('/api').send({ foo: 'bar', bar: 'baz', doubleByte: '文' }).expect(200);
       });

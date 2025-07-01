@@ -161,18 +161,15 @@ http-proxy-middleware options:
 Narrow down which requests should be proxied. The `path` used for filtering is the `request.url` pathname. In Express, this is the `path` relative to the mount-point of the proxy.
 
 - **path matching**
-
   - `createProxyMiddleware({...})` - matches any path, all requests will be proxied when `pathFilter` is not configured.
   - `createProxyMiddleware({ pathFilter: '/api', ...})` - matches paths starting with `/api`
 
 - **multiple path matching**
-
   - `createProxyMiddleware({ pathFilter: ['/api', '/ajax', '/someotherpath'], ...})`
 
 - **wildcard path matching**
 
   For fine-grained control you can use wildcard matching. Glob pattern matching is done by _micromatch_. Visit [micromatch](https://www.npmjs.com/package/micromatch) or [glob](https://www.npmjs.com/package/glob) for more globbing examples.
-
   - `createProxyMiddleware({ pathFilter: '**', ...})` matches any path, all requests will be proxied.
   - `createProxyMiddleware({ pathFilter: '**/*.html', ...})` matches any path which ends with `.html`
   - `createProxyMiddleware({ pathFilter: '/*.html', ...})` matches paths directly under path-absolute
@@ -416,13 +413,12 @@ The following options are provided by the underlying [http-proxy](https://github
 - **option.autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
 - **option.protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
 - **option.cookieDomainRewrite**: rewrites domain of `set-cookie` headers. Possible values:
-
   - `false` (default): disable cookie rewriting
   - String: new domain, for example `cookieDomainRewrite: "new.domain"`. To remove the domain, use `cookieDomainRewrite: ""`.
   - Object: mapping of domains to new domains, use `"*"` to match all domains.  
     For example keep one domain unchanged, rewrite one domain and remove other domains:
 
-    ```json
+    ```jsonc
     cookieDomainRewrite: {
       "unchanged.domain": "unchanged.domain",
       "old.domain": "new.domain",
@@ -431,13 +427,12 @@ The following options are provided by the underlying [http-proxy](https://github
     ```
 
 - **option.cookiePathRewrite**: rewrites path of `set-cookie` headers. Possible values:
-
   - `false` (default): disable cookie rewriting
   - String: new path, for example `cookiePathRewrite: "/newPath/"`. To remove the path, use `cookiePathRewrite: ""`. To set path to root use `cookiePathRewrite: "/"`.
   - Object: mapping of paths to new paths, use `"*"` to match all paths.
     For example, to keep one path unchanged, rewrite one path and remove other paths:
 
-    ```json
+    ```jsonc
     cookiePathRewrite: {
       "/unchanged.path/": "/unchanged.path/",
       "/old.path/": "/new.path/",
