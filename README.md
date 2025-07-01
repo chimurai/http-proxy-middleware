@@ -418,7 +418,7 @@ The following options are provided by the underlying [http-proxy](https://github
   - Object: mapping of domains to new domains, use `"*"` to match all domains.  
     For example keep one domain unchanged, rewrite one domain and remove other domains:
 
-    ```json
+    ```jsonc
     cookieDomainRewrite: {
       "unchanged.domain": "unchanged.domain",
       "old.domain": "new.domain",
@@ -432,7 +432,7 @@ The following options are provided by the underlying [http-proxy](https://github
   - Object: mapping of paths to new paths, use `"*"` to match all paths.
     For example, to keep one path unchanged, rewrite one path and remove other paths:
 
-    ```json
+    ```jsonc
     cookiePathRewrite: {
       "/unchanged.path/": "/unchanged.path/",
       "/old.path/": "/new.path/",
