@@ -1,7 +1,6 @@
 import * as getPort from 'get-port';
 import * as http from 'http';
-import * as WebSocket from 'ws';
-import { Server as WebSocketServer } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 
 import type { RequestHandler } from '../../src/types';
 import { createApp, createProxyMiddleware } from './test-kit';
