@@ -1,5 +1,5 @@
-import type * as http from 'http';
-import * as zlib from 'zlib';
+import type * as http from 'node:http';
+import * as zlib from 'node:zlib';
 
 import { Debug } from '../debug';
 import { getFunctionName } from '../utils/function';

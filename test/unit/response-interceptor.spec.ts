@@ -1,5 +1,5 @@
-import { IncomingMessage, ServerResponse } from 'http';
-import { Socket } from 'net';
+import { IncomingMessage, ServerResponse } from 'node:http';
+import { Socket } from 'node:net';
 
 import { responseInterceptor } from '../../src/handlers/response-interceptor';
 

@@ -1,5 +1,5 @@
-import type * as http from 'http';
-import type { Socket } from 'net';
+import type * as http from 'node:http';
+import type { Socket } from 'node:net';
 
 import { getStatusCode } from '../../status-code';
 import { Plugin } from '../../types';

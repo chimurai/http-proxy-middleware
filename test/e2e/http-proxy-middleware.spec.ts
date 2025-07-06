@@ -1,6 +1,7 @@
+import type * as http from 'node:http';
+
 import * as bodyParser from 'body-parser';
 import type * as express from 'express';
-import type * as http from 'http';
 import { CompletedRequest, Mockttp, getLocal } from 'mockttp';
 import * as request from 'supertest';
 

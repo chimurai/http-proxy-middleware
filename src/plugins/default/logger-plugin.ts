@@ -1,6 +1,5 @@
 import type { IncomingMessage } from 'node:http';
-
-import { URL } from 'url';
+import { URL } from 'node:url';
 
 import { getLogger } from '../../logger';
 import { Plugin } from '../../types';

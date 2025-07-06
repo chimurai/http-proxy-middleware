@@ -1,5 +1,5 @@
-import type * as http from 'http';
-import * as querystring from 'querystring';
+import type * as http from 'node:http';
+import * as querystring from 'node:querystring';
 
 export type BodyParserLikeRequest = http.IncomingMessage & { body?: any };
 
