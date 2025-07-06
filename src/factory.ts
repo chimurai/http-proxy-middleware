@@ -1,4 +1,4 @@
-import type * as http from 'http';
+import type * as http from 'node:http';
 
 import { HttpProxyMiddleware } from './http-proxy-middleware';
 import type { NextFunction, Options, RequestHandler } from './types';

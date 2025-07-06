@@ -1,4 +1,4 @@
-import type * as http from 'http';
+import type * as http from 'node:http';
 
 import { matchPathFilter } from '../../src/path-filter';
 

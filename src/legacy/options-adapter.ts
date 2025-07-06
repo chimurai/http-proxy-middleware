@@ -1,4 +1,4 @@
-import * as url from 'url';
+import * as url from 'node:url';
 
 import { Debug } from '../debug';
 import { getLogger } from '../logger';

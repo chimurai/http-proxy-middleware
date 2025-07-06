@@ -1,4 +1,5 @@
-import * as http from 'http';
+import * as http from 'node:http';
+
 import * as request from 'supertest';
 
 import { createProxyMiddleware } from './test-kit';

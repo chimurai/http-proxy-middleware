@@ -1,5 +1,6 @@
+import * as http from 'node:http';
+
 import * as getPort from 'get-port';
-import * as http from 'http';
 import { WebSocket, WebSocketServer } from 'ws';
 
 import type { RequestHandler } from '../../src/types';

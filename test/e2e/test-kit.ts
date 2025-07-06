@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { Express, RequestHandler } from 'express';
+import type { Express, RequestHandler } from 'express';
 
 export { createProxyMiddleware, responseInterceptor, fixRequestBody } from '../../src/index';
 

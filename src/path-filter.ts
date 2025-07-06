@@ -1,7 +1,8 @@
-import type * as http from 'http';
+import type * as http from 'node:http';
+import * as url from 'node:url';
+
 import * as isGlob from 'is-glob';
 import * as micromatch from 'micromatch';
-import * as url from 'url';
 
 import { ERRORS } from './errors';
 import type { Filter } from './types';

@@ -1,6 +1,6 @@
-import { ClientRequest, IncomingMessage, ServerResponse } from 'http';
-import { Socket } from 'net';
-import * as querystring from 'querystring';
+import { ClientRequest, IncomingMessage, ServerResponse } from 'node:http';
+import { Socket } from 'node:net';
+import * as querystring from 'node:querystring';
 
 import { BodyParserLikeRequest, fixRequestBody } from '../../src/handlers/fix-request-body';
 

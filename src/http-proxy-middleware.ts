@@ -1,7 +1,8 @@
-import type * as http from 'http';
+import type * as http from 'node:http';
+import type * as https from 'node:https';
+import type * as net from 'node:net';
+
 import * as httpProxy from 'http-proxy';
-import type * as https from 'https';
-import type * as net from 'net';
 
 import { verifyConfig } from './configuration';
 import { Debug as debug } from './debug';
