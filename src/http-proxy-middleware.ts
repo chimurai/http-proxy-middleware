@@ -8,7 +8,7 @@ import { verifyConfig } from './configuration';
 import { Debug as debug } from './debug';
 import { getPlugins } from './get-plugins';
 import { getLogger } from './logger';
-import { matchPathFilter } from './path-filter';
+import { matchPathFilter,getUrlPathName } from './path-filter';
 import * as PathRewriter from './path-rewriter';
 import * as Router from './router';
 import type { Filter, Logger, Options, RequestHandler } from './types';
@@ -175,7 +175,8 @@ export class HttpProxyMiddleware<TReq, TRes> {
   // rewrite path
   private applyPathRewrite = async (req: http.IncomingMessage, pathRewriter) => {
     if (pathRewriter) {
-      const path = await pathRewriter(req.url, req);
+      const reqPath = getUrlPathName(req.url);
+      const path = await pathRewriter(reqPath, req);
 
       if (typeof path === 'string') {
         debug('pathRewrite new path: %s', req.url);
