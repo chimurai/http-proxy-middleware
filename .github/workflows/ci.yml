@@ -128,7 +128,9 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x, 24.x]
+        # Pin v24 for now due to issues with TLS passthrough with mockttp
+        # https://github.com/httptoolkit/mockttp/commit/b591cff5f44355f395aee5eaf5f2bcc1b1979b34
+        node-version: [20.x, 22.x, 24.4.1]
 
     steps:
       - uses: actions/checkout@v4
