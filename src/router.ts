@@ -18,31 +18,41 @@ export async function getTarget(req, config) {
 }
 
 function getTargetFromProxyTable(req, table) {
-  let result;
   const host = req.headers.host;
   const path = req.url;
-
-  const hostAndPath = host + path;
+  let hostMatch;
 
   for (const [key, value] of Object.entries(table)) {
-    if (containsPath(key)) {
-      if (hostAndPath.indexOf(key) > -1) {
-        // match 'localhost:3000/api'
-        result = value;
-        debug('match: "%s" -> "%s"', key, result);
-        break;
-      }
-    } else {
+    // host-only rule
+    if (!containsPath(key)) {
       if (key === host) {
-        // match 'localhost:3000'
-        result = value;
-        debug('match: "%s" -> "%s"', host, result);
-        break;
+        hostMatch = value;
+      }
+      continue;
+    }
+
+    // If key starts with '/', it's a path-only rule.
+    if (key.startsWith('/')) {
+      if (path.startsWith(key)) {
+        debug('path-only match: "%s" -> "%s"', key, value);
+        return value;
+      }
+    }
+    // If key contains a '/' but doesn't start with one, it's a host+path rule.
+    else {
+      const hostAndPath = host + path;
+      if (hostAndPath.startsWith(key)) {
+        debug('host+path match: "%s" -> "%s"', key, value);
+        return value;
       }
     }
   }
 
-  return result;
+  // If we finished the loop with no path-involved matches, use the host-only match.
+  if (hostMatch) {
+    debug('host-only fallback: "%s" -> "%s"', host, hostMatch);
+  }
+  return hostMatch;
 }
 
 function containsPath(v) {
