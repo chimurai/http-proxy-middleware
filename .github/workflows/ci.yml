@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
@@ -35,7 +35,7 @@ jobs:
     needs: [dependencies]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
@@ -66,7 +66,7 @@ jobs:
     needs: [build]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
@@ -97,7 +97,7 @@ jobs:
     needs: [dependencies]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
@@ -133,7 +133,7 @@ jobs:
         node-version: [20.x, 22.x, 24.4.1]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -163,7 +163,7 @@ jobs:
     needs: [dependencies]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
@@ -193,7 +193,7 @@ jobs:
     name: Spellcheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: streetsidesoftware/cspell-action@v6
         with:
           # Define glob patterns to filter the files to be checked. Use a new line between patterns to define multiple patterns.
