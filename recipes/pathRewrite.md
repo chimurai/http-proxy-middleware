@@ -23,7 +23,7 @@ const options = {
 
 const apiProxy = createProxyMiddleware(options);
 
-// `/old/api/foo/bar` -> `http://localhost:3000/new/api/foo/bar`
+// `/api/old-path/foo/bar` -> `http://localhost:3000/api/new-path/foo/bar`
 ```
 
 ## remove paths
