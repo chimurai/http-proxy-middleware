@@ -25,8 +25,12 @@ export const errorResponsePlugin: Plugin = (proxyServer, options) => {
         res.writeHead(statusCode);
       }
 
+      const encodedPath = req.url
+        .replace(/</g, '%3C')
+        .replace(/>/g, '%3E');
+
       const host = req.headers && req.headers.host;
-      res.end(`Error occurred while trying to proxy: ${host}${req.url}`);
+      res.end(`Error occurred while trying to proxy: ${host}${encodedPath}`);
     } else if (isSocketLike(res)) {
       res.destroy();
     }
