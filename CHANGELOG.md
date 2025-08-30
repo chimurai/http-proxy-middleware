@@ -3,6 +3,7 @@
 ## next
 
 - fix(types): fix Logger type
+- fix(error-response-plugin): sanitize input
 
 ## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
 
