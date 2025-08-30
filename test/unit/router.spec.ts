@@ -157,5 +157,19 @@ describe('router unit test', () => {
         return expect(result).resolves.toBe('http://localhost:6006');
       });
     });
+
+    describe('exact path tests, rather than partial match', () => {
+      it('should NOT match route key from query string parameters', () => {
+        fakeReq.url = '/foobar?a=1&b=/rest';
+        result = getTarget(fakeReq, proxyOptionWithRouter);
+        return expect(result).resolves.toBeUndefined();
+      });
+
+      it('should match from the start of the path and not a substring', () => {
+        fakeReq.url = '/some/path/that/also/contains/rest';
+        result = getTarget(fakeReq, proxyOptionWithRouter);
+        return expect(result).resolves.toBe('http://localhost:6007');
+      });
+    });
   });
 });
