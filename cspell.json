@@ -19,7 +19,7 @@
       "path": "CONTRIBUTORS.txt"
     }
   ],
-  "ignoreRegExpList": ["[a-z]+path", "\\]\\(#[a-z-]+\\)"],
+  "ignoreRegExpList": ["[a-z]+path", "\\]\\(#[a-z-]+\\)", "%[\\dA-Z]{2}"],
   "words": [
     "brotli",
     "camelcase",

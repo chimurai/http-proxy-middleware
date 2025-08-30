@@ -3,6 +3,7 @@ import type { Socket } from 'node:net';
 
 import { getStatusCode } from '../../status-code';
 import { Plugin } from '../../types';
+import { sanitize } from '../../utils/sanitize';
 
 function isResponseLike(obj: any): obj is http.ServerResponse {
   return obj && typeof obj.writeHead === 'function';
@@ -26,7 +27,7 @@ export const errorResponsePlugin: Plugin = (proxyServer, options) => {
       }
 
       const host = req.headers && req.headers.host;
-      res.end(`Error occurred while trying to proxy: ${host}${req.url}`);
+      res.end(`Error occurred while trying to proxy: ${sanitize(host)}${sanitize(req.url)}`);
     } else if (isSocketLike(res)) {
       res.destroy();
     }
