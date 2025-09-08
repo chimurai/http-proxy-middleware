@@ -42,9 +42,6 @@ export function fixRequestBody<TReq extends BodyParserLikeRequest = BodyParserLi
       case 'gzip':
         proxyData = zlib.gzipSync(proxyData);
         break;
-      case 'zstd':
-        proxyData = zlib.zstdCompressSync(proxyData);
-        break;
     }
 
     proxyReq.setHeader('Content-Length', Buffer.byteLength(proxyData));
