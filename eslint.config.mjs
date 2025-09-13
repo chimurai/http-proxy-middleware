@@ -1,17 +1,13 @@
 // @ts-check
 import eslint from '@eslint/js';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
-  // replacement of legacy `.eslintignore`
-  {
-    ignores: ['dist'],
-  },
-  // extends...
+export default defineConfig(
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-  // base config
+  tseslint.configs.recommended,
+  globalIgnores(['dist']),
   {
     languageOptions: {
       globals: {
