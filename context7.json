@@ -1,0 +1,15 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "http-proxy-middleware",
+  "description": "Node.js proxy middleware for express-like servers: express, connect, next.js and more.",
+  "previousVersions": [
+    {
+      "tag": "v2.0.8",
+      "title": "version v2.0.8"
+    },
+    {
+      "tag": "v1.3.1",
+      "title": "version v1.3.1"
+    }
+  ]
+}
