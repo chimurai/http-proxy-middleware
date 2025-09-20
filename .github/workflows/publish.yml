@@ -18,7 +18,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile --ignore-scripts
 
       - name: Publish to NPM (beta)
         if: 'github.event.release.prerelease'

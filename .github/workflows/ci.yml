@@ -26,6 +26,9 @@ jobs:
         if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
         run: yarn install --frozen-lockfile --ignore-scripts
 
+      - name: yarn audit
+        run: yarn audit --audit-level high --groups dependencies
+
         env:
           CI: true
 
