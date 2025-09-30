@@ -1,5 +1,6 @@
 import type * as http from 'node:http';
 import * as querystring from 'node:querystring';
+import * as zlib from 'node:zlib';
 
 export type BodyParserLikeRequest = http.IncomingMessage & { body?: any };
 
@@ -28,8 +29,23 @@ export function fixRequestBody<TReq extends BodyParserLikeRequest = BodyParserLi
   }
 
   const writeBody = (bodyData: string) => {
-    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
-    proxyReq.write(bodyData);
+    let proxyData: string | Buffer = bodyData;
+
+    const contentEncoding = String(proxyReq.getHeader('Content-Encoding')).toLowerCase();
+    switch (contentEncoding) {
+      case 'br':
+        proxyData = zlib.brotliCompressSync(proxyData);
+        break;
+      case 'deflate':
+        proxyData = zlib.deflateSync(proxyData);
+        break;
+      case 'gzip':
+        proxyData = zlib.gzipSync(proxyData);
+        break;
+    }
+
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(proxyData));
+    proxyReq.write(proxyData);
   };
 
   // Use if-elseif to prevent multiple writeBody/setHeader calls:
