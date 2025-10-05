@@ -5,7 +5,7 @@ import * as request from 'supertest';
 
 import { createApp, createAppWithPath, createProxyMiddleware } from './test-kit';
 
-const untrustedCACert = generateCACertificate({ bits: 1024 });
+const untrustedCACert = generateCACertificate({ bits: 2048 });
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
