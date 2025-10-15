@@ -33,7 +33,7 @@ const apiProxy = createProxyMiddleware({
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
 });
 
-const server = http.createServer(jsonPlaceholderProxy);
+const server = http.createServer(apiProxy);
 
 server.listen(3000);
 ```
