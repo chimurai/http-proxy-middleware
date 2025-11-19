@@ -1,6 +1,7 @@
 import { ClientRequest, IncomingMessage, ServerResponse } from 'node:http';
 import { Socket } from 'node:net';
 import * as querystring from 'node:querystring';
+import * as zlib from 'node:zlib';
 
 import { BodyParserLikeRequest, fixRequestBody } from '../../src/handlers/fix-request-body';
 
@@ -212,5 +213,21 @@ describe('fixRequestBody', () => {
     expect(proxyResponse.end).toHaveBeenCalledTimes(0);
     expect(proxyRequest.write).toHaveBeenCalledTimes(0);
     expect(proxyRequest.destroy).toHaveBeenCalledTimes(0);
+  });
+
+  it('should re-encode body when the source was encoded', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
+    proxyRequest.setHeader('content-encoding', 'gzip');
+
+    jest.spyOn(proxyRequest, 'setHeader');
+    jest.spyOn(proxyRequest, 'write');
+
+    const data = { someField: 'some value' };
+    fixRequestBody(proxyRequest, createRequestWithBody(data));
+
+    const expectedBody = zlib.gzipSync(JSON.stringify(data));
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
+    expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
 });
