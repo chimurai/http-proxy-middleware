@@ -7,8 +7,10 @@ import { Options } from '../types';
  *
  * Will be removed in a future version.
  */
-export interface LegacyOptions<TReq = http.IncomingMessage, TRes = http.ServerResponse>
-  extends Options<TReq, TRes> {
+export interface LegacyOptions<
+  TReq = http.IncomingMessage,
+  TRes = http.ServerResponse,
+> extends Options<TReq, TRes> {
   /**
    * @deprecated
    * Use `on.error` instead.
