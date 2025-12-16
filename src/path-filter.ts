@@ -24,13 +24,22 @@ export function matchPathFilter<TReq = http.IncomingMessage>(
 
   // multi path
   if (Array.isArray(pathFilter)) {
-    if (pathFilter.every(isStringPath)) {
+    const stringPaths = pathFilter.filter(isStringPath);
+    const globPaths = pathFilter.filter(isGlobPath);
+
+    // Handle mixed arrays
+    if (stringPaths.length && globPaths.length) {
+      return (
+        matchMultiPath(stringPaths, uri) ||
+        matchMultiGlobPath(globPaths, uri)
+      );
+    }
+    if (stringPaths.length) {
       return matchMultiPath(pathFilter, uri);
     }
-    if (pathFilter.every(isGlobPath)) {
-      return matchMultiGlobPath(pathFilter as string[], uri);
+    if (globPaths.length) {
+      return matchMultiGlobPath(pathFilter, uri);
     }
-
     throw new Error(ERRORS.ERR_CONTEXT_MATCHER_INVALID_ARRAY);
   }
 
