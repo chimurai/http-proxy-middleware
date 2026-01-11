@@ -10,7 +10,7 @@
   "author": "chimurai",
   "license": "MIT",
   "devDependencies": {
-    "@fastify/express": "4.0.2",
+    "@fastify/express": "4.0.3",
     "browser-sync": "3.0.4",
     "connect": "3.7.0",
     "express": "5.2.1",
