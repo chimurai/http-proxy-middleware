@@ -178,7 +178,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
       const path = await pathRewriter(req.url, req);
 
       if (typeof path === 'string') {
-        debug('pathRewrite new path: %s', req.url);
+        debug('pathRewrite new path: %s', path);
         req.url = path;
       } else {
         debug('pathRewrite: no rewritten path found: %s', req.url);
