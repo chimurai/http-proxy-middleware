@@ -54,7 +54,7 @@ describe('E2E WebSocket proxy', () => {
       proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
 
       // quick & dirty Promise version of http.get (don't care about correctness)
-      const get = async (uri) => new Promise((resolve, reject) => http.get(uri, resolve));
+      const get = async (uri: string) => new Promise((resolve, reject) => http.get(uri, resolve));
 
       // need to make a normal http request, so http-proxy-middleware can catch the upgrade request
       await get(`http://localhost:${SERVER_PORT}/`);

@@ -3,7 +3,7 @@ import type { Express, RequestHandler } from 'express';
 
 export { createProxyMiddleware, responseInterceptor, fixRequestBody } from '../../src/index';
 
-export function createApp(...middlewares): Express {
+export function createApp(...middlewares: any[]): Express {
   const app = express();
   app.use(...middlewares);
   return app;

@@ -133,7 +133,7 @@ describe('E2E http-proxy-middleware', () => {
 
     describe('custom pathFilter matcher/filter', () => {
       it('should have response body: "HELLO WEB"', async () => {
-        const filter = (path, req) => {
+        const filter = (path: string, req: http.IncomingMessage) => {
           return true;
         };
 
@@ -152,7 +152,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should not proxy when filter returns false', async () => {
-        const filter = (path, req) => {
+        const filter = (path: string, req: http.IncomingMessage) => {
           return false;
         };
 
@@ -172,7 +172,7 @@ describe('E2E http-proxy-middleware', () => {
 
       it('should not proxy when filter throws Error', async () => {
         const myError = new Error('MY_ERROR');
-        const filter = (path, req) => {
+        const filter = (path: string, req: http.IncomingMessage) => {
           throw myError;
         };
 
