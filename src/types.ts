@@ -28,13 +28,13 @@ export interface Plugin<TReq = http.IncomingMessage, TRes = http.ServerResponse>
 }
 
 export interface OnProxyEvent<TReq = http.IncomingMessage, TRes = http.ServerResponse> {
-  error?: (
-    err: Error,
+  error?: (err: Error, req: TReq, res: TRes | net.Socket, target?: string | Partial<URL>) => void;
+  proxyReq?: (
+    proxyReq: http.ClientRequest,
     req: TReq,
-    res: TRes | net.Socket,
-    target?: string | Partial<URL>,
+    res: TRes,
+    options: ProxyServerOptions,
   ) => void;
-  proxyReq?: (proxyReq: http.ClientRequest, req: TReq, res: TRes, options: ProxyServerOptions) => void;
   proxyReqWs?: (
     proxyReq: http.ClientRequest,
     req: TReq,
@@ -42,33 +42,12 @@ export interface OnProxyEvent<TReq = http.IncomingMessage, TRes = http.ServerRes
     options: ProxyServerOptions,
     head: any,
   ) => void;
-  proxyRes?: (
-    proxyRes: TReq,
-    req: TReq,
-    res: TRes,
-  ) => void;
+  proxyRes?: (proxyRes: TReq, req: TReq, res: TRes) => void;
   open?: (proxySocket: net.Socket) => void;
-  close?: (
-    proxyRes: TReq,
-    proxySocket: net.Socket,
-    proxyHead: any,
-  ) => void;
-  start?: (
-    req: TReq,
-    res: TRes,
-    target: string | Partial<URL>,
-  ) => void;
-  end?: (
-    req: TReq,
-    res: TRes,
-    proxyRes: TReq,
-  ) => void;
-  econnreset?: (
-    err: Error,
-    req: TReq,
-    res: TRes,
-    target: string | Partial<URL>,
-  ) => void;
+  close?: (proxyRes: TReq, proxySocket: net.Socket, proxyHead: any) => void;
+  start?: (req: TReq, res: TRes, target: string | Partial<URL>) => void;
+  end?: (req: TReq, res: TRes, proxyRes: TReq) => void;
+  econnreset?: (err: Error, req: TReq, res: TRes, target: string | Partial<URL>) => void;
 }
 
 export type Logger = Pick<Console, 'info' | 'warn' | 'error'>;
@@ -98,9 +77,9 @@ export interface Options<
    * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/pathRewrite.md
    */
   pathRewrite?:
-  | { [regexp: string]: string }
-  | ((path: string, req: TReq) => string | undefined)
-  | ((path: string, req: TReq) => Promise<string>);
+    | { [regexp: string]: string }
+    | ((path: string, req: TReq) => string | undefined)
+    | ((path: string, req: TReq) => Promise<string>);
   /**
    * Access the internal http-proxy server instance to customize behavior
    *

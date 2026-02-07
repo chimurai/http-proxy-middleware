@@ -2,10 +2,7 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "lib": [
-      "es2021",
-      "es2022"
-    ],
+    "lib": ["es2021", "es2022"],
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2021",
@@ -15,7 +12,5 @@
     "noImplicitAny": false,
     "skipLibCheck": true
   },
-  "include": [
-    "./src"
-  ]
+  "include": ["./src"]
 }
