@@ -2,7 +2,7 @@ import type * as http from 'node:http';
 import type * as https from 'node:https';
 import type * as net from 'node:net';
 
-import * as httpProxy from 'http-proxy';
+import { type ProxyServer, createProxyServer } from 'httpxy';
 
 import { verifyConfig } from './configuration';
 import { Debug as debug } from './debug';
@@ -18,7 +18,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options<TReq, TRes>;
-  private proxy: httpProxy<TReq, TRes>;
+  private proxy: ProxyServer;
   private pathRewriter;
   private logger: Logger;
 
@@ -28,7 +28,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     this.logger = getLogger(options as unknown as Options);
 
     debug(`create proxy server`);
-    this.proxy = httpProxy.createProxyServer({});
+    this.proxy = createProxyServer({});
 
     this.registerPlugins(this.proxy, this.proxyOptions);
 
@@ -70,7 +70,9 @@ export class HttpProxyMiddleware<TReq, TRes> {
     if (server && !this.serverOnCloseSubscribed) {
       server.on('close', () => {
         debug('server close signal received: closing proxy server');
-        this.proxy.close();
+        this.proxy.close(() => {
+          debug('proxy server closed');
+        });
       });
       this.serverOnCloseSubscribed = true;
     }
@@ -81,7 +83,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     }
   }) as RequestHandler;
 
-  private registerPlugins(proxy: httpProxy<TReq, TRes>, options: Options<TReq, TRes>) {
+  private registerPlugins(proxy: ProxyServer, options: Options<TReq, TRes>) {
     const plugins = getPlugins<TReq, TRes>(options);
     plugins.forEach((plugin) => {
       debug(`register plugin: "${getFunctionName(plugin)}"`);
@@ -103,7 +105,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     try {
       if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
         const activeProxyOptions = await this.prepareProxyRequest(req);
-        this.proxy.ws(req, socket, head, activeProxyOptions);
+        this.proxy.ws(req, socket, activeProxyOptions, head);
         debug('server upgrade event received. Proxying WebSocket');
       }
     } catch (err) {
