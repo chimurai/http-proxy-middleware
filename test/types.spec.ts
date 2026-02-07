@@ -182,6 +182,11 @@ describe('http-proxy-middleware TypeScript Types', () => {
             error(error, req, res, target) {
               req.params;
 
+              // @ts-expect-error: should error when request is typed as `any`
+              req.unknownProperty;
+              // @ts-expect-error: should error when response is typed as `any`
+              res.unknownProperty;
+
               // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
               if (res instanceof http.ServerResponse) {
                 res.status(200).send('OK');
@@ -345,6 +350,11 @@ describe('http-proxy-middleware TypeScript Types', () => {
           proxyRes: responseInterceptor(async (buffer, proxyRes, req, res) => {
             req.myRequestParams;
             res.myResponseParams;
+
+            // @ts-expect-error: should error when request is typed as `any`
+            req.unknownProperty;
+            // @ts-expect-error: should error when response is typed as `any`
+            res.unknownProperty;
             return buffer;
           }),
         },
@@ -371,6 +381,12 @@ describe('http-proxy-middleware TypeScript Types', () => {
           (proxyServer, options) => {
             proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
               req.params;
+
+              // @ts-expect-error: should error when request is typed as `any`
+              req.unknownProperty;
+              // @ts-expect-error: should error when response is typed as `any`
+              res.unknownProperty;
+
               res.status(200).send('OK');
             });
           },
@@ -396,6 +412,12 @@ describe('http-proxy-middleware TypeScript Types', () => {
                 responseInterceptor(async (buffer, proxyRes, req, res) => {
                   req.params;
                   res.status(200).send('OK');
+
+                  // @ts-expect-error: should error when request is typed as `any`
+                  req.unknownProperty;
+                  // @ts-expect-error: should error when response is typed as `any`
+                  res.unknownProperty;
+
                   return buffer;
                 }),
               );
