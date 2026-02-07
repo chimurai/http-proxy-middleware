@@ -46,11 +46,33 @@ export class HttpProxyMiddleware<TReq, TRes> {
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
   public middleware: RequestHandler = (async (req, res, next?) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
+      let activeProxyOptions: Options<TReq, TRes>;
       try {
-        const activeProxyOptions = await this.prepareProxyRequest(req);
-        debug(`proxy request to target: %O`, activeProxyOptions.target);
-        this.proxy.web(req, res, activeProxyOptions);
+        // Preparation Phase: Apply router and path rewriter.
+        activeProxyOptions = await this.prepareProxyRequest(req);
+
+        // [Smoking Gun] httpxy is inconsistent with error handling:
+        // 1. If target is missing (here), it emits 'error' but returns a boolean (bypassing our catch/next).
+        // 2. If a network error occurs (in proxy.web), it rejects the promise but SKIPS emitting 'error'.
+        // We manually throw here to force Case 1 into the catch block so next(err) is called for Express.
+        if (!activeProxyOptions.target && !activeProxyOptions.forward) {
+          throw new Error('Must provide a proper URL as target');
+        }
       } catch (err) {
+        next?.(err);
+        return;
+      }
+
+      try {
+        // Proxying Phase: Handle the actual web request.
+        debug(`proxy request to target: %O`, activeProxyOptions.target);
+        await this.proxy.web(req, res, activeProxyOptions);
+      } catch (err) {
+        // Manually emit 'error' event because httpxy's promise-based API does not emit it automatically.
+        // This is crucial for backward compatibility with HPM plugins (like error-response-plugin)
+        // and custom listeners registered via the 'on: { error: ... }' option.
+        this.proxy.emit('error', err, req, res, activeProxyOptions.target);
+
         next?.(err);
       }
     } else {
@@ -105,7 +127,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     try {
       if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
         const activeProxyOptions = await this.prepareProxyRequest(req);
-        this.proxy.ws(req, socket, activeProxyOptions, head);
+        await this.proxy.ws(req, socket, activeProxyOptions, head);
         debug('server upgrade event received. Proxying WebSocket');
       }
     } catch (err) {
