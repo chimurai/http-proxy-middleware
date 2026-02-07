@@ -52,6 +52,7 @@
     "typicode",
     "vhosted",
     "websockets",
-    "xfwd"
+    "xfwd",
+    "httpxy"
   ]
 }
