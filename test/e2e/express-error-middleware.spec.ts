@@ -1,3 +1,4 @@
+import * as express from 'express';
 import * as request from 'supertest';
 
 import { createApp, createProxyMiddleware } from './test-kit';
@@ -11,7 +12,12 @@ describe('express error middleware', () => {
       router: (req) => undefined, // Trigger "Error: Must provide a proper URL as target"
     });
 
-    const errorMiddleware = (err, req, res, next) => {
+    const errorMiddleware = (
+      err: Error,
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       httpProxyError = err;
       res.status(504).send('Something broke!');
     };

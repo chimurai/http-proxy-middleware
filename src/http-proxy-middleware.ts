@@ -2,7 +2,7 @@ import type * as http from 'node:http';
 import type * as https from 'node:https';
 import type * as net from 'node:net';
 
-import * as httpProxy from 'http-proxy';
+import * as httpProxy from 'http-proxy-3';
 
 import { verifyConfig } from './configuration';
 import { Debug as debug } from './debug';
@@ -18,7 +18,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options<TReq, TRes>;
-  private proxy: httpProxy<TReq, TRes>;
+  private proxy: httpProxy.ProxyServer;
   private pathRewriter;
   private logger: Logger;
 
@@ -81,7 +81,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     }
   }) as RequestHandler;
 
-  private registerPlugins(proxy: httpProxy<TReq, TRes>, options: Options<TReq, TRes>) {
+  private registerPlugins(proxy: httpProxy.ProxyServer, options: Options<TReq, TRes>) {
     const plugins = getPlugins<TReq, TRes>(options);
     plugins.forEach((plugin) => {
       debug(`register plugin: "${getFunctionName(plugin)}"`);
@@ -109,7 +109,8 @@ export class HttpProxyMiddleware<TReq, TRes> {
     } catch (err) {
       // This error does not include the URL as the fourth argument as we won't
       // have the URL if `this.prepareProxyRequest` throws an error.
-      this.proxy.emit('error', err, req, socket);
+
+      this.proxy.emit('error', err as Error, req, socket);
     }
   };
 
@@ -154,6 +155,10 @@ export class HttpProxyMiddleware<TReq, TRes> {
     // 2. option.pathRewrite
     await this.applyRouter(req, newProxyOptions);
     await this.applyPathRewrite(req, this.pathRewriter);
+
+    if (!newProxyOptions.target) {
+      throw new Error('Must provide a proper URL as target');
+    }
 
     return newProxyOptions;
   };
