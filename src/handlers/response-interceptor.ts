@@ -14,6 +14,23 @@ type Interceptor<TReq = http.IncomingMessage, TRes = http.ServerResponse> = (
 ) => Promise<Buffer | string>;
 
 /**
+ * Disallow headers when response contains trailer
+ * source: https://developer.mozilla.org/docs/Web/HTTP/Headers/Trailer
+ */
+const TrailerDisallowHeaders: string[] = [
+  'content-length',
+  'host',
+  'content-type',
+  'authorization',
+  'cache-control',
+  'max-forwards',
+  'te',
+  'set-cookie',
+  'content-encoding',
+  'content-range',
+];
+
+/**
  * Intercept responses from upstream.
  * Automatically decompress (deflate, gzip, brotli).
  * Give developer the opportunity to modify intercepted Buffer and http.ServerResponse
@@ -49,8 +66,14 @@ export function responseInterceptor<
 
       // set correct content-length (with double byte character support)
       debug('set content-length: %s', Buffer.byteLength(interceptedBuffer, 'utf8'));
-      res.setHeader('content-length', Buffer.byteLength(interceptedBuffer, 'utf8'));
-
+      // some headers are disallowed when response headers contains trailer
+      if (proxyRes.headers.trailer === undefined) {
+        res.setHeader('content-length', Buffer.byteLength(interceptedBuffer, 'utf8'));
+      } else {
+        TrailerDisallowHeaders.forEach((value) => {
+          res.removeHeader(value);
+        });
+      }
       debug('write intercepted response');
       res.write(interceptedBuffer);
       res.end();

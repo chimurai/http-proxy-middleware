@@ -42,6 +42,13 @@ describe('responseInterceptor()', () => {
       const response = await agent.get(`/json`).expect(200);
       expect(response.body.favorite).toEqual('叉燒包');
     });
+
+    it('should not contains disallow headers to trailer in response headers http://httpbin.org/response-headers', async () => {
+      const response = await agent
+        .get('/response-headers?Trailer=X-Stream-Error&Host=localhost')
+        .expect(200);
+      expect(response.header['host']).toBeUndefined();
+    });
   });
 
   describe('intercept responses with original headers', () => {
