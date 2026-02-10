@@ -3424,10 +3424,10 @@ https-proxy-agent@^7.0.6:
     agent-base "^7.1.2"
     debug "4"
 
-httpxy@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/httpxy/-/httpxy-0.1.7.tgz#02d02e57eda10e8b5c0e3f9f10860e3d7a5991a4"
-  integrity sha512-pXNx8gnANKAndgga5ahefxc++tJvNL87CXoRwxn1cJE2ZkWEojF3tNfQIEhZX/vfpt+wzeAzpUI4qkediX1MLQ==
+httpxy@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/httpxy/-/httpxy-0.2.2.tgz#1603165cfd12087f2039c4a8532ce61eab5d84e5"
+  integrity sha512-QnS6mAOqvdmfctFaD/Kp5cwRMcaUhEmIyw2rjVYnhJb8EuAyd/79biT/50HUTKvq/PwoXYTP6J3d9TUxzHFZwA==
 
 human-signals@^2.1.0:
   version "2.1.0"
