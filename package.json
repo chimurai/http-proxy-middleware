@@ -90,7 +90,7 @@
   },
   "dependencies": {
     "debug": "^4.3.6",
-    "httpxy": "^0.1.7",
+    "httpxy": "^0.2.2",
     "is-glob": "^4.0.3",
     "is-plain-object": "^5.0.0",
     "micromatch": "^4.0.8"

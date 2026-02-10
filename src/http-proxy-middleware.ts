@@ -18,7 +18,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options<TReq, TRes>;
-  private proxy: ProxyServer;
+  private proxy: ProxyServer<TReq, TRes>;
   private pathRewriter;
   private logger: Logger;
 
@@ -71,7 +71,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
         // Manually emit 'error' event because httpxy's promise-based API does not emit it automatically.
         // This is crucial for backward compatibility with HPM plugins (like error-response-plugin)
         // and custom listeners registered via the 'on: { error: ... }' option.
-        this.proxy.emit('error', err, req, res, activeProxyOptions.target);
+        this.proxy.emit('error', err as Error, req, res, activeProxyOptions.target);
 
         next?.(err);
       }
@@ -133,7 +133,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     } catch (err) {
       // This error does not include the URL as the fourth argument as we won't
       // have the URL if `this.prepareProxyRequest` throws an error.
-      this.proxy.emit('error', err, req, socket);
+      this.proxy.emit('error', err as Error, req, socket);
     }
   };
 
