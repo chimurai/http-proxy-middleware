@@ -87,7 +87,7 @@ function matchMultiPath(pathFilterList: string[], uri?: string) {
  * @param  {String} uri from req.url
  * @return {String}     RFC 3986 path
  */
-function getUrlPathName(uri?: string) {
+export function getUrlPathName(uri?: string) {
   return uri && url.parse(uri).pathname;
 }
 
