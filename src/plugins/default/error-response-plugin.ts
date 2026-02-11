@@ -16,7 +16,7 @@ function isSocketLike(obj: any): obj is Socket {
 export const errorResponsePlugin: Plugin = (proxyServer, options) => {
   proxyServer.on('error', (err, req, res, target?) => {
     // Re-throw error. Not recoverable since req & res are empty.
-    if (!req && !res) {
+    if (!req || !res) {
       throw err; // "Error: Must provide a proper URL as target"
     }
 

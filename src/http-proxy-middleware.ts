@@ -71,7 +71,15 @@ export class HttpProxyMiddleware<TReq, TRes> {
         // Manually emit 'error' event because httpxy's promise-based API does not emit it automatically.
         // This is crucial for backward compatibility with HPM plugins (like error-response-plugin)
         // and custom listeners registered via the 'on: { error: ... }' option.
-        this.proxy.emit('error', err as Error, req, res, activeProxyOptions.target);
+
+        /**
+         * TODO: Ideally, TReq and TRes should be restricted via "TReq extends http.IncomingMessage = http.IncomingMessage"
+         * and "TRes extends http.ServerResponse = http.ServerResponse", which allows us to avoid the "req as TReq" below.
+         *
+         * However, making TReq and TRes constrained types may cause a breaking change for TypeScript users downstream.
+         * So we leave this as a TODO for now, and revisit it in a future major release.
+         */
+        this.proxy.emit('error', err as Error, req as TReq, res, activeProxyOptions.target);
 
         next?.(err);
       }
@@ -105,7 +113,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     }
   }) as RequestHandler;
 
-  private registerPlugins(proxy: ProxyServer, options: Options<TReq, TRes>) {
+  private registerPlugins(proxy: ProxyServer<TReq, TRes>, options: Options<TReq, TRes>) {
     const plugins = getPlugins<TReq, TRes>(options);
     plugins.forEach((plugin) => {
       debug(`register plugin: "${getFunctionName(plugin)}"`);
@@ -133,7 +141,15 @@ export class HttpProxyMiddleware<TReq, TRes> {
     } catch (err) {
       // This error does not include the URL as the fourth argument as we won't
       // have the URL if `this.prepareProxyRequest` throws an error.
-      this.proxy.emit('error', err as Error, req, socket);
+
+      /**
+       * TODO: Ideally, TReq and TRes should be restricted via "TReq extends http.IncomingMessage = http.IncomingMessage"
+       * and "TRes extends http.ServerResponse = http.ServerResponse", which allows us to avoid the "req as TReq" below.
+       *
+       * However, making TReq and TRes constrained types may cause a breaking change for TypeScript users downstream.
+       * So we leave this as a TODO for now, and revisit it in a future major release.
+       */
+      this.proxy.emit('error', err as Error, req as TReq, socket);
     }
   };
 
