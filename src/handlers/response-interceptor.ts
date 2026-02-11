@@ -8,7 +8,7 @@ const debug = Debug.extend('response-interceptor');
 
 type Interceptor<TReq = http.IncomingMessage, TRes = http.ServerResponse> = (
   buffer: Buffer,
-  proxyRes: TReq,
+  proxyRes: http.IncomingMessage,
   req: TReq,
   res: TRes,
 ) => Promise<Buffer | string>;
@@ -25,7 +25,7 @@ export function responseInterceptor<
   TRes extends http.ServerResponse = http.ServerResponse,
 >(interceptor: Interceptor<TReq, TRes>) {
   return async function proxyResResponseInterceptor(
-    proxyRes: TReq,
+    proxyRes: http.IncomingMessage,
     req: TReq,
     res: TRes,
   ): Promise<void> {
@@ -34,7 +34,7 @@ export function responseInterceptor<
     let buffer = Buffer.from('', 'utf8');
 
     // decompress proxy response
-    const _proxyRes = decompress<TReq>(proxyRes, proxyRes.headers['content-encoding']);
+    const _proxyRes = decompress(proxyRes, proxyRes.headers['content-encoding']);
 
     // concat data stream
     _proxyRes.on('data', (chunk) => (buffer = Buffer.concat([buffer, chunk])));
