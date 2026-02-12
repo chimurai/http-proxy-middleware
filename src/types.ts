@@ -77,9 +77,9 @@ export interface Options<
    * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/pathRewrite.md
    */
   pathRewrite?:
-  | { [regexp: string]: string }
-  | ((path: string, req: TReq) => string | undefined)
-  | ((path: string, req: TReq) => Promise<string>);
+    | { [regexp: string]: string }
+    | ((path: string, req: TReq) => string | undefined)
+    | ((path: string, req: TReq) => Promise<string>);
   /**
    * Access the internal http-proxy server instance to customize behavior
    *
@@ -135,9 +135,9 @@ export interface Options<
    * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/router.md
    */
   router?:
-  | { [hostOrPath: string]: ProxyServerOptions['target'] }
-  | ((req: TReq) => ProxyServerOptions['target'])
-  | ((req: TReq) => Promise<ProxyServerOptions['target']>);
+    | { [hostOrPath: string]: ProxyServerOptions['target'] }
+    | ((req: TReq) => ProxyServerOptions['target'])
+    | ((req: TReq) => Promise<ProxyServerOptions['target']>);
   /**
    * Log information from http-proxy-middleware
    * @example
