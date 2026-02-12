@@ -25,8 +25,21 @@ const debug = Debug.extend('proxy-events-plugin');
  * ```
  */
 export const proxyEventsPlugin: Plugin = (proxyServer, options) => {
-  Object.entries(options.on || {}).forEach(([eventName, handler]) => {
-    debug(`register event handler: "${eventName}" -> "${getFunctionName(handler)}"`);
-    proxyServer.on(eventName, handler as (...args: unknown[]) => void);
-  });
+  if (!options.on) {
+    return;
+  }
+
+  // hoist variable here for better typing
+  let eventName: keyof typeof options.on;
+  // for in provide better typing than Object.entries()
+  for (eventName in options.on) {
+    if (Object.prototype.hasOwnProperty.call(options.on, eventName)) {
+      const handler = options.on[eventName];
+      if (!handler) {
+        continue;
+      }
+      debug(`register event handler: "${eventName}" -> "${getFunctionName(handler)}"`);
+      proxyServer.on<keyof typeof options.on>(eventName, handler as (...args: unknown[]) => void);
+    }
+  }
 };

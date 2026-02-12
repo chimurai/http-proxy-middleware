@@ -89,9 +89,8 @@
     "ws": "8.19.0"
   },
   "dependencies": {
-    "@types/http-proxy": "^1.17.15",
     "debug": "^4.3.6",
-    "http-proxy": "^1.18.1",
+    "httpxy": "^0.2.2",
     "is-glob": "^4.0.3",
     "is-plain-object": "^5.0.0",
     "micromatch": "^4.0.8"
