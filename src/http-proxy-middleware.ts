@@ -60,12 +60,8 @@ export class HttpProxyMiddleware<TReq, TRes> {
     /**
      * Get the server object to subscribe to server events;
      * 'upgrade' for websocket and 'close' for graceful shutdown
-     *
-     * NOTE:
-     * req.socket: node >= 13
-     * req.connection: node < 13 (Remove this when node 12/13 support is dropped)
      */
-    const server: https.Server = ((req.socket ?? req.connection) as any)?.server;
+    const server: https.Server = (req.socket as any)?.server;
 
     if (server && !this.serverOnCloseSubscribed) {
       server.on('close', () => {
