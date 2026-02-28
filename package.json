@@ -58,7 +58,7 @@
   "devDependencies": {
     "@commitlint/cli": "20.4.2",
     "@commitlint/config-conventional": "20.4.2",
-    "@eslint/js": "9.39.2",
+    "@eslint/js": "10.0.1",
     "@trivago/prettier-plugin-sort-imports": "6.0.2",
     "@types/debug": "4.1.12",
     "@types/eslint": "9.6.1",
@@ -70,7 +70,7 @@
     "@types/supertest": "7.2.0",
     "@types/ws": "8.18.1",
     "body-parser": "2.2.2",
-    "eslint": "9.39.2",
+    "eslint": "10.0.2",
     "express": "5.2.1",
     "get-port": "5.1.1",
     "globals": "17.3.0",
