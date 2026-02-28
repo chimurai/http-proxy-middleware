@@ -1,22 +1,53 @@
 {
   "name": "http-proxy-middleware",
-  "type": "commonjs",
   "version": "3.0.5",
   "description": "The one-liner node.js proxy middleware for connect, express, next.js and more",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "keywords": [
+    "browser-sync",
+    "connect",
+    "cors",
+    "express",
+    "fastify",
+    "grunt-contrib-connect",
+    "gulp",
+    "http",
+    "https",
+    "middleware",
+    "next.js",
+    "polka",
+    "proxy",
+    "reverse",
+    "websocket",
+    "ws"
+  ],
+  "homepage": "https://github.com/chimurai/http-proxy-middleware#readme",
+  "bugs": {
+    "url": "https://github.com/chimurai/http-proxy-middleware/issues"
+  },
+  "license": "MIT",
+  "author": "Steven Chim",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chimurai/http-proxy-middleware.git"
+  },
   "files": [
     "dist"
   ],
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "provenance": true
+  },
   "scripts": {
     "clean": "rm -rf dist coverage tsconfig.tsbuildinfo .eslintcache",
     "install:all": "yarn && (cd examples && yarn)",
-    "lint": "yarn prettier && yarn eslint",
-    "lint:fix": "yarn prettier:fix && yarn eslint:fix",
+    "lint": "yarn oxfmt && yarn eslint",
+    "lint:fix": "yarn oxfmt:fix && yarn eslint:fix",
     "eslint": "eslint '{src,test,examples}/**/*.{js,ts}' --cache",
     "eslint:fix": "yarn eslint --fix",
-    "prettier": "prettier --list-different \"**/*.{js,ts,md,yml,json,html}\"",
-    "prettier:fix": "prettier --write \"**/*.{js,ts,md,yml,json,html}\"",
+    "oxfmt": "oxfmt --list-different \"**/*.{js,ts,md,yml,json,html}\"",
+    "oxfmt:fix": "oxfmt --write \"**/*.{js,ts,md,yml,json,html}\"",
     "build": "tsc --build",
     "test": "jest",
     "coverage": "jest --coverage",
@@ -24,42 +55,18 @@
     "prepack": "yarn clean && yarn test && yarn build",
     "spellcheck": "npx --yes cspell --show-context --show-suggestions '**/*.*'"
   },
-  "publishConfig": {
-    "provenance": true
+  "dependencies": {
+    "@types/http-proxy": "^1.17.15",
+    "debug": "^4.3.6",
+    "http-proxy": "^1.18.1",
+    "is-glob": "^4.0.3",
+    "is-plain-object": "^5.0.0",
+    "micromatch": "^4.0.8"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/chimurai/http-proxy-middleware.git"
-  },
-  "keywords": [
-    "reverse",
-    "proxy",
-    "middleware",
-    "http",
-    "https",
-    "connect",
-    "express",
-    "fastify",
-    "polka",
-    "next.js",
-    "browser-sync",
-    "gulp",
-    "grunt-contrib-connect",
-    "websocket",
-    "ws",
-    "cors"
-  ],
-  "author": "Steven Chim",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/chimurai/http-proxy-middleware/issues"
-  },
-  "homepage": "https://github.com/chimurai/http-proxy-middleware#readme",
   "devDependencies": {
     "@commitlint/cli": "20.4.2",
     "@commitlint/config-conventional": "20.4.2",
     "@eslint/js": "10.0.1",
-    "@trivago/prettier-plugin-sort-imports": "6.0.2",
     "@types/debug": "4.1.12",
     "@types/eslint": "9.6.1",
     "@types/express": "5.0.6",
@@ -79,32 +86,24 @@
     "lint-staged": "16.3.0",
     "mockttp": "4.2.1",
     "open": "8.4.2",
+    "oxfmt": "^0.35.0",
     "patch-package": "8.0.1",
     "pkg-pr-new": "0.0.65",
-    "prettier": "3.8.1",
     "supertest": "7.2.2",
     "ts-jest": "29.4.6",
     "typescript": "5.9.3",
     "typescript-eslint": "8.56.1",
     "ws": "8.19.0"
   },
-  "dependencies": {
-    "@types/http-proxy": "^1.17.15",
-    "debug": "^4.3.6",
-    "http-proxy": "^1.18.1",
-    "is-glob": "^4.0.3",
-    "is-plain-object": "^5.0.0",
-    "micromatch": "^4.0.8"
-  },
   "resolutions": {
     "patch-package/**/tmp": "^0.2.4"
-  },
-  "engines": {
-    "node": "^14.18.0 || ^16.10.0 || >=18.0.0"
   },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
     ]
+  },
+  "engines": {
+    "node": "^14.18.0 || ^16.10.0 || >=18.0.0"
   }
 }

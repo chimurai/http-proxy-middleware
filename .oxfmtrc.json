@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": true,
+  "sortImports": {
+    "newlinesBetween": true
+  },
+  "ignorePatterns": ["dist", "coverage"]
+}

@@ -21,8 +21,8 @@
         "dbaeumer.vscode-eslint",
         "eamodio.gitlens",
         "EditorConfig.EditorConfig",
-        "esbenp.prettier-vscode",
         "firsttris.vscode-jest-runner",
+        "oxc.oxc-vscode",
         "pkief.material-icon-theme",
         "streetsidesoftware.code-spell-checker",
         "yzhang.markdown-all-in-one"
