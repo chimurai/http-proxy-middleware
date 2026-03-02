@@ -27,6 +27,6 @@ const debug = Debug.extend('proxy-events-plugin');
 export const proxyEventsPlugin: Plugin = (proxyServer, options) => {
   Object.entries(options.on || {}).forEach(([eventName, handler]) => {
     debug(`register event handler: "${eventName}" -> "${getFunctionName(handler)}"`);
-    proxyServer.on(eventName, handler as (...args: unknown[]) => void);
+    proxyServer.on(eventName, handler as never);
   });
 };

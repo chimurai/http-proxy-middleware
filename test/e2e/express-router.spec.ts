@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as http from 'http';
 import * as request from 'supertest';
 
 import { Options } from '../../src/index';
@@ -18,7 +19,7 @@ describe('Usage in Express', () => {
       // sub route config
       const sub = express.Router();
 
-      function filter(pathname, req) {
+      function filter(pathname: string, req: http.IncomingMessage) {
         const urlFilter = new RegExp('^/sub/api');
         const match = urlFilter.test(pathname);
         return match;
@@ -49,8 +50,8 @@ describe('Usage in Express', () => {
     });
   });
 
-  function jsonMiddleware(data) {
-    return (req, res) => {
+  function jsonMiddleware(data: any) {
+    return (req: express.Request, res: express.Response) => {
       res.json(data);
     };
   }

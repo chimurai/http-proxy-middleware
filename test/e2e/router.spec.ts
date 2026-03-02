@@ -2,6 +2,7 @@ import { ErrorRequestHandler } from 'express';
 import * as getPort from 'get-port';
 import { Mockttp, generateCACertificate, getLocal } from 'mockttp';
 import * as request from 'supertest';
+import * as TestAgent from 'supertest';
 
 import { createApp, createAppWithPath, createProxyMiddleware } from './test-kit';
 
@@ -147,7 +148,7 @@ describe('E2E router', () => {
   });
 
   describe('router with proxyTable', () => {
-    let agent;
+    let agent: TestAgent.Agent;
 
     beforeEach(() => {
       const app = createAppWithPath(
