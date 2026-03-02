@@ -75,7 +75,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
       this.serverOnCloseSubscribed = true;
     }
 
-    if (this.proxyOptions.ws === true) {
+    if (this.proxyOptions.ws === true && server) {
       // use initial request to access the server object to subscribe to http upgrade event
       this.catchUpgradeRequest(server);
     }
