@@ -100,7 +100,7 @@
     "patch-package/**/tmp": "^0.2.4"
   },
   "engines": {
-    "node": "^14.18.0 || ^16.10.0 || >=18.0.0"
+    "node": ">=20.0.0"
   },
   "commitlint": {
     "extends": [
