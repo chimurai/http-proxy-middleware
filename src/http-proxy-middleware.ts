@@ -2,7 +2,7 @@ import type * as http from 'node:http';
 import type * as https from 'node:https';
 import type * as net from 'node:net';
 
-import * as httpProxy from 'http-proxy';
+import { type ProxyServer, createProxyServer } from 'httpxy';
 
 import { verifyConfig } from './configuration';
 import { Debug as debug } from './debug';
@@ -18,7 +18,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options<TReq, TRes>;
-  private proxy: httpProxy<TReq, TRes>;
+  private proxy: ProxyServer<TReq, TRes>;
   private pathRewriter;
   private logger: Logger;
 
@@ -28,7 +28,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     this.logger = getLogger(options as unknown as Options);
 
     debug(`create proxy server`);
-    this.proxy = httpProxy.createProxyServer({});
+    this.proxy = createProxyServer({});
 
     this.registerPlugins(this.proxy, this.proxyOptions);
 
@@ -46,11 +46,41 @@ export class HttpProxyMiddleware<TReq, TRes> {
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
   public middleware: RequestHandler = (async (req, res, next?) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
+      let activeProxyOptions: Options<TReq, TRes>;
       try {
-        const activeProxyOptions = await this.prepareProxyRequest(req);
-        debug(`proxy request to target: %O`, activeProxyOptions.target);
-        this.proxy.web(req, res, activeProxyOptions);
+        // Preparation Phase: Apply router and path rewriter.
+        activeProxyOptions = await this.prepareProxyRequest(req);
+
+        // [Smoking Gun] httpxy is inconsistent with error handling:
+        // 1. If target is missing (here), it emits 'error' but returns a boolean (bypassing our catch/next).
+        // 2. If a network error occurs (in proxy.web), it rejects the promise but SKIPS emitting 'error'.
+        // We manually throw here to force Case 1 into the catch block so next(err) is called for Express.
+        if (!activeProxyOptions.target && !activeProxyOptions.forward) {
+          throw new Error('Must provide a proper URL as target');
+        }
       } catch (err) {
+        next?.(err);
+        return;
+      }
+
+      try {
+        // Proxying Phase: Handle the actual web request.
+        debug(`proxy request to target: %O`, activeProxyOptions.target);
+        await this.proxy.web(req, res, activeProxyOptions);
+      } catch (err) {
+        // Manually emit 'error' event because httpxy's promise-based API does not emit it automatically.
+        // This is crucial for backward compatibility with HPM plugins (like error-response-plugin)
+        // and custom listeners registered via the 'on: { error: ... }' option.
+
+        /**
+         * TODO: Ideally, TReq and TRes should be restricted via "TReq extends http.IncomingMessage = http.IncomingMessage"
+         * and "TRes extends http.ServerResponse = http.ServerResponse", which allows us to avoid the "req as TReq" below.
+         *
+         * However, making TReq and TRes constrained types may cause a breaking change for TypeScript users downstream.
+         * So we leave this as a TODO for now, and revisit it in a future major release.
+         */
+        this.proxy.emit('error', err as Error, req as TReq, res, activeProxyOptions.target);
+
         next?.(err);
       }
     } else {
@@ -70,7 +100,9 @@ export class HttpProxyMiddleware<TReq, TRes> {
     if (server && !this.serverOnCloseSubscribed) {
       server.on('close', () => {
         debug('server close signal received: closing proxy server');
-        this.proxy.close();
+        this.proxy.close(() => {
+          debug('proxy server closed');
+        });
       });
       this.serverOnCloseSubscribed = true;
     }
@@ -81,7 +113,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
     }
   }) as RequestHandler;
 
-  private registerPlugins(proxy: httpProxy<TReq, TRes>, options: Options<TReq, TRes>) {
+  private registerPlugins(proxy: ProxyServer<TReq, TRes>, options: Options<TReq, TRes>) {
     const plugins = getPlugins<TReq, TRes>(options);
     plugins.forEach((plugin) => {
       debug(`register plugin: "${getFunctionName(plugin)}"`);
@@ -103,13 +135,21 @@ export class HttpProxyMiddleware<TReq, TRes> {
     try {
       if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
         const activeProxyOptions = await this.prepareProxyRequest(req);
-        this.proxy.ws(req, socket, head, activeProxyOptions);
+        await this.proxy.ws(req, socket, activeProxyOptions, head);
         debug('server upgrade event received. Proxying WebSocket');
       }
     } catch (err) {
       // This error does not include the URL as the fourth argument as we won't
       // have the URL if `this.prepareProxyRequest` throws an error.
-      this.proxy.emit('error', err, req, socket);
+
+      /**
+       * TODO: Ideally, TReq and TRes should be restricted via "TReq extends http.IncomingMessage = http.IncomingMessage"
+       * and "TRes extends http.ServerResponse = http.ServerResponse", which allows us to avoid the "req as TReq" below.
+       *
+       * However, making TReq and TRes constrained types may cause a breaking change for TypeScript users downstream.
+       * So we leave this as a TODO for now, and revisit it in a future major release.
+       */
+      this.proxy.emit('error', err as Error, req as TReq, socket);
     }
   };
 
