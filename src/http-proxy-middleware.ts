@@ -174,15 +174,6 @@ export class HttpProxyMiddleware<TReq, TRes> {
    * @return {Object} proxy options
    */
   private prepareProxyRequest = async (req: http.IncomingMessage) => {
-    /**
-     * Incorrect usage confirmed: https://github.com/expressjs/express/issues/4854#issuecomment-1066171160
-     * Temporary restore req.url patch for {@link src/legacy/create-proxy-middleware.ts legacyCreateProxyMiddleware()}
-     * FIXME: remove this patch in future release
-     */
-    if ((this.middleware as unknown as any).__LEGACY_HTTP_PROXY_MIDDLEWARE__) {
-      req.url = (req as unknown as any).originalUrl || req.url;
-    }
-
     const newProxyOptions = Object.assign({}, this.proxyOptions);
 
     // Apply in order:
