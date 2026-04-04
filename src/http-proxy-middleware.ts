@@ -4,15 +4,15 @@ import type * as net from 'node:net';
 
 import { type ProxyServer, createProxyServer } from 'httpxy';
 
-import { verifyConfig } from './configuration';
-import { Debug as debug } from './debug';
-import { getPlugins } from './get-plugins';
-import { getLogger } from './logger';
-import { matchPathFilter } from './path-filter';
-import * as PathRewriter from './path-rewriter';
-import * as Router from './router';
-import type { Filter, Logger, Options, RequestHandler } from './types';
-import { getFunctionName } from './utils/function';
+import { verifyConfig } from './configuration.js';
+import { Debug as debug } from './debug.js';
+import { getPlugins } from './get-plugins.js';
+import { getLogger } from './logger.js';
+import { matchPathFilter } from './path-filter.js';
+import * as PathRewriter from './path-rewriter.js';
+import * as Router from './router.js';
+import type { Filter, Logger, Options, RequestHandler } from './types.js';
+import { getFunctionName } from './utils/function.js';
 
 export class HttpProxyMiddleware<
   TReq extends http.IncomingMessage = http.IncomingMessage,

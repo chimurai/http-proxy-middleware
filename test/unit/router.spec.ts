@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { getTarget } from '../../src/router';
+import { getTarget } from '../../src/router.js';
 
 describe('router unit test', () => {
   let fakeReq;

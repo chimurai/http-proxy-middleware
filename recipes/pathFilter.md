@@ -18,7 +18,7 @@ Narrow down which requests should be proxied. The `path` used for filtering is t
 This will match paths starting with `/api`
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://localhost:3000',
@@ -33,7 +33,7 @@ const apiProxy = createProxyMiddleware({
 This will match paths starting with `/api` or `/rest`
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://localhost:3000',
@@ -49,7 +49,7 @@ const apiProxy = createProxyMiddleware({
 This will match paths starting with `/api/` and should also end with `.json`
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://localhost:3000',
@@ -62,7 +62,7 @@ const apiProxy = createProxyMiddleware({
 Multiple wildcards can be used.
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://localhost:3000',
@@ -75,7 +75,7 @@ const apiProxy = createProxyMiddleware({
 This example will create a proxy with globs.
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://localhost:3000',
@@ -89,7 +89,7 @@ Write your custom `pathFilter` function to have full control on the matching beh
 The request `pathname` and `req` object are provided to determine which requests should be proxied or not.
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const pathFilter = function (pathname, req) {
   return pathname.match('^/api') && req.method === 'GET';

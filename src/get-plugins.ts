@@ -5,8 +5,8 @@ import {
   errorResponsePlugin,
   loggerPlugin,
   proxyEventsPlugin,
-} from './plugins/default';
-import type { Options, Plugin } from './types';
+} from './plugins/default/index.js';
+import type { Options, Plugin } from './types.js';
 
 export function getPlugins<TReq extends http.IncomingMessage, TRes extends http.ServerResponse>(
   options: Options<TReq, TRes>,

@@ -7,7 +7,7 @@ Subscribe to `http-proxy` events: `error`, `proxyReq`, `proxyReqWs`, `proxyRes`,
 Subscribe to http-proxy's [error event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const onError = function (err, req, res) {
   console.log('Something went wrong.');
@@ -27,7 +27,7 @@ const apiProxy = createProxyMiddleware(options);
 Subscribe to http-proxy's [proxyReq event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const onProxyReq = function (proxyReq, req, res) {
   // add new header to request
@@ -47,7 +47,7 @@ const apiProxy = createProxyMiddleware(options);
 Subscribe to http-proxy's [proxyReqWs event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const onProxyReqWs = function (proxyReq, req, socket, options, head) {
   // add custom header
@@ -67,7 +67,7 @@ const apiProxy = createProxyMiddleware(options);
 Subscribe to http-proxy's [proxyRes event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const onProxyRes = function (proxyRes, req, res) {
   // add new header to response

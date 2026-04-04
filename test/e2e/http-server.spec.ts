@@ -3,7 +3,7 @@ import * as http from 'node:http';
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 
-import { createProxyMiddleware } from './test-kit';
+import { createProxyMiddleware } from './test-kit.js';
 
 describe('http integration', () => {
   it('should work with raw node http RequestHandler', async () => {

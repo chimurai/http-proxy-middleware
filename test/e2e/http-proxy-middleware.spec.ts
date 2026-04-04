@@ -6,8 +6,8 @@ import { CompletedRequest, Mockttp, getLocal } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Logger } from '../../src/types';
-import { createApp, createAppWithPath, createProxyMiddleware, fixRequestBody } from './test-kit';
+import type { Logger } from '../../src/types.js';
+import { createApp, createAppWithPath, createProxyMiddleware, fixRequestBody } from './test-kit.js';
 
 describe('E2E http-proxy-middleware', () => {
   describe('http-proxy-middleware creation', () => {

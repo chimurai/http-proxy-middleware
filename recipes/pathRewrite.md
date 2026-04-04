@@ -12,7 +12,7 @@ Modify request paths before requests are send to the target.
 Rewrite paths
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const options = {
   target: 'http://localhost:3000',
@@ -31,7 +31,7 @@ const apiProxy = createProxyMiddleware(options);
 Remove base path
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const options = {
   target: 'http://localhost:3000',
@@ -50,7 +50,7 @@ const apiProxy = createProxyMiddleware(options);
 Add base path
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const options = {
   target: 'http://localhost:3000',
@@ -71,7 +71,7 @@ Implement you own path rewrite logic.
 The unmodified path will be used, when rewrite function returns `undefined`
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const rewriteFn = function (path, req) {
   return path.replace('/api/foo', '/api/bar');

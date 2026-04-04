@@ -5,8 +5,10 @@
 - fix(types): fix Logger type
 - fix(error-response-plugin): sanitize input
 - feat: drop node v14/v16/v18 [BREAKING CHANGE]
-- refactor(#1136): replace http-proxy w/ httpxy [BREAKING CHANGE]
+- refactor(#1136): replace http-proxy w/ httpxy
 - chore: remove legacyCreateProxyMiddleware() [BREAKING CHANGE]
+- ci: migrate from jest to vitest
+- chore(package.json): esm only [BREAKING CHANGE]
 
 ## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
 

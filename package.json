@@ -1,9 +1,16 @@
 {
   "name": "http-proxy-middleware",
-  "type": "commonjs",
+  "type": "module",
   "version": "4.0.0-beta.0",
   "description": "The one-liner node.js proxy middleware for connect, express, next.js and more",
   "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -99,7 +106,7 @@
     "patch-package/**/tmp": "^0.2.4"
   },
   "engines": {
-    "node": "^22.0.0 || >=24.0.0"
+    "node": "^22.12.0 || >=24.0.0"
   },
   "commitlint": {
     "extends": [

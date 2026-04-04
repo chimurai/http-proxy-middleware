@@ -1,8 +1,8 @@
 import type * as http from 'node:http';
 import * as zlib from 'node:zlib';
 
-import { Debug } from '../debug';
-import { getFunctionName } from '../utils/function';
+import { Debug } from '../debug.js';
+import { getFunctionName } from '../utils/function.js';
 
 const debug = Debug.extend('response-interceptor');
 

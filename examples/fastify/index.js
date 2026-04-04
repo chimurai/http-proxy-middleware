@@ -1,8 +1,13 @@
-const fastify = require('fastify')({ logger: true });
-const { createProxyMiddleware } = require('../../dist'); // require('http-proxy-middleware');
+import fastifyExpress from '@fastify/express';
+import fastifyFactory from 'fastify';
+import open from 'open';
+
+import { createProxyMiddleware } from '../../dist/index.js';
+
+const fastify = fastifyFactory({ logger: true });
 
 (async () => {
-  await fastify.register(require('@fastify/express'));
+  await fastify.register(fastifyExpress);
 
   const proxy = createProxyMiddleware({
     target: 'http://jsonplaceholder.typicode.com',
@@ -15,6 +20,6 @@ const { createProxyMiddleware } = require('../../dist'); // require('http-proxy-
     if (err) throw err;
     fastify.log.info(`server listening on ${address}`);
 
-    require('open')(`${address}/users`);
+    open(`${address}/users`);
   });
 })();

@@ -4,7 +4,7 @@ import { Mockttp, generateCACertificate, getLocal } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { createApp, createAppWithPath, createProxyMiddleware } from './test-kit';
+import { createApp, createAppWithPath, createProxyMiddleware } from './test-kit.js';
 
 const untrustedCACert = generateCACertificate({ bits: 2048 });
 

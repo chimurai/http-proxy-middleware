@@ -3,8 +3,8 @@ import type * as http from 'node:http';
 import isGlob from 'is-glob';
 import micromatch from 'micromatch';
 
-import { ERRORS } from './errors';
-import type { Filter } from './types';
+import { ERRORS } from './errors.js';
+import type { Filter } from './types.js';
 
 export function matchPathFilter<TReq extends http.IncomingMessage = http.IncomingMessage>(
   pathFilter: Filter<TReq> = '/',

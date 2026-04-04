@@ -12,8 +12,9 @@ Since this only modifies the request body stream the original POST body paramete
 ```js
 'use strict';
 
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+
 const router = express.Router();
 
 const proxy_filter = function (path, req) {

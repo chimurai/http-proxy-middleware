@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getFunctionName } from '../../../src/utils/function';
+import { getFunctionName } from '../../../src/utils/function.js';
 
 describe('getFunctionName()', () => {
   it('should return Function name', () => {

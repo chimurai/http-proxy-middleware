@@ -1,6 +1,6 @@
 import { isPlainObject } from 'is-plain-object';
 
-import { Debug } from './debug';
+import { Debug } from './debug.js';
 
 const debug = Debug.extend('router');
 

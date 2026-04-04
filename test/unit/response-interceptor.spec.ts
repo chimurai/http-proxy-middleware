@@ -3,7 +3,7 @@ import { Socket } from 'node:net';
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { responseInterceptor } from '../../src/handlers/response-interceptor';
+import { responseInterceptor } from '../../src/handlers/response-interceptor.js';
 
 const fakeProxyResponse = () => {
   const httpIncomingMessage = new IncomingMessage(new Socket());

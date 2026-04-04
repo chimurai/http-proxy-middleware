@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { type Sockets, getPort } from '../../../src/utils/logger-plugin';
+import { type Sockets, getPort } from '../../../src/utils/logger-plugin.js';
 
 describe('getPort()', () => {
   it('should return port from proxyRes.req.agent.sockets', () => {

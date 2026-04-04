@@ -12,8 +12,8 @@ Write your own router to dynamically route to a different `target`.
 The `req` object is provided to retrieve contextual data.
 
 ```javascript
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const customRouter = function (req) {
   return 'http://www.example.org'; // protocol + host
@@ -41,8 +41,8 @@ Use a Proxy Table to proxy requests to a different `target` based on:
 - Host HTTP header + path
 
 ```javascript
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const proxyTable = {
   'integration.localhost:3000': 'http://localhost:8001', // host only

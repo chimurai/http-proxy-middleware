@@ -4,8 +4,12 @@ import * as http from 'node:http';
 import express from 'express';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { fixRequestBody, createProxyMiddleware as middleware, responseInterceptor } from '../src';
-import type { Options, RequestHandler } from '../src/types';
+import {
+  fixRequestBody,
+  createProxyMiddleware as middleware,
+  responseInterceptor,
+} from '../src/index.js';
+import type { Options, RequestHandler } from '../src/types.js';
 
 describe('http-proxy-middleware TypeScript Types', () => {
   let options: Options;
