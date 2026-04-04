@@ -8,7 +8,8 @@ import { createApp, createAppWithPath, createProxyMiddleware } from './test-kit.
 
 const untrustedCACert = generateCACertificate({ bits: 2048 });
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// NOTE: Seems to be not needed when using `ignoreHostHttpsErrors` in mockttp, but leaving it here just in case
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 describe('E2E router', () => {
   let targetServerA: Mockttp;
