@@ -316,6 +316,36 @@ describe('E2E http-proxy-middleware', () => {
         const response = await agent.get(`/api/some/endpoint`).expect(504);
         expect(response.status).toBe(504);
       });
+
+      it('should handle ECONNRESET errors from the target server', async () => {
+        await mockTargetServer.forGet('/api/some/endpoint').thenResetConnection();
+
+        const resetAgent = request(
+          createApp(
+            createProxyMiddleware({
+              target: `http://localhost:${mockTargetServer.port}`,
+            }),
+          ),
+        );
+
+        const response = await resetAgent.get(`/api/some/endpoint`).expect(504);
+        expect(response.status).toBe(504);
+      });
+
+      it('should handle closed connections from the target server', async () => {
+        await mockTargetServer.forGet('/api/some/endpoint').thenCloseConnection();
+
+        const closeAgent = request(
+          createApp(
+            createProxyMiddleware({
+              target: `http://localhost:${mockTargetServer.port}`,
+            }),
+          ),
+        );
+
+        const response = await closeAgent.get(`/api/some/endpoint`).expect(504);
+        expect(response.status).toBe(504);
+      });
     });
 
     describe('option.on.error - custom error handler', () => {
