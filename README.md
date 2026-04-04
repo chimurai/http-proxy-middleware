@@ -7,18 +7,17 @@
 
 Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/expressjs/express), [next.js](https://github.com/vercel/next.js) and [many more](#compatible-servers).
 
-Powered by the popular Nodejitsu [`http-proxy`](https://github.com/http-party/node-http-proxy). [![GitHub stars](https://img.shields.io/github/stars/http-party/node-http-proxy.svg?style=social&label=Star)](https://github.com/http-party/node-http-proxy)
+Powered by [`httpxy`](https://github.com/unjs/httpxy). A maintained version of [http-proxy](https://github.com/http-party/node-http-proxy).
 
 ## ⚠️ Note <!-- omit in toc -->
 
-This page is showing documentation for version v3.x.x ([release notes](https://github.com/chimurai/http-proxy-middleware/releases))
+This page is showing documentation for version **v4.x.x** ([release notes](https://github.com/chimurai/http-proxy-middleware/releases))
 
-See [MIGRATION.md](https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md) for details on how to migrate from v2.x.x to v3.x.x
+For older documentation:
 
-If you're looking for older documentation. Go to:
-
-- <https://github.com/chimurai/http-proxy-middleware/tree/v2.0.4#readme>
-- <https://github.com/chimurai/http-proxy-middleware/tree/v0.21.0#readme>
+- [v3.0.5](https://github.com/chimurai/http-proxy-middleware/tree/v3.0.5#readme)
+- [v2.0.4](https://github.com/chimurai/http-proxy-middleware/tree/v2.0.4#readme)
+- [v0.21.0](https://github.com/chimurai/http-proxy-middleware/tree/v0.21.0#readme)
 
 ## TL;DR <!-- omit in toc -->
 
@@ -48,7 +47,7 @@ app.listen(3000);
 // http://127.0.0.1:3000/api/foo/bar -> http://www.example.org/api/foo/bar
 ```
 
-_All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#options) can be used, along with some extra `http-proxy-middleware` [options](#options).
+_All_ `httpxy` [options](https://github.com/unjs/httpxy#options) can be used, along with some extra `http-proxy-middleware` [options](#options).
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -65,8 +64,8 @@ _All_ `http-proxy` [options](https://github.com/nodejitsu/node-http-proxy#option
   - [`plugins` (Array)](#plugins-array)
   - [`ejectPlugins` (boolean) default: `false`](#ejectplugins-boolean-default-false)
   - [`logger` (Object)](#logger-object)
-- [`http-proxy` events](#http-proxy-events)
-- [`http-proxy` options](#http-proxy-options)
+- [`httpxy` events](#httpxy-events)
+- [`httpxy` options](#httpxy-options)
 - [WebSocket](#websocket)
   - [External WebSocket upgrade](#external-websocket-upgrade)
 - [Intercept and manipulate requests](#intercept-and-manipulate-requests)
@@ -315,9 +314,9 @@ createProxyMiddleware({
 });
 ```
 
-## `http-proxy` events
+## `httpxy` events
 
-Subscribe to [http-proxy events](https://github.com/nodejitsu/node-http-proxy#listening-for-proxy-events) with the `on` option:
+Subscribe to [httpxy events](https://github.com/unjs/httpxy#events) with the `on` option:
 
 ```js
 createProxyMiddleware({
@@ -356,7 +355,7 @@ createProxyMiddleware({
   }
   ```
 
-- **option.on.proxyReq**: function, subscribe to http-proxy's `proxyReq` event.
+- **option.on.proxyReq**: function, subscribe to httpxy's `proxyReq` event.
 
   ```javascript
   function onProxyReq(proxyReq, req, res) {
@@ -366,7 +365,7 @@ createProxyMiddleware({
   }
   ```
 
-- **option.on.proxyReqWs**: function, subscribe to http-proxy's `proxyReqWs` event.
+- **option.on.proxyReqWs**: function, subscribe to httpxy's `proxyReqWs` event.
 
   ```javascript
   function onProxyReqWs(proxyReq, req, socket, options, head) {
@@ -375,7 +374,7 @@ createProxyMiddleware({
   }
   ```
 
-- **option.on.open**: function, subscribe to http-proxy's `open` event.
+- **option.on.open**: function, subscribe to httpxy's `open` event.
 
   ```javascript
   function onOpen(proxySocket) {
@@ -384,7 +383,7 @@ createProxyMiddleware({
   }
   ```
 
-- **option.on.close**: function, subscribe to http-proxy's `close` event.
+- **option.on.close**: function, subscribe to httpxy's `close` event.
 
   ```javascript
   function onClose(res, socket, head) {
@@ -393,9 +392,9 @@ createProxyMiddleware({
   }
   ```
 
-## `http-proxy` options
+## `httpxy` options
 
-The following options are provided by the underlying [http-proxy](https://github.com/nodejitsu/node-http-proxy#options) library.
+The following options are provided by the underlying [httpxy](https://github.com/unjs/httpxy#options) library.
 
 - **option.target**: url string to be parsed with the url module
 - **option.forward**: url string to be parsed with the url module
@@ -450,10 +449,10 @@ The following options are provided by the underlying [http-proxy](https://github
 - **option.buffer**: stream of data to send as the request body. Maybe you have some middleware that consumes the request stream before proxying it on e.g. If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
 
   ```javascript
-  import httpProxy from 'http-proxy';
+  import { createProxyServer } from 'httpxy';
   import streamify from 'stream-array';
 
-  const proxy = httpProxy.createProxyServer();
+  const proxy = createProxyServer();
 
   export default function proxyWithBody(req, res, next) {
     proxy.web(
@@ -638,4 +637,4 @@ $ yarn spellcheck
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2025 Steven Chim
+Copyright (c) 2015-2026 Steven Chim
