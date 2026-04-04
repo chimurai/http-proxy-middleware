@@ -137,8 +137,9 @@ export class HttpProxyMiddleware<
   private handleUpgrade = async (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
     try {
       if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
-        const activeProxyOptions = await this.prepareProxyRequest(req);
-        await this.proxy.ws(req, socket, activeProxyOptions, head);
+        const proxiedReq = req as TReq;
+        const activeProxyOptions = await this.prepareProxyRequest(proxiedReq);
+        await this.proxy.ws(proxiedReq, socket, activeProxyOptions, head);
         debug('server upgrade event received. Proxying WebSocket');
       }
     } catch (err) {

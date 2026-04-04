@@ -34,13 +34,13 @@ describe('E2E router', () => {
 
     await targetServerA
       .forAnyRequest()
-      .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'A' : 'NOT HTTPS A' }));
+      .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'HTTPS A' : 'HTTP A' }));
     await targetServerB
       .forAnyRequest()
-      .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'B' : 'NOT HTTPS B' }));
+      .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'HTTPS B' : 'HTTP B' }));
     await targetServerC
       .forAnyRequest()
-      .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'C' : 'NOT HTTPS C' }));
+      .thenCallback(({ protocol }) => ({ body: protocol === 'https' ? 'HTTPS C' : 'HTTP C' }));
 
     await targetServerA.start(targetPortA);
     await targetServerB.start(targetPortB);
@@ -68,7 +68,7 @@ describe('E2E router', () => {
 
       const agent = request(app);
       const response = await agent.get('/api').expect(200);
-      expect(response.text).toBe('C');
+      expect(response.text).toBe('HTTPS C');
     });
 
     it('should work with an object', async () => {
@@ -84,7 +84,7 @@ describe('E2E router', () => {
       );
       const agent = request(app);
       const response = await agent.get('/api').expect(200);
-      expect(response.text).toBe('C');
+      expect(response.text).toBe('HTTPS C');
     });
 
     it('should work with an async callback', async () => {
@@ -103,7 +103,7 @@ describe('E2E router', () => {
 
       const agent = request(app);
       const response = await agent.get('/api').expect(200);
-      expect(response.text).toBe('C');
+      expect(response.text).toBe('HTTPS C');
     });
 
     it('should handle promise rejection in router', async () => {
@@ -127,7 +127,7 @@ describe('E2E router', () => {
       expect(response.text).toBe('An error thrown in the router');
     });
 
-    it('missing a : will cause it to use http', async () => {
+    it('missing a ":" in protocol will cause it to use https', async () => {
       const app = createApp(
         createProxyMiddleware({
           target: `https://localhost:${targetPortA}`,
@@ -143,7 +143,7 @@ describe('E2E router', () => {
 
       const agent = request(app);
       const response = await agent.get('/api').expect(200);
-      expect(response.text).toBe('NOT HTTPS C');
+      expect(response.text).toBe('HTTPS C');
     });
   });
 
@@ -171,25 +171,25 @@ describe('E2E router', () => {
     it('should proxy to option.target', async () => {
       const response = await agent.get('/api').expect(200);
 
-      expect(response.text).toBe('A');
+      expect(response.text).toBe('HTTPS A');
     });
 
     it('should proxy when host is "alpha.localhost"', async () => {
       const response = await agent.get('/api').set('host', 'alpha.localhost:6000').expect(200);
 
-      expect(response.text).toBe('A');
+      expect(response.text).toBe('HTTPS A');
     });
 
     it('should proxy when host is "beta.localhost"', async () => {
       const response = await agent.get('/api').set('host', 'beta.localhost:6000').expect(200);
 
-      expect(response.text).toBe('B');
+      expect(response.text).toBe('HTTPS B');
     });
 
     it('should proxy with host & path config: "localhost:6000/api"', async () => {
       const response = await agent.get('/api').set('host', 'localhost:6000').expect(200);
 
-      expect(response.text).toBe('C');
+      expect(response.text).toBe('HTTPS C');
     });
   });
 });
