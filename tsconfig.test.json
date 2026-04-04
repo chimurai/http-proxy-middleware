@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": ".",
+    "incremental": false,
     "noEmit": true
   },
-  "include": ["./src/**/*.ts", "./test/**/*.ts"]
+  "include": ["./src/**/*.ts", "./test/**/*.ts", "./vitest.config.ts"]
 }

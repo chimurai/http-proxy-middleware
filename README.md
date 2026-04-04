@@ -450,13 +450,12 @@ The following options are provided by the underlying [http-proxy](https://github
 - **option.buffer**: stream of data to send as the request body. Maybe you have some middleware that consumes the request stream before proxying it on e.g. If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
 
   ```javascript
-  'use strict';
+  import httpProxy from 'http-proxy';
+  import streamify from 'stream-array';
 
-  const streamify = require('stream-array');
-  const HttpProxy = require('http-proxy');
-  const proxy = new HttpProxy();
+  const proxy = httpProxy.createProxyServer();
 
-  module.exports = (req, res, next) => {
+  export default function proxyWithBody(req, res, next) {
     proxy.web(
       req,
       res,
@@ -466,7 +465,7 @@ The following options are provided by the underlying [http-proxy](https://github
       },
       next,
     );
-  };
+  }
   ```
 
 ## WebSocket
