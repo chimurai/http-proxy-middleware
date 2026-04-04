@@ -1,6 +1,7 @@
 import * as http from 'node:http';
 
-import * as request from 'supertest';
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
 
 import { createProxyMiddleware } from './test-kit';
 

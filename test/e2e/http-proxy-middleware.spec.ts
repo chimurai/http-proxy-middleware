@@ -1,9 +1,10 @@
 import type * as http from 'node:http';
 
-import * as bodyParser from 'body-parser';
+import bodyParser from 'body-parser';
 import type * as express from 'express';
 import { CompletedRequest, Mockttp, getLocal } from 'mockttp';
-import * as request from 'supertest';
+import request from 'supertest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Logger } from '../../src/types';
 import { createApp, createAppWithPath, createProxyMiddleware, fixRequestBody } from './test-kit';
@@ -25,7 +26,7 @@ describe('E2E http-proxy-middleware', () => {
         url: '/foo/bar',
       } as http.IncomingMessage;
       const mockRes: http.ServerResponse = {} as http.ServerResponse;
-      const mockNext: express.NextFunction = jest.fn();
+      const mockNext: express.NextFunction = vi.fn();
 
       beforeEach(() => {
         const middleware = createProxyMiddleware({
@@ -177,9 +178,9 @@ describe('E2E http-proxy-middleware', () => {
         };
 
         const logger: Logger = {
-          info: jest.fn(),
-          warn: jest.fn(),
-          error: jest.fn(),
+          info: vi.fn(),
+          warn: vi.fn(),
+          error: vi.fn(),
         };
 
         agent = request(

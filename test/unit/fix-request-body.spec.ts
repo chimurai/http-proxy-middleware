@@ -3,11 +3,13 @@ import { Socket } from 'node:net';
 import * as querystring from 'node:querystring';
 import * as zlib from 'node:zlib';
 
+import { describe, expect, it, vi } from 'vitest';
+
 import { BodyParserLikeRequest, fixRequestBody } from '../../src/handlers/fix-request-body';
 
 const fakeProxyRequest = (): ClientRequest => {
   const proxyRequest = new ClientRequest('http://some-host');
-  proxyRequest.emit = jest.fn();
+  proxyRequest.emit = vi.fn();
 
   return proxyRequest;
 };
@@ -37,8 +39,8 @@ describe('fixRequestBody', () => {
   it('should not write when body is undefined', () => {
     const proxyRequest = fakeProxyRequest();
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody(undefined));
 
@@ -50,8 +52,8 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({}));
 
@@ -63,8 +65,8 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'text/plain; charset=utf-8');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody('some string'));
 
@@ -77,8 +79,8 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -91,8 +93,8 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'multipart/form-data');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -115,8 +117,8 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'multipart/form-data');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -140,8 +142,8 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/merge-patch+json; charset=utf-8');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
     const expectedBody = JSON.stringify({ someField: 'some value' });
@@ -153,8 +155,8 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -167,8 +169,8 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -181,8 +183,8 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded+json');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -203,10 +205,10 @@ describe('fixRequestBody', () => {
     const proxyResponse = fakeProxyResponse();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded');
 
-    jest.spyOn(proxyRequest, 'write');
-    jest.spyOn(proxyRequest, 'destroy');
-    jest.spyOn(proxyResponse, 'writeHead');
-    jest.spyOn(proxyResponse, 'end');
+    vi.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'destroy');
+    vi.spyOn(proxyResponse, 'writeHead');
+    vi.spyOn(proxyResponse, 'end');
 
     fixRequestBody(proxyRequest, request);
 
@@ -220,8 +222,8 @@ describe('fixRequestBody', () => {
     proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
     proxyRequest.setHeader('content-encoding', 'gzip');
 
-    jest.spyOn(proxyRequest, 'setHeader');
-    jest.spyOn(proxyRequest, 'write');
+    vi.spyOn(proxyRequest, 'setHeader');
+    vi.spyOn(proxyRequest, 'write');
 
     const data = { someField: 'some value' };
     fixRequestBody(proxyRequest, createRequestWithBody(data));

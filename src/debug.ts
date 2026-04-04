@@ -1,4 +1,4 @@
-import * as createDebug from 'debug';
+import createDebug from 'debug';
 
 /**
  * Debug instance with the given namespace: http-proxy-middleware

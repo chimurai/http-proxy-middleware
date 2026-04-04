@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { getTarget } from '../../src/router';
 
 describe('router unit test', () => {

@@ -1,12 +1,12 @@
 import type * as http from 'node:http';
 
-import * as isGlob from 'is-glob';
-import * as micromatch from 'micromatch';
+import isGlob from 'is-glob';
+import micromatch from 'micromatch';
 
 import { ERRORS } from './errors';
 import type { Filter } from './types';
 
-export function matchPathFilter<TReq = http.IncomingMessage>(
+export function matchPathFilter<TReq extends http.IncomingMessage = http.IncomingMessage>(
   pathFilter: Filter<TReq> = '/',
   uri: string | undefined,
   req: http.IncomingMessage,

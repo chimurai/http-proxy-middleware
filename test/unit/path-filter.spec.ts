@@ -1,5 +1,7 @@
 import type * as http from 'node:http';
 
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { matchPathFilter } from '../../src/path-filter';
 
 describe('Path Filter', () => {

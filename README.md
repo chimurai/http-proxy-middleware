@@ -623,7 +623,7 @@ $ yarn build
 $ yarn test
 
 # code coverage
-$ yarn cover
+$ yarn coverage
 
 # check spelling mistakes
 $ yarn spellcheck
