@@ -1,4 +1,5 @@
-import * as request from 'supertest';
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
 
 import { createApp, createProxyMiddleware } from './test-kit';
 

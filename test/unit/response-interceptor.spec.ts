@@ -1,6 +1,8 @@
 import { IncomingMessage, ServerResponse } from 'node:http';
 import { Socket } from 'node:net';
 
+import { describe, expect, it, vi } from 'vitest';
+
 import { responseInterceptor } from '../../src/handlers/response-interceptor';
 
 const fakeProxyResponse = () => {
@@ -13,9 +15,9 @@ const fakeResponse = () => {
   const httpIncomingMessage = fakeProxyResponse();
 
   const response = new ServerResponse(httpIncomingMessage);
-  response.setHeader = jest.fn();
-  response.write = jest.fn();
-  response.end = jest.fn();
+  response.setHeader = vi.fn();
+  response.write = vi.fn();
+  response.end = vi.fn();
 
   return response;
 };

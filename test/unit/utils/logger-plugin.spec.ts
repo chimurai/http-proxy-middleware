@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { type Sockets, getPort } from '../../../src/utils/logger-plugin';
 
 describe('getPort()', () => {

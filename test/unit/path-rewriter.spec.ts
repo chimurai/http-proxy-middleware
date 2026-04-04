@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { createPathRewriter } from '../../src/path-rewriter';
 
 describe('Path rewriting', () => {

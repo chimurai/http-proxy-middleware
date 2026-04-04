@@ -1,5 +1,6 @@
 import { Mockttp, getLocal } from 'mockttp';
-import * as request from 'supertest';
+import request from 'supertest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { createApp, createProxyMiddleware } from './test-kit';
 

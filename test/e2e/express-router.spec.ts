@@ -1,5 +1,6 @@
-import * as express from 'express';
-import * as request from 'supertest';
+import express from 'express';
+import request from 'supertest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { Options } from '../../src/index';
 import { createProxyMiddleware } from './test-kit';

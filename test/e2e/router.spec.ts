@@ -1,7 +1,8 @@
 import { ErrorRequestHandler } from 'express';
-import * as getPort from 'get-port';
+import getPort from 'get-port';
 import { Mockttp, generateCACertificate, getLocal } from 'mockttp';
-import * as request from 'supertest';
+import request from 'supertest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { createApp, createAppWithPath, createProxyMiddleware } from './test-kit';
 

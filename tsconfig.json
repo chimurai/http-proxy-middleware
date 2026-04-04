@@ -6,6 +6,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2022",
+    "types": ["node"],
+    "esModuleInterop": true,
     "incremental": true,
     "declaration": true,
     "strict": true,

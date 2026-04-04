@@ -10,24 +10,30 @@ import type { ProxyServer, ProxyServerOptions } from 'httpxy';
 export type NextFunction<T = (err?: any) => void> = T;
 
 export interface RequestHandler<
-  TReq = http.IncomingMessage,
-  TRes = http.ServerResponse,
+  TReq extends http.IncomingMessage = http.IncomingMessage,
+  TRes extends http.ServerResponse = http.ServerResponse,
   TNext = NextFunction,
 > {
   (req: TReq, res: TRes, next?: TNext): Promise<void>;
   upgrade: (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => void;
 }
 
-export type Filter<TReq = http.IncomingMessage> =
+export type Filter<TReq extends http.IncomingMessage = http.IncomingMessage> =
   | string
   | string[]
   | ((pathname: string, req: TReq) => boolean);
 
-export interface Plugin<TReq = http.IncomingMessage, TRes = http.ServerResponse> {
+export interface Plugin<
+  TReq extends http.IncomingMessage = http.IncomingMessage,
+  TRes extends http.ServerResponse = http.ServerResponse,
+> {
   (proxyServer: ProxyServer<TReq, TRes>, options: Options<TReq, TRes>): void;
 }
 
-export interface OnProxyEvent<TReq = http.IncomingMessage, TRes = http.ServerResponse> {
+export interface OnProxyEvent<
+  TReq extends http.IncomingMessage = http.IncomingMessage,
+  TRes extends http.ServerResponse = http.ServerResponse,
+> {
   error?: (err: Error, req: TReq, res: TRes | net.Socket, target?: string | Partial<URL>) => void;
   proxyReq?: (
     proxyReq: http.ClientRequest,
@@ -53,8 +59,8 @@ export interface OnProxyEvent<TReq = http.IncomingMessage, TRes = http.ServerRes
 export type Logger = Pick<Console, 'info' | 'warn' | 'error'>;
 
 export interface Options<
-  TReq = http.IncomingMessage,
-  TRes = http.ServerResponse,
+  TReq extends http.IncomingMessage = http.IncomingMessage,
+  TRes extends http.ServerResponse = http.ServerResponse,
 > extends ProxyServerOptions {
   /**
    * Narrow down requests to proxy or not.

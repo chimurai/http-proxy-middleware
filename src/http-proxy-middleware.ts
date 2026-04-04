@@ -14,7 +14,10 @@ import * as Router from './router';
 import type { Filter, Logger, Options, RequestHandler } from './types';
 import { getFunctionName } from './utils/function';
 
-export class HttpProxyMiddleware<TReq, TRes> {
+export class HttpProxyMiddleware<
+  TReq extends http.IncomingMessage = http.IncomingMessage,
+  TRes extends http.ServerResponse = http.ServerResponse,
+> {
   private wsInternalSubscribed = false;
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options<TReq, TRes>;
@@ -44,7 +47,11 @@ export class HttpProxyMiddleware<TReq, TRes> {
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-  public middleware: RequestHandler = (async (req, res, next?) => {
+  public middleware: RequestHandler<TReq, TRes> = (async (
+    req: TReq,
+    res: TRes,
+    next?: (err?: unknown) => void,
+  ) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       let activeProxyOptions: Options<TReq, TRes>;
       try {

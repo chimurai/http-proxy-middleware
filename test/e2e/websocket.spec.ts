@@ -1,7 +1,8 @@
 import * as http from 'node:http';
 
-import * as getPort from 'get-port';
-import { WebSocket, WebSocketServer } from 'ws';
+import getPort from 'get-port';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { RawData, WebSocket, WebSocketServer } from 'ws';
 
 import type { RequestHandler } from '../../src/types';
 import { createApp, createProxyMiddleware } from './test-kit';
@@ -41,11 +42,73 @@ describe('E2E WebSocket proxy', () => {
     });
   });
 
+  const closeServer = (server?: http.Server) => {
+    if (!server?.listening) {
+      return Promise.resolve();
+    }
+
+    return new Promise<void>((resolve, reject) => {
+      server.close((error) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve();
+      });
+    });
+  };
+
+  const closeWebSocketServer = (server?: WebSocketServer) => {
+    if (!server) {
+      return Promise.resolve();
+    }
+
+    return new Promise<void>((resolve) => {
+      server.close(() => resolve());
+    });
+  };
+
+  const closeWebSocketClient = (socket?: WebSocket) => {
+    if (!socket || socket.readyState === WebSocket.CLOSED) {
+      return Promise.resolve();
+    }
+
+    return new Promise<void>((resolve) => {
+      socket.once('close', () => resolve());
+      socket.once('error', () => resolve());
+
+      if (socket.readyState === WebSocket.CONNECTING) {
+        socket.terminate();
+        return;
+      }
+
+      socket.close();
+    });
+  };
+
+  const connectWebSocket = (url: string) => {
+    return new Promise<void>((resolve, reject) => {
+      ws = new WebSocket(url);
+      ws.once('open', () => resolve());
+      ws.once('error', reject);
+    });
+  };
+
+  const receiveMessage = () => {
+    return new Promise<string | RawData>((resolve) => {
+      ws.once('message', (data, isBinary) => {
+        const message = isBinary ? data : data.toString();
+        resolve(message);
+      });
+    });
+  };
+
   afterEach(async () => {
-    return Promise.all([
-      new Promise((resolve) => proxyServer.close(resolve)),
-      new Promise((resolve) => wss.close(resolve)),
-      new Promise((resolve) => resolve(ws.close())),
+    await Promise.all([
+      closeServer(proxyServer),
+      closeWebSocketServer(wss),
+      closeWebSocketClient(ws),
     ]);
   });
 
@@ -54,45 +117,37 @@ describe('E2E WebSocket proxy', () => {
       proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
 
       // quick & dirty Promise version of http.get (don't care about correctness)
-      const get = async (uri) => new Promise((resolve, reject) => http.get(uri, resolve));
+      const get = async (uri: string) => new Promise((resolve, reject) => http.get(uri, resolve));
 
       // need to make a normal http request, so http-proxy-middleware can catch the upgrade request
       await get(`http://localhost:${SERVER_PORT}/`);
       // do a second http request to make sure only 1 listener subscribes to upgrade request
       await get(`http://localhost:${SERVER_PORT}/`);
 
-      return new Promise((resolve) => {
-        ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
-        ws.on('open', resolve);
-      });
+      await connectWebSocket(`ws://localhost:${SERVER_PORT}/socket`);
     });
 
-    it('should proxy to path', (done) => {
-      ws.on('message', (data, isBinary) => {
-        const message = isBinary ? data : data.toString();
-        expect(message).toBe('foobar');
-        done();
-      });
+    it('should proxy to path', async () => {
+      const messageReceived = receiveMessage();
       ws.send('foobar');
+
+      await expect(messageReceived).resolves.toBe('foobar');
     });
   });
 
   describe('option.ws with external server "upgrade"', () => {
-    beforeEach((done) => {
+    beforeEach(async () => {
       proxyServer = createApp(proxyMiddleware).listen(SERVER_PORT);
       proxyServer.on('upgrade', proxyMiddleware.upgrade);
 
-      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
-      ws.on('open', done);
+      await connectWebSocket(`ws://localhost:${SERVER_PORT}/socket`);
     });
 
-    it('should proxy to path', (done) => {
-      ws.on('message', (data, isBinary) => {
-        const message = isBinary ? data : data.toString();
-        expect(message).toBe('foobar');
-        done();
-      });
+    it('should proxy to path', async () => {
+      const messageReceived = receiveMessage();
       ws.send('foobar');
+
+      await expect(messageReceived).resolves.toBe('foobar');
     });
   });
 
@@ -110,18 +165,15 @@ describe('E2E WebSocket proxy', () => {
       proxyServer.on('upgrade', proxyMiddleware.upgrade);
     });
 
-    beforeEach((done) => {
-      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
-      ws.on('open', done);
+    beforeEach(async () => {
+      await connectWebSocket(`ws://localhost:${SERVER_PORT}/socket`);
     });
 
-    it('should proxy to path', (done) => {
-      ws.on('message', (data, isBinary) => {
-        const message = isBinary ? data : data.toString();
-        expect(message).toBe('foobar');
-        done();
-      });
+    it('should proxy to path', async () => {
+      const messageReceived = receiveMessage();
       ws.send('foobar');
+
+      await expect(messageReceived).resolves.toBe('foobar');
     });
   });
 
@@ -140,12 +192,14 @@ describe('E2E WebSocket proxy', () => {
       proxyServer.on('upgrade', proxyMiddleware.upgrade);
     });
 
-    it('should handle error', (done) => {
-      ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
+    it('should handle error', async () => {
+      await new Promise<void>((resolve) => {
+        ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
 
-      ws.on('error', (err) => {
-        expect(err).toBeTruthy();
-        done();
+        ws.once('error', (err) => {
+          expect(err).toBeTruthy();
+          resolve();
+        });
       });
     });
   });
@@ -166,16 +220,14 @@ describe('E2E WebSocket proxy', () => {
       } as http.IncomingMessage;
 
       const mockRes = {
-        writeHead: jest.fn(),
-        end: jest.fn(),
+        writeHead: vi.fn(),
+        end: vi.fn(),
       } as unknown as http.ServerResponse;
 
-      const mockNext = jest.fn();
+      const mockNext = vi.fn();
 
       // Should not throw TypeError
-      await expect(async () => {
-        await middleware(mockReq, mockRes, mockNext);
-      }).resolves.not.toThrow();
+      await expect(middleware(mockReq, mockRes, mockNext)).resolves.toBeUndefined();
 
       expect(mockNext).toHaveBeenCalled();
     });
@@ -217,15 +269,13 @@ describe('E2E WebSocket proxy', () => {
       } as unknown as http.IncomingMessage;
 
       const mockRes = {
-        writeHead: jest.fn(),
-        end: jest.fn(),
+        writeHead: vi.fn(),
+        end: vi.fn(),
       } as unknown as http.ServerResponse;
 
-      const mockNext = jest.fn();
+      const mockNext = vi.fn();
 
-      await expect(async () => {
-        await middleware(mockReq, mockRes, mockNext);
-      }).resolves.not.toThrow();
+      await expect(middleware(mockReq, mockRes, mockNext)).resolves.toBeUndefined();
 
       expect(mockNext).toHaveBeenCalled();
     });
@@ -245,16 +295,14 @@ describe('E2E WebSocket proxy', () => {
       } as http.IncomingMessage;
 
       const mockRes = {
-        writeHead: jest.fn(),
-        end: jest.fn(),
+        writeHead: vi.fn(),
+        end: vi.fn(),
       } as unknown as http.ServerResponse;
 
-      const mockNext = jest.fn();
+      const mockNext = vi.fn();
 
       // Should not throw
-      await expect(async () => {
-        await middleware(mockReq, mockRes, mockNext);
-      }).resolves.not.toThrow();
+      await expect(middleware(mockReq, mockRes, mockNext)).resolves.toBeUndefined();
 
       expect(mockNext).toHaveBeenCalled();
     });
@@ -266,7 +314,7 @@ describe('E2E WebSocket proxy', () => {
         pathFilter: '/api',
       });
 
-      const mockNext = jest.fn();
+      const mockNext = vi.fn();
 
       // Multiple requests without server
       for (let i = 0; i < 3; i++) {
@@ -277,13 +325,11 @@ describe('E2E WebSocket proxy', () => {
         } as http.IncomingMessage;
 
         const mockRes = {
-          writeHead: jest.fn(),
-          end: jest.fn(),
+          writeHead: vi.fn(),
+          end: vi.fn(),
         } as unknown as http.ServerResponse;
 
-        await expect(async () => {
-          await middleware(mockReq, mockRes, mockNext);
-        }).resolves.not.toThrow();
+        await expect(middleware(mockReq, mockRes, mockNext)).resolves.toBeUndefined();
       }
 
       expect(mockNext).toHaveBeenCalledTimes(3);
@@ -303,15 +349,13 @@ describe('E2E WebSocket proxy', () => {
       } as http.IncomingMessage;
 
       const mockRes = {
-        writeHead: jest.fn(),
-        end: jest.fn(),
+        writeHead: vi.fn(),
+        end: vi.fn(),
       } as unknown as http.ServerResponse;
 
-      const mockNext = jest.fn();
+      const mockNext = vi.fn();
 
-      await expect(async () => {
-        await middleware(mockReq, mockRes, mockNext);
-      }).resolves.not.toThrow();
+      await expect(middleware(mockReq, mockRes, mockNext)).resolves.toBeUndefined();
 
       expect(mockNext).toHaveBeenCalled();
     });

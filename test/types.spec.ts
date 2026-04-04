@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as http from 'node:http';
 
-import * as express from 'express';
+import express from 'express';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { fixRequestBody, createProxyMiddleware as middleware, responseInterceptor } from '../src';
 import type { Options, RequestHandler } from '../src/types';
