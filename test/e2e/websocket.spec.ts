@@ -4,8 +4,8 @@ import getPort from 'get-port';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { RawData, WebSocket, WebSocketServer } from 'ws';
 
-import type { RequestHandler } from '../../src/types';
-import { createApp, createProxyMiddleware } from './test-kit';
+import type { RequestHandler } from '../../src/types.js';
+import { createApp, createProxyMiddleware } from './test-kit.js';
 
 /********************************************************************
  * - Not possible to use `supertest` to test WebSockets

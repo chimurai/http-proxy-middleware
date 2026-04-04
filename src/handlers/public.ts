@@ -1,2 +1,2 @@
-export { responseInterceptor } from './response-interceptor';
-export { fixRequestBody } from './fix-request-body';
+export { responseInterceptor } from './response-interceptor.js';
+export { fixRequestBody } from './fix-request-body.js';

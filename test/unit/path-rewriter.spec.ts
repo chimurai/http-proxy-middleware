@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createPathRewriter } from '../../src/path-rewriter';
+import { createPathRewriter } from '../../src/path-rewriter.js';
 
 describe('Path rewriting', () => {
   let rewriter;

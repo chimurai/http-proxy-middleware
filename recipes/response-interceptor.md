@@ -7,7 +7,7 @@ Responses which are compressed with `brotli`, `gzip` and `deflate` will be decom
 ## Replace text and change http status code
 
 ```js
-const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
+import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
 
 const proxy = createProxyMiddleware({
   target: 'http://www.example.com',
@@ -105,7 +105,9 @@ Some working examples on <https://03rjl.sse.codesandbox.io>/[relative wikimedia 
 _You can just use any relative image path from <https://upload.wikimedia.org> and use the relative image path on <https://03rjl.sse.codesandbox.io> to see the manipulated image._
 
 ```javascript
-const Jimp = require('jimp'); // use jimp library for image manipulation
+// use jimp library for image manipulation
+import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
+import Jimp from 'jimp';
 
 const proxy = createProxyMiddleware({
   target: 'https://upload.wikimedia.org',
@@ -140,7 +142,7 @@ const proxy = createProxyMiddleware({
 ## Manipulate response headers
 
 ```js
-const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
+import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
 
 const proxy = createProxyMiddleware({
   target: 'http://www.example.com',

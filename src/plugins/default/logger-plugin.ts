@@ -1,9 +1,9 @@
 import type { IncomingMessage } from 'node:http';
 import { URL } from 'node:url';
 
-import { getLogger } from '../../logger';
-import { Plugin } from '../../types';
-import { getPort } from '../../utils/logger-plugin';
+import { getLogger } from '../../logger.js';
+import { Plugin } from '../../types.js';
+import { getPort } from '../../utils/logger-plugin.js';
 
 type ExpressRequest = {
   /** Express req.baseUrl */

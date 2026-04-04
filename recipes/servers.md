@@ -22,8 +22,9 @@ Missing a server? Feel free to extend this list of examples.
 Vanilla http server implementation with [`http.createServer`](https://nodejs.org/docs/latest/api/http.html#httpcreateserveroptions-requestlistener)
 
 ```javascript
-const http = require('node:http');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import * as http from 'node:http';
+
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 /**
  * Configure proxy middleware
@@ -45,8 +46,8 @@ https://github.com/expressjs/express
 ![express downloads](https://img.shields.io/npm/dm/express)
 
 ```javascript
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org/api',
@@ -66,9 +67,10 @@ https://github.com/senchalabs/connect
 ![connect downloads](https://img.shields.io/npm/dm/connect)
 
 ```javascript
-const http = require('http');
-const connect = require('connect');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import * as http from 'node:http';
+
+import connect from 'connect';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org/api',
@@ -138,11 +140,14 @@ export const config = {
 See working example in [/examples/fastify/index.js](https://github.com/chimurai/http-proxy-middleware/blob/master/examples/fastify/index.js)
 
 ```javascript
-const fastify = require('fastify')({ logger: true });
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import fastifyExpress from '@fastify/express';
+import fastifyFactory from 'fastify';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+
+const fastify = fastifyFactory({ logger: true });
 
 (async () => {
-  await fastify.register(require('@fastify/express'));
+  await fastify.register(fastifyExpress);
 
   const proxy = createProxyMiddleware({
     target: 'http://jsonplaceholder.typicode.com',
@@ -167,8 +172,10 @@ https://github.com/BrowserSync/browser-sync
 ![browser-sync downloads](https://img.shields.io/npm/dm/browser-sync)
 
 ```javascript
-const browserSync = require('browser-sync').create();
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import BrowserSync from 'browser-sync';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+
+const browserSync = BrowserSync.create();
 
 const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
@@ -193,8 +200,8 @@ https://github.com/lukeed/polka
 ![polka downloads](https://img.shields.io/npm/dm/polka)
 
 ```javascript
-const polka = require('polka');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import polka from 'polka';
 
 const app = polka();
 
@@ -214,10 +221,10 @@ https://github.com/johnpapa/lite-server
 [![GitHub stars](https://img.shields.io/github/stars/johnpapa/lite-server.svg?style=social&label=Star)](https://github.com/johnpapa/lite-server)
 ![lite-server downloads](https://img.shields.io/npm/dm/lite-server)
 
-File: `bs-config.js`
+File: `bs-config.mjs`
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
@@ -225,7 +232,7 @@ const apiProxy = createProxyMiddleware({
   pathFilter: '/api',
 });
 
-module.exports = {
+export default {
   server: {
     // Start from key `10` in order to NOT overwrite the default 2 middleware provided
     // by `lite-server` or any future ones that might be added.
@@ -246,7 +253,7 @@ https://github.com/gruntjs/grunt-contrib-connect
 As an `Array`:
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
@@ -268,7 +275,7 @@ grunt.initConfig({
 As a `function`:
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
@@ -299,9 +306,9 @@ https://github.com/avevlad/gulp-connect
 ![gulp-connect downloads](https://img.shields.io/npm/dm/gulp-connect)
 
 ```javascript
-const gulp = require('gulp');
-const connect = require('gulp-connect');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import gulp from 'gulp';
+import connect from 'gulp-connect';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 gulp.task('connect', function () {
   connect.server({
@@ -328,7 +335,7 @@ https://github.com/BrowserSync/grunt-browser-sync
 ![grunt-browser-sync downloads](https://img.shields.io/npm/dm/grunt-browser-sync)
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
@@ -360,9 +367,9 @@ https://github.com/schickling/gulp-webserver
 ![gulp-webserver downloads](https://img.shields.io/npm/dm/gulp-webserver)
 
 ```javascript
-const gulp = require('gulp');
-const webserver = require('gulp-webserver');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import gulp from 'gulp';
+import webserver from 'gulp-webserver';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 gulp.task('webserver', function () {
   const apiProxy = createProxyMiddleware({

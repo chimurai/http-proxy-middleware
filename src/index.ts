@@ -1,10 +1,10 @@
-export * from './factory';
+export * from './factory.js';
 
-export * from './handlers';
+export * from './handlers/index.js';
 
-export type { Plugin, Filter, Options, RequestHandler } from './types';
+export type { Plugin, Filter, Options, RequestHandler } from './types.js';
 
 /**
  * Default plugins
  */
-export * from './plugins/default';
+export * from './plugins/default/index.js';

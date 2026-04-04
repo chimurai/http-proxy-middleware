@@ -1,7 +1,7 @@
 import type * as http from 'node:http';
 
-import { HttpProxyMiddleware } from './http-proxy-middleware';
-import type { NextFunction, Options, RequestHandler } from './types';
+import { HttpProxyMiddleware } from './http-proxy-middleware.js';
+import type { NextFunction, Options, RequestHandler } from './types.js';
 
 export function createProxyMiddleware<
   TReq extends http.IncomingMessage = http.IncomingMessage,

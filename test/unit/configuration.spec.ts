@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { verifyConfig } from '../../src/configuration';
+import { verifyConfig } from '../../src/configuration.js';
 
 describe('configFactory', () => {
   describe('verifyConfig()', () => {

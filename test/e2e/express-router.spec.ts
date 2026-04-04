@@ -2,8 +2,8 @@ import express from 'express';
 import request from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { Options } from '../../src/index';
-import { createProxyMiddleware } from './test-kit';
+import type { Options } from '../../src/index.js';
+import { createProxyMiddleware } from './test-kit.js';
 
 describe('Usage in Express', () => {
   let app: express.Express;

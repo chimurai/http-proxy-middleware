@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 
-import { createApp, createProxyMiddleware } from './test-kit';
+import { createApp, createProxyMiddleware } from './test-kit.js';
 
 describe('express error middleware', () => {
   it('should propagate error to express', async () => {

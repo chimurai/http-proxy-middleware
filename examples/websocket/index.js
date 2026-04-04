@@ -1,8 +1,14 @@
 /**
  * Module dependencies.
  */
-const express = require('express');
-const { createProxyMiddleware } = require('../../dist'); // require('http-proxy-middleware');
+import { fileURLToPath } from 'node:url';
+
+import express from 'express';
+import open from 'open';
+
+import { createProxyMiddleware } from '../../dist/index.js';
+
+const currentDir = fileURLToPath(new URL('.', import.meta.url));
 
 /**
  * Configure proxy middleware
@@ -19,7 +25,7 @@ const wsProxy = createProxyMiddleware({
 });
 
 const app = express();
-app.use('/', express.static(__dirname)); // demo page
+app.use('/', express.static(currentDir)); // demo page
 app.use(wsProxy); // add the proxy to express
 
 const server = app.listen(3000);
@@ -28,7 +34,7 @@ server.on('upgrade', wsProxy.upgrade); // optional: upgrade externally
 console.log('[DEMO] Server: listening on port 3000');
 console.log('[DEMO] Opening: http://localhost:3000');
 
-require('open')('http://localhost:3000');
+open('http://localhost:3000');
 
 /**
  * Example:

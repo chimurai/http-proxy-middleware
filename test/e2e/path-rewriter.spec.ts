@@ -2,7 +2,7 @@ import { Mockttp, getLocal } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { createApp, createProxyMiddleware } from './test-kit';
+import { createApp, createProxyMiddleware } from './test-kit.js';
 
 describe('E2E pathRewrite', () => {
   let mockTargetServer: Mockttp;

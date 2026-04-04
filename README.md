@@ -28,7 +28,7 @@ Proxy `/api` requests to `http://www.example.org`
 
 ```typescript
 // typescript
-import * as express from 'express';
+import express from 'express';
 import type { NextFunction, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import type { Filter, Options, RequestHandler } from 'http-proxy-middleware';
@@ -93,7 +93,7 @@ npm install --save-dev http-proxy-middleware
 Create and configure a proxy middleware with: `createProxyMiddleware(config)`.
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'http://www.example.org',
@@ -114,13 +114,13 @@ An example with `express` server.
 
 ```javascript
 // include dependencies
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const app = express();
 
 // create the proxy
-/** @type {import('http-proxy-middleware/dist/types').RequestHandler<express.Request, express.Response>} */
+/** @type {import('http-proxy-middleware').RequestHandler<import('express').Request, import('express').Response>} */
 const exampleProxy = createProxyMiddleware({
   target: 'http://www.example.org/api', // target host with the same base path
   changeOrigin: true, // needed for virtual hosted sites
@@ -281,13 +281,15 @@ NOTE: register your own error handlers to prevent server from crashing.
 
 ```js
 // eject default plugins and manually add them back
-
-const {
-  debugProxyErrorsPlugin, // subscribe to proxy errors to prevent server from crashing
-  loggerPlugin, // log proxy events to a logger (ie. console)
-  errorResponsePlugin, // return 5xx response on proxy error
+import {
+  debugProxyErrorsPlugin,
+  // log proxy events to a logger (ie. console)
+  errorResponsePlugin,
+  // subscribe to proxy errors to prevent server from crashing
+  loggerPlugin,
+  // return 5xx response on proxy error
   proxyEventsPlugin, // implements the "on:" option
-} = require('http-proxy-middleware');
+} from 'http-proxy-middleware';
 
 createProxyMiddleware({
   target: `http://example.org`,
@@ -497,7 +499,7 @@ Currently the only pre-provided request interceptor is `fixRequestBody`, which i
 Example:
 
 ```javascript
-const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
+import { createProxyMiddleware, fixRequestBody } from 'http-proxy-middleware';
 
 const proxy = createProxyMiddleware({
   /**
@@ -522,7 +524,7 @@ NOTE: `responseInterceptor` disables streaming of target's response.
 Example:
 
 ```javascript
-const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
+import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
 
 const proxy = createProxyMiddleware({
   /**

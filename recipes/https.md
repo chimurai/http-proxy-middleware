@@ -7,7 +7,7 @@ All options are provided by [http-proxy](https://github.com/nodejitsu/node-http-
 ## Basic proxy to an HTTPS server
 
 ```javascript
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: 'https://example.org',
@@ -18,8 +18,9 @@ const apiProxy = createProxyMiddleware({
 ## Proxy to an HTTPS server using a PKCS12 client certificate
 
 ```javascript
-const fs = require('fs');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import * as fs from 'node:fs';
+
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const apiProxy = createProxyMiddleware({
   target: {

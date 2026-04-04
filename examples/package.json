@@ -1,6 +1,7 @@
 {
   "name": "examples",
   "version": "1.0.0",
+  "type": "module",
   "private": "true",
   "description": "View working examples of `http-proxy-middleware` implemented in popular servers.",
   "scripts": {

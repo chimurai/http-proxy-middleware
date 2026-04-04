@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
+import { getPlugins } from '../../src/get-plugins.js';
 import {
   debugProxyErrorsPlugin,
   errorResponsePlugin,
   loggerPlugin,
   proxyEventsPlugin,
-} from '../../src';
-import { getPlugins } from '../../src/get-plugins';
-import { Plugin } from '../../src/types';
+} from '../../src/index.js';
+import type { Plugin } from '../../src/types.js';
 
 describe('getPlugins', () => {
   let plugins: Plugin[];

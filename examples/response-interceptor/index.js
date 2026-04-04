@@ -1,11 +1,12 @@
 // file deepcode ignore DisablePoweredBy: example code
 // file deepcode ignore UseCsurfForExpress: example code
-
 /**
  * Module dependencies.
  */
-const express = require('express');
-const { createProxyMiddleware, responseInterceptor } = require('../../dist'); // require('http-proxy-middleware');
+import express from 'express';
+import open from 'open';
+
+import { createProxyMiddleware, responseInterceptor } from '../../dist/index.js';
 
 // test with double-byte characters
 // cSpell:ignore Kroket, ส้มตำไทย, चिकन
@@ -78,7 +79,7 @@ console.log('[DEMO] Open: http://localhost:3000/brotli');
 console.log('[DEMO] Open: http://localhost:3000/gzip');
 console.log('[DEMO] Open: http://localhost:3000/deflate');
 
-require('open')('http://localhost:3000/users');
+open('http://localhost:3000/users');
 
 process.on('SIGINT', () => server.close());
 process.on('SIGTERM', () => server.close());
