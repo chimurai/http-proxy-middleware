@@ -5,10 +5,16 @@
 - fix(types): fix Logger type
 - fix(error-response-plugin): sanitize input
 - feat: drop node v14/v16/v18 [BREAKING CHANGE]
-- refactor(#1136): replace http-proxy w/ httpxy
+- refactor: replace http-proxy w/ httpxy
 - chore: remove legacyCreateProxyMiddleware() [BREAKING CHANGE]
 - ci: migrate from jest to vitest
 - chore(package.json): esm only [BREAKING CHANGE]
+- chore(package.json): bump to httpxy 0.5.0 (#1183)
+- chore(package.json): drop node20 [BREAKING CHANGE] (#1179)
+- refactor: remove deprecated url.parse() (#1176)
+- fix(fixRequestBody): support content-encoding on request body (#1142)
+- fix: prevent TypeError when ws enabled but server is undefined (#1163)
+- fix: applyPathRewrite logs old req.url instead of rewritten path (#1157)
 
 ## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
 
