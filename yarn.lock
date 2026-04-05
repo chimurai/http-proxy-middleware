@@ -389,6 +389,11 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.2.0.tgz#5f3d96ec6b2354ad6d8a28bf216a1d97b5426861"
   integrity sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==
 
+"@hono/node-server@1.19.12":
+  version "1.19.12"
+  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-1.19.12.tgz#dae075247959b6d7d2dba4c8bdc8c452ca0c7b40"
+  integrity sha512-txsUW4SQ1iilgE0l9/e9VQWmELXifEFvmdA1j6WFh/aFPj99hIntrSsq/if0UWyGVkmrRPKA1wCeP+UCr1B9Uw==
+
 "@httptoolkit/httpolyglot@^3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@httptoolkit/httpolyglot/-/httpolyglot-3.0.1.tgz#b76598a852232c59fcab98d717c22bef512e169f"
@@ -2425,6 +2430,11 @@ hasown@^2.0.2:
   integrity sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==
   dependencies:
     function-bind "^1.1.2"
+
+hono@4.12.10:
+  version "4.12.10"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-4.12.10.tgz#1d95bd5b3d2fd0c75e84725a087ac50a16ed8b9e"
+  integrity sha512-mx/p18PLy5og9ufies2GOSUqep98Td9q4i/EF6X7yJgAiIopxqdfIO3jbqsi3jRgTgw88jMDEzVKi+V2EF+27w==
 
 html-escaper@^2.0.0:
   version "2.0.2"

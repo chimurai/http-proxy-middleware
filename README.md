@@ -5,7 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/chimurai/http-proxy-middleware/badge.svg)](https://snyk.io/test/github/chimurai/http-proxy-middleware)
 [![npm](https://img.shields.io/npm/v/http-proxy-middleware?color=%23CC3534&style=flat-square&logo=npm)](https://www.npmjs.com/package/http-proxy-middleware)
 
-Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/expressjs/express), [next.js](https://github.com/vercel/next.js) and [many more](#compatible-servers).
+Node.js proxying made simple. Configure proxy middleware with ease for [connect](https://github.com/senchalabs/connect), [express](https://github.com/expressjs/express), [next.js](https://github.com/vercel/next.js), [hono](https://github.com/honojs/hono) and [many more](#compatible-servers).
 
 Powered by [`httpxy`](https://github.com/unjs/httpxy). A maintained version of [http-proxy](https://github.com/http-party/node-http-proxy).
 
@@ -592,6 +592,7 @@ View the [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master
 
 - [connect](https://www.npmjs.com/package/connect)
 - [express](https://www.npmjs.com/package/express)
+- [hono](https://www.npmjs.com/package/@hono/node-server)
 - [next.js](https://www.npmjs.com/package/next)
 - [fastify](https://www.npmjs.com/package/fastify)
 - [browser-sync](https://www.npmjs.com/package/browser-sync)

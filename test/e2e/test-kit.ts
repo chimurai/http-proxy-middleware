@@ -1,6 +1,11 @@
 import express, { type Express, type RequestHandler } from 'express';
 
-export { createProxyMiddleware, responseInterceptor, fixRequestBody } from '../../src/index.js';
+export {
+  createProxyMiddleware,
+  createHonoProxyMiddleware,
+  responseInterceptor,
+  fixRequestBody,
+} from '../../src/index.js';
 
 export function createApp(...middlewares): Express {
   const app = express();
