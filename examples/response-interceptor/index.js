@@ -1,5 +1,4 @@
-// file deepcode ignore DisablePoweredBy: example code
-// file deepcode ignore UseCsurfForExpress: example code
+// @ts-check
 /**
  * Module dependencies.
  */

@@ -23,9 +23,9 @@ const jsonPlaceholderProxy = createProxyMiddleware({
 app.init({
   server: {
     baseDir: './',
-    port: 3000,
     middleware: [jsonPlaceholderProxy],
   },
+  port: 3000,
   startPath: '/users',
 });
 
