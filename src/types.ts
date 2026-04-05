@@ -48,7 +48,7 @@ export interface OnProxyEvent<
     options: ProxyServerOptions,
     head: any,
   ) => void;
-  proxyRes?: (proxyRes: TReq, req: TReq, res: TRes) => void;
+  proxyRes?: (proxyRes: TReq, req: TReq, res: TRes) => void | Promise<void>;
   open?: (proxySocket: net.Socket) => void;
   close?: (proxyRes: TReq, proxySocket: net.Socket, proxyHead: any) => void;
   start?: (req: TReq, res: TRes, target: string | Partial<URL>) => void;
