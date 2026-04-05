@@ -8,6 +8,7 @@ Missing a server? Feel free to extend this list of examples.
 - [Express](#express)
 - [Connect](#connect)
 - [Next.js](#nextjs)
+- [Hono](#hono)
 - [fastify](#fastify)
 - [Browser-Sync](#browser-sync)
 - [Polka](#polka)
@@ -130,6 +131,32 @@ export const config = {
 };
 
 // curl http://localhost:3000/api/users
+```
+
+## Hono
+
+<https://github.com/honojs/hono> [![GitHub stars](https://img.shields.io/github/stars/honojs/hono.svg?style=social&label=Star)](https://github.com/honojs/hono)
+![hono downloads](https://img.shields.io/npm/dm/hono)
+
+```javascript
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { createHonoProxyMiddleware } from 'http-proxy-middleware';
+
+const app = new Hono();
+
+app.use(
+  '/users',
+  createHonoProxyMiddleware({
+    target: 'http://jsonplaceholder.typicode.com',
+    changeOrigin: true, // for vhosted sites, changes host header to match to target's host
+    logger: console,
+  }),
+);
+
+const server = serve(app);
+
+// curl http://localhost:3000/users
 ```
 
 ## fastify

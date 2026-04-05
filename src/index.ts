@@ -1,4 +1,5 @@
 export * from './factory.js';
+export * from './factory-hono.js';
 
 export * from './handlers/index.js';
 
