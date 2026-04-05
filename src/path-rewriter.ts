@@ -1,4 +1,4 @@
-import { isPlainObject } from 'is-plain-object';
+import isPlainObject from 'is-plain-obj';
 
 import { Debug } from './debug.js';
 import { ERRORS } from './errors.js';
