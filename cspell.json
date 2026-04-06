@@ -28,10 +28,12 @@
     "fastify",
     "globbing",
     "gzipped",
+    "httpxy",
     "jsonplaceholder",
     "lcov",
     "Lenna",
     "lipsum",
+    "logomark",
     "lorum",
     "middlewares",
     "millis",
@@ -51,7 +53,6 @@
     "typicode",
     "vhosted",
     "websockets",
-    "xfwd",
-    "httpxy"
+    "xfwd"
   ]
 }
