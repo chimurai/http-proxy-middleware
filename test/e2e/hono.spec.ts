@@ -1,7 +1,9 @@
-import { HttpBindings, ServerType, serve } from '@hono/node-server';
+import type { HttpBindings, ServerType } from '@hono/node-server';
+import { serve } from '@hono/node-server';
 import getPort from 'get-port';
 import { Hono } from 'hono';
-import { Mockttp, getLocal } from 'mockttp';
+import type { Mockttp } from 'mockttp';
+import { getLocal } from 'mockttp';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { createHonoProxyMiddleware } from './test-kit.js';

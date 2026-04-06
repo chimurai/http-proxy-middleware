@@ -1,4 +1,5 @@
-import { Mockttp, getLocal } from 'mockttp';
+import type { Mockttp } from 'mockttp';
+import { getLocal } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 

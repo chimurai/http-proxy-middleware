@@ -1,4 +1,4 @@
 {
-  "**/*.{js,ts,md,yml,json,html}": "prettier --write",
-  "**/*.{js,ts}": "eslint --cache --fix"
+  "**/*.{js,ts,mjs,mts,md,yml,json,html}": "prettier --write",
+  "**/*.{js,ts,mjs,mts}": "eslint --cache --fix"
 }

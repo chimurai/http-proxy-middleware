@@ -5,7 +5,8 @@ import * as zlib from 'node:zlib';
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { BodyParserLikeRequest, fixRequestBody } from '../../src/handlers/fix-request-body.js';
+import type { BodyParserLikeRequest } from '../../src/handlers/fix-request-body.js';
+import { fixRequestBody } from '../../src/handlers/fix-request-body.js';
 
 const fakeProxyRequest = (): ClientRequest => {
   const proxyRequest = new ClientRequest('http://some-host');

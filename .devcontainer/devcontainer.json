@@ -43,7 +43,7 @@
   // },
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "yarn install && yarn patch-package"
+  "postCreateCommand": "yarn install && yarn prepare"
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
   // "remoteUser": "root"

@@ -1,5 +1,5 @@
 import { Debug } from '../../debug.js';
-import { Plugin } from '../../types.js';
+import type { Plugin } from '../../types.js';
 import { getFunctionName } from '../../utils/function.js';
 
 const debug = Debug.extend('proxy-events-plugin');

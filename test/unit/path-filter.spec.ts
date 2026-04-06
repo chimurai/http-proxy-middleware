@@ -67,7 +67,7 @@ describe('Path Filter', () => {
 
   describe('Wildcard path matching', () => {
     describe('Single glob', () => {
-      let url;
+      let url: string;
 
       beforeEach(() => {
         url = 'http://localhost/api/foo/bar.html';
