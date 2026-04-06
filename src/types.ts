@@ -58,6 +58,11 @@ export interface OnProxyEvent<
 
 export type Logger = Pick<Console, 'info' | 'warn' | 'error'>;
 
+export type PathRewriteConfig<TReq extends http.IncomingMessage = http.IncomingMessage> =
+  | { [regexp: string]: string }
+  | ((path: string, req: TReq) => string | undefined)
+  | ((path: string, req: TReq) => Promise<string>);
+
 export interface Options<
   TReq extends http.IncomingMessage = http.IncomingMessage,
   TRes extends http.ServerResponse = http.ServerResponse,
@@ -82,10 +87,8 @@ export interface Options<
    * ```
    * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/pathRewrite.md
    */
-  pathRewrite?:
-    | { [regexp: string]: string }
-    | ((path: string, req: TReq) => string | undefined)
-    | ((path: string, req: TReq) => Promise<string>);
+  pathRewrite?: PathRewriteConfig<TReq>;
+
   /**
    * Access the internal http-proxy server instance to customize behavior
    *

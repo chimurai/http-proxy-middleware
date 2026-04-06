@@ -183,6 +183,14 @@ describe('http-proxy-middleware TypeScript Types', () => {
         middleware({
           router: (req) => req.params,
           pathFilter: (pathname, req) => !!req.params,
+          pathRewrite: (path, req) => {
+            req.params;
+
+            // @ts-expect-error: should error when request is typed as `any`
+            req.unknownProperty;
+
+            return path;
+          },
           on: {
             error(error, req, res, target) {
               req.params;

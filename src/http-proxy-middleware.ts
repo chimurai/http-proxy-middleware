@@ -9,8 +9,8 @@ import { Debug as debug } from './debug.js';
 import { getPlugins } from './get-plugins.js';
 import { getLogger } from './logger.js';
 import { matchPathFilter } from './path-filter.js';
-import * as PathRewriter from './path-rewriter.js';
-import * as Router from './router.js';
+import { createPathRewriter } from './path-rewriter.js';
+import { getTarget } from './router.js';
 import type { Filter, Logger, Options, RequestHandler } from './types.js';
 import { getFunctionName } from './utils/function.js';
 
@@ -22,7 +22,7 @@ export class HttpProxyMiddleware<
   private serverOnCloseSubscribed = false;
   private proxyOptions: Options<TReq, TRes>;
   private proxy: ProxyServer<TReq, TRes>;
-  private pathRewriter;
+  private pathRewriter: ReturnType<typeof createPathRewriter<TReq>>;
   private logger: Logger;
 
   constructor(options: Options<TReq, TRes>) {
@@ -35,7 +35,7 @@ export class HttpProxyMiddleware<
 
     this.registerPlugins(this.proxy, this.proxyOptions);
 
-    this.pathRewriter = PathRewriter.createPathRewriter(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
+    this.pathRewriter = createPathRewriter(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
@@ -181,7 +181,7 @@ export class HttpProxyMiddleware<
    * @param {Object} req
    * @return {Object} proxy options
    */
-  private prepareProxyRequest = async (req: http.IncomingMessage) => {
+  private prepareProxyRequest = async (req: TReq) => {
     const newProxyOptions = Object.assign({}, this.proxyOptions);
 
     // Apply in order:
@@ -194,11 +194,11 @@ export class HttpProxyMiddleware<
   };
 
   // Modify option.target when router present.
-  private applyRouter = async (req: http.IncomingMessage, options: Options<TReq, TRes>) => {
+  private applyRouter = async (req: TReq, options: Options<TReq, TRes>) => {
     let newTarget;
 
     if (options.router) {
-      newTarget = await Router.getTarget(req, options);
+      newTarget = await getTarget(req, options);
 
       if (newTarget) {
         debug('router new target: "%s"', newTarget);
@@ -208,9 +208,12 @@ export class HttpProxyMiddleware<
   };
 
   // rewrite path
-  private applyPathRewrite = async (req: http.IncomingMessage, pathRewriter) => {
+  private applyPathRewrite = async (
+    req: TReq,
+    pathRewriter: ReturnType<typeof createPathRewriter<TReq>>,
+  ) => {
     if (pathRewriter) {
-      const path = await pathRewriter(req.url, req);
+      const path = await pathRewriter(req.url as string, req);
 
       if (typeof path === 'string') {
         debug('pathRewrite new path: %s', path);

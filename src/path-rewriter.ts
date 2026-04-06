@@ -1,7 +1,10 @@
+import type { IncomingMessage } from 'node:http';
+
 import isPlainObject from 'is-plain-obj';
 
 import { Debug } from './debug.js';
 import { ERRORS } from './errors.js';
+import type { PathRewriteConfig } from './types.js';
 
 const debug = Debug.extend('path-rewriter');
 
@@ -9,11 +12,10 @@ type RewriteRule = { regex: RegExp; value: string };
 
 /**
  * Create rewrite function, to cache parsed rewrite rules.
- *
- * @param {Object} rewriteConfig
- * @return {Function} Function to rewrite paths; This function should accept `path` (request.url) as parameter
  */
-export function createPathRewriter(rewriteConfig) {
+export function createPathRewriter<TReq extends IncomingMessage = IncomingMessage>(
+  rewriteConfig: PathRewriteConfig<TReq> | undefined,
+) {
   let rulesCache: RewriteRule[];
 
   if (!isValidRewriteConfig(rewriteConfig)) {
@@ -28,7 +30,7 @@ export function createPathRewriter(rewriteConfig) {
     return rewritePath;
   }
 
-  function rewritePath(path) {
+  function rewritePath(path: string) {
     let result = path;
 
     for (const rule of rulesCache) {
@@ -43,7 +45,9 @@ export function createPathRewriter(rewriteConfig) {
   }
 }
 
-function isValidRewriteConfig(rewriteConfig) {
+function isValidRewriteConfig<TReq extends IncomingMessage = IncomingMessage>(
+  rewriteConfig: PathRewriteConfig<TReq> | undefined,
+): boolean {
   if (typeof rewriteConfig === 'function') {
     return true;
   } else if (isPlainObject(rewriteConfig)) {
@@ -55,7 +59,7 @@ function isValidRewriteConfig(rewriteConfig) {
   }
 }
 
-function parsePathRewriteRules(rewriteConfig: Record<string, string>) {
+function parsePathRewriteRules(rewriteConfig: PathRewriteConfig | undefined) {
   const rules: RewriteRule[] = [];
 
   if (isPlainObject(rewriteConfig)) {
