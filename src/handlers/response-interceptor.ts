@@ -106,8 +106,12 @@ function copyHeaders<TRes extends http.ServerResponse = http.ServerResponse>(
 ): void {
   debug('copy original response headers');
 
-  response.statusCode = originalResponse.statusCode as number;
-  response.statusMessage = originalResponse.statusMessage as string;
+  if (originalResponse.statusCode) {
+    response.statusCode = originalResponse.statusCode;
+  }
+  if (originalResponse.statusMessage) {
+    response.statusMessage = originalResponse.statusMessage;
+  }
 
   if (response.setHeader) {
     let keys = Object.keys(originalResponse.headers);
@@ -118,13 +122,13 @@ function copyHeaders<TRes extends http.ServerResponse = http.ServerResponse>(
     keys.forEach((key) => {
       let value = originalResponse.headers[key];
 
-      if (key === 'set-cookie') {
+      if (key === 'set-cookie' && value) {
         // remove cookie domain
-        value = (Array.isArray(value) ? value : [value]) as string[];
+        value = Array.isArray(value) ? value : [value];
         value = value.map((x) => x.replace(/Domain=[^;]+?/i, ''));
       }
 
-      response.setHeader(key, value as readonly string[]);
+      response.setHeader(key, value as number | string | string[]);
     });
   } else {
     if ('headers' in response) {
