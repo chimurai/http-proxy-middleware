@@ -2,7 +2,7 @@ import type { IncomingMessage } from 'node:http';
 import { URL } from 'node:url';
 
 import { getLogger } from '../../logger.js';
-import { Plugin } from '../../types.js';
+import type { Plugin } from '../../types.js';
 import { getPort } from '../../utils/logger-plugin.js';
 
 type ExpressRequest = {

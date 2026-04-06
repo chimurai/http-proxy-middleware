@@ -1,7 +1,7 @@
 import type * as http from 'node:http';
 
 import { ERRORS } from './errors.js';
-import { Options } from './types.js';
+import type { Options } from './types.js';
 
 export function verifyConfig<TReq extends http.IncomingMessage, TRes extends http.ServerResponse>(
   options: Options<TReq, TRes>,

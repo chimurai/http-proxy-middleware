@@ -2,7 +2,7 @@ import type * as http from 'node:http';
 import type { Socket } from 'node:net';
 
 import { getStatusCode } from '../../status-code.js';
-import { Plugin } from '../../types.js';
+import type { Plugin } from '../../types.js';
 import { sanitize } from '../../utils/sanitize.js';
 
 function isResponseLike(obj: any): obj is http.ServerResponse {

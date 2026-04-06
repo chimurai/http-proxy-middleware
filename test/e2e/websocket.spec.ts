@@ -2,7 +2,8 @@ import * as http from 'node:http';
 
 import getPort from 'get-port';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { RawData, WebSocket, WebSocketServer } from 'ws';
+import type { RawData } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 
 import type { RequestHandler } from '../../src/types.js';
 import { createApp, createProxyMiddleware } from './test-kit.js';

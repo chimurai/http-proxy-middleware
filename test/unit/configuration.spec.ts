@@ -5,7 +5,7 @@ import { verifyConfig } from '../../src/configuration.js';
 describe('configFactory', () => {
   describe('verifyConfig()', () => {
     describe('missing option.target', () => {
-      let fn;
+      let fn: () => void;
 
       beforeEach(() => {
         fn = () => {
@@ -19,7 +19,7 @@ describe('configFactory', () => {
     });
 
     describe('optional option.target when option.router is used', () => {
-      let fn;
+      let fn: () => void;
 
       beforeEach(() => {
         fn = () => {

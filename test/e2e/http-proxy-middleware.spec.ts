@@ -2,7 +2,8 @@ import type * as http from 'node:http';
 
 import bodyParser from 'body-parser';
 import type * as express from 'express';
-import { CompletedRequest, Mockttp, getLocal } from 'mockttp';
+import type { CompletedRequest, Mockttp } from 'mockttp';
+import { getLocal } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

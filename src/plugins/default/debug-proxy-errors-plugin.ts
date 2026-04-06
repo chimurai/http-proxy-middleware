@@ -1,5 +1,5 @@
 import { Debug } from '../../debug.js';
-import { Plugin } from '../../types.js';
+import type { Plugin } from '../../types.js';
 
 const debug = Debug.extend('debug-proxy-errors-plugin');
 
