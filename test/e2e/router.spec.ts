@@ -150,7 +150,7 @@ describe('E2E router', () => {
   });
 
   describe('router with proxyTable', () => {
-    let agent;
+    let agent: request.Agent;
 
     beforeEach(() => {
       const app = createAppWithPath(

@@ -1,11 +1,12 @@
-import type * as http from 'node:http';
+import { IncomingMessage } from 'node:http';
+import { Socket } from 'node:net';
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { matchPathFilter } from '../../src/path-filter.js';
 
 describe('Path Filter', () => {
-  const fakeReq = {} as http.IncomingMessage;
+  const fakeReq = new IncomingMessage(new Socket());
 
   describe('String path matching', () => {
     let result;
@@ -179,10 +180,10 @@ describe('Path Filter', () => {
   });
 
   describe('Use function for matching', () => {
-    const testFunctionAsPathFilter = (val) => {
+    const testFunctionAsPathFilter = (val: any) => {
       return matchPathFilter(fn, 'http://localhost/api/foo/bar', fakeReq);
 
-      function fn(path, req) {
+      function fn(path: string, req: any) {
         return val;
       }
     };
@@ -204,7 +205,7 @@ describe('Path Filter', () => {
   });
 
   describe('Test invalid pathFilters', () => {
-    let testPathFilter;
+    let testPathFilter: (pathFilter: any) => () => void;
 
     beforeEach(() => {
       testPathFilter = (pathFilter) => {

@@ -7,7 +7,7 @@ export {
   fixRequestBody,
 } from '../../src/index.js';
 
-export function createApp(...middlewares): Express {
+export function createApp(...middlewares: RequestHandler[]): Express {
   const app = express();
   app.use(...middlewares);
   return app;

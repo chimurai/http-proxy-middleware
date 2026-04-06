@@ -7,7 +7,7 @@ import { getLocal } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Logger } from '../../src/types.js';
+import type { Filter, Logger } from '../../src/types.js';
 import { createApp, createAppWithPath, createProxyMiddleware, fixRequestBody } from './test-kit.js';
 
 describe('E2E http-proxy-middleware', () => {
@@ -135,7 +135,7 @@ describe('E2E http-proxy-middleware', () => {
 
     describe('custom pathFilter matcher/filter', () => {
       it('should have response body: "HELLO WEB"', async () => {
-        const filter = (path, req) => {
+        const filter: Filter = (path, req) => {
           return true;
         };
 
@@ -154,7 +154,7 @@ describe('E2E http-proxy-middleware', () => {
       });
 
       it('should not proxy when filter returns false', async () => {
-        const filter = (path, req) => {
+        const filter: Filter = (path, req) => {
           return false;
         };
 
@@ -174,7 +174,7 @@ describe('E2E http-proxy-middleware', () => {
 
       it('should not proxy when filter throws Error', async () => {
         const myError = new Error('MY_ERROR');
-        const filter = (path, req) => {
+        const filter: Filter = (path, req) => {
           throw myError;
         };
 

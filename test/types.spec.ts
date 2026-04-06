@@ -92,12 +92,12 @@ describe('http-proxy-middleware TypeScript Types', () => {
       });
 
       it('should have router Type with function', () => {
-        options = { router: (path) => '/path' };
+        options = { router: (req) => '/path' };
         expect(options).toBeDefined();
       });
 
       it('should have router Type with async function', () => {
-        options = { router: async (path) => '/path' };
+        options = { router: async (req) => '/path' };
         expect(options).toBeDefined();
       });
     });
@@ -183,6 +183,14 @@ describe('http-proxy-middleware TypeScript Types', () => {
         middleware({
           router: (req) => req.params,
           pathFilter: (pathname, req) => !!req.params,
+          pathRewrite: (path, req) => {
+            req.params;
+
+            // @ts-expect-error: should error when request is typed as `any`
+            req.unknownProperty;
+
+            return path;
+          },
           on: {
             error(error, req, res, target) {
               req.params;

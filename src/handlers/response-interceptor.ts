@@ -100,11 +100,18 @@ function decompress<TReq extends http.IncomingMessage = http.IncomingMessage>(
  * Copy original headers
  * https://github.com/apache/superset/blob/9773aba522e957ed9423045ca153219638a85d2f/superset-frontend/webpack.proxy-config.js#L78
  */
-function copyHeaders(originalResponse, response): void {
+function copyHeaders<TRes extends http.ServerResponse = http.ServerResponse>(
+  originalResponse: http.IncomingMessage,
+  response: TRes,
+): void {
   debug('copy original response headers');
 
-  response.statusCode = originalResponse.statusCode;
-  response.statusMessage = originalResponse.statusMessage;
+  if (originalResponse.statusCode) {
+    response.statusCode = originalResponse.statusCode;
+  }
+  if (originalResponse.statusMessage) {
+    response.statusMessage = originalResponse.statusMessage;
+  }
 
   if (response.setHeader) {
     let keys = Object.keys(originalResponse.headers);
@@ -115,15 +122,17 @@ function copyHeaders(originalResponse, response): void {
     keys.forEach((key) => {
       let value = originalResponse.headers[key];
 
-      if (key === 'set-cookie') {
+      if (key === 'set-cookie' && value) {
         // remove cookie domain
         value = Array.isArray(value) ? value : [value];
         value = value.map((x) => x.replace(/Domain=[^;]+?/i, ''));
       }
 
-      response.setHeader(key, value);
+      response.setHeader(key, value as number | string | string[]);
     });
   } else {
-    response.headers = originalResponse.headers;
+    if ('headers' in response) {
+      response.headers = originalResponse.headers;
+    }
   }
 }
