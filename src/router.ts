@@ -1,10 +1,17 @@
+import type * as http from 'node:http';
+
+import type { ProxyServerOptions } from 'httpxy';
 import isPlainObject from 'is-plain-obj';
 
 import { Debug } from './debug.js';
+import type { Options } from './index.js';
 
 const debug = Debug.extend('router');
 
-export async function getTarget(req, config) {
+export async function getTarget<
+  TReq extends http.IncomingMessage = http.IncomingMessage,
+  TRes extends http.ServerResponse = http.ServerResponse,
+>(req: TReq, config: Options<TReq, TRes>) {
   let newTarget;
   const router = config.router;
 
@@ -17,10 +24,13 @@ export async function getTarget(req, config) {
   return newTarget;
 }
 
-function getTargetFromProxyTable(req, table) {
+function getTargetFromProxyTable<TReq extends http.IncomingMessage>(
+  req: TReq,
+  table: Record<string, ProxyServerOptions['target']>,
+) {
   let result;
-  const host = req.headers.host;
-  const path = req.url;
+  const host = req.headers.host ?? '';
+  const path = req.url ?? '';
 
   const hostAndPath = host + path;
 
@@ -45,6 +55,6 @@ function getTargetFromProxyTable(req, table) {
   return result;
 }
 
-function containsPath(v) {
+function containsPath(v: string) {
   return v.indexOf('/') > -1;
 }

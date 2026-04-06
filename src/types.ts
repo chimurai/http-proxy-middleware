@@ -144,7 +144,7 @@ export interface Options<
    * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/router.md
    */
   router?:
-    | { [hostOrPath: string]: ProxyServerOptions['target'] }
+    | Record<string, ProxyServerOptions['target']>
     | ((req: TReq) => ProxyServerOptions['target'])
     | ((req: TReq) => Promise<ProxyServerOptions['target']>);
   /**
