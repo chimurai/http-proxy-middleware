@@ -1,20 +1,23 @@
+import { IncomingMessage } from 'node:http';
+import { Socket } from 'node:net';
+
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { getTarget } from '../../src/router.js';
+import type { Options } from '../../src/types.js';
 
 describe('router unit test', () => {
-  let fakeReq;
-  let config;
-  let result;
-  let proxyOptionWithRouter;
+  let fakeReq: IncomingMessage;
+  let config: Options;
+  let result: ReturnType<typeof getTarget>;
+  let proxyOptionWithRouter: Options;
 
   beforeEach(() => {
-    fakeReq = {
-      headers: {
-        host: 'localhost',
-      },
-      url: '/',
+    fakeReq = new IncomingMessage(new Socket());
+    fakeReq.headers = {
+      host: 'localhost',
     };
+    fakeReq.url = '/';
 
     config = {
       target: 'http://localhost:6000',
@@ -22,7 +25,7 @@ describe('router unit test', () => {
   });
 
   describe('router.getTarget from function', () => {
-    let request;
+    let request: IncomingMessage;
 
     beforeEach(() => {
       proxyOptionWithRouter = {
@@ -48,7 +51,7 @@ describe('router unit test', () => {
   });
 
   describe('router.getTarget from async function', () => {
-    let request;
+    let request: IncomingMessage;
 
     beforeEach(() => {
       proxyOptionWithRouter = {
