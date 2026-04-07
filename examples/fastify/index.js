@@ -6,20 +6,17 @@ import { createProxyMiddleware } from '#http-proxy-middleware';
 
 const fastify = fastifyFactory({ logger: true });
 
-(async () => {
-  await fastify.register(fastifyExpress);
+await fastify.register(fastifyExpress);
 
-  const proxy = createProxyMiddleware({
-    target: 'http://jsonplaceholder.typicode.com',
-    changeOrigin: true,
-  });
+const proxy = createProxyMiddleware({
+  target: 'http://jsonplaceholder.typicode.com',
+  changeOrigin: true,
+});
 
-  fastify.use(proxy);
+fastify.use(proxy);
 
-  fastify.listen({ port: 3000 }, (err, address) => {
-    if (err) throw err;
-    fastify.log.info(`server listening on ${address}`);
+const address = await fastify.listen({ host: '127.0.0.1', port: 3000 });
 
-    open(`${address}/users`);
-  });
-})();
+fastify.log.info(`server listening on ${address}`);
+
+open(`${address}/users`);
