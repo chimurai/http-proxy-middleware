@@ -3,7 +3,7 @@
  */
 import browserSync from 'browser-sync';
 
-import { createProxyMiddleware } from '../../dist/index.js';
+import { createProxyMiddleware } from '#http-proxy-middleware';
 
 const app = browserSync.create();
 

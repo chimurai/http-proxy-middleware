@@ -7,7 +7,7 @@ import * as http from 'node:http';
 import connect from 'connect';
 import open from 'open';
 
-import { createProxyMiddleware } from '../../dist/index.js';
+import { createProxyMiddleware } from '#http-proxy-middleware';
 
 /**
  * Configure proxy middleware

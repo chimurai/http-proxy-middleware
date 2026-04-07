@@ -6,7 +6,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import open from 'open';
 
-import { createHonoProxyMiddleware } from '../../dist/index.js';
+import { createHonoProxyMiddleware } from '#http-proxy-middleware';
 
 const app = new Hono();
 
