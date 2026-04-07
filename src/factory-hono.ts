@@ -26,7 +26,7 @@ import { getLogger } from './logger.js';
 export function createHonoProxyMiddleware(
   options: Options,
 ): MiddlewareHandler<{ Bindings: HttpBindings }> {
-  const proxy = createProxyMiddleware(options);
+  const proxy = createProxyMiddleware<HttpBindings['incoming'], HttpBindings['outgoing']>(options);
   const logger = getLogger(options);
 
   return (c, next) => {
