@@ -5,7 +5,7 @@
 import express from 'express';
 import open from 'open';
 
-import { createProxyMiddleware, responseInterceptor } from '../../dist/index.js';
+import { createProxyMiddleware, responseInterceptor } from '#http-proxy-middleware';
 
 // test with double-byte characters
 // cSpell:ignore Kroket, ส้มตำไทย, चिकन

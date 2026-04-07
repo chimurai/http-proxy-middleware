@@ -5,7 +5,7 @@
 import express from 'express';
 import open from 'open';
 
-import { createProxyMiddleware } from '../../dist/index.js';
+import { createProxyMiddleware } from '#http-proxy-middleware';
 
 /**
  * Configure proxy middleware

@@ -2,7 +2,7 @@ import fastifyExpress from '@fastify/express';
 import fastifyFactory from 'fastify';
 import open from 'open';
 
-import { createProxyMiddleware } from '../../dist/index.js';
+import { createProxyMiddleware } from '#http-proxy-middleware';
 
 const fastify = fastifyFactory({ logger: true });
 

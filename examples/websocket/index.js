@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import open from 'open';
 
-import { createProxyMiddleware } from '../../dist/index.js';
+import { createProxyMiddleware } from '#http-proxy-middleware';
 
 const currentDir = fileURLToPath(new URL('.', import.meta.url));
 
