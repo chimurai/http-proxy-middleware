@@ -1,18 +1,18 @@
 {
   "name": "examples",
   "version": "1.0.0",
-  "type": "module",
   "private": "true",
+  "description": "View working examples of `http-proxy-middleware` implemented in popular servers.",
+  "keywords": [],
+  "license": "MIT",
+  "author": "chimurai",
+  "type": "module",
   "imports": {
     "#http-proxy-middleware": "./subpath.shim.js"
   },
-  "description": "View working examples of `http-proxy-middleware` implemented in popular servers.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "chimurai",
-  "license": "MIT",
   "devDependencies": {
     "@fastify/express": "4.0.4",
     "browser-sync": "3.0.4",

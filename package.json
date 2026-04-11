@@ -1,9 +1,42 @@
 {
   "name": "http-proxy-middleware",
-  "type": "module",
   "version": "4.0.0-beta.3",
   "description": "The one-liner node.js proxy middleware for connect, express, next.js and more",
+  "keywords": [
+    "browser-sync",
+    "connect",
+    "cors",
+    "express",
+    "fastify",
+    "grunt-contrib-connect",
+    "gulp",
+    "hono",
+    "http",
+    "https",
+    "middleware",
+    "next.js",
+    "polka",
+    "proxy",
+    "reverse",
+    "websocket",
+    "ws"
+  ],
+  "homepage": "https://github.com/chimurai/http-proxy-middleware#readme",
+  "bugs": {
+    "url": "https://github.com/chimurai/http-proxy-middleware/issues"
+  },
+  "license": "MIT",
+  "author": "Steven Chim",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chimurai/http-proxy-middleware.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -11,19 +44,18 @@
       "default": "./dist/index.js"
     }
   },
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "publishConfig": {
+    "provenance": true
+  },
   "scripts": {
     "clean": "rm -rf dist coverage tsconfig.tsbuildinfo .eslintcache",
     "install:all": "yarn && (cd examples && yarn)",
-    "lint": "yarn prettier && yarn eslint",
-    "lint:fix": "yarn prettier:fix && yarn eslint:fix",
+    "lint": "yarn format && yarn eslint",
+    "lint:fix": "yarn format:fix && yarn eslint:fix",
     "eslint": "eslint --cache '**/*.{js,ts,mjs,mts}'",
     "eslint:fix": "yarn eslint --fix",
-    "prettier": "prettier --list-different \"**/*.{js,ts,mjs,mts,md,yml,json,html}\"",
-    "prettier:fix": "prettier --write \"**/*.{js,ts,mjs,mts,md,yml,json,html}\"",
+    "format": "oxfmt --list-different \"**/*.{js,ts,mjs,mts,md,yml,json,html}\"",
+    "format:fix": "oxfmt --write \"**/*.{js,ts,mjs,mts,md,yml,json,html}\"",
     "build": "tsc --build",
     "test": "vitest run",
     "test:types": "tsc --project tsconfig.test.json --noEmit",
@@ -32,43 +64,18 @@
     "prepack": "yarn clean && yarn test && yarn build",
     "spellcheck": "npx --yes cspell --show-context --show-suggestions '**/*.*'"
   },
-  "publishConfig": {
-    "provenance": true
+  "dependencies": {
+    "debug": "^4.4.3",
+    "httpxy": "^0.5.0",
+    "is-glob": "^4.0.3",
+    "is-plain-obj": "^4.1.0",
+    "micromatch": "^4.0.8"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/chimurai/http-proxy-middleware.git"
-  },
-  "keywords": [
-    "reverse",
-    "proxy",
-    "middleware",
-    "http",
-    "https",
-    "connect",
-    "express",
-    "fastify",
-    "polka",
-    "next.js",
-    "browser-sync",
-    "gulp",
-    "grunt-contrib-connect",
-    "websocket",
-    "ws",
-    "cors"
-  ],
-  "author": "Steven Chim",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/chimurai/http-proxy-middleware/issues"
-  },
-  "homepage": "https://github.com/chimurai/http-proxy-middleware#readme",
   "devDependencies": {
     "@commitlint/cli": "20.5.0",
     "@commitlint/config-conventional": "20.5.0",
     "@eslint/js": "10.0.1",
     "@hono/node-server": "1.19.13",
-    "@trivago/prettier-plugin-sort-imports": "6.0.2",
     "@types/debug": "4.1.13",
     "@types/eslint": "9.6.1",
     "@types/express": "5.0.6",
@@ -88,31 +95,24 @@
     "lint-staged": "16.4.0",
     "mockttp": "4.3.0",
     "open": "11.0.0",
+    "oxfmt": "0.44.0",
     "patch-package": "8.0.1",
     "pkg-pr-new": "0.0.66",
-    "prettier": "3.8.1",
     "supertest": "7.2.2",
     "typescript": "6.0.2",
     "typescript-eslint": "8.58.1",
     "vitest": "4.1.4",
     "ws": "8.20.0"
   },
-  "dependencies": {
-    "debug": "^4.4.3",
-    "httpxy": "^0.5.0",
-    "is-glob": "^4.0.3",
-    "is-plain-obj": "^4.1.0",
-    "micromatch": "^4.0.8"
-  },
   "resolutions": {
     "patch-package/**/tmp": "^0.2.4"
-  },
-  "engines": {
-    "node": "^22.12.0 || >=24.0.0"
   },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
     ]
+  },
+  "engines": {
+    "node": "^22.12.0 || >=24.0.0"
   }
 }
