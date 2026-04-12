@@ -25,7 +25,7 @@ describe('Path rewriting', () => {
     });
 
     beforeEach(() => {
-      rewriter = createPathRewriter(config) as any;
+      rewriter = createPathRewriter(config)!;
     });
 
     it('should rewrite path', () => {
@@ -68,7 +68,7 @@ describe('Path rewriting', () => {
     });
 
     beforeEach(() => {
-      rewriter = createPathRewriter(config) as any;
+      rewriter = createPathRewriter(config)!;
     });
 
     it('should add base path to requests', () => {
@@ -81,25 +81,19 @@ describe('Path rewriting', () => {
     const originalRequestPath = '/123/456';
 
     it('should return unmodified path', () => {
-      rewriter = createPathRewriter((path) => {
-        return path;
-      }) as any;
+      rewriter = createPathRewriter((path) => path)!;
 
       expect(rewriter(originalRequestPath, fakeReq)).toBe('/123/456');
     });
 
     it('should return alternative path', () => {
-      rewriter = createPathRewriter((path) => {
-        return '/foo/bar';
-      }) as any;
+      rewriter = createPathRewriter((path) => '/foo/bar')!;
 
       expect(rewriter(originalRequestPath, fakeReq)).toBe('/foo/bar');
     });
 
     it('should return replaced path', () => {
-      rewriter = createPathRewriter((path) => {
-        return path.replace('/456', '/789');
-      }) as any;
+      rewriter = createPathRewriter((path) => path.replace('/456', '/789'))!;
 
       expect(rewriter(originalRequestPath, fakeReq)).toBe('/123/789');
     });
@@ -107,19 +101,19 @@ describe('Path rewriting', () => {
     // Same tests as the above three, but async
 
     it('is async and should return unmodified path', () => {
-      rewriter = createPathRewriter(async (path) => path) as any;
+      rewriter = createPathRewriter(async (path) => path)!;
 
       return expect(rewriter(originalRequestPath, fakeReq)).resolves.toBe('/123/456');
     });
 
     it('is async and should return alternative path', () => {
-      rewriter = createPathRewriter(async (path) => '/foo/bar') as any;
+      rewriter = createPathRewriter(async (path) => '/foo/bar')!;
 
       return expect(rewriter(originalRequestPath, fakeReq)).resolves.toBe('/foo/bar');
     });
 
     it('is async and should return replaced path', () => {
-      rewriter = createPathRewriter(async (path) => path.replace('/456', '/789')) as any;
+      rewriter = createPathRewriter(async (path) => path.replace('/456', '/789'))!;
 
       return expect(rewriter(originalRequestPath, fakeReq)).resolves.toBe('/123/789');
     });
@@ -129,10 +123,8 @@ describe('Path rewriting', () => {
     let badFn: (cfg?: PathRewriteConfig) => () => void;
 
     beforeEach(() => {
-      badFn = (cfg) => {
-        return () => {
-          createPathRewriter(cfg);
-        };
+      badFn = (cfg) => () => {
+        createPathRewriter(cfg);
       };
     });
 
