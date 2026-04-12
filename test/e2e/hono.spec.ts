@@ -34,7 +34,7 @@ describe('E2E Hono', () => {
         app.use(
           '/api',
           createHonoProxyMiddleware({
-            target: `http://localhost:${mockTargetServer.port}`,
+            target: mockTargetServer.url,
             pathFilter: '/api',
           }),
         );
@@ -74,7 +74,7 @@ describe('E2E Hono', () => {
 
         app.use(
           createHonoProxyMiddleware({
-            target: `http://localhost:${mockTargetServer.port}`,
+            target: mockTargetServer.url,
             pathFilter: '/api',
           }),
         );

@@ -62,7 +62,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: '/api',
             }),
           ),
@@ -81,7 +81,7 @@ describe('E2E http-proxy-middleware', () => {
           .withExactQuery('?q=1&r=[2,3]')
           .thenReply(200, 'OK');
 
-        const response = await request(`http://localhost:${mockTargetServer.port}`)
+        const response = await request(mockTargetServer.url)
           .get(`/api/b/c/dp?q=1&r=[2,3]#s`)
           .expect(200);
 
@@ -95,7 +95,7 @@ describe('E2E http-proxy-middleware', () => {
           createApp(
             bodyParser.urlencoded({ extended: false }),
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: '/api',
               on: {
                 proxyReq: fixRequestBody,
@@ -116,7 +116,7 @@ describe('E2E http-proxy-middleware', () => {
           createApp(
             bodyParser.json(),
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: '/api',
               on: {
                 proxyReq: fixRequestBody,
@@ -142,7 +142,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: filter,
             }),
           ),
@@ -161,7 +161,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: filter,
             }),
           ),
@@ -187,7 +187,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: filter,
               logger: logger,
             }),
@@ -206,7 +206,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: ['/api', '/ajax'],
             }),
           ),
@@ -236,7 +236,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: '/api/**',
             }),
           ),
@@ -255,7 +255,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: ['**/*.html', '!**.json'],
             }),
           ),
@@ -280,7 +280,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: '/api',
               headers: { host: 'foobar.dev' },
             }),
@@ -324,7 +324,7 @@ describe('E2E http-proxy-middleware', () => {
         const resetAgent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
             }),
           ),
         );
@@ -339,7 +339,7 @@ describe('E2E http-proxy-middleware', () => {
         const closeAgent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
             }),
           ),
         );
@@ -384,7 +384,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: '/api',
               on: {
                 proxyRes: (proxyRes, req, res) => {
@@ -424,7 +424,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: '/api',
               on: {
                 proxyReq: (proxyReq, req, res) => {
@@ -454,7 +454,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathRewrite: {
                 '^/api': '/rest',
                 '^/remove': '',
@@ -482,7 +482,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createAppWithPath(
             '/api',
-            createProxyMiddleware({ target: `http://localhost:${mockTargetServer.port}/api` }),
+            createProxyMiddleware({ target: `${mockTargetServer.url}/api` }),
           ),
         );
       });
@@ -511,7 +511,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              target: `http://localhost:${mockTargetServer.port}`,
+              target: mockTargetServer.url,
               pathFilter: '/api',
               logger: customLogger,
             }),
@@ -524,7 +524,7 @@ describe('E2E http-proxy-middleware', () => {
         expect(logMessages).not.toBeUndefined();
         expect(logMessages.length).toBe(1);
         expect(logMessages.at(0)).toBe(
-          `[HPM] GET /api/foo/bar -> http://localhost:${mockTargetServer.port}/api/foo/bar [200]`,
+          `[HPM] GET /api/foo/bar -> ${mockTargetServer.url}/api/foo/bar [200]`,
         );
       });
 
@@ -532,7 +532,7 @@ describe('E2E http-proxy-middleware', () => {
         agent = request(
           createApp(
             createProxyMiddleware({
-              router: () => `http://localhost:${mockTargetServer.port}`,
+              router: () => mockTargetServer.url,
               pathFilter: '/api',
               logger: customLogger,
             }),
@@ -545,7 +545,7 @@ describe('E2E http-proxy-middleware', () => {
         expect(logMessages).not.toBeUndefined();
         expect(logMessages.length).toBe(1);
         expect(logMessages.at(0)).toBe(
-          `[HPM] GET /api/foo/bar -> http://localhost:${mockTargetServer.port}/api/foo/bar [200]`,
+          `[HPM] GET /api/foo/bar -> ${mockTargetServer.url}/api/foo/bar [200]`,
         );
       });
     });

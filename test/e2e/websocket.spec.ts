@@ -1,9 +1,11 @@
 import * as http from 'node:http';
 
 import getPort from 'get-port';
+import type { Mockttp } from 'mockttp';
+import { getLocal } from 'mockttp';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RawData } from 'ws';
-import { WebSocket, WebSocketServer } from 'ws';
+import { WebSocket } from 'ws';
 
 import type { RequestHandler } from '../../src/types.js';
 import { createApp, createProxyMiddleware } from './test-kit.js';
@@ -16,32 +18,27 @@ import { createApp, createProxyMiddleware } from './test-kit.js';
 describe('E2E WebSocket proxy', () => {
   let proxyServer: http.Server;
   let ws: WebSocket;
-  let wss: WebSocketServer;
+  let mockWsTargetServer: Mockttp;
   let proxyMiddleware: RequestHandler;
-  let WS_SERVER_PORT: number;
   let SERVER_PORT: number;
 
   beforeEach(async () => {
-    WS_SERVER_PORT = await getPort();
+    mockWsTargetServer = getLocal();
+    await mockWsTargetServer.start();
+    await mockWsTargetServer.forAnyWebSocket().thenEcho();
+
     SERVER_PORT = await getPort();
-
-    wss = new WebSocketServer({ port: WS_SERVER_PORT });
-
-    wss.on('connection', (websocket) => {
-      websocket.on('message', (data, isBinary) => {
-        const message = isBinary ? data : data.toString();
-        websocket.send(message); // echo received message
-      });
-    });
   });
 
   beforeEach(() => {
     proxyMiddleware = createProxyMiddleware({
-      target: `http://localhost:${WS_SERVER_PORT}`,
+      target: mockWsTargetServer.url,
       ws: true,
       pathRewrite: { '^/socket': '' },
     });
   });
+
+  const toWebSocketUrl = (url: string) => url.replace(/^http/, 'ws');
 
   const closeServer = (server?: http.Server) => {
     if (!server?.listening) {
@@ -57,16 +54,6 @@ describe('E2E WebSocket proxy', () => {
 
         resolve();
       });
-    });
-  };
-
-  const closeWebSocketServer = (server?: WebSocketServer) => {
-    if (!server) {
-      return Promise.resolve();
-    }
-
-    return new Promise<void>((resolve) => {
-      server.close(() => resolve());
     });
   };
 
@@ -108,8 +95,8 @@ describe('E2E WebSocket proxy', () => {
   afterEach(async () => {
     await Promise.all([
       closeServer(proxyServer),
-      closeWebSocketServer(wss),
       closeWebSocketClient(ws),
+      mockWsTargetServer.stop(),
     ]);
   });
 
@@ -157,7 +144,7 @@ describe('E2E WebSocket proxy', () => {
       const proxyMiddleware = createProxyMiddleware({
         // cSpell:ignore notworkinghost
         target: 'ws://notworkinghost:6789',
-        router: { '/socket': `ws://localhost:${WS_SERVER_PORT}` },
+        router: { '/socket': toWebSocketUrl(mockWsTargetServer.url) },
         pathRewrite: { '^/socket': '' },
       });
 
@@ -208,7 +195,7 @@ describe('E2E WebSocket proxy', () => {
   describe('ws enabled without server object (issue #143)', () => {
     it('should not crash when server is undefined', async () => {
       const middleware = createProxyMiddleware({
-        target: `http://localhost:${WS_SERVER_PORT}`,
+        target: mockWsTargetServer.url,
         ws: true,
         pathFilter: '/api',
       });
@@ -257,7 +244,7 @@ describe('E2E WebSocket proxy', () => {
 
     it('should not crash when server is null', async () => {
       const middleware = createProxyMiddleware({
-        target: `http://localhost:${WS_SERVER_PORT}`,
+        target: mockWsTargetServer.url,
         ws: true,
         pathFilter: '/api',
       });
@@ -283,7 +270,7 @@ describe('E2E WebSocket proxy', () => {
 
     it('should not crash on matching path with undefined server', async () => {
       const middleware = createProxyMiddleware({
-        target: `http://localhost:${WS_SERVER_PORT}`,
+        target: mockWsTargetServer.url,
         ws: true,
         pathFilter: '/api', // Will not match '/test'
       });
@@ -310,7 +297,7 @@ describe('E2E WebSocket proxy', () => {
 
     it('should handle multiple requests with missing server', async () => {
       const middleware = createProxyMiddleware({
-        target: `http://localhost:${WS_SERVER_PORT}`,
+        target: mockWsTargetServer.url,
         ws: true,
         pathFilter: '/api',
       });
@@ -338,7 +325,7 @@ describe('E2E WebSocket proxy', () => {
 
     it('should handle ws:false with missing server', async () => {
       const middleware = createProxyMiddleware({
-        target: `http://localhost:${WS_SERVER_PORT}`,
+        target: mockWsTargetServer.url,
         ws: false, // ws disabled
         pathFilter: '/api',
       });
