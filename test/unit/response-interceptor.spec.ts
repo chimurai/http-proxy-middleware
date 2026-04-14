@@ -1,35 +1,16 @@
-import { IncomingMessage, ServerResponse } from 'node:http';
-import { Socket } from 'node:net';
-
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { responseInterceptor } from '../../src/handlers/response-interceptor.js';
-
-const fakeProxyResponse = () => {
-  const httpIncomingMessage = new IncomingMessage(new Socket());
-  httpIncomingMessage._read = () => ({});
-  return httpIncomingMessage;
-};
-
-const fakeResponse = () => {
-  const httpIncomingMessage = fakeProxyResponse();
-
-  const response = new ServerResponse(httpIncomingMessage);
-  response.setHeader = vi.fn();
-  response.write = vi.fn();
-  response.end = vi.fn();
-
-  return response;
-};
+import { createMockRequest, createMockResponse } from '../test-utils.js';
 
 const waitInterceptorHandler = (ms = 1): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('responseInterceptor', () => {
   it('should write body on end proxy event', async () => {
-    const proxyRes = fakeProxyResponse();
-    const req = fakeProxyResponse();
-    const res = fakeResponse();
+    const proxyRes = createMockRequest();
+    const req = createMockRequest();
+    const res = createMockResponse();
 
     responseInterceptor(async () => JSON.stringify({ someField: '' }))(proxyRes, req, res);
 
@@ -43,9 +24,9 @@ describe('responseInterceptor', () => {
   });
 
   it('should end with error when receive a proxy error event', async () => {
-    const proxyRes = fakeProxyResponse();
-    const req = fakeProxyResponse();
-    const res = fakeResponse();
+    const proxyRes = createMockRequest();
+    const req = createMockRequest();
+    const res = createMockResponse();
 
     responseInterceptor(async () => JSON.stringify({ someField: '' }))(proxyRes, req, res);
 

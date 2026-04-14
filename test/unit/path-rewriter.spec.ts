@@ -1,13 +1,11 @@
-import { IncomingMessage } from 'node:http';
-import { Socket } from 'node:net';
-
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createPathRewriter } from '../../src/path-rewriter.js';
 import type { PathRewriteConfig } from '../../src/types.js';
+import { createMockRequest } from '../test-utils.js';
 
 describe('Path rewriting', () => {
-  const fakeReq = new IncomingMessage(new Socket());
+  const mockReq = createMockRequest();
   let rewriter: Exclude<ReturnType<typeof createPathRewriter>, undefined>;
   let result: ReturnType<typeof rewriter>;
   let config: PathRewriteConfig;
@@ -29,33 +27,33 @@ describe('Path rewriting', () => {
     });
 
     it('should rewrite path', () => {
-      result = rewriter('/api/old/index.json', fakeReq);
+      result = rewriter('/api/old/index.json', mockReq);
       expect(result).toBe('/api/new/index.json');
     });
 
     it('should remove path', () => {
-      result = rewriter('/remove/old/index.json', fakeReq);
+      result = rewriter('/remove/old/index.json', mockReq);
       expect(result).toBe('/old/index.json');
     });
 
     it('should leave path intact', () => {
-      result = rewriter('/foo/bar/index.json', fakeReq);
+      result = rewriter('/foo/bar/index.json', mockReq);
       expect(result).toBe('/foo/bar/index.json');
     });
 
     it('should not rewrite path when config-key does not match url with test(regex)', () => {
-      result = rewriter('/invalid/bar/foo.json', fakeReq);
+      result = rewriter('/invalid/bar/foo.json', mockReq);
       expect(result).toBe('/path/new/bar/foo.json');
       expect(result).not.toBe('/invalid/new/bar/foo.json');
     });
 
     it('should rewrite path when config-key does match url with test(regex)', () => {
-      result = rewriter('/valid/foo/bar.json', fakeReq);
+      result = rewriter('/valid/foo/bar.json', mockReq);
       expect(result).toBe('/path/new/foo/bar.json');
     });
 
     it('should return first match when similar paths are configured', () => {
-      result = rewriter('/some/specific/path/bar.json', fakeReq);
+      result = rewriter('/some/specific/path/bar.json', mockReq);
       expect(result).toBe('/awe/some/specific/path/bar.json');
     });
   });
@@ -72,7 +70,7 @@ describe('Path rewriting', () => {
     });
 
     it('should add base path to requests', () => {
-      result = rewriter('/api/books/123', fakeReq);
+      result = rewriter('/api/books/123', mockReq);
       expect(result).toBe('/extra/base/path/api/books/123');
     });
   });
@@ -83,19 +81,19 @@ describe('Path rewriting', () => {
     it('should return unmodified path', () => {
       rewriter = createPathRewriter((path) => path)!;
 
-      expect(rewriter(originalRequestPath, fakeReq)).toBe('/123/456');
+      expect(rewriter(originalRequestPath, mockReq)).toBe('/123/456');
     });
 
     it('should return alternative path', () => {
       rewriter = createPathRewriter((path) => '/foo/bar')!;
 
-      expect(rewriter(originalRequestPath, fakeReq)).toBe('/foo/bar');
+      expect(rewriter(originalRequestPath, mockReq)).toBe('/foo/bar');
     });
 
     it('should return replaced path', () => {
       rewriter = createPathRewriter((path) => path.replace('/456', '/789'))!;
 
-      expect(rewriter(originalRequestPath, fakeReq)).toBe('/123/789');
+      expect(rewriter(originalRequestPath, mockReq)).toBe('/123/789');
     });
 
     // Same tests as the above three, but async
@@ -103,19 +101,19 @@ describe('Path rewriting', () => {
     it('is async and should return unmodified path', () => {
       rewriter = createPathRewriter(async (path) => path)!;
 
-      return expect(rewriter(originalRequestPath, fakeReq)).resolves.toBe('/123/456');
+      return expect(rewriter(originalRequestPath, mockReq)).resolves.toBe('/123/456');
     });
 
     it('is async and should return alternative path', () => {
       rewriter = createPathRewriter(async (path) => '/foo/bar')!;
 
-      return expect(rewriter(originalRequestPath, fakeReq)).resolves.toBe('/foo/bar');
+      return expect(rewriter(originalRequestPath, mockReq)).resolves.toBe('/foo/bar');
     });
 
     it('is async and should return replaced path', () => {
       rewriter = createPathRewriter(async (path) => path.replace('/456', '/789'))!;
 
-      return expect(rewriter(originalRequestPath, fakeReq)).resolves.toBe('/123/789');
+      return expect(rewriter(originalRequestPath, mockReq)).resolves.toBe('/123/789');
     });
   });
 

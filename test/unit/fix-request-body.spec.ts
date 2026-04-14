@@ -1,30 +1,22 @@
-import { ClientRequest, IncomingMessage, ServerResponse } from 'node:http';
-import { Socket } from 'node:net';
+import type { ClientRequest } from 'node:http';
 import * as querystring from 'node:querystring';
 import * as zlib from 'node:zlib';
 
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { BodyParserLikeRequest } from '../../src/handlers/fix-request-body.js';
 import { fixRequestBody } from '../../src/handlers/fix-request-body.js';
+import { createMockRequest, createMockResponse, createMockClientRequest } from '../test-utils.js';
 
 const fakeProxyRequest = (): ClientRequest => {
-  const proxyRequest = new ClientRequest('http://some-host');
-  proxyRequest.emit = vi.fn();
-
-  return proxyRequest;
-};
-
-const fakeProxyResponse = (): ServerResponse<IncomingMessage> => {
-  const res = new ServerResponse(new IncomingMessage(new Socket()));
-  return res;
+  return createMockClientRequest('http://some-host');
 };
 
 const createRequestWithBody = (body: unknown): BodyParserLikeRequest => {
-  const req = new IncomingMessage(new Socket()) as BodyParserLikeRequest;
-  req.url = '/test_path';
-  req.body = body;
-  return req;
+  return createMockRequest({
+    url: '/test_path',
+    body: body,
+  } as BodyParserLikeRequest);
 };
 
 const handlerFormDataBodyData = (contentType: string, data: { [key: string]: any }) => {
@@ -40,9 +32,6 @@ describe('fixRequestBody', () => {
   it('should not write when body is undefined', () => {
     const proxyRequest = fakeProxyRequest();
 
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
-
     fixRequestBody(proxyRequest, createRequestWithBody(undefined));
 
     expect(proxyRequest.setHeader).not.toHaveBeenCalled();
@@ -53,9 +42,6 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
 
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
-
     fixRequestBody(proxyRequest, createRequestWithBody({}));
 
     expect(proxyRequest.setHeader).toHaveBeenCalled();
@@ -65,9 +51,6 @@ describe('fixRequestBody', () => {
   it('should write when body is not empty and Content-Type is text/plain', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'text/plain; charset=utf-8');
-
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody('some string'));
 
@@ -80,9 +63,6 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
 
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
-
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
     const expectedBody = JSON.stringify({ someField: 'some value' });
@@ -93,9 +73,6 @@ describe('fixRequestBody', () => {
   it('should write when body is not empty and Content-Type is multipart/form-data', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'multipart/form-data');
-
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -117,9 +94,6 @@ describe('fixRequestBody', () => {
   it('should write when body is not empty and Content-Type includes multipart/form-data', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'multipart/form-data');
-
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -143,9 +117,6 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/merge-patch+json; charset=utf-8');
 
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
-
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
     const expectedBody = JSON.stringify({ someField: 'some value' });
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
@@ -155,9 +126,6 @@ describe('fixRequestBody', () => {
   it('should write when body is not empty and Content-Type is application/x-www-form-urlencoded', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded');
-
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -170,9 +138,6 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
-
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
     const expectedBody = querystring.stringify({ someField: 'some value' });
@@ -183,9 +148,6 @@ describe('fixRequestBody', () => {
   it('should parse json and call write() once with incorrect content-type application/x-www-form-urlencoded+json', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded+json');
-
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
@@ -203,13 +165,8 @@ describe('fixRequestBody', () => {
       },
     } as BodyParserLikeRequest;
 
-    const proxyResponse = fakeProxyResponse();
+    const proxyResponse = createMockResponse();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded');
-
-    vi.spyOn(proxyRequest, 'write');
-    vi.spyOn(proxyRequest, 'destroy');
-    vi.spyOn(proxyResponse, 'writeHead');
-    vi.spyOn(proxyResponse, 'end');
 
     fixRequestBody(proxyRequest, request);
 
@@ -222,9 +179,6 @@ describe('fixRequestBody', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
     proxyRequest.setHeader('content-encoding', 'gzip');
-
-    vi.spyOn(proxyRequest, 'setHeader');
-    vi.spyOn(proxyRequest, 'write');
 
     const data = { someField: 'some value' };
     fixRequestBody(proxyRequest, createRequestWithBody(data));

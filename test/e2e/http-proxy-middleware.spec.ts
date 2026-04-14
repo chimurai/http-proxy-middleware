@@ -1,5 +1,3 @@
-import type * as http from 'node:http';
-
 import bodyParser from 'body-parser';
 import type * as express from 'express';
 import type { CompletedRequest, Mockttp } from 'mockttp';
@@ -8,6 +6,7 @@ import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Filter, Logger } from '../../src/types.js';
+import { createMockRequest, createMockResponse } from '../test-utils.js';
 import { createApp, createAppWithPath, createProxyMiddleware, fixRequestBody } from './test-kit.js';
 
 describe('E2E http-proxy-middleware', () => {
@@ -23,10 +22,8 @@ describe('E2E http-proxy-middleware', () => {
 
   describe('pathFilter matching', () => {
     describe('do not proxy', () => {
-      const mockReq: http.IncomingMessage = {
-        url: '/foo/bar',
-      } as http.IncomingMessage;
-      const mockRes: http.ServerResponse = {} as http.ServerResponse;
+      const mockReq = createMockRequest({ url: '/foo/bar' });
+      const mockRes = createMockResponse();
       const mockNext: express.NextFunction = vi.fn();
 
       beforeEach(() => {

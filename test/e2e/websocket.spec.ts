@@ -1,4 +1,5 @@
 import * as http from 'node:http';
+import type { Socket } from 'node:net';
 
 import getPort from 'get-port';
 import type { Mockttp } from 'mockttp';
@@ -8,6 +9,7 @@ import type { RawData } from 'ws';
 import { WebSocket } from 'ws';
 
 import type { RequestHandler } from '../../src/types.js';
+import { createMockRequest, createMockResponse } from '../test-utils.js';
 import { createApp, createProxyMiddleware } from './test-kit.js';
 
 /********************************************************************
@@ -201,16 +203,13 @@ describe('E2E WebSocket proxy', () => {
       });
 
       // Mock request without server attached
-      const mockReq = {
+      const mockReq = createMockRequest({
         url: '/other', // Non-matching path
         headers: {},
-        socket: {}, // socket without server property
-      } as http.IncomingMessage;
+        socket: {} as unknown as Socket, // socket without server property
+      });
 
-      const mockRes = {
-        writeHead: vi.fn(),
-        end: vi.fn(),
-      } as unknown as http.ServerResponse;
+      const mockRes = createMockResponse();
 
       const mockNext = vi.fn();
 
@@ -250,16 +249,13 @@ describe('E2E WebSocket proxy', () => {
       });
 
       // Mock request with null server
-      const mockReq = {
+      const mockReq = createMockRequest({
         url: '/other',
         headers: {},
-        socket: { server: null }, // explicitly null
-      } as unknown as http.IncomingMessage;
+        socket: { server: null } as unknown as Socket, // explicitly null
+      });
 
-      const mockRes = {
-        writeHead: vi.fn(),
-        end: vi.fn(),
-      } as unknown as http.ServerResponse;
+      const mockRes = createMockResponse();
 
       const mockNext = vi.fn();
 
@@ -276,16 +272,13 @@ describe('E2E WebSocket proxy', () => {
       });
 
       // Mock request with path that won't match
-      const mockReq = {
+      const mockReq = createMockRequest({
         url: '/test',
         headers: {},
-        socket: {}, // no server
-      } as http.IncomingMessage;
+        socket: {} as unknown as Socket, // no server
+      });
 
-      const mockRes = {
-        writeHead: vi.fn(),
-        end: vi.fn(),
-      } as unknown as http.ServerResponse;
+      const mockRes = createMockResponse();
 
       const mockNext = vi.fn();
 
@@ -306,16 +299,13 @@ describe('E2E WebSocket proxy', () => {
 
       // Multiple requests without server
       for (let i = 0; i < 3; i++) {
-        const mockReq = {
+        const mockReq = createMockRequest({
           url: '/other',
           headers: {},
-          socket: {},
-        } as http.IncomingMessage;
+          socket: {} as unknown as Socket,
+        });
 
-        const mockRes = {
-          writeHead: vi.fn(),
-          end: vi.fn(),
-        } as unknown as http.ServerResponse;
+        const mockRes = createMockResponse();
 
         await expect(middleware(mockReq, mockRes, mockNext)).resolves.toBeUndefined();
       }
@@ -330,16 +320,13 @@ describe('E2E WebSocket proxy', () => {
         pathFilter: '/api',
       });
 
-      const mockReq = {
+      const mockReq = createMockRequest({
         url: '/other',
         headers: {},
-        socket: {}, // no server, but ws is disabled anyway
-      } as http.IncomingMessage;
+        socket: {} as unknown as Socket, // no server, but ws is disabled anyway
+      });
 
-      const mockRes = {
-        writeHead: vi.fn(),
-        end: vi.fn(),
-      } as unknown as http.ServerResponse;
+      const mockRes = createMockResponse();
 
       const mockNext = vi.fn();
 
