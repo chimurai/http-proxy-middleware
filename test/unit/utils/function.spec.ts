@@ -9,8 +9,8 @@ describe('getFunctionName()', () => {
   });
 
   it('should return arrow Function name', () => {
-    const myFunction = () => {};
-    expect(getFunctionName(myFunction)).toBe('myFunction');
+    const myArrowFunction = () => {};
+    expect(getFunctionName(myArrowFunction)).toBe('myArrowFunction');
   });
 
   it('should return anonymous Function name', () => {

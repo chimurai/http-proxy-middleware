@@ -30,7 +30,7 @@ describe('E2E Plugins', () => {
     };
 
     const config: Options = {
-      target: `http://localhost:${mockTargetServer.port}`,
+      target: mockTargetServer.url,
       plugins: [simplePlugin], // register a plugin
     };
     const proxyMiddleware = createProxyMiddleware(config);

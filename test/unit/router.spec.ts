@@ -1,23 +1,24 @@
-import { IncomingMessage } from 'node:http';
-import { Socket } from 'node:net';
+import type { IncomingMessage } from 'node:http';
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { getTarget } from '../../src/router.js';
 import type { Options } from '../../src/types.js';
+import { createMockRequest } from '../test-utils.js';
 
 describe('router unit test', () => {
-  let fakeReq: IncomingMessage;
+  let mockReq: IncomingMessage;
   let config: Options;
   let result: ReturnType<typeof getTarget>;
   let proxyOptionWithRouter: Options;
 
   beforeEach(() => {
-    fakeReq = new IncomingMessage(new Socket());
-    fakeReq.headers = {
-      host: 'localhost',
-    };
-    fakeReq.url = '/';
+    mockReq = createMockRequest({
+      headers: {
+        host: 'localhost',
+      },
+      url: '/',
+    });
 
     config = {
       target: 'http://localhost:6000',
@@ -36,7 +37,7 @@ describe('router unit test', () => {
         },
       };
 
-      result = getTarget(fakeReq, proxyOptionWithRouter);
+      result = getTarget(mockReq, proxyOptionWithRouter);
     });
 
     describe('custom dynamic router function', () => {
@@ -62,7 +63,7 @@ describe('router unit test', () => {
         },
       };
 
-      result = getTarget(fakeReq, proxyOptionWithRouter);
+      result = getTarget(mockReq, proxyOptionWithRouter);
     });
 
     describe('custom dynamic router async function', () => {
@@ -94,71 +95,71 @@ describe('router unit test', () => {
 
     describe('without router config', () => {
       it('should return the normal target when router not present in config', () => {
-        result = getTarget(fakeReq, config);
+        result = getTarget(mockReq, config);
         return expect(result).resolves.toBeUndefined();
       });
     });
 
     describe('with just the host in router config', () => {
       it('should target http://localhost:6001 when for router:"alpha.localhost"', () => {
-        fakeReq.headers.host = 'alpha.localhost';
-        result = getTarget(fakeReq, proxyOptionWithRouter);
+        mockReq.headers.host = 'alpha.localhost';
+        result = getTarget(mockReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6001');
       });
 
       it('should target http://localhost:6002 when for router:"beta.localhost"', () => {
-        fakeReq.headers.host = 'beta.localhost';
-        result = getTarget(fakeReq, proxyOptionWithRouter);
+        mockReq.headers.host = 'beta.localhost';
+        result = getTarget(mockReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6002');
       });
     });
 
     describe('with host and host + path config', () => {
       it('should target http://localhost:6004 without path', () => {
-        fakeReq.headers.host = 'gamma.localhost';
-        result = getTarget(fakeReq, proxyOptionWithRouter);
+        mockReq.headers.host = 'gamma.localhost';
+        result = getTarget(mockReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6004');
       });
 
       it('should target http://localhost:6003 exact path match', () => {
-        fakeReq.headers.host = 'gamma.localhost';
-        fakeReq.url = '/api';
-        result = getTarget(fakeReq, proxyOptionWithRouter);
+        mockReq.headers.host = 'gamma.localhost';
+        mockReq.url = '/api';
+        result = getTarget(mockReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6003');
       });
 
       it('should target http://localhost:6004 when contains path', () => {
-        fakeReq.headers.host = 'gamma.localhost';
-        fakeReq.url = '/api/books/123';
-        result = getTarget(fakeReq, proxyOptionWithRouter);
+        mockReq.headers.host = 'gamma.localhost';
+        mockReq.url = '/api/books/123';
+        result = getTarget(mockReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6003');
       });
     });
 
     describe('with just the path', () => {
       it('should target http://localhost:6005 with just a path as router config', () => {
-        fakeReq.url = '/rest';
-        result = getTarget(fakeReq, proxyOptionWithRouter);
+        mockReq.url = '/rest';
+        result = getTarget(mockReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6005');
       });
 
       it('should target http://localhost:6005 with just a path as router config', () => {
-        fakeReq.url = '/rest/deep/path';
-        result = getTarget(fakeReq, proxyOptionWithRouter);
+        mockReq.url = '/rest/deep/path';
+        result = getTarget(mockReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6005');
       });
 
       it('should target http://localhost:6000 path in not present in router config', () => {
-        fakeReq.url = '/unknown-path';
-        result = getTarget(fakeReq, proxyOptionWithRouter);
+        mockReq.url = '/unknown-path';
+        result = getTarget(mockReq, proxyOptionWithRouter);
         return expect(result).resolves.toBeUndefined();
       });
     });
 
     describe('matching order of router config', () => {
       it('should return first matching target when similar paths are configured', () => {
-        fakeReq.url = '/some/specific/path';
-        result = getTarget(fakeReq, proxyOptionWithRouter);
+        mockReq.url = '/some/specific/path';
+        result = getTarget(mockReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6006');
       });
     });

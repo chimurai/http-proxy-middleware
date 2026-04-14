@@ -26,7 +26,7 @@ describe('E2E pathRewrite', () => {
       const agent = request(
         createApp(
           createProxyMiddleware({
-            target: `http://localhost:${mockTargetServer.port}`,
+            target: mockTargetServer.url,
             pathRewrite: {
               '^/foobar/api/': '/api/',
             },
@@ -49,7 +49,7 @@ describe('E2E pathRewrite', () => {
       const agent = request(
         createApp(
           createProxyMiddleware({
-            target: `http://localhost:${mockTargetServer.port}`,
+            target: mockTargetServer.url,
             pathRewrite(path, req) {
               return path.replace('/foobar', '');
             },
@@ -71,7 +71,7 @@ describe('E2E pathRewrite', () => {
       const agent = request(
         createApp(
           createProxyMiddleware({
-            target: `http://localhost:${mockTargetServer.port}`,
+            target: mockTargetServer.url,
             pathRewrite(path, req) {
               return undefined;
             },
