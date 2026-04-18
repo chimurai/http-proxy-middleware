@@ -13,6 +13,7 @@ import { createPathRewriter } from './path-rewriter.js';
 import { getTarget } from './router.js';
 import type { Filter, Logger, Options, RequestHandler } from './types.js';
 import { getFunctionName } from './utils/function.js';
+import { normalizeIPv6LiteralTargets } from './utils/ipv6.js';
 
 export class HttpProxyMiddleware<
   TReq extends http.IncomingMessage = http.IncomingMessage,
@@ -188,6 +189,7 @@ export class HttpProxyMiddleware<
     // 1. option.router
     // 2. option.pathRewrite
     await this.applyRouter(req, newProxyOptions);
+    normalizeIPv6LiteralTargets(newProxyOptions);
     await this.applyPathRewrite(req, this.pathRewriter);
 
     return newProxyOptions;
