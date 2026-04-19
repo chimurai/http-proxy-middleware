@@ -3,9 +3,9 @@ import { getLocal } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { createApp, createProxyMiddleware } from './test-kit.js';
+import { createApp, createProxyMiddleware, isIPv6Available } from './test-kit.js';
 
-describe('ipv6 integration', () => {
+describe.runIf(await isIPv6Available())('ipv6 integration', () => {
   let targetServer: Mockttp;
 
   beforeEach(async () => {
