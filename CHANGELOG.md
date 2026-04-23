@@ -17,6 +17,7 @@
 - fix: applyPathRewrite logs old req.url instead of rewritten path (#1157)
 - feat(hono): support for hono with createHonoProxyMiddleware
 - feat(ipv6): support literal IPv6 addresses in `target` and `forward` options (ie. "http://[::1]:8000")
+- chore(package.json): bump httpxy to ^0.5.1
 
 ## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
 

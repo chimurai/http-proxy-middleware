@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.4",
   "description": "The one-liner node.js proxy middleware for connect, express, next.js and more",
   "keywords": [
     "browser-sync",
@@ -66,7 +66,7 @@
   },
   "dependencies": {
     "debug": "^4.4.3",
-    "httpxy": "^0.5.0",
+    "httpxy": "^0.5.1",
     "is-glob": "^4.0.3",
     "is-plain-obj": "^4.1.0",
     "micromatch": "^4.0.8"
