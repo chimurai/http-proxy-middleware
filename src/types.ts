@@ -15,7 +15,7 @@ export interface RequestHandler<
   TNext = NextFunction,
 > {
   (req: TReq, res: TRes, next?: TNext): Promise<void>;
-  upgrade: (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => void;
+  upgrade: (req: TReq, socket: net.Socket, head: Buffer) => void;
 }
 
 export type Filter<TReq extends http.IncomingMessage = http.IncomingMessage> =

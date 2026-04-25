@@ -79,15 +79,7 @@ export class HttpProxyMiddleware<
         // Manually emit 'error' event because httpxy's promise-based API does not emit it automatically.
         // This is crucial for backward compatibility with HPM plugins (like error-response-plugin)
         // and custom listeners registered via the 'on: { error: ... }' option.
-
-        /**
-         * TODO: Ideally, TReq and TRes should be restricted via "TReq extends http.IncomingMessage = http.IncomingMessage"
-         * and "TRes extends http.ServerResponse = http.ServerResponse", which allows us to avoid the "req as TReq" below.
-         *
-         * However, making TReq and TRes constrained types may cause a breaking change for TypeScript users downstream.
-         * So we leave this as a TODO for now, and revisit it in a future major release.
-         */
-        this.proxy.emit('error', err as Error, req as TReq, res, activeProxyOptions.target);
+        this.proxy.emit('error', err as Error, req, res, activeProxyOptions.target);
 
         next?.(err);
       }
@@ -135,10 +127,10 @@ export class HttpProxyMiddleware<
     }
   };
 
-  private handleUpgrade = async (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
+  private handleUpgrade = async (req: TReq, socket: net.Socket, head: Buffer) => {
     try {
       if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
-        const proxiedReq = req as TReq;
+        const proxiedReq = req;
         const activeProxyOptions = await this.prepareProxyRequest(proxiedReq);
         await this.proxy.ws(proxiedReq, socket, activeProxyOptions, head);
         debug('server upgrade event received. Proxying WebSocket');
@@ -146,15 +138,7 @@ export class HttpProxyMiddleware<
     } catch (err) {
       // This error does not include the URL as the fourth argument as we won't
       // have the URL if `this.prepareProxyRequest` throws an error.
-
-      /**
-       * TODO: Ideally, TReq and TRes should be restricted via "TReq extends http.IncomingMessage = http.IncomingMessage"
-       * and "TRes extends http.ServerResponse = http.ServerResponse", which allows us to avoid the "req as TReq" below.
-       *
-       * However, making TReq and TRes constrained types may cause a breaking change for TypeScript users downstream.
-       * So we leave this as a TODO for now, and revisit it in a future major release.
-       */
-      this.proxy.emit('error', err as Error, req as TReq, socket);
+      this.proxy.emit('error', err as Error, req, socket);
     }
   };
 
@@ -214,8 +198,8 @@ export class HttpProxyMiddleware<
     req: TReq,
     pathRewriter: ReturnType<typeof createPathRewriter<TReq>>,
   ) => {
-    if (pathRewriter) {
-      const path = await pathRewriter(req.url as string, req);
+    if (req.url && pathRewriter) {
+      const path = await pathRewriter(req.url, req);
 
       if (typeof path === 'string') {
         debug('pathRewrite new path: %s', path);
