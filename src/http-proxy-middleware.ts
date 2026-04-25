@@ -99,7 +99,7 @@ export class HttpProxyMiddleware<
      * Get the server object to subscribe to server events;
      * 'upgrade' for websocket and 'close' for graceful shutdown
      */
-    const server: https.Server = (req.socket as any)?.server;
+    const server = (req.socket as net.Socket & { server?: https.Server })?.server;
 
     if (server && !this.serverOnCloseSubscribed) {
       server.on('close', () => {
