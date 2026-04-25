@@ -107,5 +107,42 @@ describe('E2E Hono', () => {
         await expect(response.text()).resolves.toBe('DOWNSTREAM HANDLER');
       });
     });
+
+    describe('error handling', () => {
+      let server: ServerType;
+      let serverPort: number;
+
+      beforeEach(async () => {
+        app = new Hono<{ Bindings: HttpBindings }>();
+        serverPort = await getPort();
+
+        app.use(
+          '/api',
+          createHonoProxyMiddleware({
+            target: mockTargetServer.url,
+            pathFilter: '/api',
+            router: () => {
+              throw new Error('router exploded');
+            },
+          }),
+        );
+
+        server = serve({
+          fetch: app.fetch,
+          port: serverPort,
+        });
+      });
+
+      afterEach(() => {
+        server.close();
+      });
+
+      it('should return Proxy Error when proxy middleware calls next(err)', async () => {
+        const response = await fetch(`http://127.0.0.1:${serverPort}/api`);
+
+        expect(response.status).toBe(500);
+        await expect(response.text()).resolves.toBe('Proxy Error');
+      });
+    });
   });
 });
