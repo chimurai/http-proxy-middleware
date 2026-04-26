@@ -1,8 +1,9 @@
-import type { IncomingMessage } from 'node:http';
+import type { ClientRequest, IncomingMessage } from 'node:http';
 import { URL } from 'node:url';
 
 import { getLogger } from '../../logger.js';
 import type { Plugin } from '../../types.js';
+import { createUrl } from '../../utils/create-url.js';
 import { getPort } from '../../utils/logger-plugin.js';
 
 type ExpressRequest = {
@@ -49,21 +50,12 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
 
     try {
       const port = getPort(proxyRes.req?.agent?.sockets);
+      const { protocol, host, path } = proxyRes.req as ClientRequest;
 
-      const obj = {
-        protocol: proxyRes.req.protocol,
-        host: proxyRes.req.host,
-        pathname: proxyRes.req.path,
-      } as URL;
-
-      target = new URL(`${obj.protocol}//${obj.host}${obj.pathname}`);
-
-      if (port) {
-        target.port = port;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      target = createUrl({ protocol, host, port, path });
     } catch (err) {
-      // nock issue (https://github.com/chimurai/http-proxy-middleware/issues/1035)
+      // should not error. keeping fallback just in case
+      console.error('[HPM] Unexpected error while creating target URL', err);
       // fallback to old implementation (less correct - without port)
       target = new URL(options.target as URL);
       target.pathname = proxyRes.req.path;

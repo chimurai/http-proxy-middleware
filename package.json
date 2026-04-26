@@ -94,6 +94,8 @@
     "husky": "9.1.7",
     "lint-staged": "16.4.0",
     "mockttp": "4.3.1",
+    "msw": "2.13.6",
+    "nock": "14.0.13",
     "open": "11.0.0",
     "oxfmt": "0.46.0",
     "patch-package": "8.0.1",
