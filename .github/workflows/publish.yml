@@ -5,7 +5,10 @@ on:
 jobs:
   build-and-publish:
     # prevents this action from running on forks
-    if: github.repository == 'chimurai/http-proxy-middleware'
+    # only allow listed user to publish
+    if: |
+      github.repository == 'chimurai/http-proxy-middleware' &&
+      github.triggering_actor == 'chimurai'
     runs-on: ubuntu-latest
     permissions:
       contents: read
