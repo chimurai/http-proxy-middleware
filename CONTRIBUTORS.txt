@@ -3,6 +3,7 @@ Bezalel
 bforbis
 cdaringe
 Chim
+chimurai
 cloudmu
 devanshj
 dylang
