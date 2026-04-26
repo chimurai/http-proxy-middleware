@@ -18,6 +18,7 @@
 - feat(hono): support for hono with createHonoProxyMiddleware
 - feat(ipv6): support literal IPv6 addresses in `target` and `forward` options (ie. "http://[::1]:8000")
 - chore(package.json): bump httpxy to ^0.5.1
+- fix(logger-plugin): support ipv6 host and handle undefined protocol/host
 
 ## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
 
