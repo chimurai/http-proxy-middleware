@@ -1,6 +1,6 @@
 import nock from 'nock';
 import request from 'supertest';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp, createProxyMiddleware } from './test-kit.js';
 
@@ -26,6 +26,8 @@ describe('E2E nock', () => {
   });
 
   it('proxies GET requests to a nock mocked target', async () => {
+    await using consoleInfoSpy = await vi.spyOn(console, 'info');
+
     const agent = request(
       createApp(
         createProxyMiddleware({
@@ -33,6 +35,7 @@ describe('E2E nock', () => {
           pathFilter: '/api',
           // Keep nock-based e2e stable: avoid the default socket-connect piping path.
           followRedirects: true,
+          logger: console,
         }),
       ),
     );
@@ -42,6 +45,9 @@ describe('E2E nock', () => {
     const response = await agent.get('/api/hello').expect(200);
 
     expect(response.text).toBe('hello from nock');
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      '[HPM] GET /api/hello -> http://localhost:45678/api/hello [200]',
+    );
   });
 
   it('forwards query string to the nock mocked target', async () => {

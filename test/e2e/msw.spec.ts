@@ -1,7 +1,7 @@
 import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import request from 'supertest';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp, createProxyMiddleware } from './test-kit.js';
 
@@ -27,6 +27,8 @@ describe('E2E msw', () => {
   });
 
   it('proxies GET requests to a msw mocked target', async () => {
+    await using consoleInfoSpy = await vi.spyOn(console, 'info');
+
     server.use(
       http.get(`${target}/api/hello`, () => {
         return new HttpResponse('hello from msw', { status: 200 });
@@ -40,6 +42,7 @@ describe('E2E msw', () => {
           pathFilter: '/api',
           // Keep msw-based e2e stable and aligned with nock e2e transport path.
           followRedirects: true,
+          logger: console,
         }),
       ),
     );
@@ -47,6 +50,9 @@ describe('E2E msw', () => {
     const response = await agent.get('/api/hello').expect(200);
 
     expect(response.text).toBe('hello from msw');
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      '[HPM] GET /api/hello -> http://localhost:45678/api/hello [200]',
+    );
   });
 
   it('forwards query string to the msw mocked target', async () => {
