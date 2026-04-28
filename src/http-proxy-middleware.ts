@@ -93,7 +93,8 @@ export class HttpProxyMiddleware<
      */
     const server = (req.socket as net.Socket & { server?: https.Server })?.server;
 
-    if (server && !this.serverOnCloseSubscribed) {
+    // subscribe to http 'close' event to close proxy socket on ws true
+    if (server && !this.serverOnCloseSubscribed && this.proxyOptions.ws === true) {
       server.on('close', () => {
         debug('server close signal received: closing proxy server');
         this.proxy.close(() => {
