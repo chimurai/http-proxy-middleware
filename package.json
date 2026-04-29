@@ -60,7 +60,7 @@
     "test": "vitest run",
     "test:types": "tsc --project tsconfig.test.json --noEmit",
     "coverage": "vitest run --coverage",
-    "prepare": "husky && patch-package",
+    "prepare": "husky",
     "prepack": "yarn clean && yarn test && yarn build",
     "spellcheck": "npx --yes cspell --show-context --show-suggestions '**/*.*'"
   },
@@ -98,16 +98,12 @@
     "nock": "14.0.13",
     "open": "11.0.0",
     "oxfmt": "0.46.0",
-    "patch-package": "8.0.1",
     "pkg-pr-new": "0.0.66",
     "supertest": "7.2.2",
     "typescript": "6.0.3",
     "typescript-eslint": "8.59.0",
     "vitest": "4.1.5",
     "ws": "8.20.0"
-  },
-  "resolutions": {
-    "patch-package/**/tmp": "^0.2.4"
   },
   "commitlint": {
     "extends": [
