@@ -2,12 +2,9 @@ import { createServer } from 'node:net';
 
 import express, { type Express, type RequestHandler } from 'express';
 
-export {
-  createProxyMiddleware,
-  createHonoProxyMiddleware,
-  responseInterceptor,
-  fixRequestBody,
-} from '../../src/index.js';
+export { createProxyMiddleware, responseInterceptor, fixRequestBody } from '../../src/index.js';
+
+export { createHonoProxyMiddleware } from '../../src/index-hono.js';
 
 export function createApp(...middlewares: RequestHandler[]): Express {
   const app = express();

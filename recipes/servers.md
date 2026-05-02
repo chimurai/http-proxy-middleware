@@ -141,7 +141,7 @@ export const config = {
 ```javascript
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
-import { createHonoProxyMiddleware } from 'http-proxy-middleware';
+import { createHonoProxyMiddleware } from 'http-proxy-middleware/hono';
 
 const app = new Hono();
 
