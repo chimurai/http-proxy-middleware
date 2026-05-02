@@ -20,6 +20,8 @@
 - chore(package.json): bump httpxy to ^0.5.1
 - fix(logger-plugin): support ipv6 host and handle undefined protocol/host
 - ci(publish.yml): pin github.triggering_actor
+- chore(package.json): node ^22.15.0 (#1218)
+- refactor(package): subpath 'http-proxy-middleware/hono' (#1220)
 
 ## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
 
