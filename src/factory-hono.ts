@@ -17,11 +17,13 @@ import { getLogger } from './logger.js';
  * ```ts
  * import { serve } from '@hono/node-server';
  * import { Hono } from 'hono';
- * import { createHonoProxyMiddleware } from 'http-proxy-middleware';
+ * import { createHonoProxyMiddleware } from 'http-proxy-middleware/hono';
  *
  * const app = new Hono();
  * app.use('/api', createHonoProxyMiddleware({ target: 'http://example.com', changeOrigin: true }));
  * serve(app);
+ *
+ * @since 4.0.0
  */
 export function createHonoProxyMiddleware(
   options: Options,

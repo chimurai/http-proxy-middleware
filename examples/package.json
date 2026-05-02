@@ -8,7 +8,8 @@
   "author": "chimurai",
   "type": "module",
   "imports": {
-    "#http-proxy-middleware": "./subpath.shim.js"
+    "#http-proxy-middleware": "./subpath.shim.js",
+    "#http-proxy-middleware/hono": "./subpath.hono.shim.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

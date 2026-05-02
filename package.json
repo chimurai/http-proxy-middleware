@@ -42,6 +42,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./hono": {
+      "types": "./dist/index-hono.d.ts",
+      "import": "./dist/index-hono.js",
+      "default": "./dist/index-hono.js"
     }
   },
   "publishConfig": {
