@@ -4,7 +4,7 @@ This example will create a basic proxy middleware for [virtual hosted sites](htt
 
 When `changeOrigin` is set to `true`; Host [HTTP header](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields) will be set to match target's host.
 
-The `changeOrigin` option is provided by [http-proxy](https://github.com/nodejitsu/node-http-proxy).
+The `changeOrigin` option is provided by [httpxy](https://github.com/unjs/httpxy).
 
 ```javascript
 import { createProxyMiddleware } from 'http-proxy-middleware';

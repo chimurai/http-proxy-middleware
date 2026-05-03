@@ -6,9 +6,9 @@ Some simple guidelines we'd like you to follow.
 
 ## Got Questions or Problems?
 
-If you have questions about http-proxy-middle usage; Please check if your question hasn't been already answered on [Stack Overflow](http://stackoverflow.com/search?q=%22http-proxy-middleware%22) or in our [issue archive](https://github.com/chimurai/http-proxy-middleware/issues?utf8=%E2%9C%93&q=is%3Aissue+), [examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples) and [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master/recipes).
+If you have questions about http-proxy-middleware usage; Please check if your question hasn't been already answered on [Stack Overflow](http://stackoverflow.com/search?q=%22http-proxy-middleware%22) or in our [issue archive](https://github.com/chimurai/http-proxy-middleware/issues?utf8=%E2%9C%93&q=is%3Aissue+), [examples](https://github.com/chimurai/http-proxy-middleware/tree/master/examples) and [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master/recipes).
 
-Since Nodejitsu's `http-proxy` is providing the actual proxy functionality; You might find your answer in their [documentation](https://github.com/nodejitsu/node-http-proxy), [issue archive](https://github.com/nodejitsu/node-http-proxy/issues?utf8=%E2%9C%93&q=is%3Aissue) or [examples](https://github.com/nodejitsu/node-http-proxy/tree/master/examples).
+`httpxy` is providing the actual proxy functionality; You might find your answer in their [documentation](https://github.com/unjs/httpxy), [issue archive](https://github.com/unjs/httpxy/issues?q=sort%3Aupdated-desc%20is%3Aissue) or have a look in the older [http-proxy examples](https://github.com/nodejitsu/node-http-proxy/tree/master/examples).
 
 ## Report Issues
 

@@ -5,7 +5,7 @@ import { getFunctionName } from '../../utils/function.js';
 const debug = Debug.extend('proxy-events-plugin');
 
 /**
- * Implements option.on object to subscribe to http-proxy events.
+ * Implements option.on object to subscribe to `httpxy` events.
  *
  * @example
  * ```js

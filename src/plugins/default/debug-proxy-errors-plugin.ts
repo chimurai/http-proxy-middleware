@@ -4,7 +4,7 @@ import type { Plugin } from '../../types.js';
 const debug = Debug.extend('debug-proxy-errors-plugin');
 
 /**
- * Subscribe to {@link https://www.npmjs.com/package/http-proxy#listening-for-proxy-events http-proxy error events} to prevent server from crashing.
+ * Subscribe to {@link https://github.com/unjs/httpxy#events `httpxy` error events} to prevent server from crashing.
  * Errors are logged with {@link https://www.npmjs.com/package/debug debug} library.
  */
 export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
@@ -13,7 +13,7 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
    * Prevent server from crashing when http-proxy errors (uncaught errors)
    */
   proxyServer.on('error', (error, req, res, target) => {
-    debug(`http-proxy error event: \n%O`, error);
+    debug(`httpxy error event: \n%O`, error);
   });
 
   proxyServer.on('proxyReq', (proxyReq, req, socket) => {
@@ -61,6 +61,6 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
 
   // https://github.com/webpack/webpack-dev-server/issues/1642#issuecomment-1103136590
   proxyServer.on('econnreset', (error, req, res, target) => {
-    debug(`http-proxy econnreset event: \n%O`, error);
+    debug(`httpxy econnreset event: \n%O`, error);
   });
 };

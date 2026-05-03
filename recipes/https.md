@@ -2,7 +2,7 @@
 
 How to proxy requests to various types of HTTPS servers.
 
-All options are provided by [http-proxy](https://github.com/nodejitsu/node-http-proxy).
+All options are provided by [httpxy](https://github.com/unjs/httpxy).
 
 ## Basic proxy to an HTTPS server
 

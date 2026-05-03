@@ -45,7 +45,7 @@ body:
     attributes:
       render: typescript
       label: 'What http-proxy-middleware configuration are you using?'
-      description: 'Paste your http-proxy configuration here...'
+      description: 'Paste your http-proxy-middleware configuration here...'
     validations:
       required: true
   - type: textarea
@@ -53,10 +53,10 @@ body:
       render: shell
       label: 'What OS/version and node/version are you seeing the problem?'
       description: 'Paste the output of `npx envinfo`'
-      placeholder: 'ie. MacOS 11.4 and Node 16.2.0'
+      placeholder: 'ie. MacOS 26.3.1 and Node 24.15.0'
     validations:
       required: true
   - type: textarea
     attributes:
       label: 'Additional context (optional)'
-      description: 'Please add any addition information that might help the investigation'
+      description: 'Please add any additional information that might help the investigation'

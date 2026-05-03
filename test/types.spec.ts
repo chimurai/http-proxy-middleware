@@ -57,8 +57,8 @@ describe('http-proxy-middleware TypeScript Types', () => {
     });
   });
 
-  describe('http-proxy options', () => {
-    it('should extend from http-proxy options', () => {
+  describe('`httpxy` options', () => {
+    it('should extend from `httpxy` options', () => {
       options = {
         target: 'http://example',
         ws: true,
