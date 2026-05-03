@@ -7,6 +7,7 @@ import {
   loggerPlugin,
   proxyEventsPlugin,
 } from '../../src/index.js';
+import { definePlugin } from '../../src/plugins/define-plugin.js';
 import type { Plugin } from '../../src/types.js';
 
 describe('getPlugins', () => {
@@ -16,14 +17,12 @@ describe('getPlugins', () => {
     plugins = getPlugins({});
 
     expect(plugins).toHaveLength(4);
-    expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      [
-        "debugProxyErrorsPlugin",
-        "proxyEventsPlugin",
-        "loggerPlugin",
-        "errorResponsePlugin",
-      ]
-    `);
+    expect(plugins).toStrictEqual([
+      debugProxyErrorsPlugin,
+      proxyEventsPlugin,
+      loggerPlugin,
+      errorResponsePlugin,
+    ]);
   });
 
   it('should return no plugins when ejectPlugins is configured in option', () => {
@@ -35,40 +34,34 @@ describe('getPlugins', () => {
   });
 
   it('should return user plugins with default plugins when user plugins are provided', () => {
-    const myPlugin: Plugin = () => {
+    const myPlugin: Plugin = definePlugin(() => {
       /* noop */
-    };
+    });
     plugins = getPlugins({
       plugins: [myPlugin],
     });
 
     expect(plugins).toHaveLength(5);
-    expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      [
-        "debugProxyErrorsPlugin",
-        "proxyEventsPlugin",
-        "loggerPlugin",
-        "errorResponsePlugin",
-        "myPlugin",
-      ]
-    `);
+    expect(plugins).toStrictEqual([
+      debugProxyErrorsPlugin,
+      proxyEventsPlugin,
+      loggerPlugin,
+      errorResponsePlugin,
+      myPlugin,
+    ]);
   });
 
   it('should only return user plugins when user plugins are provided with ejectPlugins option', () => {
-    const myPlugin: Plugin = () => {
+    const myPlugin: Plugin = definePlugin(() => {
       /* noop */
-    };
+    });
     plugins = getPlugins({
       ejectPlugins: true,
       plugins: [myPlugin],
     });
 
     expect(plugins).toHaveLength(1);
-    expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      [
-        "myPlugin",
-      ]
-    `);
+    expect(plugins).toStrictEqual([myPlugin]);
   });
 
   it('should return manually added default plugins in different order after using ejectPlugins', () => {
@@ -78,14 +71,12 @@ describe('getPlugins', () => {
     });
 
     expect(plugins).toHaveLength(4);
-    expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      [
-        "debugProxyErrorsPlugin",
-        "errorResponsePlugin",
-        "loggerPlugin",
-        "proxyEventsPlugin",
-      ]
-    `);
+    expect(plugins).toStrictEqual([
+      debugProxyErrorsPlugin,
+      errorResponsePlugin,
+      loggerPlugin,
+      proxyEventsPlugin,
+    ]);
   });
 
   it('should not configure errorResponsePlugin when user specifies their own error handler', () => {
@@ -99,12 +90,6 @@ describe('getPlugins', () => {
     });
 
     expect(plugins).toHaveLength(3);
-    expect(plugins.map((plugin) => plugin.name)).toMatchInlineSnapshot(`
-      [
-        "debugProxyErrorsPlugin",
-        "proxyEventsPlugin",
-        "loggerPlugin",
-      ]
-    `);
+    expect(plugins).toStrictEqual([debugProxyErrorsPlugin, proxyEventsPlugin, loggerPlugin]);
   });
 });

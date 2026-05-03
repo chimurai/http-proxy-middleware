@@ -5,6 +5,7 @@ import { getLogger } from '../../logger.js';
 import type { Plugin } from '../../types.js';
 import { createUrl } from '../../utils/create-url.js';
 import { getPort } from '../../utils/logger-plugin.js';
+import { definePlugin } from '../define-plugin.js';
 
 type ExpressRequest = {
   /** Express req.baseUrl */
@@ -19,7 +20,7 @@ type BrowserSyncRequest = {
 /** Request Types from different server libs */
 type FrameworkRequest = IncomingMessage & ExpressRequest & BrowserSyncRequest;
 
-export const loggerPlugin: Plugin = (proxyServer, options) => {
+export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer, options) => {
   const logger = getLogger(options);
 
   proxyServer.on('error', (err, req, res, target?) => {
@@ -40,7 +41,7 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
    * [HPM] GET /users/ -> http://jsonplaceholder.typicode.com/users/ [304]
    * ```
    */
-  proxyServer.on('proxyRes', (proxyRes: any, req: FrameworkRequest, res) => {
+  proxyServer.on('proxyRes', (proxyRes: any, req, res) => {
     // BrowserSync uses req.originalUrl
     // Next.js doesn't have req.baseUrl
     const originalUrl = req.originalUrl ?? `${req.baseUrl || ''}${req.url}`;
@@ -80,4 +81,4 @@ export const loggerPlugin: Plugin = (proxyServer, options) => {
   proxyServer.on('close', (req, proxySocket, proxyHead) => {
     logger.info('[HPM] Client disconnected: %o', proxySocket.address());
   });
-};
+});

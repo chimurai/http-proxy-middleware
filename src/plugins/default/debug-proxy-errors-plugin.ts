@@ -1,5 +1,6 @@
 import { Debug } from '../../debug.js';
 import type { Plugin } from '../../types.js';
+import { definePlugin } from '../define-plugin.js';
 
 const debug = Debug.extend('debug-proxy-errors-plugin');
 
@@ -7,7 +8,7 @@ const debug = Debug.extend('debug-proxy-errors-plugin');
  * Subscribe to {@link https://github.com/unjs/httpxy#events `httpxy` error events} to prevent server from crashing.
  * Errors are logged with {@link https://www.npmjs.com/package/debug debug} library.
  */
-export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
+export const debugProxyErrorsPlugin: Plugin = definePlugin((proxyServer, options) => {
   /**
    * The old `http-proxy` doesn't handle any errors by default (https://github.com/http-party/node-http-proxy#listening-for-proxy-events)
    * > We do not do any error handling of messages passed between client and proxy, and messages passed between proxy and target, so it is recommended that you listen on errors and handle them.
@@ -64,4 +65,4 @@ export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
   proxyServer.on('econnreset', (error, req, res, target) => {
     debug(`httpxy econnreset event: \n%O`, error);
   });
-};
+});

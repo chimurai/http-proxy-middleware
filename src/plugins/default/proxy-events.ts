@@ -1,6 +1,7 @@
 import { Debug } from '../../debug.js';
 import type { Plugin } from '../../types.js';
 import { getFunctionName } from '../../utils/function.js';
+import { definePlugin } from '../define-plugin.js';
 
 const debug = Debug.extend('proxy-events-plugin');
 
@@ -24,7 +25,7 @@ const debug = Debug.extend('proxy-events-plugin');
  * });
  * ```
  */
-export const proxyEventsPlugin: Plugin = (proxyServer, options) => {
+export const proxyEventsPlugin: Plugin = definePlugin((proxyServer, options) => {
   if (!options.on) {
     return;
   }
@@ -42,4 +43,4 @@ export const proxyEventsPlugin: Plugin = (proxyServer, options) => {
       proxyServer.on<keyof typeof options.on>(eventName, handler as (...args: unknown[]) => void);
     }
   }
-};
+});

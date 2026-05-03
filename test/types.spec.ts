@@ -5,6 +5,7 @@ import express from 'express';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
+  definePlugin,
   fixRequestBody,
   createProxyMiddleware as middleware,
   responseInterceptor,
@@ -440,6 +441,48 @@ describe('http-proxy-middleware TypeScript Types', () => {
       );
 
       expect(app).toBeDefined();
+    });
+  });
+
+  describe('definePlugin()', () => {
+    it('should define plugin with correct types', () => {
+      const myPlugin = definePlugin((proxyServer, options) => {
+        proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
+          req.url;
+          res.statusCode;
+
+          // @ts-expect-error: should error when request is typed as `any`
+          req.unknownProperty;
+          // @ts-expect-error: should error when response is typed as `any`
+          res.unknownProperty;
+        });
+      });
+
+      expect(myPlugin).toBeDefined();
+    });
+
+    it('should define plugin with custom req & res types', () => {
+      interface MyRequest extends http.IncomingMessage {
+        myRequestParams: { [key: string]: string };
+      }
+
+      interface MyResponse extends http.ServerResponse {
+        myResponseParams: { [key: string]: string };
+      }
+
+      const myPlugin = definePlugin<MyRequest, MyResponse>((proxyServer, options) => {
+        proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
+          req.myRequestParams;
+          res.myResponseParams;
+
+          // @ts-expect-error: should error when request is typed as `any`
+          req.unknownProperty;
+          // @ts-expect-error: should error when response is typed as `any`
+          res.unknownProperty;
+        });
+      });
+
+      expect(myPlugin).toBeDefined();
     });
   });
 });
