@@ -16,7 +16,7 @@ const onError = function (err, req, res) {
 
 const options = {
   target: 'http://localhost:3000',
-  on: { 'error', onError }
+  on: { error: onError },
 };
 
 const apiProxy = createProxyMiddleware(options);

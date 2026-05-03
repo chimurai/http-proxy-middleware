@@ -17,14 +17,13 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const router = express.Router();
 
-const proxy_filter = function (path, req) {
-  return path.match('^/docs') && (req.method === 'GET' || req.method === 'POST');
-};
-
 const proxy_options = {
   target: 'http://localhost:8080',
   pathRewrite: {
     '^/docs': '/java/rep/server1', // Host path & target path conversion
+  },
+  pathFilter: function (path, req) {
+    return path.match('^/docs') && (req.method === 'GET' || req.method === 'POST');
   },
   on: {
     error(err, req, res) {
@@ -69,7 +68,7 @@ const proxy_options = {
 };
 
 // Proxy configuration
-const proxy = createProxyMiddleware(proxy_filter, proxy_options);
+const proxy = createProxyMiddleware(proxy_options);
 
 /* GET home page. */
 router.get('/', function (req, res, next) {

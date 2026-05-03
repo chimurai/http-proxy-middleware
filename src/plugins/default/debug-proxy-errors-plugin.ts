@@ -9,8 +9,9 @@ const debug = Debug.extend('debug-proxy-errors-plugin');
  */
 export const debugProxyErrorsPlugin: Plugin = (proxyServer): void => {
   /**
-   * http-proxy doesn't handle any errors by default (https://github.com/http-party/node-http-proxy#listening-for-proxy-events)
-   * Prevent server from crashing when http-proxy errors (uncaught errors)
+   * The old `http-proxy` doesn't handle any errors by default (https://github.com/http-party/node-http-proxy#listening-for-proxy-events)
+   * > We do not do any error handling of messages passed between client and proxy, and messages passed between proxy and target, so it is recommended that you listen on errors and handle them.
+   * Subscribing to error event to prevent server from crashing
    */
   proxyServer.on('error', (error, req, res, target) => {
     debug(`httpxy error event: \n%O`, error);
