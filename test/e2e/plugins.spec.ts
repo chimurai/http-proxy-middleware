@@ -18,7 +18,7 @@ describe('E2E Plugins', () => {
     await mockTargetServer.stop();
   });
 
-  it('should register a plugin and access the http-proxy object', async () => {
+  it('should register a plugin and access the `httpxy` object', async () => {
     let proxyReqUrl: string | undefined;
     let responseStatusCode: number | undefined;
 

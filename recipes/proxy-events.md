@@ -1,10 +1,10 @@
 # Proxy Events
 
-Subscribe to `http-proxy` events: `error`, `proxyReq`, `proxyReqWs`, `proxyRes`, `open`, `close`, `start`, `end`, `econnreset`.
+Subscribe to `httpxy` events: `error`, `proxyReq`, `proxyReqWs`, `proxyRes`, `open`, `close`, `start`, `end`, `econnreset`.
 
 ## on.error
 
-Subscribe to http-proxy's [error event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
+Subscribe to httpxy's [error event](https://github.com/unjs/httpxy#events).
 
 ```javascript
 import { createProxyMiddleware } from 'http-proxy-middleware';
@@ -24,7 +24,7 @@ const apiProxy = createProxyMiddleware(options);
 
 ## on.proxyReq
 
-Subscribe to http-proxy's [proxyReq event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
+Subscribe to httpxy's [proxyReq event](https://github.com/unjs/httpxy#events).
 
 ```javascript
 import { createProxyMiddleware } from 'http-proxy-middleware';
@@ -44,7 +44,7 @@ const apiProxy = createProxyMiddleware(options);
 
 ## on.proxyReqWs
 
-Subscribe to http-proxy's [proxyReqWs event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
+Subscribe to httpxy's [proxyReqWs event](https://github.com/unjs/httpxy#events).
 
 ```javascript
 import { createProxyMiddleware } from 'http-proxy-middleware';
@@ -64,7 +64,7 @@ const apiProxy = createProxyMiddleware(options);
 
 ## on.proxyRes
 
-Subscribe to http-proxy's [proxyRes event](https://www.npmjs.com/package/http-proxy#listening-for-proxy-events).
+Subscribe to httpxy's [proxyRes event](https://github.com/unjs/httpxy#events).
 
 ```javascript
 import { createProxyMiddleware } from 'http-proxy-middleware';

@@ -90,7 +90,7 @@ export interface Options<
   pathRewrite?: PathRewriteConfig<TReq>;
 
   /**
-   * Access the internal http-proxy server instance to customize behavior
+   * Access the internal `httpxy` server instance to customize behavior
    *
    * @example
    * ```js
@@ -115,7 +115,7 @@ export interface Options<
    */
   ejectPlugins?: boolean;
   /**
-   * Listen to http-proxy events
+   * Listen to `httpxy` events
    * @see {@link OnProxyEvent} for available events
    * @example
    * ```js

@@ -335,7 +335,7 @@ createProxyMiddleware({
 });
 ```
 
-- **option.on.error**: function, subscribe to http-proxy's `error` event for custom error handling.
+- **option.on.error**: function, subscribe to httpxy's `error` event for custom error handling.
 
   ```javascript
   function onError(err, req, res, target) {
@@ -346,7 +346,7 @@ createProxyMiddleware({
   }
   ```
 
-- **option.on.proxyRes**: function, subscribe to http-proxy's `proxyRes` event.
+- **option.on.proxyRes**: function, subscribe to httpxy's `proxyRes` event.
 
   ```javascript
   function onProxyRes(proxyRes, req, res) {
