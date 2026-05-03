@@ -4,6 +4,7 @@ import type { Socket } from 'node:net';
 import { getStatusCode } from '../../status-code.js';
 import type { Plugin } from '../../types.js';
 import { sanitize } from '../../utils/sanitize.js';
+import { definePlugin } from '../define-plugin.js';
 
 function isResponseLike(obj: any): obj is http.ServerResponse {
   return obj && typeof obj.writeHead === 'function';
@@ -13,7 +14,7 @@ function isSocketLike(obj: any): obj is Socket {
   return obj && typeof obj.write === 'function' && !('writeHead' in obj);
 }
 
-export const errorResponsePlugin: Plugin = (proxyServer, options) => {
+export const errorResponsePlugin: Plugin = definePlugin((proxyServer, options) => {
   proxyServer.on('error', (err, req, res, target?) => {
     // Re-throw error. Not recoverable since req & res are empty.
     if (!req || !res) {
@@ -32,4 +33,4 @@ export const errorResponsePlugin: Plugin = (proxyServer, options) => {
       res.destroy();
     }
   });
-};
+});
