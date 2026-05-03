@@ -542,7 +542,7 @@ const proxy = createProxyMiddleware({
 });
 ```
 
-Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md#readme) for more examples.
+Check out [interception recipes](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/response-interceptor.md) for more examples.
 
 ## Node.js 17+: ECONNREFUSED issue with IPv6 and localhost ([#705](https://github.com/chimurai/http-proxy-middleware/issues/705))
 

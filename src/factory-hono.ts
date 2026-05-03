@@ -7,13 +7,13 @@ import { getLogger } from './logger.js';
 /**
  * Creates a Hono middleware that proxies requests using http-proxy-middleware.
  *
- * `@remarks`
+ * @remarks
  * This middleware requires Hono to be running on Node.js via `@hono/node-server`.
  * It uses `c.env.incoming` and `c.env.outgoing` which are only available with `HttpBindings`.
  *
- * `@experimental` This API is experimental and may change without a major version bump.
+ * @experimental This API is experimental and may change without a major version bump.
  *
- * `@example`
+ * @example
  * ```ts
  * import { serve } from '@hono/node-server';
  * import { Hono } from 'hono';
@@ -22,6 +22,7 @@ import { getLogger } from './logger.js';
  * const app = new Hono();
  * app.use('/api', createHonoProxyMiddleware({ target: 'http://example.com', changeOrigin: true }));
  * serve(app);
+ * ```
  *
  * @since 4.0.0
  */

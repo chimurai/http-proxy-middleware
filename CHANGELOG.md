@@ -61,7 +61,7 @@
 This release contains some breaking changes.
 
 Please read the V3 discussion <https://github.com/chimurai/http-proxy-middleware/discussions/768>
-or follow the [MIGRATION.md](https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION.md) guide.
+or follow the [MIGRATION_V3.md](https://github.com/chimurai/http-proxy-middleware/blob/master/MIGRATION_V3.md) guide.
 
 - feat(typescript): type improvements ([#882](https://github.com/chimurai/http-proxy-middleware/pull/882))
 - chore(deps): update micromatch to 4.0.5
@@ -154,7 +154,7 @@ or follow the [MIGRATION.md](https://github.com/chimurai/http-proxy-middleware/b
 
 - chore(deps): lodash 4.17.20 ([#475](https://github.com/chimurai/http-proxy-middleware/pull/475))
 
-## [v1.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.6)
+## [v1.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v1.0.5)
 
 - chore(deps): lodash 4.17.19 ([#454](https://github.com/chimurai/http-proxy-middleware/pull/454))
 
