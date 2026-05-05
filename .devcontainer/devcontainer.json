@@ -3,7 +3,7 @@
 {
   "name": "Node.js",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24",
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
@@ -13,7 +13,7 @@
     // Configure properties specific to VS Code.
     "vscode": {
       "settings": {
-        "workbench.colorTheme": "Default Dark+",
+        "workbench.colorTheme": "Dark+",
         "workbench.iconTheme": "material-icon-theme"
       },
       "extensions": [

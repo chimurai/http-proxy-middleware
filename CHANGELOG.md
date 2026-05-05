@@ -22,6 +22,7 @@
 - ci(publish.yml): pin github.triggering_actor
 - chore(package.json): node ^22.15.0 (#1218)
 - refactor(package): subpath 'http-proxy-middleware/hono' (#1220)
+- chore: node 26 support
 
 ## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
 
