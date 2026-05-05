@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## [v4.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.0.0)
 
 - fix(types): fix Logger type
 - fix(error-response-plugin): sanitize input
