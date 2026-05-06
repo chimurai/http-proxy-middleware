@@ -31,6 +31,15 @@ describe('responseInterceptor()', () => {
         'content-type': 'image/png',
       });
 
+      await targetServer
+        .forGet('/response-headers')
+        .withExactQuery('?Trailer=X-Stream-Error&Host=localhost')
+        .thenReply(200, '', {
+          'transfer-encoding': 'chunked',
+          trailer: 'X-Stream-Error',
+          host: 'localhost',
+        });
+
       agent = request(
         createApp(
           createProxyMiddleware({
@@ -64,6 +73,13 @@ describe('responseInterceptor()', () => {
     it('should support double bytes characters for /json', async () => {
       const response = await agent.get(`/json`).expect(200);
       expect(response.body.favorite).toEqual('叉燒包');
+    });
+
+    it('should not contains disallow headers to trailer in response headers', async () => {
+      const response = await agent
+        .get('/response-headers?Trailer=X-Stream-Error&Host=localhost')
+        .expect(200);
+      expect(response.header['host']).toBeUndefined();
     });
   });
 
