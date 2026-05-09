@@ -3,7 +3,8 @@ import { getLocal } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import type { Options, Plugin } from '../../src/types.js';
+import { definePlugin } from '../../src/index.js';
+import type { Options, Plugin } from '../../src/index.js';
 import { createApp, createProxyMiddleware } from './test-kit.js';
 
 describe('E2E Plugins', () => {
@@ -24,10 +25,10 @@ describe('E2E Plugins', () => {
 
     mockTargetServer.forGet('/users/1').thenReply(200, '{"userName":"John"}');
 
-    const simplePlugin: Plugin = (proxy) => {
+    const simplePlugin: Plugin = definePlugin((proxy) => {
       proxy.on('proxyReq', (proxyReq, req, res, options) => (proxyReqUrl = req.url));
       proxy.on('proxyRes', (proxyRes, req, res) => (responseStatusCode = proxyRes.statusCode));
-    };
+    });
 
     const config: Options = {
       target: mockTargetServer.url,

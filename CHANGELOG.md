@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- feat(definePlugin): helper function to create plugins
+
 ## [v4.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.0.0)
 
 - fix(types): fix Logger type
