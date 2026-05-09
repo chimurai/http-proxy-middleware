@@ -63,6 +63,7 @@ _All_ `httpxy` [options](https://github.com/unjs/httpxy#options) can be used, al
   - [`router` (object/function)](#router-objectfunction)
   - [`plugins` (Array)](#plugins-array)
   - [`ejectPlugins` (boolean) default: `false`](#ejectplugins-boolean-default-false)
+- [`definePlugin` helper](#defineplugin-helper)
   - [`logger` (Object)](#logger-object)
 - [`httpxy` events](#httpxy-events)
 - [`httpxy` options](#httpxy-options)
@@ -281,12 +282,9 @@ NOTE: register your own error handlers to prevent server from crashing.
 ```js
 // eject default plugins and manually add them back
 import {
-  debugProxyErrorsPlugin,
-  // log proxy events to a logger (ie. console)
-  errorResponsePlugin,
-  // subscribe to proxy errors to prevent server from crashing
-  loggerPlugin,
-  // return 5xx response on proxy error
+  debugProxyErrorsPlugin, // subscribe to proxy errors to prevent server from crashing
+  errorResponsePlugin, // return 5xx response on proxy error
+  loggerPlugin, // log proxy events to a logger (ie. console)
   proxyEventsPlugin, // implements the "on:" option
 } from 'http-proxy-middleware';
 
@@ -295,6 +293,24 @@ createProxyMiddleware({
   changeOrigin: true,
   ejectPlugins: true,
   plugins: [debugProxyErrorsPlugin, loggerPlugin, errorResponsePlugin, proxyEventsPlugin],
+});
+```
+
+## `definePlugin` helper
+
+Create your own `http-proxy-middleware` plugin.
+
+(Default plugins are created with `definePlugin`)
+
+```ts
+const myPlugin = definePlugin((proxyServer, options) => {
+  // plugin implementation
+});
+
+// use configure and use plugin
+createProxyMiddleware({
+  target: `http://example.org`,
+  plugins: [myPlugin],
 });
 ```
 
