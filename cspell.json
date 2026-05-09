@@ -47,11 +47,12 @@
     "proxying",
     "rawbody",
     "restream",
+    "selfsigned",
     "snyk",
     "streamify",
-    "trivago",
     "tseslint",
     "typicode",
+    "unstub",
     "vhosted",
     "websockets",
     "xfwd"
