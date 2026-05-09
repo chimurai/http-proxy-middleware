@@ -303,6 +303,8 @@ Create your own `http-proxy-middleware` plugin.
 (Default plugins are created with `definePlugin`)
 
 ```ts
+import { createProxyMiddleware, definePlugin } from 'http-proxy-middleware';
+
 const myPlugin = definePlugin((proxyServer, options) => {
   // plugin implementation
 });
