@@ -23,6 +23,9 @@ export type Filter<TReq extends http.IncomingMessage = http.IncomingMessage> =
   | string[]
   | ((pathname: string, req: TReq) => boolean);
 
+/**
+ * @see {@link https://github.com/chimurai/http-proxy-middleware/tree/master#defineplugin-helper `definePlugin()`} to define a http-proxy-middleware plugin.
+ */
 export interface Plugin<
   TReq extends http.IncomingMessage = http.IncomingMessage,
   TRes extends http.ServerResponse = http.ServerResponse,
