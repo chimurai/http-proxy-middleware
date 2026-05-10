@@ -95,7 +95,7 @@
     "express": "5.2.1",
     "get-port": "7.2.0",
     "globals": "17.5.0",
-    "hono": "4.12.14",
+    "hono": "4.12.18",
     "husky": "9.1.7",
     "lint-staged": "16.4.0",
     "mockttp": "4.3.1",
