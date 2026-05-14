@@ -26,7 +26,7 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
   proxyServer.on('error', (err, req, res, target?) => {
     const hostname = req?.headers?.host;
     const requestHref = `${hostname}${req?.url}`;
-    const targetHref = `${(target as unknown as any)?.href}`; // target is undefined when websocket errors
+    const targetHref = `${(target as unknown as URL)?.href}`; // target is undefined when websocket errors
 
     const errorMessage = '[HPM] Error occurred while proxying request %s to %s [%s] (%s)';
     const errReference = 'https://nodejs.org/api/errors.html#errors_common_system_errors'; // link to Node Common Systems Errors page
