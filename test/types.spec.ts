@@ -52,6 +52,24 @@ describe('http-proxy-middleware TypeScript Types', () => {
       expect(proxy).toBeDefined();
     });
 
+    it('should create proxy with truthy filter', () => {
+      const proxy = middleware({
+        ...options,
+        pathFilter: (path, req) => path.match('^/api') && req.method === 'GET',
+      });
+      expect(proxy).toBeDefined();
+    });
+
+    it('should create proxy with truthy regex match filter', () => {
+      const proxy = middleware({ ...options, pathFilter: (path, req) => path.match('^/api') });
+      expect(proxy).toBeDefined();
+    });
+
+    it('should create proxy with truthy regex test filter', () => {
+      const proxy = middleware({ ...options, pathFilter: (path, req) => /^\/api/.test(path) });
+      expect(proxy).toBeDefined();
+    });
+
     it('should create proxy with manual websocket upgrade function', () => {
       const proxy = middleware({ ...options, pathFilter: (path, req) => true });
       expect(proxy.upgrade).toBeDefined();

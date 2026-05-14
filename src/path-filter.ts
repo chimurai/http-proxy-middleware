@@ -36,7 +36,7 @@ export function matchPathFilter<TReq extends http.IncomingMessage = http.Incomin
   // custom matching
   if (typeof pathFilter === 'function') {
     const pathname = getUrlPathName(uri) as string;
-    return pathFilter(pathname, req as TReq);
+    return Boolean(pathFilter(pathname, req as TReq));
   }
 
   throw new Error(ERRORS.ERR_CONTEXT_MATCHER_GENERIC);
