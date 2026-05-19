@@ -3,6 +3,7 @@
 ## next
 
 - feat(definePlugin): helper function to create plugins
+- chore(package.json): update to httpxy@0.5.2
 
 ## [v4.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.0.0)
 
