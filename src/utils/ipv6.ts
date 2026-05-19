@@ -36,8 +36,14 @@ function normalizeIPv6ProxyTarget(target: Options['target'], optionName: 'target
   if (targetUrl && isBracketedIPv6Hostname(targetUrl.hostname)) {
     debug('normalized IPv6 "%s" %s', optionName, target);
 
+    const auth =
+      targetUrl.username || targetUrl.password
+        ? `${targetUrl.username}:${targetUrl.password}`
+        : undefined;
+
     return {
       hostname: stripBrackets(targetUrl.hostname),
+      auth,
       pathname: targetUrl.pathname,
       port: targetUrl.port,
       protocol: targetUrl.protocol,
