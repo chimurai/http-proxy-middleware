@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "debug": "^4.4.3",
-    "httpxy": "^0.5.2",
+    "httpxy": "^0.5.3",
     "is-glob": "^4.0.3",
     "is-plain-obj": "^4.1.0",
     "micromatch": "^4.0.8"
