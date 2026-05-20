@@ -47,6 +47,22 @@ describe('normalizeIPv6Targets()', () => {
     });
   });
 
+  it('should normalize unspecified bracketed IPv6 destination to loopback', () => {
+    const options: Options = {
+      target: 'http://[::]:8888/api',
+    };
+
+    normalizeIPv6LiteralTargets(options);
+
+    expect(options.target).toEqual({
+      hostname: '::1',
+      pathname: '/api',
+      port: '8888',
+      protocol: 'http:',
+      search: '',
+    });
+  });
+
   it('should preserve credentials when normalizing bracketed IPv6 target string', () => {
     const options: Options = {
       target: 'http://user:pass@[::1]:8888/api',
