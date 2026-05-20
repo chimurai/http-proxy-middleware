@@ -157,7 +157,7 @@ describe.runIf(await isIPv6Available())('ipv6 integration', () => {
     let receivedPath: string | undefined;
     let authorizationHeader: string | undefined;
 
-    await targetServer.forGet('/api/').thenCallback((req) => {
+    await targetServer.forGet('/api').thenCallback((req) => {
       receivedPath = req.path;
       const authHeader = req.headers.authorization;
       authorizationHeader = Array.isArray(authHeader) ? authHeader[0] : authHeader;
@@ -176,7 +176,7 @@ describe.runIf(await isIPv6Available())('ipv6 integration', () => {
     const app = createApp(proxy);
     await request(app).get('/').expect(200);
 
-    expect(receivedPath).toBe('/api/');
+    expect(receivedPath).toBe('/api');
     expect(authorizationHeader).toBe('Basic dXNlcjpwYXNz'); // cspell:disable-line
   });
 });
