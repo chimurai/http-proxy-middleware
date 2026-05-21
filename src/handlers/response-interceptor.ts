@@ -47,15 +47,24 @@ export function responseInterceptor<
   ): Promise<void> {
     debug('intercept proxy response');
     const originalProxyRes = proxyRes;
-    let buffer = Buffer.from('', 'utf8');
+    const chunks: Buffer[] = [];
+    let bufferLength = 0;
 
     // decompress proxy response
     const _proxyRes = decompress(proxyRes, proxyRes.headers['content-encoding']);
 
-    // concat data stream
-    _proxyRes.on('data', (chunk) => (buffer = Buffer.concat([buffer, chunk])));
+    // collect data chunks and concatenate once on end to avoid repeated full-buffer copies
+    _proxyRes.on('data', (chunk) => {
+      const chunkBuffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      chunks.push(chunkBuffer);
+      bufferLength += chunkBuffer.length; // precalculate Buffer length for slightly better performance on Buffer.concat()
+    });
 
     _proxyRes.on('end', async () => {
+      const buffer = Buffer.concat(chunks, bufferLength);
+      chunks.length = 0; // clear chunks array
+      bufferLength = 0;
+
       // copy original headers
       copyHeaders(proxyRes, res);
 
@@ -64,8 +73,8 @@ export function responseInterceptor<
       const interceptedBuffer = Buffer.from(await interceptor(buffer, originalProxyRes, req, res));
 
       // set correct content-length (with double byte character support)
-      debug('set content-length: %s', Buffer.byteLength(interceptedBuffer, 'utf8'));
-      res.setHeader('content-length', Buffer.byteLength(interceptedBuffer, 'utf8'));
+      debug('set content-length: %s', Buffer.byteLength(interceptedBuffer));
+      res.setHeader('content-length', Buffer.byteLength(interceptedBuffer));
 
       debug('write intercepted response');
       res.write(interceptedBuffer);
@@ -73,6 +82,8 @@ export function responseInterceptor<
     });
 
     _proxyRes.on('error', (error) => {
+      chunks.length = 0; // clear chunks array
+      bufferLength = 0;
       res.end(`Error fetching proxied request: ${error.message}`);
     });
   };
