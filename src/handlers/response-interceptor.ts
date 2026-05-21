@@ -47,15 +47,19 @@ export function responseInterceptor<
   ): Promise<void> {
     debug('intercept proxy response');
     const originalProxyRes = proxyRes;
-    let buffer = Buffer.from('', 'utf8');
+    let buffers: Buffer[] = [];
 
     // decompress proxy response
     const _proxyRes = decompress(proxyRes, proxyRes.headers['content-encoding']);
 
     // concat data stream
-    _proxyRes.on('data', (chunk) => (buffer = Buffer.concat([buffer, chunk])));
+    _proxyRes.on('data', (chunk) => buffers.push(chunk));
 
     _proxyRes.on('end', async () => {
+      // Concatenate all buffers into one and free up temp buffers
+      const buffer = buffers.length ? Buffer.concat(buffers) : Buffer.from('', 'utf8');
+      buffers = [];
+
       // copy original headers
       copyHeaders(proxyRes, res);
 
@@ -73,6 +77,7 @@ export function responseInterceptor<
     });
 
     _proxyRes.on('error', (error) => {
+      buffers = [];
       res.end(`Error fetching proxied request: ${error.message}`);
     });
   };
