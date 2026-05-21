@@ -6,6 +6,7 @@
 - chore(package.json): update to httpxy@0.5.3
 - fix(ipv6): preserve credentials when normalizing bracketed IPv6 target string
 - fix(ipv6): unspecified IPv6 target hostname (::)"
+- fix(response-interceptor): reduce responseInterceptor buffer churn
 
 ## [v4.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.0.0)
 
