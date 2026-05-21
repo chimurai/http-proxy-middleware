@@ -1,7 +1,7 @@
 import { createSecureServer, type Http2SecureServer } from 'node:http2';
 
 import type { Mockttp } from 'mockttp';
-import { generate } from 'selfsigned';
+import { generateCACertificate } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -24,7 +24,7 @@ describe('E2E http2', () => {
     }
 
     beforeEach(async () => {
-      const cert = await generate([{ name: 'commonName', value: 'localhost' }]);
+      const cert = await generateCACertificate({ bits: 2048 });
       proxyServerCertPem = cert.cert;
 
       // Keep this dynamic to avoid a Vitest module-load ordering issue that breaks cert generation.
@@ -41,7 +41,7 @@ describe('E2E http2', () => {
 
       http2ProxyServer = createSecureServer(
         {
-          key: cert.private,
+          key: cert.key,
           cert: cert.cert,
           // Express + supertest use the HTTP/1.1 request/response API in this e2e flow.
           allowHTTP1: true,
@@ -86,7 +86,7 @@ describe('E2E http2', () => {
     }
 
     beforeEach(async () => {
-      const cert = await generate([{ name: 'commonName', value: 'localhost' }]);
+      const cert = await generateCACertificate({ bits: 2048 });
       proxyServerCertPem = cert.cert;
 
       // Keep this dynamic to avoid a Vitest module-load ordering issue that breaks cert generation.
@@ -103,7 +103,7 @@ describe('E2E http2', () => {
 
       http2ProxyServer = createSecureServer(
         {
-          key: cert.private,
+          key: cert.key,
           cert: cert.cert,
           // Express + supertest use the HTTP/1.1 request/response API in this e2e flow.
           allowHTTP1: true,
