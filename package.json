@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "debug": "^4.4.3",
-    "httpxy": "^0.5.1",
+    "httpxy": "^0.5.3",
     "is-glob": "^4.0.3",
     "is-plain-obj": "^4.1.0",
     "micromatch": "^4.0.8"
@@ -98,13 +98,12 @@
     "hono": "4.12.18",
     "husky": "9.1.7",
     "lint-staged": "17.0.4",
-    "mockttp": "4.3.1",
+    "mockttp": "4.4.2",
     "msw": "2.14.5",
     "nock": "14.0.15",
     "open": "11.0.0",
     "oxfmt": "0.48.0",
     "pkg-pr-new": "0.0.71",
-    "selfsigned": "5.5.0",
     "supertest": "7.2.2",
     "typescript": "6.0.3",
     "typescript-eslint": "8.59.2",

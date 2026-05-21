@@ -34,10 +34,18 @@ function normalizeIPv6ProxyTarget(target: Options['target'], optionName: 'target
   const targetUrl = toTargetUrl(target);
 
   if (targetUrl && isBracketedIPv6Hostname(targetUrl.hostname)) {
+    const normalizedHostname = normalizeIPv6DestinationHostname(stripBrackets(targetUrl.hostname));
+
     debug('normalized IPv6 "%s" %s', optionName, target);
 
+    const auth =
+      targetUrl.username || targetUrl.password
+        ? `${targetUrl.username}:${targetUrl.password}`
+        : undefined;
+
     return {
-      hostname: stripBrackets(targetUrl.hostname),
+      hostname: normalizedHostname,
+      auth,
       pathname: targetUrl.pathname,
       port: targetUrl.port,
       protocol: targetUrl.protocol,
@@ -66,4 +74,14 @@ function isBracketedIPv6Hostname(hostname: string): boolean {
 
 function stripBrackets(hostname: string): string {
   return hostname.replace(/^\[|\]$/g, '');
+}
+
+function normalizeIPv6DestinationHostname(hostname: string): string {
+  // The unspecified address (::) is not a routable destination for outbound client requests.
+  // Treat it as loopback so a target like http://[::]:port reaches local IPv6 listeners.
+  if (hostname === '::') {
+    debug('normalizing hostname unspecified IPv6 address (::) to loopback (::1)');
+    return '::1';
+  }
+  return hostname;
 }
