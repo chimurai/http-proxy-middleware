@@ -88,4 +88,32 @@ describe('E2E graceful shutdown', () => {
     // proxy.close() should still be called exactly once
     expect(proxyCloseSpy).toHaveBeenCalledOnce();
   });
+
+  it('should close proxy only after all attached servers close', async () => {
+    const proxyMiddleware = createProxyMiddleware({ target: mockTargetServer.url });
+    const app = createApp(proxyMiddleware);
+
+    const proxyServerA = http.createServer(app);
+    const proxyServerB = http.createServer(app);
+    const serverPortA = await getPort();
+    const serverPortB = await getPort();
+
+    await Promise.all([
+      new Promise<void>((resolve) => proxyServerA.listen(serverPortA, resolve)),
+      new Promise<void>((resolve) => proxyServerB.listen(serverPortB, resolve)),
+    ]);
+
+    expect(capturedProxy).toBeDefined();
+    const proxyCloseSpy = vi.spyOn(capturedProxy!, 'close');
+
+    // Attach middleware listeners to both servers
+    await request(`http://localhost:${serverPortA}`).get('/api').expect(200);
+    await request(`http://localhost:${serverPortB}`).get('/api').expect(200);
+
+    await closeServer(proxyServerA);
+    expect(proxyCloseSpy).not.toHaveBeenCalled();
+
+    await closeServer(proxyServerB);
+    expect(proxyCloseSpy).toHaveBeenCalledOnce();
+  });
 });
