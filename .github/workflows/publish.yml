@@ -15,6 +15,8 @@ jobs:
       id-token: write # Required for OIDC
     steps:
       - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@v6
         with:
           node-version: '24.x'
@@ -29,8 +31,8 @@ jobs:
 
       - name: Publish to NPM (beta)
         if: 'github.event.release.prerelease'
-        run: npm publish --access public --tag beta
+        run: npm stage publish --access public --tag beta
 
       - name: Publish to NPM (stable)
         if: '!github.event.release.prerelease'
-        run: npm publish --access public
+        run: npm stage publish --access public
