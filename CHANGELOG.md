@@ -7,6 +7,7 @@
 - fix(ipv6): preserve credentials when normalizing bracketed IPv6 target string
 - fix(ipv6): unspecified IPv6 target hostname (::)"
 - fix(response-interceptor): reduce responseInterceptor buffer churn
+- fix(ws): handle multi-server upgrade subscription and safe proxy shutdown
 
 ## [v4.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.0.0)
 

@@ -141,6 +141,56 @@ describe('E2E WebSocket proxy', () => {
     });
   });
 
+  describe('option.ws across multiple servers', () => {
+    it('should proxy websocket upgrades on every attached server', async () => {
+      const serverPortA = await getPort();
+      const serverPortB = await getPort();
+
+      const proxyServerA = createApp(proxyMiddleware).listen(serverPortA);
+      const proxyServerB = createApp(proxyMiddleware).listen(serverPortB);
+
+      const connectWebSocketWithTimeout = (url: string) => {
+        return new Promise<void>((resolve, reject) => {
+          const socket = new WebSocket(url);
+          const timeout = setTimeout(() => {
+            socket.terminate();
+            reject(new Error(`Timed out connecting to ${url}`));
+          }, 2000);
+
+          socket.once('open', () => {
+            clearTimeout(timeout);
+            socket.close();
+            resolve();
+          });
+
+          socket.once('error', (error) => {
+            clearTimeout(timeout);
+            reject(error);
+          });
+        });
+      };
+
+      try {
+        await new Promise((resolve, reject) => {
+          http.get(`http://localhost:${serverPortA}/`, resolve).on('error', reject);
+        });
+
+        await new Promise((resolve, reject) => {
+          http.get(`http://localhost:${serverPortB}/`, resolve).on('error', reject);
+        });
+
+        await expect(
+          connectWebSocketWithTimeout(`ws://localhost:${serverPortA}/socket`),
+        ).resolves.toBeUndefined();
+        await expect(
+          connectWebSocketWithTimeout(`ws://localhost:${serverPortB}/socket`),
+        ).resolves.toBeUndefined();
+      } finally {
+        await Promise.all([closeServer(proxyServerA), closeServer(proxyServerB)]);
+      }
+    });
+  });
+
   describe('with router and pathRewrite', () => {
     beforeEach(() => {
       const proxyMiddleware = createProxyMiddleware({

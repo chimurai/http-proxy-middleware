@@ -19,8 +19,8 @@ export class HttpProxyMiddleware<
   TReq extends http.IncomingMessage = http.IncomingMessage,
   TRes extends http.ServerResponse = http.ServerResponse,
 > {
-  private wsInternalSubscribed = false;
-  private serverOnCloseSubscribed = false;
+  private wsInternalSubscribedServers = new WeakSet<http.Server | https.Server>();
+  private activeServers = new Set<http.Server | https.Server>();
   private proxyOptions: Options<TReq, TRes>;
   private proxy: ProxyServer<TReq, TRes>;
   private pathRewriter: ReturnType<typeof createPathRewriter<TReq>>;
@@ -41,10 +41,16 @@ export class HttpProxyMiddleware<
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
     this.middleware.upgrade = (req, socket, head) => {
-      if (!this.wsInternalSubscribed) {
+      const server = this.#getServer(req);
+
+      if (server && !this.wsInternalSubscribedServers.has(server)) {
         this.handleUpgrade(req, socket, head);
       }
     };
+  }
+
+  #getServer(req: TReq): http.Server | https.Server | undefined {
+    return (req.socket as net.Socket & { server?: http.Server | https.Server })?.server;
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
@@ -91,16 +97,24 @@ export class HttpProxyMiddleware<
      * Get the server object to subscribe to server events;
      * 'upgrade' for websocket and 'close' for graceful shutdown
      */
-    const server = (req.socket as net.Socket & { server?: https.Server })?.server;
+    const server = this.#getServer(req);
 
-    if (server && !this.serverOnCloseSubscribed) {
+    if (server && !this.activeServers.has(server)) {
+      debug('registering server close listener');
+      this.activeServers.add(server);
+
       server.on('close', () => {
-        debug('server close signal received: closing proxy server');
-        this.proxy.close(() => {
-          debug('proxy server closed');
-        });
+        debug('server close signal received.');
+        this.activeServers.delete(server);
+
+        if (this.activeServers.size > 0) {
+          debug(`proxy server not closed: ${this.activeServers.size} server(s) still active`);
+          return;
+        } else {
+          debug('closing proxy server');
+          this.proxy.close(() => debug('proxy server closed'));
+        }
       });
-      this.serverOnCloseSubscribed = true;
     }
 
     if (this.proxyOptions.ws === true && server) {
@@ -117,13 +131,11 @@ export class HttpProxyMiddleware<
     });
   }
 
-  private catchUpgradeRequest = (server: https.Server) => {
-    if (!this.wsInternalSubscribed) {
+  private catchUpgradeRequest = (server: http.Server | https.Server) => {
+    if (!this.wsInternalSubscribedServers.has(server)) {
       debug('subscribing to server upgrade event');
       server.on('upgrade', this.handleUpgrade);
-      // prevent duplicate upgrade handling;
-      // in case external upgrade is also configured
-      this.wsInternalSubscribed = true;
+      this.wsInternalSubscribedServers.add(server);
     }
   };
 
