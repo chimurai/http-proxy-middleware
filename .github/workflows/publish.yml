@@ -11,10 +11,12 @@ jobs:
       contents: read
       id-token: write # Required for OIDC
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
         with:
-          node-version: '22.x'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
 
       # Ensure npm 11.5.1 or later is installed
@@ -26,8 +28,8 @@ jobs:
 
       - name: Publish to NPM (beta)
         if: 'github.event.release.prerelease'
-        run: npm publish --access public --tag v3-beta
+        run: npm stage publish --access public --tag v3-beta
 
       - name: Publish to NPM (stable)
         if: '!github.event.release.prerelease'
-        run: npm publish --access public --tag v3-latest
+        run: npm stage publish --access public --tag v3-latest
