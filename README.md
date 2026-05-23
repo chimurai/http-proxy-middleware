@@ -487,6 +487,8 @@ The following options are provided by the underlying [httpxy](https://github.com
 
 ## WebSocket
 
+See [recipes/websocket.md](recipes/websocket.md) for more examples.
+
 ```javascript
 // verbose api
 createProxyMiddleware({ pathFilter: '/', target: 'http://echo.websocket.org', ws: true });

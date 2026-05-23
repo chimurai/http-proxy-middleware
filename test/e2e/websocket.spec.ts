@@ -10,7 +10,7 @@ import { WebSocket } from 'ws';
 
 import type { RequestHandler } from '../../src/types.js';
 import { createMockRequest, createMockResponse } from '../test-utils.js';
-import { createApp, createProxyMiddleware } from './test-kit.js';
+import { createApp, createAppWithPath, createProxyMiddleware } from './test-kit.js';
 
 /********************************************************************
  * - Not possible to use `supertest` to test WebSockets
@@ -122,6 +122,119 @@ describe('E2E WebSocket proxy', () => {
       ws.send('foobar');
 
       await expect(messageReceived).resolves.toBe('foobar');
+    });
+
+    it('should forward websocket upgrade to /ws-path without duplicating the mounted path', async () => {
+      const sockJsPort = await getPort();
+
+      const sockJsTargetServer = getLocal();
+      await sockJsTargetServer.start();
+      // performs an initial regular HTTP GET request subscribe to server upgrade event internally.
+      await sockJsTargetServer.forGet('/ws-path').thenReply(200, 'ok');
+      const sockJsRule = await sockJsTargetServer.forAnyWebSocket().thenEcho();
+
+      const sockJsMiddleware = createProxyMiddleware({
+        target: `${sockJsTargetServer.url}`,
+        ws: true,
+      });
+
+      const sockJsServer = createAppWithPath('/ws-path', sockJsMiddleware).listen(sockJsPort);
+
+      await new Promise((resolve, reject) => {
+        http.get(`http://localhost:${sockJsPort}/ws-path`, resolve).on('error', reject);
+      });
+
+      const sockJsClient = new WebSocket(`ws://localhost:${sockJsPort}/ws-path`);
+
+      try {
+        await new Promise<void>((resolve, reject) => {
+          sockJsClient.once('open', () => resolve());
+          sockJsClient.once('error', reject);
+        });
+
+        const seenRequests = await sockJsRule.getSeenRequests();
+        expect(seenRequests).toHaveLength(1);
+        const upstreamPathname = new URL(seenRequests[0].url).pathname;
+        expect(upstreamPathname).toBe('/ws-path');
+      } finally {
+        await Promise.all([
+          closeWebSocketClient(sockJsClient),
+          closeServer(sockJsServer),
+          sockJsTargetServer.stop(),
+        ]);
+      }
+    });
+
+    it('should proxy websocket upgrades for two mounted paths with separate targets', async () => {
+      const serverPort = await getPort();
+
+      const targetServerA = getLocal();
+      const targetServerB = getLocal();
+      await targetServerA.start();
+      await targetServerB.start();
+      await targetServerA.forGet('/ws-path-a').thenReply(200, 'ok');
+      await targetServerB.forGet('/ws-path-b').thenReply(200, 'ok');
+      await targetServerA.forAnyWebSocket().thenEcho();
+      await targetServerB.forAnyWebSocket().thenEcho();
+
+      const middlewareA = createProxyMiddleware({
+        target: targetServerA.url,
+        ws: true,
+        // NOTE: when multiple ws middlewares share one server, scope each with pathFilter
+        // so only the intended middleware handles a given upgrade request.
+        pathFilter: '/ws-path-a',
+      });
+
+      const middlewareB = createProxyMiddleware({
+        target: targetServerB.url,
+        ws: true,
+        pathFilter: '/ws-path-b',
+      });
+
+      const multiMountServer = createAppWithPath('/ws-path-a', middlewareA)
+        .use('/ws-path-b', middlewareB)
+        .listen(serverPort);
+
+      const connectAndEcho = async (path: string, message: string) => {
+        const socket = new WebSocket(`ws://localhost:${serverPort}${path}`);
+
+        try {
+          await new Promise<void>((resolve, reject) => {
+            socket.once('open', () => resolve());
+            socket.once('error', reject);
+          });
+
+          const echoed = new Promise<string>((resolve) => {
+            socket.once('message', (data) => resolve(data.toString()));
+          });
+
+          socket.send(message);
+          await expect(echoed).resolves.toBe(message);
+        } finally {
+          await closeWebSocketClient(socket);
+        }
+      };
+
+      try {
+        // NOTE: perform a normal HTTP request per mounted path first so each middleware
+        // subscribes to the server upgrade event before the websocket connection starts.
+        await new Promise((resolve, reject) => {
+          http.get(`http://localhost:${serverPort}/ws-path-a`, resolve).on('error', reject);
+        });
+
+        await new Promise((resolve, reject) => {
+          http.get(`http://localhost:${serverPort}/ws-path-b`, resolve).on('error', reject);
+        });
+
+        await connectAndEcho('/ws-path-a', 'from-a');
+        await connectAndEcho('/ws-path-b', 'from-b');
+      } finally {
+        await Promise.all([
+          closeServer(multiMountServer),
+          targetServerA.stop(),
+          targetServerB.stop(),
+        ]);
+      }
     });
   });
 
