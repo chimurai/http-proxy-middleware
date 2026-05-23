@@ -357,6 +357,44 @@ describe('E2E WebSocket proxy', () => {
     });
   });
 
+  describe('with unreachable websocket target', () => {
+    it('should call on.error when proxy.ws rejects', async () => {
+      // getPort returns a free port number; because nothing is started there,
+      // connecting to this ws target fails and proxy.ws rejects.
+      const unreachablePort = await getPort();
+      const onError = vi.fn((err, req, socket) => {
+        // Ensure hanging sockets are cleaned up in case the client does not close itself.
+        (socket as Socket).destroy();
+      });
+
+      const middleware = createProxyMiddleware({
+        target: `ws://127.0.0.1:${unreachablePort}`,
+        ws: true,
+        on: {
+          error: onError,
+        },
+      });
+
+      proxyServer = createApp(middleware).listen(SERVER_PORT);
+      proxyServer.on('upgrade', middleware.upgrade);
+
+      await new Promise<void>((resolve) => {
+        ws = new WebSocket(`ws://localhost:${SERVER_PORT}/socket`);
+        ws.once('error', () => resolve());
+        ws.once('open', () => {
+          ws.close();
+          resolve();
+        });
+      });
+
+      expect(onError).toHaveBeenCalledTimes(1);
+      const [err, req, socket] = onError.mock.calls[0];
+      expect(err).toBeTruthy();
+      expect(req.url).toBe('/socket');
+      expect(socket).toBeTruthy();
+    });
+  });
+
   describe('ws enabled without server object (issue #143)', () => {
     it('should not crash when server is undefined', async () => {
       const middleware = createProxyMiddleware({
