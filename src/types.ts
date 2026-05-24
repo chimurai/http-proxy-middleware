@@ -136,20 +136,35 @@ export interface Options<
   on?: OnProxyEvent<TReq, TRes>;
   /**
    * Dynamically set the {@link Options.target `options.target`}.
+   *
    * @example
    * ```js
    * createProxyMiddleware({
-   *   router: async (req) => {
+   *   router: async (req, res, options) => {
    *     return 'http://127:0.0.1:3000';
    *   }
    * });
    * ```
+   *
+   * @since v0.16.0
+   * @since v4.1.0 - `res` and `options` parameters added to router function signature
+   *
+   * NOTE: `res` is undefined in WebSocket upgrade flows.
+   *
    * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/router.md
    */
   router?:
     | Record<string, ProxyServerOptions['target']>
-    | ((req: TReq) => ProxyServerOptions['target'])
-    | ((req: TReq) => Promise<ProxyServerOptions['target']>);
+    | ((
+        req: TReq,
+        res: TRes | undefined,
+        options: Options<TReq, TRes>,
+      ) => ProxyServerOptions['target'])
+    | ((
+        req: TReq,
+        res: TRes | undefined,
+        options: Options<TReq, TRes>,
+      ) => Promise<ProxyServerOptions['target']>);
   /**
    * Log information from http-proxy-middleware
    * @example

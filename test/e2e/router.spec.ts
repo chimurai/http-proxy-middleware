@@ -1,5 +1,5 @@
 import type { ErrorRequestHandler } from 'express';
-import type { Mockttp } from 'mockttp';
+import type { CompletedRequest, Mockttp } from 'mockttp';
 import { generateCACertificate, getLocal } from 'mockttp';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -136,6 +136,46 @@ describe('E2E router', () => {
       const agent = request(app);
       const response = await agent.get('/api').expect(200);
       expect(response.text).toBe('HTTPS C');
+    });
+
+    it('should allow using Express res.locals to update options.headers in router', async () => {
+      let completedRequest: CompletedRequest | undefined;
+
+      targetServerC.reset();
+      await targetServerC.forGet('/locals-options').thenCallback((req) => {
+        completedRequest = req;
+        return { statusCode: 200, body: 'OK - target C' };
+      });
+
+      const app = createApp(
+        (req, res, next) => {
+          res.locals.forwardedHeaderValue = app.locals.forwardedHeaderValue;
+          next();
+        },
+        createProxyMiddleware({
+          target: targetServerA.url,
+          secure: false,
+          changeOrigin: true,
+          router(req, res, options) {
+            options.headers = {
+              ...options.headers,
+              'x-forwarded-from-locals': res?.locals.forwardedHeaderValue,
+            };
+
+            return targetServerC.url;
+          },
+        }),
+      );
+
+      app.locals.forwardedHeaderValue = 'header-from-express-locals';
+
+      const agent = request(app);
+      const response = await agent.get('/locals-options').expect(200);
+
+      expect(response.text).toBe('OK - target C');
+      expect(completedRequest?.headers['x-forwarded-from-locals']).toBe(
+        'header-from-express-locals',
+      );
     });
   });
 

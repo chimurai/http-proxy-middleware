@@ -63,7 +63,7 @@ export class HttpProxyMiddleware<
       let activeProxyOptions: Options<TReq, TRes>;
       try {
         // Preparation Phase: Apply router and path rewriter.
-        activeProxyOptions = await this.prepareProxyRequest(req);
+        activeProxyOptions = await this.prepareProxyRequest(req, res);
 
         // [Smoking Gun] httpxy is inconsistent with error handling:
         // 1. If target is missing (here), it emits 'error' but returns a boolean (bypassing our catch/next).
@@ -142,9 +142,9 @@ export class HttpProxyMiddleware<
   private handleUpgrade = async (req: TReq, socket: net.Socket, head: Buffer) => {
     try {
       if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
-        const proxiedReq = req;
-        const activeProxyOptions = await this.prepareProxyRequest(proxiedReq);
-        await this.proxy.ws(proxiedReq, socket, activeProxyOptions, head);
+        // No HTTP response object exists during WebSocket upgrades, so pass undefined.
+        const activeProxyOptions = await this.prepareProxyRequest(req, undefined);
+        await this.proxy.ws(req, socket, activeProxyOptions, head);
         debug('server upgrade event received. Proxying WebSocket');
       }
     } catch (err) {
@@ -178,13 +178,13 @@ export class HttpProxyMiddleware<
    * @param {Object} req
    * @return {Object} proxy options
    */
-  private prepareProxyRequest = async (req: TReq) => {
+  private prepareProxyRequest = async (req: TReq, res?: TRes) => {
     const newProxyOptions = Object.assign({}, this.proxyOptions);
 
     // Apply in order:
     // 1. option.router
     // 2. option.pathRewrite
-    await this.applyRouter(req, newProxyOptions);
+    await this.applyRouter(req, res, newProxyOptions);
     normalizeIPv6LiteralTargets(newProxyOptions);
     await this.applyPathRewrite(req, this.pathRewriter);
 
@@ -192,11 +192,11 @@ export class HttpProxyMiddleware<
   };
 
   // Modify option.target when router present.
-  private applyRouter = async (req: TReq, options: Options<TReq, TRes>) => {
+  private applyRouter = async (req: TReq, res: TRes | undefined, options: Options<TReq, TRes>) => {
     let newTarget;
 
     if (options.router) {
-      newTarget = await getTarget(req, options);
+      newTarget = await getTarget(req, res, options);
 
       if (newTarget) {
         debug('router new target: "%s"', newTarget);

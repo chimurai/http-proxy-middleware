@@ -11,14 +11,14 @@ const debug = Debug.extend('router');
 export async function getTarget<
   TReq extends http.IncomingMessage = http.IncomingMessage,
   TRes extends http.ServerResponse = http.ServerResponse,
->(req: TReq, config: Options<TReq, TRes>) {
+>(req: TReq, res: TRes | undefined, config: Options<TReq, TRes>) {
   let newTarget;
   const router = config.router;
 
   if (isPlainObject(router)) {
     newTarget = getTargetFromProxyTable(req, router);
   } else if (typeof router === 'function') {
-    newTarget = await router(req);
+    newTarget = await router(req, res, config);
   }
 
   return newTarget;
