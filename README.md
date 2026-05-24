@@ -239,12 +239,12 @@ router: {
 }
 
 // Custom router function (string target)
-router: function(req) {
+router: function(req, res, options) {
     return 'http://127.0.0.1:8004';
 }
 
 // Custom router function (target object)
-router: function(req) {
+router: function(req, res, options) {
     return {
         protocol: 'https:', // The : is required
         host: '127.0.0.1',
@@ -253,10 +253,12 @@ router: function(req) {
 }
 
 // Asynchronous router function which returns promise
-router: async function(req) {
+router: async function(req, res, options) {
     const url = await doSomeIO();
     return url;
 }
+
+// NOTE: `res` is undefined in WebSocket upgrade flows.
 ```
 
 ### `plugins` (Array)
@@ -498,7 +500,9 @@ createProxyMiddleware({ pathFilter: '/', target: 'http://echo.websocket.org', ws
 
 ### External WebSocket upgrade
 
-In the previous WebSocket examples, http-proxy-middleware relies on a initial http request in order to listen to the http `upgrade` event. If you need to proxy WebSockets without the initial http request, you can subscribe to the server's http `upgrade` event manually.
+In the previous WebSocket examples, http-proxy-middleware relies on an initial HTTP request in order to listen to the HTTP `upgrade` event. If you need to proxy WebSockets without the initial HTTP request, you can subscribe to the server's HTTP `upgrade` event manually.
+
+When the same middleware instance is attached to multiple servers and `ws: true` is used, each server needs its own initial HTTP request before upgrades are auto-subscribed.
 
 ```javascript
 const wsProxy = createProxyMiddleware({ target: 'ws://echo.websocket.org', changeOrigin: true });
@@ -578,6 +582,10 @@ Ways to solve it:
 - Change `target: "http://localhost"` to `target: "http://127.0.0.1"` (IPv4).
 - Change the target server to (also) accept IPv6 connections.
 - Add this flag when running `node`: `node index.js --dns-result-order=ipv4first`. (Not recommended.)
+
+Additional IPv6 notes:
+
+- Unspecified IPv6 host `http://[::]:port` is normalized to loopback (`::1`) to reach local listeners.
 
 > Note: There’s a thing called [Happy Eyeballs](https://en.wikipedia.org/wiki/Happy_Eyeballs) which means connecting to both IPv4 and IPv6 in parallel, which Node.js doesn’t have, but explains why for example `curl` can connect.
 

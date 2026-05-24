@@ -5,7 +5,7 @@
 - feat(definePlugin): helper function to create plugins
 - chore(package.json): update to httpxy@0.5.3
 - fix(ipv6): preserve credentials when normalizing bracketed IPv6 target string
-- fix(ipv6): unspecified IPv6 target hostname (::)"
+- fix(ipv6): unspecified IPv6 target hostname (::)
 - fix(response-interceptor): reduce responseInterceptor buffer churn
 - fix(ws): handle multi-server upgrade subscription and safe proxy shutdown
 - feat(router): add 'res' and 'options' to router function

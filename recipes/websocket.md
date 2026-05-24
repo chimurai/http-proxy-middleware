@@ -9,7 +9,9 @@ Examples to use `http-proxy-middleware` with WebSocket support.
 
 ## WebSocket - `ws:true` flag (automatic upgrade subscription)
 
-⚠️ NOTE: Using `ws: true` requires an an initial regular HTTP request, so HPM can subscribe to server upgrade event internally.
+⚠️ NOTE: Using `ws: true` requires an initial regular HTTP request, so HPM can subscribe to the server upgrade event internally.
+
+⚠️ NOTE: If the same middleware is attached to multiple servers, each server needs its own initial HTTP request before auto upgrade subscription is active.
 
 💡 Use `server.on('upgrade', proxy.upgrade)` without the need of an initial HTTP request.
 

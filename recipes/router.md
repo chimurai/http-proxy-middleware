@@ -10,12 +10,18 @@ Allows you to route to a different `target` by using a table of a custom functio
 
 Write your own router to dynamically route to a different `target`.
 The `req` object is provided to retrieve contextual data.
+The `res` and `options` arguments are also provided.
 
 ```javascript
 import express from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const customRouter = function (req) {
+const customRouter = function (req, res, options) {
+  options.headers = {
+    ...options.headers,
+    'x-routing-strategy': 'custom-router',
+  };
+
   return 'http://www.example.org'; // protocol + host
 };
 
@@ -30,6 +36,8 @@ const app = express();
 app.use(myProxy); // add the proxy to express
 
 app.listen(3000);
+
+// NOTE: `res` is undefined in WebSocket upgrade flows.
 ```
 
 ## Proxy Table
