@@ -79,7 +79,7 @@ export type PathRewriteConfig<
       /** `res` is undefined in WebSocket upgrade flows. */
       res?: TRes | undefined,
       options?: Options<TReq, TRes>,
-    ) => Promise<string>);
+    ) => Promise<string | undefined>);
 
 export interface Options<
   TReq extends http.IncomingMessage = http.IncomingMessage,
