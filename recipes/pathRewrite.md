@@ -73,7 +73,7 @@ The unmodified path will be used, when rewrite function returns `undefined`
 ```javascript
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const rewriteFn = function (path, req) {
+const rewriteFn = function (path, req, res, options) {
   return path.replace('/api/foo', '/api/bar');
 };
 
@@ -85,4 +85,6 @@ const options = {
 const apiProxy = createProxyMiddleware(options);
 
 // `/api/foo/lorum/ipsum` -> `http://localhost:3000/api/bar/lorum/ipsum`
+
+// NOTE: `res` is undefined in WebSocket upgrade flows.
 ```

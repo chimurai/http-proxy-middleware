@@ -212,14 +212,16 @@ pathRewrite: {'^/remove/api' : ''}
 pathRewrite: {'^/' : '/basepath/'}
 
 // custom rewriting
-pathRewrite: function (path, req) { return path.replace('/api', '/base/api') }
+pathRewrite: function (path, req, res, options) { return path.replace('/api', '/base/api') }
 
 // custom rewriting, returning Promise
-pathRewrite: async function (path, req) {
+pathRewrite: async function (path, req, res, options) {
   const should_add_something = await httpRequestToDecideSomething(path);
   if (should_add_something) path += "something";
   return path;
 }
+
+// `res` is undefined in WebSocket upgrade flows.
 ```
 
 ### `router` (object/function)
