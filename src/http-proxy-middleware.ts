@@ -23,7 +23,7 @@ export class HttpProxyMiddleware<
   private activeServers = new Set<http.Server | https.Server>();
   private proxyOptions: Options<TReq, TRes>;
   private proxy: ProxyServer<TReq, TRes>;
-  private pathRewriter: ReturnType<typeof createPathRewriter<TReq>>;
+  private pathRewriter: ReturnType<typeof createPathRewriter<TReq, TRes>>;
   private logger: Logger;
 
   constructor(options: Options<TReq, TRes>) {
@@ -36,7 +36,7 @@ export class HttpProxyMiddleware<
 
     this.registerPlugins(this.proxy, this.proxyOptions);
 
-    this.pathRewriter = createPathRewriter(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
+    this.pathRewriter = createPathRewriter<TReq, TRes>(this.proxyOptions.pathRewrite); // returns undefined when "pathRewrite" is not provided
 
     // https://github.com/chimurai/http-proxy-middleware/issues/19
     // expose function to upgrade externally
@@ -186,7 +186,7 @@ export class HttpProxyMiddleware<
     // 2. option.pathRewrite
     await this.applyRouter(req, res, newProxyOptions);
     normalizeIPv6LiteralTargets(newProxyOptions);
-    await this.applyPathRewrite(req, this.pathRewriter);
+    await this.applyPathRewrite(req, res, this.pathRewriter, newProxyOptions);
 
     return newProxyOptions;
   };
@@ -208,10 +208,12 @@ export class HttpProxyMiddleware<
   // rewrite path
   private applyPathRewrite = async (
     req: TReq,
-    pathRewriter: ReturnType<typeof createPathRewriter<TReq>>,
+    res: TRes | undefined,
+    pathRewriter: ReturnType<typeof createPathRewriter<TReq, TRes>>,
+    options: Options<TReq, TRes>,
   ) => {
     if (req.url && pathRewriter) {
-      const path = await pathRewriter(req.url, req);
+      const path = await pathRewriter(req.url, req, res, options);
 
       if (typeof path === 'string') {
         debug('pathRewrite new path: %s', path);

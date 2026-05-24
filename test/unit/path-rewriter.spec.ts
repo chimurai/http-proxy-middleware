@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createPathRewriter } from '../../src/path-rewriter.js';
+import type { Options } from '../../src/types.js';
 import type { PathRewriteConfig } from '../../src/types.js';
-import { createMockRequest } from '../test-utils.js';
+import { createMockRequest, createMockResponse } from '../test-utils.js';
 
 describe('Path rewriting', () => {
   const mockReq = createMockRequest();
@@ -114,6 +115,22 @@ describe('Path rewriting', () => {
       rewriter = createPathRewriter(async (path) => path.replace('/456', '/789'))!;
 
       return expect(rewriter(originalRequestPath, mockReq)).resolves.toBe('/123/789');
+    });
+
+    it('should pass req, res and options to custom rewrite function', () => {
+      const mockRes = createMockResponse(mockReq);
+      const mockOptions = { target: 'http://example.org' } as Options;
+      const customRewriteFn = vi.fn((path) => path);
+
+      rewriter = createPathRewriter(customRewriteFn)!;
+      rewriter(originalRequestPath, mockReq, mockRes, mockOptions);
+
+      expect(customRewriteFn).toHaveBeenCalledWith(
+        originalRequestPath,
+        mockReq,
+        mockRes,
+        mockOptions,
+      );
     });
   });
 

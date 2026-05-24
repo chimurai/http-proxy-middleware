@@ -1,4 +1,4 @@
-import type { IncomingMessage } from 'node:http';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 
 import isPlainObject from 'is-plain-obj';
 
@@ -13,9 +13,10 @@ type RewriteRule = { regex: RegExp; value: string };
 /**
  * Create rewrite function, to cache parsed rewrite rules.
  */
-export function createPathRewriter<TReq extends IncomingMessage = IncomingMessage>(
-  rewriteConfig: PathRewriteConfig<TReq> | undefined,
-) {
+export function createPathRewriter<
+  TReq extends IncomingMessage = IncomingMessage,
+  TRes extends ServerResponse = ServerResponse,
+>(rewriteConfig: PathRewriteConfig<TReq, TRes> | undefined) {
   let rulesCache: RewriteRule[];
 
   if (!isValidRewriteConfig(rewriteConfig)) {
@@ -45,9 +46,10 @@ export function createPathRewriter<TReq extends IncomingMessage = IncomingMessag
   }
 }
 
-function isValidRewriteConfig<TReq extends IncomingMessage = IncomingMessage>(
-  rewriteConfig: PathRewriteConfig<TReq> | undefined,
-): boolean {
+function isValidRewriteConfig<
+  TReq extends IncomingMessage = IncomingMessage,
+  TRes extends ServerResponse = ServerResponse,
+>(rewriteConfig: PathRewriteConfig<TReq, TRes> | undefined): boolean {
   if (typeof rewriteConfig === 'function') {
     return true;
   } else if (isPlainObject(rewriteConfig)) {

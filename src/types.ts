@@ -61,10 +61,25 @@ export interface OnProxyEvent<
 
 export type Logger = Pick<Console, 'info' | 'warn' | 'error'>;
 
-export type PathRewriteConfig<TReq extends http.IncomingMessage = http.IncomingMessage> =
+export type PathRewriteConfig<
+  TReq extends http.IncomingMessage = http.IncomingMessage,
+  TRes extends http.ServerResponse = http.ServerResponse,
+> =
   | { [regexp: string]: string }
-  | ((path: string, req: TReq) => string | undefined)
-  | ((path: string, req: TReq) => Promise<string>);
+  | ((
+      path: string,
+      req: TReq,
+      /** `res` is undefined in WebSocket upgrade flows. */
+      res?: TRes | undefined,
+      options?: Options<TReq, TRes>,
+    ) => string | undefined)
+  | ((
+      path: string,
+      req: TReq,
+      /** `res` is undefined in WebSocket upgrade flows. */
+      res?: TRes | undefined,
+      options?: Options<TReq, TRes>,
+    ) => Promise<string | undefined>);
 
 export interface Options<
   TReq extends http.IncomingMessage = http.IncomingMessage,
@@ -88,9 +103,13 @@ export interface Options<
    *   }
    * });
    * ```
+   * @since v0.15.0
+   * @since v0.21.0 - support `async` function
+   * @since v4.1.0 - `res` and `options` parameters added to custom function
+   *
    * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/pathRewrite.md
    */
-  pathRewrite?: PathRewriteConfig<TReq>;
+  pathRewrite?: PathRewriteConfig<TReq, TRes>;
 
   /**
    * Access the internal `httpxy` server instance to customize behavior
