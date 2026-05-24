@@ -15,7 +15,7 @@ type Interceptor<TReq = http.IncomingMessage, TRes = http.ServerResponse> = (
 
 /**
  * Intercept responses from upstream.
- * Automatically decompress (deflate, gzip, brotli).
+ * Automatically decompress (deflate, gzip, brotli, zstd).
  * Give developer the opportunity to modify intercepted Buffer and http.ServerResponse
  *
  * NOTE: must set options.selfHandleResponse=true (prevent automatic call of res.end())
@@ -101,8 +101,9 @@ export function responseInterceptor<
 function decompress<TReq extends http.IncomingMessage = http.IncomingMessage>(
   proxyRes: TReq,
   contentEncoding?: string,
-): TReq | zlib.Gunzip | zlib.Inflate | zlib.BrotliDecompress {
-  let _proxyRes: TReq | zlib.Gunzip | zlib.Inflate | zlib.BrotliDecompress = proxyRes;
+): TReq | zlib.Gunzip | zlib.Inflate | zlib.BrotliDecompress | zlib.ZstdDecompress {
+  let _proxyRes: TReq | zlib.Gunzip | zlib.Inflate | zlib.BrotliDecompress | zlib.ZstdDecompress =
+    proxyRes;
   let decompress;
 
   switch (contentEncoding) {
@@ -114,6 +115,9 @@ function decompress<TReq extends http.IncomingMessage = http.IncomingMessage>(
       break;
     case 'deflate':
       decompress = zlib.createInflate();
+      break;
+    case 'zstd':
+      decompress = zlib.createZstdDecompress();
       break;
     default:
       break;

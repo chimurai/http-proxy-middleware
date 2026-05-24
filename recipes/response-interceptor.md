@@ -2,7 +2,7 @@
 
 Intercept responses from upstream with `responseInterceptor`. (Make sure to set `selfHandleResponse: true`)
 
-Responses which are compressed with `brotli`, `gzip` and `deflate` will be decompressed automatically. Response will be made available as [`buffer`](https://nodejs.org/api/buffer.html) which you can manipulate.
+Responses which are compressed with `brotli`, `gzip`, `deflate` and `zstd` will be decompressed automatically (zstd requires Node.js >= 22.15.0). Response will be made available as [`buffer`](https://nodejs.org/api/buffer.html) which you can manipulate.
 
 ## Replace text and change http status code
 
