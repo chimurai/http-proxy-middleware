@@ -111,12 +111,22 @@ describe('http-proxy-middleware TypeScript Types', () => {
       });
 
       it('should have router Type with function', () => {
-        options = { router: (req) => '/path' };
+        options = {
+          router: (req, res, options) => {
+            options.headers = { ...options.headers, 'x-added-header': 'value' };
+            return '/path';
+          },
+        };
         expect(options).toBeDefined();
       });
 
       it('should have router Type with async function', () => {
-        options = { router: async (req) => '/path' };
+        options = {
+          router: async (req, res, options) => {
+            options.headers = { ...options.headers, 'x-added-header': 'value' };
+            return '/path';
+          },
+        };
         expect(options).toBeDefined();
       });
     });
