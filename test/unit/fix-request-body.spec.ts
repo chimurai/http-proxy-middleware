@@ -187,4 +187,17 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
+
+  it('should re-encode body when the source was zstd encoded', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
+    proxyRequest.setHeader('content-encoding', 'zstd');
+
+    const data = { someField: 'some value' };
+    fixRequestBody(proxyRequest, createRequestWithBody(data));
+
+    const expectedBody = zlib.zstdCompressSync(JSON.stringify(data));
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
+    expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
+  });
 });

@@ -55,6 +55,7 @@
     "unstub",
     "vhosted",
     "websockets",
-    "xfwd"
+    "xfwd",
+    "zstd"
   ]
 }

@@ -128,6 +128,17 @@ describe('responseInterceptor()', () => {
           'content-type': 'application/json; charset=utf-8',
         });
 
+      await targetServer
+        .forGet('/zstd')
+        .thenReply(
+          200,
+          zlib.zstdCompressSync(Buffer.from(JSON.stringify({ zstd: true }), 'utf8')),
+          {
+            'content-encoding': 'zstd',
+            'content-type': 'application/json; charset=utf-8',
+          },
+        );
+
       agent = request(
         createApp(
           createProxyMiddleware({
@@ -155,6 +166,11 @@ describe('responseInterceptor()', () => {
     it('should return decompressed deflated response from /deflate', async () => {
       const response = await agent.get(`/deflate`).expect(200);
       expect(response.body.deflated).toBe(true);
+    });
+
+    it('should return decompressed zstd response from /zstd', async () => {
+      const response = await agent.get(`/zstd`).expect(200);
+      expect(response.body.zstd).toBe(true);
     });
   });
 
