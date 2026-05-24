@@ -1,8 +1,11 @@
+import type { Agent as HttpAgent } from 'node:http';
+import { Agent as HttpsAgent } from 'node:https';
+
 import type { ErrorRequestHandler } from 'express';
 import type { CompletedRequest, Mockttp } from 'mockttp';
 import { generateCACertificate, getLocal } from 'mockttp';
 import request from 'supertest';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp, createAppWithPath, createProxyMiddleware } from './test-kit.js';
 
@@ -176,6 +179,46 @@ describe('E2E router', () => {
       expect(completedRequest?.headers['x-forwarded-from-locals']).toBe(
         'header-from-express-locals',
       );
+    });
+
+    it('should allow updating agent dynamically in router', async () => {
+      const agentA: HttpAgent = new HttpsAgent({ keepAlive: true });
+      const agentB: HttpAgent = new HttpsAgent({ keepAlive: false });
+      const createConnectionSpyA = vi.spyOn(agentA, 'createConnection');
+      const createConnectionSpyB = vi.spyOn(agentB, 'createConnection');
+
+      targetServerA.reset();
+      targetServerB.reset();
+
+      await targetServerA.forGet('/api/a').thenReply(200, 'HTTPS A via agent A');
+      await targetServerB.forGet('/api/b').thenReply(200, 'HTTPS B via agent B');
+
+      const app = createApp(
+        createProxyMiddleware({
+          target: targetServerA.url,
+          secure: false,
+          changeOrigin: true,
+          router(req, res, options) {
+            if (req.url === '/api/a') {
+              options.agent = agentA;
+              return targetServerA.url;
+            }
+
+            options.agent = agentB;
+            return targetServerB.url;
+          },
+        }),
+      );
+
+      const agent = request(app);
+
+      const firstResponse = await agent.get('/api/a').expect(200);
+      const secondResponse = await agent.get('/api/b').expect(200);
+
+      expect(firstResponse.text).toBe('HTTPS A via agent A');
+      expect(secondResponse.text).toBe('HTTPS B via agent B');
+      expect(createConnectionSpyA).toHaveBeenCalledTimes(1);
+      expect(createConnectionSpyB).toHaveBeenCalledTimes(1);
     });
   });
 
