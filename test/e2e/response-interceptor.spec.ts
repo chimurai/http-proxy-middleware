@@ -157,4 +157,49 @@ describe('responseInterceptor()', () => {
       expect(response.body.deflated).toBe(true);
     });
   });
+
+  describe('trailer response header handling', () => {
+    beforeEach(async () => {
+      await targetServer
+        .forGet('/response-headers')
+        .withExactQuery('?Trailer=X-Stream-Error&Host=localhost')
+        .thenReply(200, '', {
+          'transfer-encoding': 'chunked',
+          trailer: 'X-Stream-Error',
+          host: 'localhost',
+          'set-cookie': 'cookie=monster; Path=/',
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'private, max-age=60',
+        });
+
+      agent = request(
+        createApp(
+          createProxyMiddleware({
+            target: targetServer.url,
+            changeOrigin: true,
+            selfHandleResponse: true,
+            on: {
+              proxyRes: responseInterceptor(async () => {
+                return JSON.stringify({ ok: true, note: 'rewritten' });
+              }),
+            },
+          }),
+        ),
+      );
+    });
+
+    it('should rewrite body without trailer/content-length conflict and preserve end-to-end headers', async () => {
+      const response = await agent
+        .get('/response-headers?Trailer=X-Stream-Error&Host=localhost')
+        .expect(200);
+
+      expect(response.body).toEqual({ ok: true, note: 'rewritten' });
+      expect(response.header['trailer']).toBeUndefined();
+      expect(response.header['transfer-encoding']).toBeUndefined();
+      expect(response.header['content-length']).toBeDefined();
+      expect(response.header['content-type']).toContain('application/json');
+      expect(response.header['set-cookie']).toBeDefined();
+      expect(response.header['cache-control']).toBe('private, max-age=60');
+    });
+  });
 });

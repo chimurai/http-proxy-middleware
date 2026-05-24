@@ -74,6 +74,11 @@ export function responseInterceptor<
 
       // set correct content-length (with double byte character support)
       debug('set content-length: %s', Buffer.byteLength(interceptedBuffer));
+
+      // Buffered responses cannot preserve trailer framing.
+      // Remove trailer declaration (and transfer-encoding just in case) before setting content-length.
+      res.removeHeader('trailer');
+      res.removeHeader('transfer-encoding');
       res.setHeader('content-length', Buffer.byteLength(interceptedBuffer));
 
       debug('write intercepted response');
@@ -143,8 +148,10 @@ function copyHeaders<TRes extends http.ServerResponse = http.ServerResponse>(
   if (response.setHeader) {
     let keys = Object.keys(originalResponse.headers);
 
-    // ignore chunked, brotli, gzip, deflate headers
-    keys = keys.filter((key) => !['content-encoding', 'transfer-encoding'].includes(key));
+    // ignore encoding/framing headers that are incompatible with buffered interception
+    keys = keys.filter(
+      (key) => !['content-encoding', 'transfer-encoding', 'trailer'].includes(key),
+    );
 
     keys.forEach((key) => {
       let value = originalResponse.headers[key];

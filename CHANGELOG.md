@@ -10,6 +10,7 @@
 - fix(ws): handle multi-server upgrade subscription and safe proxy shutdown
 - feat(router): add 'res' and 'options' to router function
 - feat(pathRewrite): add 'res' and 'options' to custom pathRewrite function
+- fix(responseInterceptor): prevent trailer/content-length conflict
 
 ## [v4.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.0.0)
 
