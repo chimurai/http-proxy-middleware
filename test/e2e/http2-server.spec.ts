@@ -34,6 +34,7 @@ describe('E2E http2', () => {
 
       const app = createApp(
         createProxyMiddleware({
+          http2: true,
           target: mockTargetServer.url,
           pathFilter: '/api',
         }),
@@ -96,6 +97,7 @@ describe('E2E http2', () => {
 
       const app = createApp(
         createProxyMiddleware({
+          http2: true,
           target: mockTargetServer.url,
           pathFilter: '/api',
         }),
