@@ -1,6 +1,6 @@
 {
   "name": "http-proxy-middleware",
-  "version": "4.1.0-beta.1",
+  "version": "4.1.0-beta.2",
   "description": "The one-liner node.js proxy middleware for connect, express, next.js and more",
   "keywords": [
     "browser-sync",
