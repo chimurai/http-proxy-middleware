@@ -21,6 +21,7 @@
   ],
   "ignoreRegExpList": ["[a-z]+path", "\\]\\(#[a-z-]+\\)", "%[\\dA-Z]{2}"],
   "words": [
+    "bodyless",
     "brotli",
     "camelcase",
     "codesandbox",

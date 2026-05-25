@@ -218,4 +218,47 @@ describe('responseInterceptor()', () => {
       expect(response.header['cache-control']).toBe('private, max-age=60');
     });
   });
+
+  describe('bodyless responses with content-encoding', () => {
+    beforeEach(async () => {
+      await targetServer.forGet('/no-content').thenReply(204, '', {
+        'content-encoding': 'gzip',
+        'cache-control': 'no-cache',
+      });
+
+      await targetServer.forGet('/not-modified').thenReply(304, '', {
+        'content-encoding': 'deflate',
+        etag: '"123"',
+      });
+
+      agent = request(
+        createApp(
+          createProxyMiddleware({
+            target: targetServer.url,
+            changeOrigin: true,
+            selfHandleResponse: true,
+            on: {
+              proxyRes: responseInterceptor(async (buffer) => buffer),
+            },
+          }),
+        ),
+      );
+    });
+
+    it('should preserve 204 and not fail on empty gzip body', async () => {
+      const response = await agent.get('/no-content').expect(204);
+
+      expect(response.text).toBe('');
+      expect(response.header['content-encoding']).toBeUndefined();
+      expect(response.header['cache-control']).toBe('no-cache');
+    });
+
+    it('should preserve 304 and not fail on empty deflate body', async () => {
+      const response = await agent.get('/not-modified').expect(304);
+
+      expect(response.text).toBe('');
+      expect(response.header['content-encoding']).toBeUndefined();
+      expect(response.header.etag).toBe('"123"');
+    });
+  });
 });

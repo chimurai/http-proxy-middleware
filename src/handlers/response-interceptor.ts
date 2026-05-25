@@ -50,8 +50,13 @@ export function responseInterceptor<
     const chunks: Buffer[] = [];
     let bufferLength = 0;
 
+    // Bodyless responses (HEAD, 1xx, 204, 304) must not be decompressed.
+    const contentEncoding = isBodylessResponse(proxyRes.statusCode, req.method)
+      ? undefined
+      : proxyRes.headers['content-encoding'];
+
     // decompress proxy response
-    const _proxyRes = decompress(proxyRes, proxyRes.headers['content-encoding']);
+    const _proxyRes = decompress(proxyRes, contentEncoding);
 
     // collect data chunks and concatenate once on end to avoid repeated full-buffer copies
     _proxyRes.on('data', (chunk) => {
@@ -67,6 +72,13 @@ export function responseInterceptor<
 
       // copy original headers
       copyHeaders(proxyRes, res);
+
+      // RFC 9110: HEAD and 1xx/204/304 responses do not include content.
+      // End the response after headers to avoid writing an invalid body.
+      if (isBodylessResponse(proxyRes.statusCode, req.method)) {
+        res.end();
+        return;
+      }
 
       // call interceptor with intercepted response (buffer)
       debug('call interceptor function: %s', getFunctionName(interceptor));
@@ -92,6 +104,14 @@ export function responseInterceptor<
       res.end(`Error fetching proxied request: ${error.message}`);
     });
   };
+}
+
+function isBodylessResponse(statusCode?: number, method?: string): boolean {
+  return (
+    method?.toUpperCase() === 'HEAD' ||
+    (statusCode !== undefined &&
+      ((statusCode >= 100 && statusCode < 200) || statusCode === 204 || statusCode === 304))
+  );
 }
 
 /**

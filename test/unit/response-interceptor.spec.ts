@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { responseInterceptor } from '../../src/handlers/response-interceptor.js';
 import { createMockRequest, createMockResponse } from '../test-utils.js';
@@ -77,5 +77,49 @@ describe('responseInterceptor', () => {
     expect(res.setHeader).not.toHaveBeenCalled();
     expect(res.write).not.toHaveBeenCalled();
     expect(res.end).toHaveBeenCalledWith('Error fetching proxied request: some error message');
+  });
+
+  it('should not write response body for HEAD requests', async () => {
+    const proxyRes = createMockRequest({
+      statusCode: 200,
+      headers: {
+        'content-encoding': 'gzip',
+      },
+    });
+    const req = createMockRequest({ method: 'HEAD' });
+    const res = createMockResponse();
+    const interceptor = vi.fn(async (buffer: Buffer) => buffer);
+
+    responseInterceptor(interceptor)(proxyRes, req, res);
+
+    proxyRes.emit('data', Buffer.from('HPM'));
+    proxyRes.emit('end');
+    await waitInterceptorHandler();
+
+    expect(interceptor).not.toHaveBeenCalled();
+    expect(res.write).not.toHaveBeenCalled();
+    expect(res.end).toHaveBeenCalledWith();
+  });
+
+  it('should not write response body for informational responses', async () => {
+    const proxyRes = createMockRequest({
+      statusCode: 103,
+      headers: {
+        'content-encoding': 'gzip',
+      },
+    });
+    const req = createMockRequest({ method: 'GET' });
+    const res = createMockResponse();
+    const interceptor = vi.fn(async (buffer: Buffer) => buffer);
+
+    responseInterceptor(interceptor)(proxyRes, req, res);
+
+    proxyRes.emit('data', Buffer.from('HPM'));
+    proxyRes.emit('end');
+    await waitInterceptorHandler();
+
+    expect(interceptor).not.toHaveBeenCalled();
+    expect(res.write).not.toHaveBeenCalled();
+    expect(res.end).toHaveBeenCalledWith();
   });
 });
