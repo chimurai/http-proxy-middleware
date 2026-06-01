@@ -1,3 +1,5 @@
+// spell-checker: ignore evilbeta, evillocalhost
+
 import type { Agent as HttpAgent } from 'node:http';
 import { Agent as HttpsAgent } from 'node:https';
 
@@ -261,10 +263,22 @@ describe('E2E router', () => {
       expect(response.text).toBe('HTTPS B');
     });
 
+    it('should not proxy host-only target when host is a crafted superstring', async () => {
+      const response = await agent.get('/api').set('host', 'evilbeta.localhost:6000').expect(200);
+
+      expect(response.text).toBe('HTTPS A');
+    });
+
     it('should proxy with host & path config: "localhost:6000/api"', async () => {
       const response = await agent.get('/api').set('host', 'localhost:6000').expect(200);
 
       expect(response.text).toBe('HTTPS C');
+    });
+
+    it('should not proxy to host+path target when host is a crafted superstring', async () => {
+      const response = await agent.get('/api').set('host', 'evillocalhost:6000').expect(200);
+
+      expect(response.text).toBe('HTTPS A');
     });
   });
 });
