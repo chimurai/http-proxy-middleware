@@ -1,3 +1,4 @@
+// spell-checker: ignore evilalpha, evilgamma
 import { getTarget } from '../../src/router';
 
 describe('router unit test', () => {
@@ -106,6 +107,12 @@ describe('router unit test', () => {
         result = getTarget(fakeReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6002');
       });
+
+      it('should not match host-only config when host contains key as substring', () => {
+        fakeReq.headers.host = 'evilalpha.localhost';
+        result = getTarget(fakeReq, proxyOptionWithRouter);
+        return expect(result).resolves.toBeUndefined();
+      });
     });
 
     describe('with host and host + path config', () => {
@@ -128,6 +135,20 @@ describe('router unit test', () => {
         result = getTarget(fakeReq, proxyOptionWithRouter);
         return expect(result).resolves.toBe('http://localhost:6003');
       });
+
+      it('should not match host+path config when host is a superstring', () => {
+        fakeReq.headers.host = 'evilgamma.localhost';
+        fakeReq.url = '/api';
+        result = getTarget(fakeReq, proxyOptionWithRouter);
+        return expect(result).resolves.toBeUndefined();
+      });
+
+      it('should not match host+path config when host only contains host as a substring', () => {
+        fakeReq.headers.host = 'gamma.localhost.evil';
+        fakeReq.url = '/api/books/123';
+        result = getTarget(fakeReq, proxyOptionWithRouter);
+        return expect(result).resolves.toBeUndefined();
+      });
     });
 
     describe('with just the path', () => {
@@ -145,6 +166,12 @@ describe('router unit test', () => {
 
       it('should target http://localhost:6000 path in not present in router config', () => {
         fakeReq.url = '/unknown-path';
+        result = getTarget(fakeReq, proxyOptionWithRouter);
+        return expect(result).resolves.toBeUndefined();
+      });
+
+      it('should not match path config when key appears as non-prefix substring', () => {
+        fakeReq.url = '/prefix/rest';
         result = getTarget(fakeReq, proxyOptionWithRouter);
         return expect(result).resolves.toBeUndefined();
       });

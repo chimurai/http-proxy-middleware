@@ -4,6 +4,7 @@
 
 - fix(types): fix Logger type
 - fix(error-response-plugin): sanitize input
+- fix(router): harden proxy-table matching (exact host for host+path keys, prefix-only path matching) to prevent routing bypass
 
 ## [v3.0.5](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.5)
 

@@ -1,3 +1,4 @@
+/* spellchecker: ignore evilbeta, evillocalhost */
 import { ErrorRequestHandler } from 'express';
 import * as getPort from 'get-port';
 import { Mockttp, generateCACertificate, getLocal } from 'mockttp';
@@ -185,10 +186,22 @@ describe('E2E router', () => {
       expect(response.text).toBe('B');
     });
 
+    it('should not proxy host-only target when host is a crafted superstring', async () => {
+      const response = await agent.get('/api').set('host', 'evilbeta.localhost:6000').expect(200);
+
+      expect(response.text).toBe('A');
+    });
+
     it('should proxy with host & path config: "localhost:6000/api"', async () => {
       const response = await agent.get('/api').set('host', 'localhost:6000').expect(200);
 
       expect(response.text).toBe('C');
+    });
+
+    it('should not proxy to host+path target when host is a crafted superstring', async () => {
+      const response = await agent.get('/api').set('host', 'evillocalhost:6000').expect(200);
+
+      expect(response.text).toBe('A');
     });
   });
 });
