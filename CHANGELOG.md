@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## [v4.1.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.1.0)
 
 - feat(definePlugin): helper function to create plugins
 - chore(package.json): update to httpxy@0.5.3
