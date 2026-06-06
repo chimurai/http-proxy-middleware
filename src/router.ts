@@ -32,15 +32,25 @@ function getTargetFromProxyTable<TReq extends http.IncomingMessage>(
   const host = req.headers.host ?? '';
   const path = req.url ?? '';
 
-  const hostAndPath = host + path;
-
   for (const [key, value] of Object.entries(table)) {
     if (containsPath(key)) {
-      if (hostAndPath.indexOf(key) > -1) {
-        // match 'localhost:3000/api'
-        result = value;
-        debug('match: "%s" -> "%s"', key, result);
-        break;
+      if (isHostAndPathKey(key)) {
+        const [keyHost, keyPath] = splitHostAndPathKey(key);
+
+        // SECURITY: host+path keys must match exact host + path prefix.
+        if (host === keyHost && path.startsWith(keyPath)) {
+          // match 'localhost:3000/api'
+          result = value;
+          debug('match: "%s" -> "%s"', key, result);
+          break;
+        }
+      } else {
+        if (path.startsWith(key)) {
+          // match '/api'
+          result = value;
+          debug('match: "%s" -> "%s"', key, result);
+          break;
+        }
       }
     } else {
       if (key === host) {
@@ -57,4 +67,13 @@ function getTargetFromProxyTable<TReq extends http.IncomingMessage>(
 
 function containsPath(v: string) {
   return v.indexOf('/') > -1;
+}
+
+function isHostAndPathKey(v: string) {
+  return containsPath(v) && !v.startsWith('/');
+}
+
+function splitHostAndPathKey(v: string): [string, string] {
+  const firstSlash = v.indexOf('/');
+  return [v.slice(0, firstSlash), v.slice(firstSlash)];
 }

@@ -13,6 +13,7 @@
 - fix(responseInterceptor): prevent trailer/content-length conflict
 - feat(zstd): support zstd compression in responseInterceptor and fixRequestBody
 - fix(responseInterceptor): handle bodyless responses (HEAD/1xx/204/304) with content-encoding
+- fix(router): harden proxy-table matching
 
 ## [v4.0.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.0.0)
 
