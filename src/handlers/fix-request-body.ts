@@ -1,6 +1,8 @@
 import type * as http from 'node:http';
 import * as querystring from 'node:querystring';
 
+import { stringifyFormData } from './fix-request-body-utils/stringify-form-data';
+
 export type BodyParserLikeRequest = http.IncomingMessage & { body?: any };
 
 /**
@@ -32,30 +34,25 @@ export function fixRequestBody<TReq extends BodyParserLikeRequest = BodyParserLi
     proxyReq.write(bodyData);
   };
 
-  // Use if-elseif to prevent multiple writeBody/setHeader calls:
-  // Error: "Cannot set headers after they are sent to the client"
-  if (contentType.includes('application/json') || contentType.includes('+json')) {
-    writeBody(JSON.stringify(requestBody));
-  } else if (contentType.includes('application/x-www-form-urlencoded')) {
-    writeBody(querystring.stringify(requestBody));
-  } else if (contentType.includes('multipart/form-data')) {
-    writeBody(handlerFormDataBodyData(contentType, requestBody));
-  } else if (contentType.includes('text/plain')) {
-    writeBody(requestBody);
+  try {
+    // Use if-elseif to prevent multiple writeBody/setHeader calls:
+    // Error: "Cannot set headers after they are sent to the client"
+    if (contentType.includes('application/json') || contentType.includes('+json')) {
+      writeBody(JSON.stringify(requestBody));
+    } else if (contentType.includes('application/x-www-form-urlencoded')) {
+      writeBody(querystring.stringify(requestBody));
+    } else if (contentType.includes('multipart/form-data')) {
+      writeBody(stringifyFormData(contentType, requestBody));
+    } else if (contentType.includes('text/plain')) {
+      writeBody(requestBody);
+    }
+  } catch (error) {
+    // proxyReq listeners run outside the middleware try/catch path; re-throwing here can bubble as
+    // an unhandled exception in consumers, so destroy() is used to fail closed through proxy error handling.
+    proxyReq.destroy(toError(error));
   }
 }
 
-/**
- * format FormData data
- * @param contentType
- * @param data
- * @returns
- */
-function handlerFormDataBodyData(contentType: string, data: any) {
-  const boundary = contentType.replace(/^.*boundary=(.*)$/, '$1');
-  let str = '';
-  for (const [key, value] of Object.entries(data)) {
-    str += `--${boundary}\r\nContent-Disposition: form-data; name="${key}"\r\n\r\n${value}\r\n`;
-  }
-  return str;
+function toError(error: unknown): Error {
+  return error instanceof Error ? error : new Error(String(error));
 }
