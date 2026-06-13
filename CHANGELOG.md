@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased](https://github.com/chimurai/http-proxy-middleware/compare/v4.1.0...master)
+
+- fix(fixRequestBody): harden form-data stringification
+
 ## [v4.1.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.1.0)
 
 - feat(definePlugin): helper function to create plugins
