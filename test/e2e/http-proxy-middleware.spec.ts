@@ -167,7 +167,7 @@ describe('E2E http-proxy-middleware', () => {
           .post('/api')
           .set('Content-Type', 'application/x-www-form-urlencoded')
           .send(`user=${encodeURIComponent(injectedValue)}`)
-          .expect(500);
+          .expect(400);
 
         expect(response.text).toContain('Error occurred while trying to proxy');
         expect(targetSpy).toHaveBeenCalledTimes(0);

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { HttpProxyMiddlewareError } from '../../../src/errors.js';
 import { stringifyFormData } from '../../../src/handlers/fix-request-body-utils/stringify-form-data.js';
 
 describe('stringifyFormData', () => {
@@ -77,7 +78,10 @@ describe('stringifyFormData', () => {
           user: 'alice',
         }),
       ).toThrow(
-        '[HPM] unsafe multipart boundary detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
       );
     });
 
@@ -85,7 +89,10 @@ describe('stringifyFormData', () => {
       expect(() =>
         stringifyFormData('multipart/form-data; boundary="BB\rX"', { user: 'alice' }),
       ).toThrow(
-        '[HPM] unsafe multipart boundary detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
       );
     });
 
@@ -93,7 +100,10 @@ describe('stringifyFormData', () => {
       expect(() =>
         stringifyFormData('multipart/form-data; boundary="BB\nX"', { user: 'alice' }),
       ).toThrow(
-        '[HPM] unsafe multipart boundary detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
       );
     });
 
@@ -101,7 +111,10 @@ describe('stringifyFormData', () => {
       expect(() =>
         stringifyFormData('multipart/form-data; boundary=   ', { user: 'alice' }),
       ).toThrow(
-        '[HPM] unsafe multipart boundary detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
       );
     });
 
@@ -111,7 +124,10 @@ describe('stringifyFormData', () => {
           'bad\nname': 'alice',
         }),
       ).toThrow(
-        '[HPM] unsafe multipart field name "bad\nname" detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart field name "bad\nname" detected.',
+          'HPM_ERR_INVALID_MULTIPART_FIELD_NAME',
+        ),
       );
     });
 
@@ -121,7 +137,10 @@ describe('stringifyFormData', () => {
           'bad\rname': 'alice',
         }),
       ).toThrow(
-        '[HPM] unsafe multipart field name "bad\rname" detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart field name "bad\rname" detected.',
+          'HPM_ERR_INVALID_MULTIPART_FIELD_NAME',
+        ),
       );
     });
 
@@ -131,7 +150,10 @@ describe('stringifyFormData', () => {
           user: 'alice\r\nadmin',
         }),
       ).toThrow(
-        '[HPM] unsafe multipart field value for "user" detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart field value for "user" detected.',
+          'HPM_ERR_INVALID_MULTIPART_FIELD_VALUE',
+        ),
       );
     });
 
@@ -141,7 +163,10 @@ describe('stringifyFormData', () => {
           user: 'alice\radmin',
         }),
       ).toThrow(
-        '[HPM] unsafe multipart field value for "user" detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart field value for "user" detected.',
+          'HPM_ERR_INVALID_MULTIPART_FIELD_VALUE',
+        ),
       );
     });
 
@@ -151,7 +176,10 @@ describe('stringifyFormData', () => {
           user: 'prefix --BB suffix',
         }),
       ).toThrow(
-        '[HPM] unsafe multipart field value for "user" detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart field value for "user" detected.',
+          'HPM_ERR_INVALID_MULTIPART_FIELD_VALUE',
+        ),
       );
     });
   });

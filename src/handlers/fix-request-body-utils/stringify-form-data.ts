@@ -1,4 +1,7 @@
+import { HttpProxyMiddlewareError } from '../../errors.js';
+
 const CR_OR_LF = /[\r\n]/;
+const ERROR_CODE_PREFIX = 'HPM_ERR_INVALID_MULTIPART';
 
 /**
  * stringify FormData data
@@ -30,8 +33,9 @@ function getMultipartBoundary(contentType: string): string {
   const boundary = (boundaryMatch?.[1] ?? boundaryMatch?.[2] ?? contentType).trim();
 
   if (!boundary || CR_OR_LF.test(boundary)) {
-    throw new Error(
-      '[HPM] unsafe multipart boundary detected. Request rejected per RFC 9112 obsolete line folding guidance.',
+    throw new HttpProxyMiddlewareError(
+      '[HPM] invalid multipart boundary detected.',
+      `${ERROR_CODE_PREFIX}_BOUNDARY`,
     );
   }
 
@@ -42,14 +46,16 @@ function validateMultipartField(fieldName: string, fieldValue: string, boundary:
   const boundaryDelimiter = `--${boundary}`;
 
   if (CR_OR_LF.test(fieldName)) {
-    throw new Error(
-      `[HPM] unsafe multipart field name "${fieldName}" detected. Request rejected per RFC 9112 obsolete line folding guidance.`,
+    throw new HttpProxyMiddlewareError(
+      `[HPM] invalid multipart field name "${fieldName}" detected.`,
+      `${ERROR_CODE_PREFIX}_FIELD_NAME`,
     );
   }
 
   if (CR_OR_LF.test(fieldValue) || fieldValue.includes(boundaryDelimiter)) {
-    throw new Error(
-      `[HPM] unsafe multipart field value for "${fieldName}" detected. Request rejected per RFC 9112 obsolete line folding guidance.`,
+    throw new HttpProxyMiddlewareError(
+      `[HPM] invalid multipart field value for "${fieldName}" detected.`,
+      `${ERROR_CODE_PREFIX}_FIELD_VALUE`,
     );
   }
 }
