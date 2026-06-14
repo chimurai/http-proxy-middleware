@@ -20,15 +20,17 @@ export const errorResponsePlugin: Plugin = definePlugin((proxyServer, options) =
     if (!req || !res) {
       throw err; // "Error: Must provide a proper URL as target"
     }
+    // Log full details server-side where only admins can see them
+  console.error(`Proxy error for ${req.headers.host}${req.url}:`, err);
 
+    // Return generic error to client
     if (isResponseLike(res)) {
       if (!res.headersSent) {
         const statusCode = getStatusCode((err as unknown as any).code);
         res.writeHead(statusCode);
       }
 
-      const host = req.headers && req.headers.host;
-      res.end(`Error occurred while trying to proxy: ${sanitize(host)}${sanitize(req.url)}`);
+      res.end('UPSTREAM_ERROR');
     } else if (isSocketLike(res)) {
       res.destroy();
     }
