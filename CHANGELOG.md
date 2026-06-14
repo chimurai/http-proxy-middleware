@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- fix(fixRequestBody): harden form-data stringification
+
 ## [v3.0.6](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.6)
 
 - fix(types): fix Logger type
