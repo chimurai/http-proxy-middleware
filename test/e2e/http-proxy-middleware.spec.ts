@@ -128,6 +128,50 @@ describe('E2E http-proxy-middleware', () => {
         });
         await agent.post('/api').send({ foo: 'bar', bar: 'baz', doubleByte: '文' }).expect(200);
       });
+
+      it('should reject CRLF multipart injection when fixRequestBody serializes multipart', async () => {
+        const targetSpy = vi.fn();
+
+        agent = request(
+          createApp(
+            bodyParser.urlencoded({ extended: false }),
+            (req, res, next) => {
+              if (req.body?.role === 'admin') {
+                res.status(403).send('gateway: role=admin forbidden');
+                return;
+              }
+              next();
+            },
+            createProxyMiddleware({
+              target: mockTargetServer.url,
+              pathFilter: '/api',
+              on: {
+                proxyReq: (proxyReq, req) => {
+                  proxyReq.setHeader('Content-Type', 'multipart/form-data; boundary=BB');
+                  fixRequestBody(proxyReq, req);
+                },
+              },
+            }),
+          ),
+        );
+
+        await mockTargetServer.forPost('/api').thenCallback(async () => {
+          targetSpy();
+          return { statusCode: 200 };
+        });
+
+        const injectedValue =
+          'alice\r\n--BB\r\nContent-Disposition: form-data; name="role"\r\n\r\nadmin\r\n--BB--';
+
+        const response = await agent
+          .post('/api')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+          .send(`user=${encodeURIComponent(injectedValue)}`)
+          .expect(400);
+
+        expect(response.text).toContain('Error occurred while trying to proxy');
+        expect(targetSpy).toHaveBeenCalledTimes(0);
+      });
     });
 
     describe('custom pathFilter matcher/filter', () => {

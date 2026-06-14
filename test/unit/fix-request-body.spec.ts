@@ -113,6 +113,92 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
 
+  it('should reject multipart field values containing CRLF', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'multipart/form-data; boundary=BB');
+
+    fixRequestBody(
+      proxyRequest,
+      createRequestWithBody({
+        user: 'alice\r\n--BB\r\nContent-Disposition: form-data; name="role"\r\n\r\nadmin',
+      }),
+    );
+
+    expect(proxyRequest.write).toHaveBeenCalledTimes(0);
+    expect(proxyRequest.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should reject multipart field values containing LF only', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'multipart/form-data; boundary=BB');
+
+    fixRequestBody(
+      proxyRequest,
+      createRequestWithBody({
+        user: 'alice\nadmin',
+      }),
+    );
+
+    expect(proxyRequest.write).toHaveBeenCalledTimes(0);
+    expect(proxyRequest.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should reject multipart field values containing CR only', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'multipart/form-data; boundary=BB');
+
+    fixRequestBody(
+      proxyRequest,
+      createRequestWithBody({
+        user: 'alice\radmin',
+      }),
+    );
+
+    expect(proxyRequest.write).toHaveBeenCalledTimes(0);
+    expect(proxyRequest.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should reject multipart field names containing LF', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'multipart/form-data; boundary=BB');
+
+    fixRequestBody(
+      proxyRequest,
+      createRequestWithBody({
+        'bad\nname': 'alice',
+      }),
+    );
+
+    expect(proxyRequest.write).toHaveBeenCalledTimes(0);
+    expect(proxyRequest.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should reject multipart field values containing the active boundary delimiter', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'multipart/form-data; boundary=BB');
+
+    fixRequestBody(
+      proxyRequest,
+      createRequestWithBody({
+        user: '--BB',
+      }),
+    );
+
+    expect(proxyRequest.write).toHaveBeenCalledTimes(0);
+    expect(proxyRequest.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should escape quotes in multipart field names', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'multipart/form-data; boundary=BB');
+
+    fixRequestBody(proxyRequest, createRequestWithBody({ 'field"name': 'value' }));
+
+    expect(proxyRequest.write).toHaveBeenCalledWith(
+      '--BB\r\nContent-Disposition: form-data; name="field\\"name"\r\n\r\nvalue\r\n',
+    );
+  });
+
   it('should write when body is not empty and Content-Type ends with +json', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/merge-patch+json; charset=utf-8');
