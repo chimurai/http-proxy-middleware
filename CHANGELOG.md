@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/chimurai/http-proxy-middleware/compare/v4.1.0...master)
+## [v4.1.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.1.1)
 
 - fix(fixRequestBody): harden form-data stringification
 
