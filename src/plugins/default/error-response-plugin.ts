@@ -21,7 +21,7 @@ export const errorResponsePlugin: Plugin = definePlugin((proxyServer, options) =
       throw err; // "Error: Must provide a proper URL as target"
     }
     // Log full details server-side where only admins can see them
-  console.error(`Proxy error for ${req.headers.host}${req.url}:`, err);
+  console.error(`Proxy error for ${req.headers.host || 'unknown host'}${req.url || 'unknown url'}:`, err);
 
     // Return generic error to client
     if (isResponseLike(res)) {
