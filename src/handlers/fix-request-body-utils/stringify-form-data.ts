@@ -1,7 +1,12 @@
 import { HttpProxyMiddlewareError } from '../../errors.js';
 
 const CR_OR_LF = /[\r\n]/;
-const ERROR_CODE_PREFIX = 'HPM_ERR_INVALID_MULTIPART';
+
+/**
+ * HPM_ERR_INVALID_MULTIPART prefixed error code will be used in
+ * [status-code.ts]({@link ../../status-code.ts}) to return status code 400.
+ */
+export const HPM_ERR_INVALID_MULTIPART = 'HPM_ERR_INVALID_MULTIPART';
 
 /**
  * stringify FormData data
@@ -35,7 +40,7 @@ function getMultipartBoundary(contentType: string): string {
   if (!boundary || CR_OR_LF.test(boundary)) {
     throw new HttpProxyMiddlewareError(
       '[HPM] invalid multipart boundary detected.',
-      `${ERROR_CODE_PREFIX}_BOUNDARY`,
+      `${HPM_ERR_INVALID_MULTIPART}_BOUNDARY`,
     );
   }
 
@@ -48,14 +53,14 @@ function validateMultipartField(fieldName: string, fieldValue: string, boundary:
   if (CR_OR_LF.test(fieldName)) {
     throw new HttpProxyMiddlewareError(
       `[HPM] invalid multipart field name "${fieldName}" detected.`,
-      `${ERROR_CODE_PREFIX}_FIELD_NAME`,
+      `${HPM_ERR_INVALID_MULTIPART}_FIELD_NAME`,
     );
   }
 
   if (CR_OR_LF.test(fieldValue) || fieldValue.includes(boundaryDelimiter)) {
     throw new HttpProxyMiddlewareError(
       `[HPM] invalid multipart field value for "${fieldName}" detected.`,
-      `${ERROR_CODE_PREFIX}_FIELD_VALUE`,
+      `${HPM_ERR_INVALID_MULTIPART}_FIELD_VALUE`,
     );
   }
 }
