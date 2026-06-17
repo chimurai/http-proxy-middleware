@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { HttpProxyMiddlewareError } from '../../src/errors.js';
 import { createPathRewriter } from '../../src/path-rewriter.js';
 import type { Options } from '../../src/types.js';
 import type { PathRewriteConfig } from '../../src/types.js';
@@ -150,10 +151,14 @@ describe('Path rewriting', () => {
     });
 
     it('should throw when bad config is provided', () => {
-      expect(badFn(123 as unknown as PathRewriteConfig)).toThrow(Error);
-      expect(badFn('abc' as unknown as PathRewriteConfig)).toThrow(Error);
-      expect(badFn([] as unknown as PathRewriteConfig)).toThrow(Error);
-      expect(badFn([1, 2, 3] as unknown as PathRewriteConfig)).toThrow(Error);
+      expect(badFn(123 as unknown as PathRewriteConfig)).toThrow(HttpProxyMiddlewareError);
+      expect(badFn('abc' as unknown as PathRewriteConfig)).toThrow(
+        expect.objectContaining({ code: 'HPM_INVALID_PATH_REWRITER_CONFIG' }),
+      );
+      expect(badFn([] as unknown as PathRewriteConfig)).toThrow(HttpProxyMiddlewareError);
+      expect(badFn([1, 2, 3] as unknown as PathRewriteConfig)).toThrow(
+        expect.objectContaining({ code: 'HPM_INVALID_PATH_REWRITER_CONFIG' }),
+      );
     });
 
     it('should not throw when empty Object config is provided', () => {

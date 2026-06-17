@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { HttpProxyMiddlewareError } from '../../src/errors.js';
 import { matchPathFilter } from '../../src/path-filter.js';
 import { createMockRequest } from '../test-utils.js';
 
@@ -215,19 +216,31 @@ describe('Path Filter', () => {
 
     describe('Throw error', () => {
       it('should throw error with null', () => {
-        expect(testPathFilter(null)).toThrow(Error);
+        expect(testPathFilter(null)).toThrow(HttpProxyMiddlewareError);
+        expect(testPathFilter(null)).toThrow(
+          expect.objectContaining({ code: 'HPM_INVALID_PATH_FILTER_CONFIG' }),
+        );
       });
 
       it('should throw error with object literal', () => {
-        expect(testPathFilter(mockReq)).toThrow(Error);
+        expect(testPathFilter(mockReq)).toThrow(HttpProxyMiddlewareError);
+        expect(testPathFilter(mockReq)).toThrow(
+          expect.objectContaining({ code: 'HPM_INVALID_PATH_FILTER_CONFIG' }),
+        );
       });
 
       it('should throw error with integers', () => {
-        expect(testPathFilter(123)).toThrow(Error);
+        expect(testPathFilter(123)).toThrow(HttpProxyMiddlewareError);
+        expect(testPathFilter(123)).toThrow(
+          expect.objectContaining({ code: 'HPM_INVALID_PATH_FILTER_CONFIG' }),
+        );
       });
 
       it('should throw error with mixed string and glob pattern', () => {
-        expect(testPathFilter(['/api', '!*.html'])).toThrow(Error);
+        expect(testPathFilter(['/api', '!*.html'])).toThrow(HttpProxyMiddlewareError);
+        expect(testPathFilter(['/api', '!*.html'])).toThrow(
+          expect.objectContaining({ code: 'HPM_INVALID_PATH_FILTER_ARRAY_CONFIG' }),
+        );
       });
     });
 

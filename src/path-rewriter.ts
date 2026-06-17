@@ -3,7 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import isPlainObject from 'is-plain-obj';
 
 import { Debug } from './debug.js';
-import { ERRORS } from './errors.js';
+import { HttpProxyMiddlewareError } from './errors.js';
 import type { PathRewriteConfig } from './types.js';
 
 const debug = Debug.extend('path-rewriter');
@@ -57,7 +57,10 @@ function isValidRewriteConfig<
   } else if (rewriteConfig === undefined || rewriteConfig === null) {
     return false;
   } else {
-    throw new Error(ERRORS.ERR_PATH_REWRITER_CONFIG);
+    throw new HttpProxyMiddlewareError(
+      '[HPM] Invalid pathRewrite config. Expecting object with pathRewrite config or a rewrite function',
+      'HPM_INVALID_PATH_REWRITER_CONFIG',
+    );
   }
 }
 

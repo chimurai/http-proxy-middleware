@@ -3,7 +3,7 @@ import type * as http from 'node:http';
 import isGlob from 'is-glob';
 import micromatch from 'micromatch';
 
-import { ERRORS } from './errors.js';
+import { HttpProxyMiddlewareError } from './errors.js';
 import type { Filter } from './types.js';
 
 export function matchPathFilter<TReq extends http.IncomingMessage = http.IncomingMessage>(
@@ -30,7 +30,10 @@ export function matchPathFilter<TReq extends http.IncomingMessage = http.Incomin
       return matchMultiGlobPath(pathFilter as string[], uri);
     }
 
-    throw new Error(ERRORS.ERR_CONTEXT_MATCHER_INVALID_ARRAY);
+    throw new HttpProxyMiddlewareError(
+      '[HPM] Invalid pathFilter. Plain paths (e.g. "/api") can not be mixed with globs (e.g. "/api/**"). Expecting something like: ["/api", "/ajax"] or ["/api/**", "!**.html"].',
+      'HPM_INVALID_PATH_FILTER_ARRAY_CONFIG',
+    );
   }
 
   // custom matching
@@ -39,7 +42,10 @@ export function matchPathFilter<TReq extends http.IncomingMessage = http.Incomin
     return Boolean(pathFilter(pathname, req as TReq));
   }
 
-  throw new Error(ERRORS.ERR_CONTEXT_MATCHER_GENERIC);
+  throw new HttpProxyMiddlewareError(
+    '[HPM] Invalid pathFilter. Expecting something like: "/api" or ["/api", "/ajax"]',
+    'HPM_INVALID_PATH_FILTER_CONFIG',
+  );
 }
 
 /**
