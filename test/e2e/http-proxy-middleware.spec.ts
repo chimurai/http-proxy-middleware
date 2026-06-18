@@ -1,3 +1,5 @@
+import { Agent as HttpAgent } from 'node:http';
+
 import bodyParser from 'body-parser';
 import type * as express from 'express';
 import type { CompletedRequest, Mockttp } from 'mockttp';
@@ -488,6 +490,61 @@ describe('E2E http-proxy-middleware', () => {
 
         expect(completedRequest?.headers['x-added']).toBe('added-from-hpm');
       });
+
+      it('should keep header mutation safe under keep-alive socket contention (#472)', async () => {
+        const upstreamAgent = new HttpAgent({
+          keepAlive: true,
+          maxSockets: 1,
+          maxFreeSockets: 1,
+        });
+        const completedRequests: CompletedRequest[] = [];
+        const proxyErrors: Error[] = [];
+
+        agent = request(
+          createApp(
+            createProxyMiddleware({
+              target: mockTargetServer.url,
+              pathFilter: '/api',
+              agent: upstreamAgent,
+              on: {
+                proxyReq: (proxyReq) => {
+                  proxyReq.setHeader('x-added', 'added-from-hpm');
+                },
+                error: (error, req, res) => {
+                  proxyErrors.push(error);
+
+                  if ('headersSent' in res && 'writeHead' in res && !res.headersSent) {
+                    res.writeHead(500);
+                    res.end('proxy error');
+                  }
+                },
+              },
+            }),
+          ),
+        );
+
+        await mockTargetServer.forGet('/api/socket-contention').thenCallback(async (req) => {
+          completedRequests.push(req);
+          await new Promise((resolve) => setTimeout(resolve, 50));
+
+          return { statusCode: 200, body: 'OK' };
+        });
+
+        try {
+          const responses = await Promise.all(
+            Array.from({ length: 20 }, () => agent.get('/api/socket-contention').expect(200)),
+          );
+
+          expect(responses).toHaveLength(20);
+          expect(proxyErrors).toEqual([]);
+          expect(completedRequests).toHaveLength(20);
+          expect(
+            completedRequests.every((req) => req.headers['x-added'] === 'added-from-hpm'),
+          ).toBe(true);
+        } finally {
+          upstreamAgent.destroy();
+        }
+      }, 15000);
     });
 
     describe('option.pathRewrite', () => {
