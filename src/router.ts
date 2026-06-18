@@ -17,18 +17,28 @@ export async function getTarget(req, config) {
 
 function getTargetFromProxyTable(req, table) {
   let result;
-  const host = req.headers.host;
-  const path = req.url;
-
-  const hostAndPath = host + path;
+  const host = req.headers.host || '';
+  const path = req.url || '';
 
   for (const [key] of Object.entries(table)) {
     if (containsPath(key)) {
-      if (hostAndPath.indexOf(key) > -1) {
-        // match 'localhost:3000/api'
-        result = table[key];
-        logger.debug('[HPM] Router table match: "%s"', key);
-        break;
+      if (isHostAndPathKey(key)) {
+        const [keyHost, keyPath] = splitHostAndPathKey(key);
+
+        // SECURITY: host+path keys must match exact host + path prefix.
+        if (host === keyHost && path.startsWith(keyPath)) {
+          // match 'localhost:3000/api'
+          result = table[key];
+          logger.debug('[HPM] Router table match: "%s"', key);
+          break;
+        }
+      } else {
+        if (path.startsWith(key)) {
+          // match '/api'
+          result = table[key];
+          logger.debug('[HPM] Router table match: "%s"', key);
+          break;
+        }
       }
     } else {
       if (key === host) {
@@ -45,4 +55,13 @@ function getTargetFromProxyTable(req, table) {
 
 function containsPath(v) {
   return v.indexOf('/') > -1;
+}
+
+function isHostAndPathKey(v) {
+  return containsPath(v) && !v.startsWith('/');
+}
+
+function splitHostAndPathKey(v) {
+  const firstSlash = v.indexOf('/');
+  return [v.slice(0, firstSlash), v.slice(firstSlash)];
 }

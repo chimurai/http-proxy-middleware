@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- fix(router): harden proxy-table matching (exact host for host+path keys, prefix-only path matching) to prevent routing bypass
+
 ## [v2.0.9](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.9)
 
 - fix(fixRequestBody): check readableLength

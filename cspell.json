@@ -33,6 +33,7 @@
     "rawbody",
     "restream",
     "streamify",
+    "superstring",
     "vhosted",
     "websockets",
     "xfwd"
