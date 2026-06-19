@@ -5,29 +5,34 @@ on:
 jobs:
   build-and-publish:
     # prevents this action from running on forks
-    if: github.repository == 'chimurai/http-proxy-middleware'
+    # only allow listed user to publish
+    if: |
+      github.repository == 'chimurai/http-proxy-middleware' &&
+      github.triggering_actor == 'chimurai'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
+      id-token: write # Required for OIDC
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
         with:
-          node-version: '22.x'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
 
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile --ignore-scripts
 
       - name: Publish to NPM (beta)
         if: 'github.event.release.prerelease'
-        run: npm publish --provenance --access public --tag v2-beta
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm stage publish --access public --tag v2-beta
 
       - name: Publish to NPM (stable)
         if: '!github.event.release.prerelease'
-        run: npm publish --provenance --access public --tag v2-latest
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm stage publish --access public --tag v2-latest
