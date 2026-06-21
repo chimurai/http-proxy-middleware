@@ -65,6 +65,16 @@ describe('responseInterceptor()', () => {
         .expect('set-cookie', /.*cookie=monster.*/)
         .expect(302);
     });
+
+    it('should proxy and return original domain of set-cookie headers', async () => {
+      return agent
+        .get(
+          `/response-headers?set-cookie=${encodeURIComponent(
+            'JSESSIONID=monster;Domain=httpbin.com;Path=/;SameSite=Lax'
+          )}`
+        )
+        .expect('set-cookie', /.*Domain=httpbin.com.*/);
+    });
   });
 
   describe('intercept compressed responses', () => {
