@@ -133,6 +133,11 @@ describe('E2E http-proxy-middleware', () => {
 
       it('should reject CRLF multipart injection when fixRequestBody serializes multipart', async () => {
         const targetSpy = vi.fn();
+        const loggerSpy: Logger = {
+          info: vi.fn(),
+          warn: vi.fn(),
+          error: vi.fn(),
+        };
 
         agent = request(
           createApp(
@@ -153,6 +158,7 @@ describe('E2E http-proxy-middleware', () => {
                   fixRequestBody(proxyReq, req);
                 },
               },
+              logger: loggerSpy,
             }),
           ),
         );
@@ -173,6 +179,13 @@ describe('E2E http-proxy-middleware', () => {
 
         expect(response.text).toContain('Error occurred while trying to proxy');
         expect(targetSpy).toHaveBeenCalledTimes(0);
+        expect(loggerSpy.error).toHaveBeenCalledWith(
+          '[HPM] Error occurred while proxying request %s to %s [%s] (%s)',
+          expect.anything(),
+          expect.anything(),
+          'HPM_ERR_INVALID_MULTIPART_FIELD_VALUE',
+          'https://nodejs.org/api/errors.html#errors_common_system_errors',
+        );
       });
     });
 
