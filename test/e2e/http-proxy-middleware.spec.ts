@@ -131,6 +131,30 @@ describe('E2E http-proxy-middleware', () => {
         await agent.post('/api').send({ foo: 'bar', bar: 'baz', doubleByte: '文' }).expect(200);
       });
 
+      it('should detect bodyParser usage leading to ECONNRESET error', async () => {
+        const logSpy = vi.spyOn(console, 'error');
+
+        agent = request(
+          createApp(
+            bodyParser.json(),
+            createProxyMiddleware({
+              target: mockTargetServer.url,
+              pathFilter: '/api',
+            }),
+          ),
+        );
+
+        try {
+          await mockTargetServer.forPost('/api').thenResetConnection();
+          await agent.post('/api').send({ foo: 'bar', bar: 'baz', doubleByte: '文' }).expect(504);
+
+          expect(logSpy).toHaveBeenCalledTimes(1);
+          expect(logSpy.mock.calls[0][0]).toContain('[ERR_HPM.GH40]');
+        } finally {
+          logSpy.mockRestore();
+        }
+      });
+
       it('should reject CRLF multipart injection when fixRequestBody serializes multipart', async () => {
         const targetSpy = vi.fn();
         const loggerSpy: Logger = {
