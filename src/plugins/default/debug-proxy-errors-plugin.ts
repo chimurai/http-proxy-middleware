@@ -1,8 +1,26 @@
+import type { IncomingMessage } from 'node:http';
+import { styleText } from 'node:util';
+
 import { Debug } from '../../debug.js';
 import type { Plugin } from '../../types.js';
 import { definePlugin } from '../define-plugin.js';
 
 const debug = Debug.extend('debug-proxy-errors-plugin');
+
+const BODY_PARSER_ERROR_MESSAGE = `[HPM] Connection reset (ECONNRESET) detected with non-empty "req.body [ERR_HPM.GH40]".
+
+      This usually means that the POST request body (req.body) was already parsed before reaching the proxy.
+      When bodyParser runs first, it consumes the request stream, leaving the proxy unable to forward the body data to the target server.
+
+      How to fix this issue:
+      - Option 1: Place the proxy middleware before the bodyParser middleware.
+      - Option 2: Use 'fixRequestBody()' helper to fix this issue.
+
+      For more details, see: https://github.com/chimurai/http-proxy-middleware/issues/40\n`;
+
+function hasParsedBody(req: IncomingMessage | undefined): boolean {
+  return Boolean(req && req.method === 'POST' && 'body' in req && req.body);
+}
 
 /**
  * Subscribe to {@link https://github.com/unjs/httpxy#events `httpxy` error events} to prevent server from crashing.
@@ -16,6 +34,11 @@ export const debugProxyErrorsPlugin: Plugin = definePlugin((proxyServer, options
    */
   proxyServer.on('error', (error, req, res, target) => {
     debug(`httpxy error event: \n%O`, error);
+
+    // detect request body (when bodyParser used) and log an error message to help debugging
+    if ((error as any).code === 'ECONNRESET' && hasParsedBody(req)) {
+      console.error(styleText('red', BODY_PARSER_ERROR_MESSAGE));
+    }
   });
 
   proxyServer.on('proxyReq', (proxyReq, req, socket) => {
