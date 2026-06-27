@@ -7,7 +7,7 @@ import { definePlugin } from '../define-plugin.js';
 
 const debug = Debug.extend('debug-proxy-errors-plugin');
 
-const BODY_PARSER_ERROR_MESSAGE = `[HPM] Connection reset (ECONNRESET) detected with non-empty "req.body [ERR_HPM.GH40]".
+const BODY_PARSER_ERROR_MESSAGE = `[HPM] Connection reset (ECONNRESET) detected with non-empty "req.body" [ERR_HPM.GH40].
 
       This usually means that the POST request body (req.body) was already parsed before reaching the proxy.
       When bodyParser runs first, it consumes the request stream, leaving the proxy unable to forward the body data to the target server.
