@@ -1,5 +1,11 @@
 # Changelog
 
+## [v4.2.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.2.0)
+
+- feat(types): export OnProxyEvent type
+- feat(debug-proxy-errors-plugin): diagnostic message for POST + bodyParser + ECONNRESET error
+- chore(package.json): update to httpxy v0.5.4
+
 ## [v4.1.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.1.1)
 
 - fix(fixRequestBody): harden form-data stringification
