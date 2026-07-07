@@ -1,81 +1,46 @@
-## Modify Post Parameters:
+## Modify POST body
 
-The code example below illustrates how to modify POST body data prior to forwarding to the proxy target.
-Key to this example is the _"OnProxyReq"_ event handler that creates a new POST body that can be manipulated to format the POST data as required. For example: inject new POST parameters that should only be visible server side.
+Use `body-parser` to populate `req.body`, mutate that object in `on.proxyReq`, then call `fixRequestBody` so the updated body is written to the outgoing proxy request.
 
-This example uses the _"body-parser"_ module in the main app to create a req.body object with the decoded POST parameters. Side note - the code below will allow _"http-proxy-middleware"_ to work with _"body-parser"_.
-
-Since this only modifies the request body stream the original POST body parameters remain in tact, so any POST data changes will not be sent back in the response to the client.
-
-## Example:
+### Minimal example
 
 ```js
-'use strict';
-
 import express from 'express';
-import { createProxyMiddleware } from 'http-proxy-middleware';
+import bodyParser from 'body-parser';
+import { createProxyMiddleware, fixRequestBody } from 'http-proxy-middleware';
 
-const router = express.Router();
+const app = express();
 
-const proxy_options = {
-  target: 'http://localhost:8080',
-  pathRewrite: {
-    '^/docs': '/java/rep/server1', // Host path & target path conversion
-  },
-  pathFilter: function (path, req) {
-    return path.match('^/docs') && (req.method === 'GET' || req.method === 'POST');
-  },
-  on: {
-    error(err, req, res) {
-      res.writeHead(500, {
-        'Content-Type': 'text/plain',
-      });
-      res.end('Something went wrong. And we are reporting a custom error message.' + err);
+app.use(bodyParser.json());
+
+app.use(
+  '/search',
+  createProxyMiddleware({
+    target: 'http://localhost:4000',
+    changeOrigin: true,
+    on: {
+      proxyReq(proxyReq, req) {
+        if (req.method !== 'POST' || !req.body) {
+          return;
+        }
+
+        // 1) modify the parsed body
+        req.body.limit = 25;
+        req.body.filters = ['public'];
+
+        // 2) optional server-only header
+        proxyReq.setHeader('x-api-key', process.env.SEARCH_API_KEY ?? '');
+
+        // 3) write modified body to the proxied request
+        fixRequestBody(proxyReq, req);
+      },
     },
-    proxyReq(proxyReq, req, res) {
-      if (req.method == 'POST' && req.body) {
-        // Add req.body logic here if needed....
-
-        // ....
-
-        // Remove body-parser body object from the request
-        if (req.body) delete req.body;
-
-        // Make any needed POST parameter changes
-        let body = new Object();
-
-        body.filename = 'reports/statistics/summary_2016.pdf';
-        body.routeId = 's003b012d002';
-        body.authId = 'bac02c1d-258a-4177-9da6-862580154960';
-
-        // URI encode JSON object
-        body = Object.keys(body)
-          .map(function (key) {
-            return encodeURIComponent(key) + '=' + encodeURIComponent(body[key]);
-          })
-          .join('&');
-
-        // Update header
-        proxyReq.setHeader('content-type', 'application/x-www-form-urlencoded');
-        proxyReq.setHeader('content-length', body.length);
-
-        // Write out body changes to the proxyReq stream
-        proxyReq.write(body);
-        proxyReq.end();
-      }
-    },
-  },
-};
-
-// Proxy configuration
-const proxy = createProxyMiddleware(proxy_options);
-
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Node.js Express Proxy Test' });
-});
-
-router.all('/docs', proxy);
-
-module.exports = router;
+  }),
+);
 ```
+
+### Essential points
+
+- If `body-parser` runs before the proxy, the original request stream has already been consumed.
+- Updating `req.body` alone is not enough; call `fixRequestBody(proxyReq, req)` to forward the modified payload.
+- Keep mutations in `proxyReq` focused on request shaping (fields/headers) and avoid unrelated app logic in this handler.

@@ -131,6 +131,39 @@ describe('E2E http-proxy-middleware', () => {
         await agent.post('/api').send({ foo: 'bar', bar: 'baz', doubleByte: '文' }).expect(200);
       });
 
+      it('should proxy modified POST body from proxyReq when bodyParser is used (#942)', async () => {
+        agent = request(
+          createApp(
+            bodyParser.json(),
+            createProxyMiddleware({
+              target: mockTargetServer.url,
+              pathFilter: '/api',
+              on: {
+                proxyReq: (proxyReq, req) => {
+                  req.body.search = `${req.body.search} + context-filter`;
+                  req.body.top = 25;
+                  req.body.filters = ['public', 'active'];
+                  proxyReq.setHeader('x-api-key', 'server-secret');
+                  fixRequestBody(proxyReq, req);
+                },
+              },
+            }),
+          ),
+        );
+
+        await mockTargetServer.forPost('/api').thenCallback(async (req) => {
+          expect(await req.body.getJson()).toEqual({
+            search: 'hello + context-filter',
+            top: 25,
+            filters: ['public', 'active'],
+          });
+          expect(req.headers['x-api-key']).toBe('server-secret');
+          return { statusCode: 200, body: 'OK' };
+        });
+
+        await agent.post('/api').send({ search: 'hello', top: 5 }).expect(200, 'OK');
+      });
+
       it('should detect bodyParser usage leading to ECONNRESET error', async () => {
         const logSpy = vi.spyOn(console, 'error');
 

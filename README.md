@@ -516,23 +516,51 @@ server.on('upgrade', wsProxy.upgrade); // <-- subscribe to http 'upgrade'
 
 ## Intercept and manipulate requests
 
-Intercept requests from downstream by defining `onProxyReq` in `createProxyMiddleware`.
+Intercept requests from downstream by defining `on.proxyReq` in `createProxyMiddleware`.
 
-Currently the only pre-provided request interceptor is `fixRequestBody`, which is used to fix proxied POST requests when `bodyParser` is applied before this middleware.
+**Fix POST request:**
 
-Example:
+Use the pre-provided request interceptor `fixRequestBody` to fix proxied POST requests when `bodyParser` is applied before this middleware.
 
 ```javascript
 import { createProxyMiddleware, fixRequestBody } from 'http-proxy-middleware';
 
 const proxy = createProxyMiddleware({
-  /**
-   * Fix bodyParser
-   **/
   on: {
+    // Fix POST request when `bodyParser` is used
     proxyReq: fixRequestBody,
   },
 });
+```
+
+**Modify POST request:**
+
+```javascript
+import bodyParser from 'body-parser';
+import { createProxyMiddleware, fixRequestBody } from 'http-proxy-middleware';
+
+app.use(bodyParser.json());
+
+app.use(
+  '/api',
+  createProxyMiddleware({
+    target: 'http://www.example.org',
+    changeOrigin: true,
+    on: {
+      proxyReq: (proxyReq, req) => {
+        if (req.method !== 'POST' || !req.body) {
+          return;
+        }
+
+        // mutate parsed request body
+        req.body.injected = 'server-only';
+
+        // write mutated body to the proxied request
+        fixRequestBody(proxyReq, req);
+      },
+    },
+  }),
+);
 ```
 
 ## Intercept and manipulate responses
