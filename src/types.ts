@@ -154,7 +154,7 @@ export interface Options<
    */
   on?: OnProxyEvent<TReq, TRes>;
   /**
-   * Dynamically set the {@link Options.target `options.target`}.
+   * Dynamically set the {@link Options#target `options.target`}.
    *
    * @example
    * ```js
