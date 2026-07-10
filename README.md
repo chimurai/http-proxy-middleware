@@ -648,18 +648,18 @@ View the [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master
 
 `http-proxy-middleware` is compatible with the following servers:
 
-- [connect](https://www.npmjs.com/package/connect)
-- [express](https://www.npmjs.com/package/express)
-- [hono](https://www.npmjs.com/package/@hono/node-server)
-- [next.js](https://www.npmjs.com/package/next)
-- [fastify](https://www.npmjs.com/package/fastify)
-- [browser-sync](https://www.npmjs.com/package/browser-sync)
-- [lite-server](https://www.npmjs.com/package/lite-server)
-- [polka](https://github.com/lukeed/polka)
-- [grunt-contrib-connect](https://www.npmjs.com/package/grunt-contrib-connect)
-- [grunt-browser-sync](https://www.npmjs.com/package/grunt-browser-sync)
-- [gulp-connect](https://www.npmjs.com/package/gulp-connect)
-- [gulp-webserver](https://www.npmjs.com/package/gulp-webserver)
+- [connect](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#connect)
+- [express](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#express)
+- [hono](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#hono)
+- [next.js](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#nextjs)
+- [fastify](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#fastify)
+- [browser-sync](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#browser-sync)
+- [lite-server](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#lite-server)
+- [polka](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#polka)
+- [grunt-contrib-connect](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#grunt-contrib-connect)
+- [grunt-browser-sync](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#grunt-browser-sync)
+- [gulp-connect](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#gulp-connect)
+- [gulp-webserver](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#gulp-webserver)
 
 Sample implementations can be found in the [server recipes](https://github.com/chimurai/http-proxy-middleware/tree/master/recipes/servers.md).
 
