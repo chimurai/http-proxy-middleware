@@ -66,11 +66,13 @@ function matchSingleGlobPath(pattern: string, uri?: string) {
   return matcher(pathname);
 }
 
+// Borrowed from https://github.com/micromatch/micromatch/blob/8bd704ec0d9894693d35da425d827819916be920/index.js#L32
+// Optimized for single path + multi patterns
 function matchMultiGlobPath(patternList: string[], uri?: string) {
   const pathname = getUrlPathName(uri) as string;
 
-  let omit = false;
-  let keep = false;
+  let omited = false;
+  let kept = false;
   let hasPositive = false;
 
   for (const pattern of patternList) {
@@ -85,14 +87,14 @@ function matchMultiGlobPath(patternList: string[], uri?: string) {
     if (!match) continue;
 
     if (negated) {
-      omit = true;
+      omited = true;
     } else {
-      omit = false;
-      keep = true;
+      omited = false;
+      kept = true;
     }
   }
 
-  return (!hasPositive || keep) && !omit;
+  return (!hasPositive || kept) && !omited;
 }
 
 /**
