@@ -1,7 +1,7 @@
 import type * as http from 'node:http';
 
 import isGlob from 'is-glob';
-import micromatch from 'micromatch';
+import picomatch from 'picomatch';
 
 import { HttpProxyMiddlewareError } from './errors.js';
 import type { Filter } from './types.js';
@@ -58,14 +58,41 @@ function matchSingleStringPath(pathFilter: string, uri?: string) {
   return pathname?.indexOf(pathFilter) === 0;
 }
 
-function matchSingleGlobPath(pattern: string | string[], uri?: string) {
+const matchers: Record<string, picomatch.Matcher> = Object.create(null);
+
+function matchSingleGlobPath(pattern: string, uri?: string) {
   const pathname = getUrlPathName(uri) as string;
-  const matches = micromatch([pathname], pattern);
-  return matches && matches.length > 0;
+  const matcher = (matchers[pattern] ??= picomatch(pattern));
+  return matcher(pathname);
 }
 
-function matchMultiGlobPath(patternList: string | string[], uri?: string) {
-  return matchSingleGlobPath(patternList, uri);
+function matchMultiGlobPath(patternList: string[], uri?: string) {
+  const pathname = getUrlPathName(uri) as string;
+
+  let omit = false;
+  let keep = false;
+  let hasPositive = false;
+
+  for (const pattern of patternList) {
+    const matcher = (matchers[pattern] ??= picomatch(pattern));
+    const matched = matcher(pathname, true);
+
+    const negated = matched.state.negated || matched.state.negatedExtglob;
+
+    if (!negated) hasPositive = true;
+
+    const match = negated ? !matched.isMatch : matched.isMatch;
+    if (!match) continue;
+
+    if (negated) {
+      omit = true;
+    } else {
+      omit = false;
+      keep = true;
+    }
+  }
+
+  return (!hasPositive || keep) && !omit;
 }
 
 /**

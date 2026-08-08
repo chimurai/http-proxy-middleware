@@ -74,7 +74,8 @@
     "httpxy": "^0.5.4",
     "is-glob": "^4.0.3",
     "is-plain-obj": "^4.1.0",
-    "micromatch": "^4.0.8"
+    "micromatch": "^4.0.8",
+    "picomatch": "^4.0.5"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.1",
@@ -87,6 +88,7 @@
     "@types/is-glob": "4.0.4",
     "@types/micromatch": "4.0.10",
     "@types/node": "26.1.1",
+    "@types/picomatch": "^4.0.3",
     "@types/supertest": "7.2.1",
     "@types/ws": "8.18.1",
     "@vitest/coverage-v8": "4.1.10",
