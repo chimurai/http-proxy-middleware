@@ -28,3 +28,7 @@
 
 - [ ] My change requires a change to the documentation.
 - [ ] I have updated the documentation accordingly.
+
+## AI disclosure
+
+<!--- Disclose if- and how AI was used to create this PR -->
