@@ -3,7 +3,7 @@
 ## Git
 
 - ALWAYS postfix commit messages with `[AI]`.
-- ALWAYS add a concise, sanitized AI-use disclosure in the commit body. NEVER include secrets, PII, or proprietary prompt content
+- ALWAYS include user prompt in the commit body in markdown code block. NEVER include secrets, PII, or proprietary prompt content
 
 ## GitHub PR
 
