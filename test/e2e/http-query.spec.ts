@@ -78,7 +78,7 @@ describe('E2E HTTP QUERY method', () => {
     it('should proxy QUERY method and uri-query to target', async () => {
       let completedRequest: CompletedRequest | undefined;
 
-      await mockTargetServer.forAnyRequest().thenCallback((req) => {
+      await mockTargetServer.forQuery().thenCallback((req) => {
         completedRequest = req;
         return { statusCode: 200, body: 'QUERY OK' };
       });
@@ -109,7 +109,7 @@ describe('E2E HTTP QUERY method', () => {
     it('should preserve encoded query values in QUERY requests', async () => {
       let completedRequest: CompletedRequest | undefined;
 
-      await mockTargetServer.forAnyRequest().thenCallback((req) => {
+      await mockTargetServer.forQuery().thenCallback((req) => {
         completedRequest = req;
         return { statusCode: 200, body: 'ENCODING OK' };
       });
@@ -139,7 +139,7 @@ describe('E2E HTTP QUERY method', () => {
     it('should proxy QUERY request body when fixRequestBody is enabled', async () => {
       let completedRequest: CompletedRequest | undefined;
 
-      await mockTargetServer.forAnyRequest().thenCallback((req) => {
+      await mockTargetServer.forQuery().thenCallback((req) => {
         completedRequest = req;
         return { statusCode: 200, body: 'BODY OK' };
       });
@@ -169,7 +169,7 @@ describe('E2E HTTP QUERY method', () => {
     });
 
     it('should pass through 204 responses for QUERY requests', async () => {
-      await mockTargetServer.forAnyRequest().thenReply(204);
+      await mockTargetServer.forQuery().thenReply(204);
 
       const app = createApp(
         createProxyMiddleware({
@@ -184,7 +184,7 @@ describe('E2E HTTP QUERY method', () => {
     });
 
     it('should pass through error responses for QUERY requests', async () => {
-      await mockTargetServer.forAnyRequest().thenReply(422, 'invalid-query');
+      await mockTargetServer.forQuery().thenReply(422, 'invalid-query');
 
       const app = createApp(
         createProxyMiddleware({
@@ -204,7 +204,7 @@ describe('E2E HTTP QUERY method', () => {
     it('should pass through 400 when QUERY body uses fetch default Content-Type', async () => {
       let completedRequest: CompletedRequest | undefined;
 
-      await mockTargetServer.forAnyRequest().thenCallback((req) => {
+      await mockTargetServer.forQuery().thenCallback((req) => {
         completedRequest = req;
         return { statusCode: 400, body: 'unsupported-default-content-type' };
       });
@@ -227,7 +227,7 @@ describe('E2E HTTP QUERY method', () => {
     });
 
     it('should pass through 400 when QUERY Content-Type is inconsistent with content', async () => {
-      await mockTargetServer.forAnyRequest().thenReply(400, 'invalid-content-for-type');
+      await mockTargetServer.forQuery().thenReply(400, 'invalid-content-for-type');
 
       const app = createApp(
         createProxyMiddleware({
@@ -246,7 +246,7 @@ describe('E2E HTTP QUERY method', () => {
     });
 
     it('should pass through 415 and Accept-Query for unsupported QUERY media type', async () => {
-      await mockTargetServer.forAnyRequest().thenReply(415, 'unsupported-media-type', {
+      await mockTargetServer.forQuery().thenReply(415, 'unsupported-media-type', {
         'accept-query': 'application/jsonpath, application/sql',
       });
 
@@ -268,7 +268,7 @@ describe('E2E HTTP QUERY method', () => {
     });
 
     it('should pass through 405 and Allow when QUERY is not supported on target resource', async () => {
-      await mockTargetServer.forAnyRequest().thenReply(405, 'method-not-allowed', {
+      await mockTargetServer.forQuery().thenReply(405, 'method-not-allowed', {
         allow: 'GET, OPTIONS, HEAD',
       });
 
@@ -294,7 +294,7 @@ describe('E2E HTTP QUERY method', () => {
     it('should apply pathFilter for QUERY requests', async () => {
       const targetSpy = vi.fn();
 
-      await mockTargetServer.forAnyRequest().thenCallback(() => {
+      await mockTargetServer.forQuery().thenCallback(() => {
         targetSpy();
         return { statusCode: 200, body: 'SHOULD NOT HAPPEN' };
       });
@@ -315,7 +315,7 @@ describe('E2E HTTP QUERY method', () => {
     it('should rewrite path for QUERY requests', async () => {
       let completedRequest: CompletedRequest | undefined;
 
-      await mockTargetServer.forAnyRequest().thenCallback((req) => {
+      await mockTargetServer.forQuery().thenCallback((req) => {
         completedRequest = req;
         return { statusCode: 200, body: 'REWRITE OK' };
       });
@@ -349,8 +349,8 @@ describe('E2E HTTP QUERY method', () => {
       let routedRequest: CompletedRequest | undefined;
 
       try {
-        await mockTargetServer.forAnyRequest().thenReply(200, 'DEFAULT TARGET');
-        await routerTarget.forAnyRequest().thenCallback((req) => {
+        await mockTargetServer.forQuery().thenReply(200, 'DEFAULT TARGET');
+        await routerTarget.forQuery().thenCallback((req) => {
           routedRequest = req;
           return { statusCode: 200, body: 'ROUTED TARGET' };
         });
@@ -380,7 +380,7 @@ describe('E2E HTTP QUERY method', () => {
     it('should change host header for QUERY when changeOrigin is true', async () => {
       let completedRequest: CompletedRequest | undefined;
 
-      await mockTargetServer.forAnyRequest().thenCallback((req) => {
+      await mockTargetServer.forQuery().thenCallback((req) => {
         completedRequest = req;
         return { statusCode: 200, body: 'CHANGE ORIGIN OK' };
       });
@@ -405,7 +405,7 @@ describe('E2E HTTP QUERY method', () => {
     it('should forward custom headers for QUERY requests', async () => {
       let completedRequest: CompletedRequest | undefined;
 
-      await mockTargetServer.forAnyRequest().thenCallback((req) => {
+      await mockTargetServer.forQuery().thenCallback((req) => {
         completedRequest = req;
         return { statusCode: 200, body: 'HEADERS OK' };
       });
