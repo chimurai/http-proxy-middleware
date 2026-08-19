@@ -38,6 +38,25 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).not.toHaveBeenCalled();
   });
 
+  it('should not write when Content-Type is missing', () => {
+    const proxyRequest = fakeProxyRequest();
+
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
+
+    expect(proxyRequest.setHeader).not.toHaveBeenCalled();
+    expect(proxyRequest.write).not.toHaveBeenCalled();
+  });
+
+  it('should not write when Content-Type is unsupported', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/octet-stream');
+
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
+
+    expect(proxyRequest.setHeader).not.toHaveBeenCalledWith('Content-Length', expect.anything());
+    expect(proxyRequest.write).not.toHaveBeenCalled();
+  });
+
   it('should write when body is an empty JSON object', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
@@ -274,6 +293,32 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
 
+  it('should re-encode body when the source was Brotli encoded', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
+    proxyRequest.setHeader('content-encoding', 'br');
+
+    const data = { someField: 'some value' };
+    fixRequestBody(proxyRequest, createRequestWithBody(data));
+
+    const expectedBody = zlib.brotliCompressSync(JSON.stringify(data));
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
+    expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
+  });
+
+  it('should re-encode body when the source was deflate encoded', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
+    proxyRequest.setHeader('content-encoding', 'deflate');
+
+    const data = { someField: 'some value' };
+    fixRequestBody(proxyRequest, createRequestWithBody(data));
+
+    const expectedBody = zlib.deflateSync(JSON.stringify(data));
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
+    expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
+  });
+
   it('should re-encode body when the source was zstd encoded', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
@@ -285,5 +330,25 @@ describe('fixRequestBody', () => {
     const expectedBody = zlib.zstdCompressSync(JSON.stringify(data));
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
+  });
+
+  it('should destroy the proxy request with an Error when body serialization throws a string', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'application/json; charset=utf-8');
+
+    const requestBody = {
+      toJSON() {
+        throw 'serialization failed';
+      },
+    };
+
+    fixRequestBody(proxyRequest, createRequestWithBody(requestBody));
+
+    expect(proxyRequest.write).not.toHaveBeenCalled();
+    expect(proxyRequest.destroy).toHaveBeenCalledTimes(1);
+    expect(proxyRequest.destroy).toHaveBeenCalledWith(expect.any(Error));
+    expect(proxyRequest.destroy).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'serialization failed' }),
+    );
   });
 });
