@@ -3,8 +3,17 @@ import type { Socket } from 'node:net';
 
 import { getStatusCode } from '../../status-code.js';
 import type { Plugin } from '../../types.js';
-import { sanitize } from '../../utils/sanitize.js';
 import { definePlugin } from '../define-plugin.js';
+
+function getHtmlErrorTemplate(statusCode: number): string {
+  return `<html>
+  <body style="text-align: center;">
+      <h1>HTTP ${statusCode} error</h1>
+      <hr />
+      <p>http-proxy-middleware</p>
+  </body>
+</html>`;
+}
 
 function isResponseLike(obj: any): obj is http.ServerResponse {
   return obj && typeof obj.writeHead === 'function';
@@ -22,13 +31,16 @@ export const errorResponsePlugin: Plugin = definePlugin((proxyServer, options) =
     }
 
     if (isResponseLike(res)) {
+      const statusCode = getStatusCode((err as unknown as any).code);
+
       if (!res.headersSent) {
-        const statusCode = getStatusCode((err as unknown as any).code);
-        res.writeHead(statusCode);
+        res.writeHead(statusCode, {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-store',
+        });
       }
 
-      const host = req.headers && req.headers.host;
-      res.end(`Error occurred while trying to proxy: ${sanitize(host)}${sanitize(req.url)}`);
+      res.end(getHtmlErrorTemplate(statusCode));
     } else if (isSocketLike(res)) {
       res.destroy();
     }

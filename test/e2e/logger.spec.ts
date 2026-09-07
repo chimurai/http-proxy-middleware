@@ -27,13 +27,10 @@ describe('logger', () => {
 
     expect(logger.error).toHaveBeenCalledTimes(1);
 
-    const [message, requestHref, targetHref, errorCode, errorReference] = vi.mocked(logger.error)
-      .mock.calls[0];
+    const [message, requestHref, targetHref, errorCode] = vi.mocked(logger.error).mock.calls[0];
 
-    expect(
-      format(message, requestHref, targetHref, errorCode, errorReference),
-    ).toMatchInlineSnapshot(
-      `"[HPM] Error occurred while proxying request example.test/my-path to http://does-not-exist.invalid/ [ENOTFOUND] (https://nodejs.org/api/errors.html#errors_common_system_errors)"`,
+    expect(format(message, requestHref, targetHref, errorCode)).toMatchInlineSnapshot(
+      `"[HPM] Error occurred while proxying request example.test/my-path to http://does-not-exist.invalid/ [ENOTFOUND]"`,
     );
   });
 });

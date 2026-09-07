@@ -4,7 +4,7 @@ import getPort from 'get-port';
 import { Hono } from 'hono';
 import type { Mockttp } from 'mockttp';
 import { getLocal } from 'mockttp';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createHonoProxyMiddleware } from './test-kit.js';
 
@@ -26,6 +26,11 @@ describe('E2E Hono', () => {
     describe('basic setup, requests to target', () => {
       let server: ServerType;
       let serverPort: number;
+      const logger = {
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
 
       beforeEach(async () => {
         app = new Hono<{ Bindings: HttpBindings }>();
@@ -36,6 +41,7 @@ describe('E2E Hono', () => {
           createHonoProxyMiddleware({
             target: mockTargetServer.url,
             pathFilter: '/api',
+            logger,
           }),
         );
 
@@ -60,7 +66,17 @@ describe('E2E Hono', () => {
         await mockTargetServer.forGet('/api').thenResetConnection();
         const response = await fetch(`http://127.0.0.1:${serverPort}/api`);
         expect(response.status).toBe(504);
-        await expect(response.text()).resolves.toContain('Error occurred while trying to proxy:');
+        expect(response.headers.get('content-type')).toBe('text/html; charset=utf-8');
+        expect(response.headers.get('cache-control')).toBe('no-store');
+        const responseText = await response.text();
+        expect(responseText).toContain('<h1>HTTP 504 error</h1>');
+        expect(responseText).toContain('<p>http-proxy-middleware</p>');
+        expect(logger.error).toHaveBeenCalledWith(
+          expect.stringContaining('[HPM] Error occurred while proxying request'),
+          expect.any(String),
+          expect.any(String),
+          'ECONNRESET',
+        );
       });
     });
 

@@ -234,14 +234,16 @@ describe('E2E http-proxy-middleware', () => {
           .send(`user=${encodeURIComponent(injectedValue)}`)
           .expect(400);
 
-        expect(response.text).toContain('Error occurred while trying to proxy');
+        expect(response.headers['content-type']).toBe('text/html; charset=utf-8');
+        expect(response.headers['cache-control']).toBe('no-store');
+        expect(response.text).toContain('<h1>HTTP 400 error</h1>');
+        expect(response.text).toContain('<p>http-proxy-middleware</p>');
         expect(targetSpy).toHaveBeenCalledTimes(0);
         expect(loggerSpy.error).toHaveBeenCalledWith(
-          '[HPM] Error occurred while proxying request %s to %s [%s] (%s)',
+          '[HPM] Error occurred while proxying request %s to %s [%s]',
           expect.anything(),
           expect.anything(),
           'HPM_ERR_INVALID_MULTIPART_FIELD_VALUE',
-          'https://nodejs.org/api/errors.html#errors_common_system_errors',
         );
       });
     });
@@ -416,11 +418,20 @@ describe('E2E http-proxy-middleware', () => {
     });
 
     describe('default httpProxy on error handling', () => {
+      let loggerSpy: Logger;
+
       beforeEach(() => {
+        loggerSpy = {
+          info: vi.fn(),
+          warn: vi.fn(),
+          error: vi.fn(),
+        };
+
         agent = request(
           createApp(
             createProxyMiddleware({
               target: `http://localhost:666`, // unreachable host on port:666
+              logger: loggerSpy,
             }),
           ),
         );
@@ -429,6 +440,16 @@ describe('E2E http-proxy-middleware', () => {
       it('should handle errors when host is not reachable', async () => {
         const response = await agent.get(`/api/some/endpoint`).expect(504);
         expect(response.status).toBe(504);
+        expect(response.headers['content-type']).toBe('text/html; charset=utf-8');
+        expect(response.headers['cache-control']).toBe('no-store');
+        expect(response.text).toContain('<h1>HTTP 504 error</h1>');
+        expect(response.text).toContain('<p>http-proxy-middleware</p>');
+        expect(loggerSpy.error).toHaveBeenCalledWith(
+          '[HPM] Error occurred while proxying request %s to %s [%s]',
+          expect.any(String),
+          expect.any(String),
+          'ECONNREFUSED',
+        );
       });
 
       it('should handle ECONNRESET errors from the target server', async () => {
