@@ -76,7 +76,6 @@ _All_ `httpxy` [options](https://github.com/unjs/httpxy#options) can be used, al
 - [Working examples](#working-examples)
 - [Recipes](#recipes)
 - [Compatible servers](#compatible-servers)
-- [Tests](#tests)
 - [Changelog](#changelog)
 - [License](#license)
 
@@ -662,31 +661,6 @@ View the [recipes](https://github.com/chimurai/http-proxy-middleware/tree/master
 - [gulp-webserver](https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/servers.md#gulp-webserver)
 
 Sample implementations can be found in the [server recipes](https://github.com/chimurai/http-proxy-middleware/tree/master/recipes/servers.md).
-
-## Tests
-
-Run the test suite:
-
-```bash
-# install dependencies
-$ yarn
-
-# linting
-$ yarn lint
-$ yarn lint:fix
-
-# building (compile typescript to js)
-$ yarn build
-
-# unit tests
-$ yarn test
-
-# code coverage
-$ yarn coverage
-
-# check spelling mistakes
-$ yarn spellcheck
-```
 
 ## Changelog
 
