@@ -22,39 +22,67 @@ describe('Path Filter', () => {
       });
 
       it('should return true when the pathFilter is present in url', () => {
-        result = matchPathFilter('/api', 'http://localhost/api/foo/bar', mockReq);
+        result = matchPathFilter(
+          '/api',
+          'http://localhost/api/foo/bar',
+          mockReq,
+        );
         expect(result).toBe(true);
       });
 
       it('should return false when the pathFilter is not present in url', () => {
-        result = matchPathFilter('/abc', 'http://localhost/api/foo/bar', mockReq);
+        result = matchPathFilter(
+          '/abc',
+          'http://localhost/api/foo/bar',
+          mockReq,
+        );
         expect(result).toBe(false);
       });
 
       it('should return false when the pathFilter is present half way in url', () => {
-        result = matchPathFilter('/foo', 'http://localhost/api/foo/bar', mockReq);
+        result = matchPathFilter(
+          '/foo',
+          'http://localhost/api/foo/bar',
+          mockReq,
+        );
         expect(result).toBe(false);
       });
 
       it('should return false when the pathFilter does not start with /', () => {
-        result = matchPathFilter('api', 'http://localhost/api/foo/bar', mockReq);
+        result = matchPathFilter(
+          'api',
+          'http://localhost/api/foo/bar',
+          mockReq,
+        );
         expect(result).toBe(false);
       });
     });
 
     describe('Multi path matching', () => {
       it('should return true when the pathFilter is present in url', () => {
-        result = matchPathFilter(['/api'], 'http://localhost/api/foo/bar', mockReq);
+        result = matchPathFilter(
+          ['/api'],
+          'http://localhost/api/foo/bar',
+          mockReq,
+        );
         expect(result).toBe(true);
       });
 
       it('should return true when the pathFilter is present in url', () => {
-        result = matchPathFilter(['/api', '/ajax'], 'http://localhost/ajax/foo/bar', mockReq);
+        result = matchPathFilter(
+          ['/api', '/ajax'],
+          'http://localhost/ajax/foo/bar',
+          mockReq,
+        );
         expect(result).toBe(true);
       });
 
       it('should return false when the pathFilter does not match url', () => {
-        result = matchPathFilter(['/api', '/ajax'], 'http://localhost/foo/bar', mockReq);
+        result = matchPathFilter(
+          ['/api', '/ajax'],
+          'http://localhost/foo/bar',
+          mockReq,
+        );
         expect(result).toBe(false);
       });
 
@@ -109,32 +137,58 @@ describe('Path Filter', () => {
 
         it('should only match .html under root path', () => {
           const pattern = '/*.html';
-          expect(matchPathFilter(pattern, 'http://localhost/index.html', mockReq)).toBe(true);
-          expect(matchPathFilter(pattern, 'http://localhost/some/path/index.html', mockReq)).toBe(
-            false,
-          );
+          expect(
+            matchPathFilter(pattern, 'http://localhost/index.html', mockReq),
+          ).toBe(true);
+          expect(
+            matchPathFilter(
+              pattern,
+              'http://localhost/some/path/index.html',
+              mockReq,
+            ),
+          ).toBe(false);
         });
 
         it('should ignore query params', () => {
-          expect(matchPathFilter('/**/*.php', 'http://localhost/a/b/c.php?d=e&e=f', mockReq)).toBe(
-            true,
-          );
           expect(
-            matchPathFilter('/**/*.php?*', 'http://localhost/a/b/c.php?d=e&e=f', mockReq),
+            matchPathFilter(
+              '/**/*.php',
+              'http://localhost/a/b/c.php?d=e&e=f',
+              mockReq,
+            ),
+          ).toBe(true);
+          expect(
+            matchPathFilter(
+              '/**/*.php?*',
+              'http://localhost/a/b/c.php?d=e&e=f',
+              mockReq,
+            ),
           ).toBe(false);
         });
 
         it('should only match any file in root path', () => {
-          expect(matchPathFilter('/*', 'http://localhost/bar.html', mockReq)).toBe(true);
-          expect(matchPathFilter('/*.*', 'http://localhost/bar.html', mockReq)).toBe(true);
-          expect(matchPathFilter('/*', 'http://localhost/foo/bar.html', mockReq)).toBe(false);
+          expect(
+            matchPathFilter('/*', 'http://localhost/bar.html', mockReq),
+          ).toBe(true);
+          expect(
+            matchPathFilter('/*.*', 'http://localhost/bar.html', mockReq),
+          ).toBe(true);
+          expect(
+            matchPathFilter('/*', 'http://localhost/foo/bar.html', mockReq),
+          ).toBe(false);
         });
 
         it('should only match .html file is in root path', () => {
-          expect(matchPathFilter('/*.html', 'http://localhost/bar.html', mockReq)).toBe(true);
-          expect(matchPathFilter('/*.html', 'http://localhost/api/foo/bar.html', mockReq)).toBe(
-            false,
-          );
+          expect(
+            matchPathFilter('/*.html', 'http://localhost/bar.html', mockReq),
+          ).toBe(true);
+          expect(
+            matchPathFilter(
+              '/*.html',
+              'http://localhost/api/foo/bar.html',
+              mockReq,
+            ),
+          ).toBe(false);
         });
 
         it('should only match .html files in "foo" folder', () => {
@@ -152,27 +206,93 @@ describe('Path Filter', () => {
       describe('Multiple patterns', () => {
         it('should return true when both path patterns match', () => {
           const pattern = ['/api/**', '/ajax/**'];
-          expect(matchPathFilter(pattern, 'http://localhost/api/foo/bar.json', mockReq)).toBe(true);
-          expect(matchPathFilter(pattern, 'http://localhost/ajax/foo/bar.json', mockReq)).toBe(
-            true,
-          );
-          expect(matchPathFilter(pattern, 'http://localhost/rest/foo/bar.json', mockReq)).toBe(
-            false,
-          );
+          expect(
+            matchPathFilter(
+              pattern,
+              'http://localhost/api/foo/bar.json',
+              mockReq,
+            ),
+          ).toBe(true);
+          expect(
+            matchPathFilter(
+              pattern,
+              'http://localhost/ajax/foo/bar.json',
+              mockReq,
+            ),
+          ).toBe(true);
+          expect(
+            matchPathFilter(
+              pattern,
+              'http://localhost/rest/foo/bar.json',
+              mockReq,
+            ),
+          ).toBe(false);
         });
         it('should return true when both file extensions pattern match', () => {
           const pattern = ['/**/*.html', '/**/*.jpeg'];
-          expect(matchPathFilter(pattern, 'http://localhost/api/foo/bar.html', mockReq)).toBe(true);
-          expect(matchPathFilter(pattern, 'http://localhost/api/foo/bar.jpeg', mockReq)).toBe(true);
-          expect(matchPathFilter(pattern, 'http://localhost/api/foo/bar.gif', mockReq)).toBe(false);
+          expect(
+            matchPathFilter(
+              pattern,
+              'http://localhost/api/foo/bar.html',
+              mockReq,
+            ),
+          ).toBe(true);
+          expect(
+            matchPathFilter(
+              pattern,
+              'http://localhost/api/foo/bar.jpeg',
+              mockReq,
+            ),
+          ).toBe(true);
+          expect(
+            matchPathFilter(
+              pattern,
+              'http://localhost/api/foo/bar.gif',
+              mockReq,
+            ),
+          ).toBe(false);
         });
       });
 
       describe('Negation patterns', () => {
         it('should not match file extension', () => {
           const url = 'http://localhost/api/foo/bar.html';
-          expect(matchPathFilter(['**', '!**/*.html'], url, mockReq)).toBe(false);
-          expect(matchPathFilter(['**', '!**/*.json'], url, mockReq)).toBe(true);
+          expect(matchPathFilter(['**', '!**/*.html'], url, mockReq)).toBe(
+            false,
+          );
+          expect(matchPathFilter(['**', '!**/*.json'], url, mockReq)).toBe(
+            true,
+          );
+        });
+
+        it('should re-include when a later positive pattern matches', () => {
+          const pattern = ['/**', '!/**/*.html', '/api/**'];
+          expect(
+            matchPathFilter(pattern, 'http://localhost/api/a.html', mockReq),
+          ).toBe(true);
+          expect(
+            matchPathFilter(pattern, 'http://localhost/public/a.html', mockReq),
+          ).toBe(false);
+        });
+
+        it('should exclude again when a later negation matches', () => {
+          const pattern = ['/**', '/api/**', '!/api/**/*.html'];
+          expect(
+            matchPathFilter(pattern, 'http://localhost/api/a.json', mockReq),
+          ).toBe(true);
+          expect(
+            matchPathFilter(pattern, 'http://localhost/api/a.html', mockReq),
+          ).toBe(false);
+        });
+
+        it('should match everything except negated patterns when all patterns are negated', () => {
+          const pattern = ['!**/*.html'];
+          expect(
+            matchPathFilter(pattern, 'http://localhost/api/a.json', mockReq),
+          ).toBe(true);
+          expect(
+            matchPathFilter(pattern, 'http://localhost/api/a.html', mockReq),
+          ).toBe(false);
         });
       });
     });
@@ -237,9 +357,13 @@ describe('Path Filter', () => {
       });
 
       it('should throw error with mixed string and glob pattern', () => {
-        expect(testPathFilter(['/api', '!*.html'])).toThrow(HttpProxyMiddlewareError);
         expect(testPathFilter(['/api', '!*.html'])).toThrow(
-          expect.objectContaining({ code: 'HPM_INVALID_PATH_FILTER_ARRAY_CONFIG' }),
+          HttpProxyMiddlewareError,
+        );
+        expect(testPathFilter(['/api', '!*.html'])).toThrow(
+          expect.objectContaining({
+            code: 'HPM_INVALID_PATH_FILTER_ARRAY_CONFIG',
+          }),
         );
       });
     });
