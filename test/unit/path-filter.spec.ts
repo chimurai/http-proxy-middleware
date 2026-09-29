@@ -304,6 +304,16 @@ describe('Path Filter', () => {
             matchPathFilter(pattern, 'http://localhost/other/a.json', mockReq),
           ).toBe(false);
         });
+
+        it('should treat a leading "!(" extglob as a positive pattern', () => {
+          const pattern = ['!(/api)/**', '/api/**'];
+          expect(
+            matchPathFilter(pattern, 'http://localhost/other/a', mockReq),
+          ).toBe(true);
+          expect(
+            matchPathFilter(pattern, 'http://localhost/api/a', mockReq),
+          ).toBe(true);
+        });
       });
     });
   });

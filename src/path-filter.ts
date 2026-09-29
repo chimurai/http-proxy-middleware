@@ -70,10 +70,14 @@ function matchMultiGlobPath(patternList: string[], uri?: string) {
 }
 
 // picomatch (like micromatch) toggles negation per leading `!`, so an even
-// number of `!` is a positive pattern (e.g. `!!/api/**`).
+// number of `!` is a positive pattern (e.g. `!!/api/**`). A `!(` starts an
+// extglob, not a list-level negation, so it is not counted.
 function isNegatedGlob(pattern: string): boolean {
   let count = 0;
   while (pattern[count] === '!') {
+    if (pattern[count + 1] === '(') {
+      break;
+    }
     count++;
   }
   return count % 2 === 1;
