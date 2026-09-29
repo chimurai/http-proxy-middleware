@@ -294,6 +294,16 @@ describe('Path Filter', () => {
             matchPathFilter(pattern, 'http://localhost/api/a.html', mockReq),
           ).toBe(false);
         });
+
+        it('should treat an even number of leading "!" as a positive pattern', () => {
+          const pattern = ['!!/api/**', '/public/**'];
+          expect(
+            matchPathFilter(pattern, 'http://localhost/api/a.json', mockReq),
+          ).toBe(true);
+          expect(
+            matchPathFilter(pattern, 'http://localhost/other/a.json', mockReq),
+          ).toBe(false);
+        });
       });
     });
   });

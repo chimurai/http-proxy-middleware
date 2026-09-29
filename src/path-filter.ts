@@ -69,6 +69,16 @@ function matchMultiGlobPath(patternList: string[], uri?: string) {
   return matchSingleGlobPath(patternList, uri);
 }
 
+// picomatch (like micromatch) toggles negation per leading `!`, so an even
+// number of `!` is a positive pattern (e.g. `!!/api/**`).
+function isNegatedGlob(pattern: string): boolean {
+  let count = 0;
+  while (pattern[count] === '!') {
+    count++;
+  }
+  return count % 2 === 1;
+}
+
 /**
  * Matches a pathname against one or more glob patterns, preserving micromatch's
  * ordered include/exclude semantics: patterns are evaluated left-to-right, a
@@ -77,19 +87,22 @@ function matchMultiGlobPath(patternList: string[], uri?: string) {
  */
 function isGlobMatch(pathname: string, pattern: string | string[]): boolean {
   const patterns = Array.isArray(pattern) ? pattern : [pattern];
-  const allNegated =
-    patterns.length > 0 && patterns.every((p) => p.startsWith('!'));
+  const allNegated = patterns.length > 0 && patterns.every(isNegatedGlob);
 
   // when every pattern is negated, the baseline is "match everything"
   let kept = allNegated;
   let omitted = false;
 
   for (const p of patterns) {
-    if (p.startsWith('!')) {
-      if (picomatch.isMatch(pathname, p.slice(1))) {
+    // picomatch.isMatch already applies the pattern's own negation
+    const matched = picomatch.isMatch(pathname, p);
+
+    if (isNegatedGlob(p)) {
+      // a negated pattern excludes when the pathname matches its body
+      if (!matched) {
         omitted = true;
       }
-    } else if (picomatch.isMatch(pathname, p)) {
+    } else if (matched) {
       kept = true;
       omitted = false;
     }
