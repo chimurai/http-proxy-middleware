@@ -18,7 +18,7 @@ describe('E2E msw', () => {
 
   beforeEach(() => {
     // Supertest sends local loopback requests to the in-memory app; bypass those.
-    server.listen({ onUnhandledRequest: 'bypass' });
+    server.listen({ onUnhandledFrame: 'bypass' });
   });
 
   afterEach(() => {
