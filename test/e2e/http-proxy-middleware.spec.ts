@@ -570,28 +570,31 @@ describe('E2E http-proxy-middleware', () => {
         const completedRequests: CompletedRequest[] = [];
         const proxyErrors: Error[] = [];
 
-        agent = request(
-          createApp(
-            createProxyMiddleware({
-              target: mockTargetServer.url,
-              pathFilter: '/api',
-              agent: upstreamAgent,
-              on: {
-                proxyReq: (proxyReq) => {
-                  proxyReq.setHeader('x-added', 'added-from-hpm');
-                },
-                error: (error, req, res) => {
-                  proxyErrors.push(error);
-
-                  if ('headersSent' in res && 'writeHead' in res && !res.headersSent) {
-                    res.writeHead(500);
-                    res.end('proxy error');
-                  }
-                },
+        const app = createApp(
+          createProxyMiddleware({
+            target: mockTargetServer.url,
+            pathFilter: '/api',
+            agent: upstreamAgent,
+            on: {
+              proxyReq: (proxyReq) => {
+                proxyReq.setHeader('x-added', 'added-from-hpm');
               },
-            }),
-          ),
+              error: (error, req, res) => {
+                proxyErrors.push(error);
+
+                if ('headersSent' in res && 'writeHead' in res && !res.headersSent) {
+                  res.writeHead(500);
+                  res.end('proxy error');
+                }
+              },
+            },
+          }),
         );
+        const server = app.listen(0);
+
+        // Start the shared server first so concurrent SuperTest requests do not each register startup listeners.
+        await new Promise<void>((resolve) => server.once('listening', resolve));
+        agent = request(server);
 
         await mockTargetServer.forGet('/api/socket-contention').thenCallback(async (req) => {
           completedRequests.push(req);
@@ -613,6 +616,9 @@ describe('E2E http-proxy-middleware', () => {
           ).toBe(true);
         } finally {
           upstreamAgent.destroy();
+          await new Promise<void>((resolve, reject) =>
+            server.close((error) => (error ? reject(error) : resolve())),
+          );
         }
       }, 15000);
     });
