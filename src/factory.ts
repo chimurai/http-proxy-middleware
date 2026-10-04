@@ -82,8 +82,8 @@ import type { NextFunction, Options, RequestHandler } from './types.js';
 export function createProxyMiddleware<
   TReq extends http.IncomingMessage = http.IncomingMessage,
   TRes extends http.ServerResponse = http.ServerResponse,
-  TNext = NextFunction,
+  TNext extends (err?: unknown) => void = NextFunction,
 >(options: Options<TReq, TRes>): RequestHandler<TReq, TRes, TNext> {
-  const { middleware } = new HttpProxyMiddleware<TReq, TRes>(options);
-  return middleware as unknown as RequestHandler<TReq, TRes, TNext>;
+  const { middleware } = new HttpProxyMiddleware<TReq, TRes, TNext>(options);
+  return middleware;
 }

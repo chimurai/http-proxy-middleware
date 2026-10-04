@@ -11,13 +11,14 @@ import { getLogger } from './logger.js';
 import { matchPathFilter } from './path-filter.js';
 import { createPathRewriter } from './path-rewriter.js';
 import { getTarget } from './router.js';
-import type { Filter, Logger, Options, RequestHandler } from './types.js';
+import type { Filter, Logger, NextFunction, Options, RequestHandler } from './types.js';
 import { getFunctionName } from './utils/function.js';
 import { normalizeIPv6LiteralTargets } from './utils/ipv6.js';
 
 export class HttpProxyMiddleware<
   TReq extends http.IncomingMessage = http.IncomingMessage,
   TRes extends http.ServerResponse = http.ServerResponse,
+  TNext extends (err?: unknown) => void = NextFunction,
 > {
   private wsInternalSubscribedServers = new WeakSet<http.Server | https.Server>();
   private activeServers = new Set<http.Server | https.Server>();
@@ -54,10 +55,10 @@ export class HttpProxyMiddleware<
   }
 
   // https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-  public middleware: RequestHandler<TReq, TRes> = (async (
+  public middleware: RequestHandler<TReq, TRes, TNext> = (async (
     req: TReq,
     res: TRes,
-    next?: (err?: unknown) => void,
+    next?: TNext,
   ) => {
     if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
       let activeProxyOptions: Options<TReq, TRes>;
