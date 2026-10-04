@@ -1,6 +1,6 @@
 import type * as http from 'node:http';
 
-import type { ProxyServerOptions } from 'httpxy';
+import type { ProxyTarget } from 'httpxy';
 import isPlainObject from 'is-plain-obj';
 
 import { Debug } from './debug.js';
@@ -26,7 +26,7 @@ export async function getTarget<
 
 function getTargetFromProxyTable<TReq extends http.IncomingMessage>(
   req: TReq,
-  table: Record<string, ProxyServerOptions['target']>,
+  table: Record<string, ProxyTarget>,
 ) {
   let result;
   const host = req.headers.host ?? '';

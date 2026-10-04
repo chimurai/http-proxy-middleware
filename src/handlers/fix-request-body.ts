@@ -4,7 +4,7 @@ import * as zlib from 'node:zlib';
 
 import { stringifyFormData } from './fix-request-body-utils/stringify-form-data.js';
 
-export type BodyParserLikeRequest = http.IncomingMessage & { body?: any };
+export type BodyParserLikeRequest<TBody = unknown> = http.IncomingMessage & { body?: TBody };
 
 /**
  * Fix proxied body if bodyParser is involved.
@@ -73,11 +73,11 @@ export function fixRequestBody<TReq extends BodyParserLikeRequest = BodyParserLi
     if (contentType.includes('application/json') || contentType.includes('+json')) {
       writeBody(JSON.stringify(requestBody));
     } else if (contentType.includes('application/x-www-form-urlencoded')) {
-      writeBody(querystring.stringify(requestBody));
+      writeBody(querystring.stringify(requestBody as querystring.ParsedUrlQueryInput));
     } else if (contentType.includes('multipart/form-data')) {
       writeBody(stringifyFormData(contentType, requestBody));
     } else if (contentType.includes('text/plain')) {
-      writeBody(requestBody);
+      writeBody(requestBody as string);
     }
   } catch (error) {
     // proxyReq listeners run outside the middleware try/catch path; re-throwing here can bubble as
