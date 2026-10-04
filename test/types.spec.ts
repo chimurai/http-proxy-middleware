@@ -243,13 +243,20 @@ describe('http-proxy-middleware TypeScript Types', () => {
             },
             proxyReqWs(proxyReq, req, socket, options, head) {
               req.params;
+              head.byteLength;
             },
             proxyRes(proxyRes, req, res) {
               req.params;
+              proxyRes.statusCode;
+
               res.status(200).send('OK');
             },
             close(proxyRes, proxySocket, proxyHead) {
               proxyRes.params;
+              proxyHead.byteLength;
+
+              // @ts-expect-error explanation: websocket head should be a Buffer
+              proxyHead.params;
             },
             start(req, res, target) {
               req.params;
@@ -258,6 +265,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
             end(req, res, proxyRes) {
               req.params;
               res.status(200).send('OK');
+              proxyRes.statusCode;
               proxyRes.params;
             },
             econnreset(error, req, res, target) {
@@ -294,13 +302,19 @@ describe('http-proxy-middleware TypeScript Types', () => {
             },
             proxyReqWs(proxyReq, req, socket, options, head) {
               req.params;
+              head.byteLength;
             },
             proxyRes(proxyRes, req, res) {
               req.params;
+
+              proxyRes.statusCode;
+              proxyRes.params;
+
               res.status(200).send('OK');
             },
             close(proxyRes, proxySocket, proxyHead) {
               proxyRes.params;
+              proxyHead.byteLength;
             },
             start(req, res, target) {
               req.params;
@@ -309,6 +323,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
             end(req, res, proxyRes) {
               req.params;
               res.status(200).send('OK');
+              proxyRes.statusCode;
               proxyRes.params;
             },
             econnreset(error, req, res, target) {
@@ -353,10 +368,13 @@ describe('http-proxy-middleware TypeScript Types', () => {
           },
           proxyRes(proxyRes, req, res) {
             req.myRequestParams;
+            proxyRes.statusCode;
+            proxyRes.myRequestParams;
             res.myResponseParams;
           },
           close(proxyRes, proxySocket, proxyHead) {
             proxyRes.myRequestParams;
+            proxyHead.byteLength;
           },
           start(req, res, target) {
             req.myRequestParams;
@@ -365,6 +383,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
           end(req, res, proxyRes) {
             req.myRequestParams;
             res.myResponseParams;
+            proxyRes.statusCode;
             proxyRes.myRequestParams;
           },
           econnreset(error, req, res, target) {

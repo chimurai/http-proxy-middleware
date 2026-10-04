@@ -1,4 +1,5 @@
 import type express from 'express';
+import type { ProxyTarget } from 'httpxy';
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 
@@ -10,7 +11,7 @@ describe('express error middleware', () => {
 
     const proxyMiddleware = createProxyMiddleware({
       changeOrigin: true,
-      router: (req) => undefined, // Trigger "Error: Must provide a proper URL as target"
+      router: (req) => undefined as unknown as ProxyTarget, // Trigger "Error: Must provide a proper URL as target"
     });
 
     const errorMiddleware: express.ErrorRequestHandler = (err, req, res, next) => {

@@ -5,9 +5,9 @@
 import type * as http from 'node:http';
 import type * as net from 'node:net';
 
-import type { ProxyServer, ProxyServerOptions } from 'httpxy';
+import type { ProxyServer, ProxyServerOptions, ProxyTarget } from 'httpxy';
 
-export type NextFunction<T = (err?: any) => void> = T;
+export type NextFunction<T = (err?: unknown) => void> = T;
 
 export interface RequestHandler<
   TReq extends http.IncomingMessage = http.IncomingMessage,
@@ -37,7 +37,7 @@ export interface OnProxyEvent<
   TReq extends http.IncomingMessage = http.IncomingMessage,
   TRes extends http.ServerResponse = http.ServerResponse,
 > {
-  error?: (err: Error, req: TReq, res: TRes | net.Socket, target?: string | Partial<URL>) => void;
+  error?: (err: Error, req: TReq, res: TRes | net.Socket, target?: ProxyTarget) => void;
   proxyReq?: (
     proxyReq: http.ClientRequest,
     req: TReq,
@@ -49,14 +49,14 @@ export interface OnProxyEvent<
     req: TReq,
     socket: net.Socket,
     options: ProxyServerOptions,
-    head: any,
+    head: Buffer,
   ) => void;
   proxyRes?: (proxyRes: TReq, req: TReq, res: TRes) => void | Promise<void>;
   open?: (proxySocket: net.Socket) => void;
-  close?: (proxyRes: TReq, proxySocket: net.Socket, proxyHead: any) => void;
-  start?: (req: TReq, res: TRes, target: string | Partial<URL>) => void;
+  close?: (proxyRes: TReq, proxySocket: net.Socket, proxyHead: Buffer) => void;
+  start?: (req: TReq, res: TRes, target: ProxyTarget) => void;
   end?: (req: TReq, res: TRes, proxyRes: TReq) => void;
-  econnreset?: (err: Error, req: TReq, res: TRes, target: string | Partial<URL>) => void;
+  econnreset?: (err: Error, req: TReq, res: TRes, target: ProxyTarget) => void;
 }
 
 export type Logger = Pick<Console, 'info' | 'warn' | 'error'>;
@@ -173,17 +173,9 @@ export interface Options<
    * @link https://github.com/chimurai/http-proxy-middleware/blob/master/recipes/router.md
    */
   router?:
-    | Record<string, ProxyServerOptions['target']>
-    | ((
-        req: TReq,
-        res: TRes | undefined,
-        options: Options<TReq, TRes>,
-      ) => ProxyServerOptions['target'])
-    | ((
-        req: TReq,
-        res: TRes | undefined,
-        options: Options<TReq, TRes>,
-      ) => Promise<ProxyServerOptions['target']>);
+    | Record<string, ProxyTarget>
+    | ((req: TReq, res: TRes | undefined, options: Options<TReq, TRes>) => ProxyTarget)
+    | ((req: TReq, res: TRes | undefined, options: Options<TReq, TRes>) => Promise<ProxyTarget>);
   /**
    * Log information from http-proxy-middleware
    * @example
