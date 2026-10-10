@@ -5,8 +5,8 @@ Use `body-parser` to populate `req.body`, mutate that object in `on.proxyReq`, t
 ### Minimal example
 
 ```js
-import express from 'express';
 import bodyParser from 'body-parser';
+import express from 'express';
 import { createProxyMiddleware, fixRequestBody } from 'http-proxy-middleware';
 
 const app = express();
