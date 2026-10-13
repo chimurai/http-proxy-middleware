@@ -13,6 +13,8 @@ jobs:
     permissions:
       contents: read
       id-token: write # Required for OIDC
+    env:
+      PINNED_NPM_VERSION: '11.5.1'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -22,9 +24,21 @@ jobs:
           node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
 
-      # Ensure npm 11.5.1 or later is installed
+      # Ensure npm 11.5.1 or later is installed.
+      # Pin to an exact, immutable version and do not execute lifecycle scripts
+      # from the fetched package: this job holds `id-token: write` and can mint
+      # the npm provenance token, so third-party code must never run here.
       - name: Update npm
-        run: npm install -g npm@latest
+        run: npm install -g "npm@${PINNED_NPM_VERSION}" --ignore-scripts
+
+      - name: Verify npm toolchain
+        run: |
+          INSTALLED="$(npm --version)"
+          echo "npm version: ${INSTALLED}"
+          if [ "${INSTALLED}" != "${PINNED_NPM_VERSION}" ]; then
+            echo "::error::expected npm ${PINNED_NPM_VERSION} but found ${INSTALLED}"
+            exit 1
+          fi
 
       - name: Install Dependencies
         run: yarn install --frozen-lockfile --ignore-scripts
