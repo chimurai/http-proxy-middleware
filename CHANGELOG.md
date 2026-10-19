@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- fix(loggerPlugin): fix logging url with query string
+
 ## [v4.2.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.2.0)
 
 - feat(types): export OnProxyEvent type

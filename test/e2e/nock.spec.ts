@@ -69,6 +69,30 @@ describe('E2E nock', () => {
     expect(response.body).toEqual({ ok: true });
   });
 
+  it('logs the target query string without encoding the question mark', async () => {
+    await using consoleInfoSpy = await vi.spyOn(console, 'info');
+
+    const agent = request(
+      createApp(
+        createProxyMiddleware({
+          target,
+          pathFilter: '/api',
+          followRedirects: true,
+          logger: console,
+        }),
+      ),
+    );
+
+    nock(target).get('/api/search').query({ q: 'proxy', page: '1' }).reply(200, { ok: true });
+
+    const response = await agent.get('/api/search?q=proxy&page=1').expect(200);
+
+    expect(response.body).toEqual({ ok: true });
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      '[HPM] GET /api/search?q=proxy&page=1 -> http://localhost:45678/api/search?q=proxy&page=1 [200]',
+    );
+  });
+
   it('forwards JSON POST body to the nock mocked target', async () => {
     const agent = request(
       createApp(
