@@ -1,5 +1,5 @@
 import type { ClientRequest, IncomingMessage } from 'node:http';
-import { URL } from 'node:url';
+import type { URL } from 'node:url';
 
 import { getLogger } from '../../logger.js';
 import type { Plugin } from '../../types.js';
@@ -54,18 +54,15 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
       const { protocol, host, path } = proxyRes.req as ClientRequest;
 
       target = createUrl({ protocol, host, port, path });
+      const targetUrl = target.toString();
+
+      const exchange = `[HPM] ${req.method} ${originalUrl} -> ${targetUrl} [${proxyRes.statusCode}]`;
+      logger.info(exchange);
     } catch (err) {
-      // should not error. keeping fallback just in case
+      // catch nock v13 issue: protocol and host are undefined
+      // (https://github.com/chimurai/http-proxy-middleware/issues/1035)
       console.error('[HPM] Unexpected error while creating target URL', err);
-      // fallback to old implementation (less correct - without port)
-      target = new URL(options.target as URL);
-      target.pathname = proxyRes.req.path;
     }
-
-    const targetUrl = target.toString();
-
-    const exchange = `[HPM] ${req.method} ${originalUrl} -> ${targetUrl} [${proxyRes.statusCode}]`;
-    logger.info(exchange);
   });
 
   /**

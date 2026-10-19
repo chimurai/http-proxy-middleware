@@ -22,7 +22,14 @@ export function createUrl({ protocol, host, port, path }: CreateUrlParams): URL 
   }
 
   if (path) {
-    url.pathname = path;
+    const queryIndex = path.indexOf('?');
+
+    if (queryIndex === -1) {
+      url.pathname = path;
+    } else {
+      url.pathname = path.slice(0, queryIndex);
+      url.search = path.slice(queryIndex);
+    }
   }
   return url;
 }

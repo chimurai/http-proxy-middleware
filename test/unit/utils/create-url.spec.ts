@@ -58,6 +58,38 @@ describe('createUrl()', () => {
       const url = createUrl({ protocol: 'http:', host: 'api.example.com', path: '/v1/users/42' });
       expect(url.toString()).toBe('http://api.example.com/v1/users/42');
     });
+
+    it('should preserve the query string', () => {
+      const url = createUrl({
+        protocol: 'http:',
+        host: 'api.example.com',
+        path: '/users?id=1&sort=name',
+      });
+      expect(url.toString()).toBe('http://api.example.com/users?id=1&sort=name');
+    });
+
+    it('should preserve encoded characters in the query string', () => {
+      const url = createUrl({
+        protocol: 'http:',
+        host: 'api.example.com',
+        path: '/a%20b?x=%3F',
+      });
+      expect(url.toString()).toBe('http://api.example.com/a%20b?x=%3F');
+    });
+
+    it('should not treat a path starting with // as a new host', () => {
+      const url = createUrl({
+        protocol: 'http:',
+        host: 'api.example.com',
+        path: '//evil.example/x?y=1',
+      });
+      expect(url.toString()).toBe('http://api.example.com//evil.example/x?y=1');
+    });
+
+    it('should preserve an empty query string', () => {
+      const url = createUrl({ protocol: 'http:', host: 'api.example.com', path: '/?' });
+      expect(url.toString()).toBe('http://api.example.com/?');
+    });
   });
 
   describe('edge cases — missing / undefined inputs', () => {
