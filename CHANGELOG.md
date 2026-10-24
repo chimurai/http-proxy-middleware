@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- fix(fixRequestBody): wait for request stream to end
+
 ## [v3.0.7](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.7)
 
 - fix(fixRequestBody): harden form-data stringification
