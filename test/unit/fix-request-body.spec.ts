@@ -1,5 +1,5 @@
 import { Socket } from 'net';
-import { ClientRequest, ServerResponse, IncomingMessage } from 'http';
+import { ClientRequest, IncomingMessage } from 'http';
 import * as querystring from 'querystring';
 
 import { fixRequestBody } from '../../src/handlers/fix-request-body';
@@ -12,15 +12,11 @@ const fakeProxyRequest = () => {
   return proxyRequest;
 };
 
-const fakeProxyResponse = (): ServerResponse => {
-  const res = new ServerResponse(new IncomingMessage(new Socket()));
-  return res;
-};
-
 const createRequestWithBody = (body: unknown): Request => {
   const req = new IncomingMessage(new Socket()) as Request;
   req.url = '/test_path';
   req.body = body;
+  Object.defineProperty(req, 'readableEnded', { value: true });
   return req;
 };
 
@@ -107,25 +103,23 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
 
-  it('should not fixRequestBody() when there bodyParser fails', () => {
+  it('should not fixRequestBody() before the request stream ends', () => {
     const proxyRequest = fakeProxyRequest();
     const request = {
-      get readableLength() {
-        return 4444; // simulate bodyParser failure
-      },
+      body: {},
+      readableLength: 0,
+      readableEnded: false,
     } as Request;
 
-    const proxyResponse = fakeProxyResponse();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded');
 
+    jest.spyOn(proxyRequest, 'setHeader');
     jest.spyOn(proxyRequest, 'write');
     jest.spyOn(proxyRequest, 'destroy');
-    jest.spyOn(proxyResponse, 'writeHead');
-    jest.spyOn(proxyResponse, 'end');
 
     fixRequestBody(proxyRequest, request);
 
-    expect(proxyResponse.end).toHaveBeenCalledTimes(0);
+    expect(proxyRequest.setHeader).not.toHaveBeenCalledWith('Content-Length', expect.anything());
     expect(proxyRequest.write).toHaveBeenCalledTimes(0);
     expect(proxyRequest.destroy).toHaveBeenCalledTimes(0);
   });
