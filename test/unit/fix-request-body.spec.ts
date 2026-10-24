@@ -6,17 +6,22 @@ import { describe, expect, it } from 'vitest';
 
 import type { BodyParserLikeRequest } from '../../src/handlers/fix-request-body.js';
 import { fixRequestBody } from '../../src/handlers/fix-request-body.js';
-import { createMockRequest, createMockResponse, createMockClientRequest } from '../test-utils.js';
+import { createMockRequest, createMockClientRequest } from '../test-utils.js';
 
 const fakeProxyRequest = (): ClientRequest => {
   return createMockClientRequest('http://some-host');
 };
 
 const createRequestWithBody = (body: unknown): BodyParserLikeRequest => {
-  return createMockRequest({
+  const request = createMockRequest({
     url: '/test_path',
     body: body,
   } as BodyParserLikeRequest);
+
+  // The mock stream is not consumed, so mark it ended to model body-parser's completed read.
+  Object.defineProperty(request, 'readableEnded', { value: true });
+
+  return request as BodyParserLikeRequest;
 };
 
 const handlerFormDataBodyData = (contentType: string, data: { [key: string]: any }) => {
@@ -262,20 +267,19 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
 
-  it('should not fixRequestBody() when there bodyParser fails', () => {
+  it('should not fixRequestBody() before the request stream ends', () => {
     const proxyRequest = fakeProxyRequest();
     const request = {
-      get readableLength() {
-        return 4444; // simulate bodyParser failure
-      },
+      body: {},
+      readableLength: 0,
+      readableEnded: false,
     } as BodyParserLikeRequest;
 
-    const proxyResponse = createMockResponse();
     proxyRequest.setHeader('content-type', 'application/x-www-form-urlencoded');
 
     fixRequestBody(proxyRequest, request);
 
-    expect(proxyResponse.end).toHaveBeenCalledTimes(0);
+    expect(proxyRequest.setHeader).not.toHaveBeenCalledWith('Content-Length', expect.anything());
     expect(proxyRequest.write).toHaveBeenCalledTimes(0);
     expect(proxyRequest.destroy).toHaveBeenCalledTimes(0);
   });
