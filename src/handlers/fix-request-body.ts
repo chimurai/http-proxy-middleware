@@ -6,8 +6,8 @@ import * as querystring from 'querystring';
  * Fix proxied body if bodyParser is involved.
  */
 export function fixRequestBody(proxyReq: http.ClientRequest, req: http.IncomingMessage): void {
-  // skip fixRequestBody() when req.readableLength not 0 (bodyParser failure)
-  if (req.readableLength !== 0) {
+  // Only reconstruct a body after the original request stream has ended.
+  if (!req.readableEnded) {
     return;
   }
 
