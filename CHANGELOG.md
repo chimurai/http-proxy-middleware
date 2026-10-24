@@ -3,6 +3,7 @@
 ## next
 
 - fix(loggerPlugin): fix logging url with query string
+- fix(fixRequestBody): wait for request stream to end
 
 ## [v4.2.0](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.2.0)
 
