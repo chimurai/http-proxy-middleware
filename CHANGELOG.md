@@ -1,8 +1,9 @@
 # Changelog
 
-## [v3.0.9](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.9)
+## [v3.0.10](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.10)
 
 - fix(fixRequestBody): wait for request stream to end
+- ci(github-actions): fix publish.yml with actions/setup-node@v7
 
 ## [v3.0.7](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.7)
 
