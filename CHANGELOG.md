@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## [v3.0.8](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.8)
 
 - fix(fixRequestBody): wait for request stream to end
 
