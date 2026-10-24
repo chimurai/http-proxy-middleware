@@ -12,8 +12,8 @@ export function fixRequestBody<TReq extends BodyParserLikeRequest = BodyParserLi
   proxyReq: http.ClientRequest,
   req: TReq,
 ): void {
-  // skip fixRequestBody() when req.readableLength not 0 (bodyParser failure)
-  if (req.readableLength !== 0) {
+  // Only reconstruct a body after the original request stream has ended.
+  if (!req.readableEnded) {
     return;
   }
 
