@@ -170,7 +170,7 @@ describe('Path rewriting', () => {
     });
 
     it('should not throw when async function config is provided', () => {
-      expect(badFn((async () => {}) as unknown as any)).not.toThrow(Error);
+      expect(badFn(async () => {})).not.toThrow(Error);
     });
   });
 });
