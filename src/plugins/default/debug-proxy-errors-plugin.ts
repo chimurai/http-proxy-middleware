@@ -36,7 +36,7 @@ export const debugProxyErrorsPlugin: Plugin = definePlugin((proxyServer, options
     debug(`httpxy error event: \n%O`, error);
 
     // detect request body (when bodyParser used) and log an error message to help debugging
-    if ((error as any).code === 'ECONNRESET' && hasParsedBody(req)) {
+    if ('code' in error && error.code === 'ECONNRESET' && hasParsedBody(req)) {
       console.error(styleText('red', BODY_PARSER_ERROR_MESSAGE));
     }
   });

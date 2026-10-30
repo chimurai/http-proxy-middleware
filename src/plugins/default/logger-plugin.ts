@@ -30,8 +30,9 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
 
     const errorMessage = '[HPM] Error occurred while proxying request %s to %s [%s] (%s)';
     const errReference = 'https://nodejs.org/api/errors.html#errors_common_system_errors'; // link to Node Common Systems Errors page
+    const errorCode = 'code' in err ? err.code : err;
 
-    logger.error(errorMessage, requestHref, targetHref, (err as any).code || err, errReference);
+    logger.error(errorMessage, requestHref, targetHref, String(errorCode), errReference);
   });
 
   /**

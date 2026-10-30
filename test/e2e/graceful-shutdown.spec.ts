@@ -18,7 +18,7 @@ vi.mock('httpxy', async (importOriginal) => {
     ...original,
     createProxyServer: (...args: Parameters<typeof original.createProxyServer>) => {
       const proxy = original.createProxyServer(...args);
-      capturedProxy = proxy as unknown as ProxyServer;
+      capturedProxy = proxy;
       return proxy;
     },
   };

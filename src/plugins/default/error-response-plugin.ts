@@ -23,7 +23,8 @@ export const errorResponsePlugin: Plugin = definePlugin((proxyServer, options) =
 
     if (isResponseLike(res)) {
       if (!res.headersSent) {
-        const statusCode = getStatusCode((err as unknown as any).code);
+        const errorCode = 'code' in err ? err.code : err;
+        const statusCode = getStatusCode(String(errorCode));
         res.writeHead(statusCode);
       }
 
