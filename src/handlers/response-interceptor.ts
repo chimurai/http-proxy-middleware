@@ -95,15 +95,7 @@ function copyHeaders(originalResponse, response) {
     keys = keys.filter((key) => !['content-encoding', 'transfer-encoding'].includes(key));
 
     keys.forEach((key) => {
-      let value = originalResponse.headers[key];
-
-      if (key === 'set-cookie') {
-        // remove cookie domain
-        value = Array.isArray(value) ? value : [value];
-        value = value.map((x) => x.replace(/Domain=[^;]+?/i, ''));
-      }
-
-      response.setHeader(key, value);
+      response.setHeader(key, originalResponse.headers[key]);
     });
   } else {
     response.headers = originalResponse.headers;
