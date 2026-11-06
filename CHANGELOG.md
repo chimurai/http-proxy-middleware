@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- fix(stringifyFormData): fix missing close-delimiter
+
 ## [v4.2.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.2.1)
 
 - fix(loggerPlugin): fix logging url with query string

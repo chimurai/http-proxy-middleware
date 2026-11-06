@@ -30,6 +30,7 @@ const handlerFormDataBodyData = (contentType: string, data: { [key: string]: any
   for (const [key, value] of Object.entries(data)) {
     str += `--${boundary}\r\nContent-Disposition: form-data; name="${key}"\r\n\r\n${value}\r\n`;
   }
+  str += `--${boundary}--\r\n`;
   return str;
 };
 
@@ -109,6 +110,7 @@ describe('fixRequestBody', () => {
       Content-Disposition: form-data; name="someField"
 
       some value
+      --multipart/form-data--
       "
     `);
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
@@ -130,6 +132,7 @@ describe('fixRequestBody', () => {
       Content-Disposition: form-data; name="someField"
 
       some value
+      --multipart/form-data--
       "
     `);
 
@@ -219,7 +222,7 @@ describe('fixRequestBody', () => {
     fixRequestBody(proxyRequest, createRequestWithBody({ 'field"name': 'value' }));
 
     expect(proxyRequest.write).toHaveBeenCalledWith(
-      '--BB\r\nContent-Disposition: form-data; name="field\\"name"\r\n\r\nvalue\r\n',
+      '--BB\r\nContent-Disposition: form-data; name="field\\"name"\r\n\r\nvalue\r\n--BB--\r\n',
     );
   });
 
