@@ -28,6 +28,8 @@ export function stringifyFormData(contentType: string, data: object): string {
     str += `--${boundary}\r\nContent-Disposition: form-data; name="${escapeMultipartFieldName(normalizedKey)}"\r\n\r\n${normalizedValue}\r\n`;
   }
 
+  str += `--${boundary}--\r\n`; // close-delimiter per RFC 2046 §5.1.1
+
   return str;
 }
 

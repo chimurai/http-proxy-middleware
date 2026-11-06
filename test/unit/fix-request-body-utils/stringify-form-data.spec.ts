@@ -8,19 +8,25 @@ describe('stringifyFormData', () => {
     it('should serialize using quoted boundary', () => {
       const result = stringifyFormData('multipart/form-data; boundary="BB"', { user: 'alice' });
 
-      expect(result).toBe('--BB\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n');
+      expect(result).toBe(
+        '--BB\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n--BB--\r\n',
+      );
     });
 
     it('should serialize using unquoted boundary', () => {
       const result = stringifyFormData('multipart/form-data; boundary=BB', { user: 'alice' });
 
-      expect(result).toBe('--BB\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n');
+      expect(result).toBe(
+        '--BB\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n--BB--\r\n',
+      );
     });
 
     it('should serialize using case-insensitive boundary parameter', () => {
       const result = stringifyFormData('multipart/form-data; BOUNDARY=BB', { user: 'alice' });
 
-      expect(result).toBe('--BB\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n');
+      expect(result).toBe(
+        '--BB\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n--BB--\r\n',
+      );
     });
 
     it('should lock legacy fallback when boundary parameter is missing', () => {
@@ -29,7 +35,8 @@ describe('stringifyFormData', () => {
       const result = stringifyFormData(contentType, { user: 'alice' });
 
       expect(result).toBe(
-        '--multipart/form-data; charset=utf-8\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n',
+        '--multipart/form-data; charset=utf-8\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n' +
+          '--multipart/form-data; charset=utf-8--\r\n',
       );
     });
   });
@@ -43,7 +50,7 @@ describe('stringifyFormData', () => {
       });
 
       expect(result).toBe(
-        '--BB\r\nContent-Disposition: form-data; name="field\\\\\\"name"\r\n\r\n42\r\n',
+        '--BB\r\nContent-Disposition: form-data; name="field\\\\\\"name"\r\n\r\n42\r\n--BB--\r\n',
       );
     });
 
@@ -55,6 +62,7 @@ describe('stringifyFormData', () => {
 
       expect(result).toContain('name="nullValue"\r\n\r\nnull\r\n');
       expect(result).toContain('name="undefinedValue"\r\n\r\nundefined\r\n');
+      expect(result.endsWith('--BB--\r\n')).toBe(true);
     });
 
     it('should serialize multiple fields in insertion order', () => {
@@ -65,8 +73,38 @@ describe('stringifyFormData', () => {
 
       expect(result).toBe(
         '--BB\r\nContent-Disposition: form-data; name="first"\r\n\r\n1\r\n' +
-          '--BB\r\nContent-Disposition: form-data; name="second"\r\n\r\ntrue\r\n',
+          '--BB\r\nContent-Disposition: form-data; name="second"\r\n\r\ntrue\r\n' +
+          '--BB--\r\n',
       );
+    });
+  });
+
+  describe('close-delimiter (RFC 2046 §5.1.1)', () => {
+    it('should append the close-delimiter after the last field', () => {
+      const result = stringifyFormData('multipart/form-data; boundary=BB', { user: 'alice' });
+
+      expect(result).toBe(
+        '--BB\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n--BB--\r\n',
+      );
+    });
+
+    it('should append a single close-delimiter after multiple fields', () => {
+      const result = stringifyFormData('multipart/form-data; boundary=BB', {
+        first: '1',
+        second: 'true',
+      });
+
+      expect(result).toBe(
+        '--BB\r\nContent-Disposition: form-data; name="first"\r\n\r\n1\r\n' +
+          '--BB\r\nContent-Disposition: form-data; name="second"\r\n\r\ntrue\r\n' +
+          '--BB--\r\n',
+      );
+    });
+
+    it('should append the close-delimiter even when no fields are present', () => {
+      const result = stringifyFormData('multipart/form-data; boundary=BB', {});
+
+      expect(result).toBe('--BB--\r\n');
     });
   });
 
@@ -174,6 +212,19 @@ describe('stringifyFormData', () => {
       expect(() =>
         stringifyFormData('multipart/form-data; boundary=BB', {
           user: 'prefix --BB suffix',
+        }),
+      ).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart field value for "user" detected.',
+          'HPM_ERR_INVALID_MULTIPART_FIELD_VALUE',
+        ),
+      );
+    });
+
+    it('should reject a field value matching the close-delimiter exactly', () => {
+      expect(() =>
+        stringifyFormData('multipart/form-data; boundary=BB', {
+          user: '--BB--',
         }),
       ).toThrow(
         new HttpProxyMiddlewareError(
