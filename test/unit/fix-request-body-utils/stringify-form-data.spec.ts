@@ -29,14 +29,15 @@ describe('stringifyFormData', () => {
       );
     });
 
-    it('should lock legacy fallback when boundary parameter is missing', () => {
+    it('should reject legacy fallback when boundary parameter is missing', () => {
+      // The fallback (full Content-Type string) contains ';' which is illegal per RFC 2046 bchars.
       const contentType = 'multipart/form-data; charset=utf-8';
 
-      const result = stringifyFormData(contentType, { user: 'alice' });
-
-      expect(result).toBe(
-        '--multipart/form-data; charset=utf-8\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n' +
-          '--multipart/form-data; charset=utf-8--\r\n',
+      expect(() => stringifyFormData(contentType, { user: 'alice' })).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
       );
     });
   });
@@ -154,6 +155,49 @@ describe('stringifyFormData', () => {
           'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
         ),
       );
+    });
+
+    // RFC 2046 §5.1.1: boundary := 0*69<bchars> bcharsnospace
+    it('should reject multipart boundary containing characters outside the bchars grammar', () => {
+      expect(() =>
+        stringifyFormData('multipart/form-data; boundary="BB@BB"', { user: 'alice' }),
+      ).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
+      );
+    });
+
+    it('should reject multipart boundary longer than 70 characters', () => {
+      const boundary = 'B'.repeat(71);
+
+      expect(() =>
+        stringifyFormData(`multipart/form-data; boundary="${boundary}"`, { user: 'alice' }),
+      ).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
+      );
+    });
+
+    it('should accept multipart boundary at the 70 character limit', () => {
+      const boundary = 'B'.repeat(70);
+
+      const result = stringifyFormData(`multipart/form-data; boundary="${boundary}"`, {
+        user: 'alice',
+      });
+
+      expect(result.startsWith(`--${boundary}\r\n`)).toBe(true);
+    });
+
+    // Note: a trailing space can't actually reach the boundary grammar check since the
+    // extracted boundary is already trimmed, but the regex still guards against it defensively.
+    it('should accept multipart boundary containing an interior space', () => {
+      const result = stringifyFormData('multipart/form-data; boundary="B B"', { user: 'alice' });
+
+      expect(result.startsWith('--B B\r\n')).toBe(true);
     });
 
     it('should reject unsafe multipart field names containing LF', () => {

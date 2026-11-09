@@ -2,6 +2,9 @@ import { HttpProxyMiddlewareError } from '../../errors.js';
 
 const CR_OR_LF = /[\r\n]/;
 
+// RFC 2046 §5.1.1: boundary := 0*69<bchars> bcharsnospace (bchars minus trailing space).
+const BOUNDARY_RE = /^[0-9A-Za-z'()+_,\-./:=? ]{0,69}[0-9A-Za-z'()+_,\-./:=?]$/;
+
 /**
  * HPM_ERR_INVALID_MULTIPART prefixed error code will be used in
  * [status-code.ts]({@link ../../status-code.ts}) to return status code 400.
@@ -36,10 +39,9 @@ export function stringifyFormData(contentType: string, data: object): string {
 function getMultipartBoundary(contentType: string): string {
   const boundaryMatch = /(?:^|;)\s*boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType);
 
-  // Keep backward-compatible behavior when boundary is omitted: fall back to legacy extraction.
-  const boundary = (boundaryMatch?.[1] ?? boundaryMatch?.[2] ?? contentType).trim();
+  const boundary = (boundaryMatch?.[1] ?? boundaryMatch?.[2] ?? '').trim();
 
-  if (!boundary || CR_OR_LF.test(boundary)) {
+  if (!boundary || CR_OR_LF.test(boundary) || !BOUNDARY_RE.test(boundary)) {
     throw new HttpProxyMiddlewareError(
       '[HPM] invalid multipart boundary detected.',
       `${HPM_ERR_INVALID_MULTIPART}_BOUNDARY`,
