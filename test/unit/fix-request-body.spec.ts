@@ -97,20 +97,20 @@ describe('fixRequestBody', () => {
 
   it('should write when body is not empty and Content-Type is multipart/form-data', () => {
     const proxyRequest = fakeProxyRequest();
-    proxyRequest.setHeader('content-type', 'multipart/form-data');
+    proxyRequest.setHeader('content-type', 'multipart/form-data; boundary=BOUNDARY');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
-    const expectedBody = handlerFormDataBodyData('multipart/form-data', {
+    const expectedBody = handlerFormDataBodyData('multipart/form-data; boundary=BOUNDARY', {
       someField: 'some value',
     });
 
     expect(expectedBody).toMatchInlineSnapshot(`
-      "--multipart/form-data
+      "--BOUNDARY
       Content-Disposition: form-data; name="someField"
 
       some value
-      --multipart/form-data--
+      --BOUNDARY--
       "
     `);
     expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Length', expectedBody.length);
@@ -119,20 +119,20 @@ describe('fixRequestBody', () => {
 
   it('should write when body is not empty and Content-Type includes multipart/form-data', () => {
     const proxyRequest = fakeProxyRequest();
-    proxyRequest.setHeader('content-type', 'multipart/form-data');
+    proxyRequest.setHeader('content-type', 'multipart/form-data; boundary=BOUNDARY; charset=utf-8');
 
     fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
 
-    const expectedBody = handlerFormDataBodyData('multipart/form-data', {
+    const expectedBody = handlerFormDataBodyData('multipart/form-data; boundary=BOUNDARY', {
       someField: 'some value',
     });
 
     expect(expectedBody).toMatchInlineSnapshot(`
-      "--multipart/form-data
+      "--BOUNDARY
       Content-Disposition: form-data; name="someField"
 
       some value
-      --multipart/form-data--
+      --BOUNDARY--
       "
     `);
 
