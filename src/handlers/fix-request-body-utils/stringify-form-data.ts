@@ -37,9 +37,9 @@ export function stringifyFormData(contentType: string, data: object): string {
 }
 
 function getMultipartBoundary(contentType: string): string {
-  const boundaryMatch = /(?:^|;)\s*boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType);
+  const boundaryMatch = /(?:^|;)\s*boundary=(?:"([^"]+)"|([^;\s]+))\s*(?=;|$)/i.exec(contentType);
 
-  const boundary = (boundaryMatch?.[1] ?? boundaryMatch?.[2] ?? '').trim();
+  const boundary = boundaryMatch?.[1] ?? boundaryMatch?.[2] ?? '';
 
   if (!boundary || CR_OR_LF.test(boundary) || !BOUNDARY_RE.test(boundary)) {
     throw new HttpProxyMiddlewareError(

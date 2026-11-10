@@ -13,11 +13,49 @@ describe('stringifyFormData', () => {
       );
     });
 
+    it('should serialize using quoted boundary with an interior space', () => {
+      const result = stringifyFormData('multipart/form-data; boundary="B B"', { user: 'alice' });
+
+      expect(result).toBe(
+        '--B B\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n--B B--\r\n',
+      );
+    });
+
+    it('should allow a leading space in a quoted boundary', () => {
+      const result = stringifyFormData('multipart/form-data; boundary=" B"', { user: 'alice' });
+
+      expect(result).toBe(
+        '-- B\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n-- B--\r\n',
+      );
+    });
+
+    it('should reject a trailing space in a quoted boundary', () => {
+      expect(() =>
+        stringifyFormData('multipart/form-data; boundary="B "', { user: 'alice' }),
+      ).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
+      );
+    });
+
     it('should serialize using unquoted boundary', () => {
       const result = stringifyFormData('multipart/form-data; boundary=BB', { user: 'alice' });
 
       expect(result).toBe(
         '--BB\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n--BB--\r\n',
+      );
+    });
+
+    it('should reject an unquoted boundary containing a space', () => {
+      expect(() =>
+        stringifyFormData('multipart/form-data; boundary=B B', { user: 'alice' }),
+      ).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
       );
     });
 
@@ -190,14 +228,6 @@ describe('stringifyFormData', () => {
       });
 
       expect(result.startsWith(`--${boundary}\r\n`)).toBe(true);
-    });
-
-    // Note: a trailing space can't actually reach the boundary grammar check since the
-    // extracted boundary is already trimmed, but the regex still guards against it defensively.
-    it('should accept multipart boundary containing an interior space', () => {
-      const result = stringifyFormData('multipart/form-data; boundary="B B"', { user: 'alice' });
-
-      expect(result.startsWith('--B B\r\n')).toBe(true);
     });
 
     it('should reject unsafe multipart field names containing LF', () => {
