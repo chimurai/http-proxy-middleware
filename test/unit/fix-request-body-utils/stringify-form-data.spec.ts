@@ -13,11 +13,49 @@ describe('stringifyFormData', () => {
       );
     });
 
+    it('should serialize using quoted boundary with an interior space', () => {
+      const result = stringifyFormData('multipart/form-data; boundary="B B"', { user: 'alice' });
+
+      expect(result).toBe(
+        '--B B\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n--B B--\r\n',
+      );
+    });
+
+    it('should allow a leading space in a quoted boundary', () => {
+      const result = stringifyFormData('multipart/form-data; boundary=" B"', { user: 'alice' });
+
+      expect(result).toBe(
+        '-- B\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n-- B--\r\n',
+      );
+    });
+
+    it('should reject a trailing space in a quoted boundary', () => {
+      expect(() =>
+        stringifyFormData('multipart/form-data; boundary="B "', { user: 'alice' }),
+      ).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
+      );
+    });
+
     it('should serialize using unquoted boundary', () => {
       const result = stringifyFormData('multipart/form-data; boundary=BB', { user: 'alice' });
 
       expect(result).toBe(
         '--BB\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n--BB--\r\n',
+      );
+    });
+
+    it('should reject an unquoted boundary containing a space', () => {
+      expect(() =>
+        stringifyFormData('multipart/form-data; boundary=B B', { user: 'alice' }),
+      ).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
       );
     });
 
@@ -29,14 +67,15 @@ describe('stringifyFormData', () => {
       );
     });
 
-    it('should lock legacy fallback when boundary parameter is missing', () => {
+    it('should reject legacy fallback when boundary parameter is missing', () => {
+      // The fallback (full Content-Type string) contains ';' which is illegal per RFC 2046 bchars.
       const contentType = 'multipart/form-data; charset=utf-8';
 
-      const result = stringifyFormData(contentType, { user: 'alice' });
-
-      expect(result).toBe(
-        '--multipart/form-data; charset=utf-8\r\nContent-Disposition: form-data; name="user"\r\n\r\nalice\r\n' +
-          '--multipart/form-data; charset=utf-8--\r\n',
+      expect(() => stringifyFormData(contentType, { user: 'alice' })).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
       );
     });
   });
@@ -154,6 +193,41 @@ describe('stringifyFormData', () => {
           'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
         ),
       );
+    });
+
+    // RFC 2046 §5.1.1: boundary := 0*69<bchars> bcharsnospace
+    it('should reject multipart boundary containing characters outside the bchars grammar', () => {
+      expect(() =>
+        stringifyFormData('multipart/form-data; boundary="BB@BB"', { user: 'alice' }),
+      ).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
+      );
+    });
+
+    it('should reject multipart boundary longer than 70 characters', () => {
+      const boundary = 'B'.repeat(71);
+
+      expect(() =>
+        stringifyFormData(`multipart/form-data; boundary="${boundary}"`, { user: 'alice' }),
+      ).toThrow(
+        new HttpProxyMiddlewareError(
+          '[HPM] invalid multipart boundary detected.',
+          'HPM_ERR_INVALID_MULTIPART_BOUNDARY',
+        ),
+      );
+    });
+
+    it('should accept multipart boundary at the 70 character limit', () => {
+      const boundary = 'B'.repeat(70);
+
+      const result = stringifyFormData(`multipart/form-data; boundary="${boundary}"`, {
+        user: 'alice',
+      });
+
+      expect(result.startsWith(`--${boundary}\r\n`)).toBe(true);
     });
 
     it('should reject unsafe multipart field names containing LF', () => {

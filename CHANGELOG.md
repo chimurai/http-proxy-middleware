@@ -3,6 +3,7 @@
 ## next
 
 - fix(stringifyFormData): fix missing close-delimiter
+- fix(stringifyFormData): improve multipart boundary validation
 
 ## [v4.2.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.2.1)
 
