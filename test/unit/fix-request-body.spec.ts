@@ -140,6 +140,16 @@ describe('fixRequestBody', () => {
     expect(proxyRequest.write).toHaveBeenCalledWith(expectedBody);
   });
 
+  it('should destroy the request when multipart Content-Type has no boundary', () => {
+    const proxyRequest = fakeProxyRequest();
+    proxyRequest.setHeader('content-type', 'multipart/form-data');
+
+    fixRequestBody(proxyRequest, createRequestWithBody({ someField: 'some value' }));
+
+    expect(proxyRequest.write).not.toHaveBeenCalled();
+    expect(proxyRequest.destroy).toHaveBeenCalledTimes(1);
+  });
+
   it('should reject multipart field values containing CRLF', () => {
     const proxyRequest = fakeProxyRequest();
     proxyRequest.setHeader('content-type', 'multipart/form-data; boundary=BB');
