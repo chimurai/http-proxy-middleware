@@ -19,6 +19,6 @@ const noopLogger: Logger = {
   error: () => {},
 };
 
-export function getLogger(options: Options): Logger {
-  return (options.logger as Logger) || noopLogger;
+export function getLogger(options: Pick<Options, 'logger'>): Logger {
+  return options.logger || noopLogger;
 }
