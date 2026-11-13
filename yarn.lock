@@ -2255,10 +2255,10 @@ https-proxy-agent@^7.0.6:
     agent-base "^7.1.2"
     debug "4"
 
-httpxy@^0.5.4:
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/httpxy/-/httpxy-0.5.4.tgz#0603b73bb0f304d4d90181835a07cf62bb8c6b35"
-  integrity sha512-URfeibL0kTH6VuIxxaJDXWQWEk8fKr+9L8MGv6CuAiNy0fGnoVhWbXBvJR1mkdsvCDUxvhX9cW60k2AhtH5s6w==
+httpxy@^0.5.6:
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/httpxy/-/httpxy-0.5.6.tgz#954e0cb1a815c98df6f14be385ed946cd1080451"
+  integrity sha512-iqc3nOxvNb5FxbhJozt8wNmHgjlmk4zzba512jMEXVwHCEBCbGAj49eGfy5PI8ts3/LFSFq8siiSNqwfY1AlfQ==
 
 husky@9.1.7:
   version "9.1.7"

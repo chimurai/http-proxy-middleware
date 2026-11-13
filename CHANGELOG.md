@@ -4,6 +4,7 @@
 
 - fix(stringifyFormData): fix missing close-delimiter
 - fix(stringifyFormData): improve multipart boundary validation
+- chore(package.json): bump to httpxy 0.5.6
 
 ## [v4.2.1](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.2.1)
 
