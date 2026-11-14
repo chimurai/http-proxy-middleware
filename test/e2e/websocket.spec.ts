@@ -1,5 +1,5 @@
 import * as http from 'node:http';
-import type { Socket } from 'node:net';
+import { Socket } from 'node:net';
 
 import getPort from 'get-port';
 import type { Mockttp } from 'mockttp';
@@ -251,6 +251,36 @@ describe('E2E WebSocket proxy', () => {
       ws.send('foobar');
 
       await expect(messageReceived).resolves.toBe('foobar');
+    });
+  });
+
+  describe('unmatched WebSocket upgrade', () => {
+    it('should handle socket errors without destroying the socket', () => {
+      const onError = vi.fn();
+      const middleware = createProxyMiddleware({
+        target: mockWsTargetServer.url,
+        pathFilter: '/ws',
+        ws: true,
+        on: { error: onError },
+      });
+      const server = http.createServer();
+      // The upgrade hook discovers the server from the incoming request's socket.
+      const req = createMockRequest({
+        url: '/',
+        socket: { server } as unknown as Socket,
+      });
+      const socket = new Socket();
+      const socketError = new Error('connection reset');
+
+      // This unmatched upgrade must remain safe for another middleware to handle.
+      middleware.upgrade(req, socket, Buffer.alloc(0));
+
+      // Simulate the socket error caused by a client TCP reset.
+      expect(() => socket.emit('error', socketError)).not.toThrow();
+      expect(onError).toHaveBeenCalledWith(socketError, req, socket);
+      expect(socket.destroyed).toBe(false);
+      // This unconnected test socket is destroyed only for cleanup.
+      socket.destroy();
     });
   });
 
