@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## [v2.0.12](https://github.com/chimurai/http-proxy-middleware/releases/tag/v2.0.12)
 
 - fix(htt-proxy-middleware): harden ws upgrade()
 
