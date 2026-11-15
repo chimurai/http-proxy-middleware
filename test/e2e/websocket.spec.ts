@@ -99,12 +99,16 @@ describe('E2E WebSocket proxy', () => {
 
   describe('unmatched WebSocket upgrade', () => {
     it('should handle socket errors without destroying the socket', () => {
-      const onError = jest.fn();
+      const logger = {
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+      };
       const middleware = createProxyMiddleware({
         target: 'http://localhost:1234',
         pathFilter: '/ws',
         ws: true,
-        on: { error: onError },
+        logger,
       });
       proxyServer = http.createServer();
       ws = { close: () => undefined } as WebSocket;
@@ -122,7 +126,7 @@ describe('E2E WebSocket proxy', () => {
 
       // Simulate the socket error caused by a client TCP reset.
       expect(() => socket.emit('error', socketError)).not.toThrow();
-      expect(onError).toHaveBeenCalledWith(socketError, req, socket);
+      expect(logger.error).toHaveBeenCalledWith(socketError);
       expect(socket.destroyed).toBe(false);
       // This unconnected test socket is destroyed only for cleanup.
       socket.destroy();
