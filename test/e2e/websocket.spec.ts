@@ -1,9 +1,10 @@
 import * as http from 'http';
+import { Socket } from 'net';
 import * as WebSocket from 'ws';
 import { Server as WebSocketServer } from 'ws';
 import * as getPort from 'get-port';
 import { createProxyMiddleware, createApp } from './test-kit';
-import type { RequestHandler } from '../../src/types';
+import type { Request, RequestHandler } from '../../src/types';
 
 /********************************************************************
  * - Not possible to use `supertest` to test WebSockets
@@ -118,6 +119,32 @@ describe('E2E WebSocket proxy', () => {
         done();
       });
       ws.send('foobar');
+    });
+  });
+
+  describe('unmatched WebSocket upgrade', () => {
+    it('should handle socket errors without destroying the socket', () => {
+      const onError = jest.fn();
+      const middleware = createProxyMiddleware('/ws', {
+        target: 'http://localhost:1234',
+        ws: true,
+        onError,
+      });
+      proxyServer = http.createServer();
+
+      const req = {
+        url: '/',
+        socket: { server: proxyServer },
+      } as unknown as Request;
+      const socket = new Socket();
+      const socketError = new Error('connection reset');
+
+      middleware.upgrade(req, socket, Buffer.alloc(0));
+
+      expect(() => socket.emit('error', socketError)).not.toThrow();
+      expect(onError).toHaveBeenCalledWith(socketError, req, socket);
+      expect(socket.destroyed).toBe(false);
+      socket.destroy();
     });
   });
 

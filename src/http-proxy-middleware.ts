@@ -1,4 +1,5 @@
 import type * as https from 'https';
+import type * as net from 'net';
 import type * as express from 'express';
 import type { Filter, Request, RequestHandler, Response, Options } from './types';
 import * as httpProxy from 'http-proxy';
@@ -92,11 +93,28 @@ export class HttpProxyMiddleware {
     }
   };
 
-  private handleUpgrade = async (req: Request, socket, head) => {
-    if (this.shouldProxy(this.config.context, req)) {
-      const activeProxyOptions = await this.prepareProxyRequest(req);
-      this.proxy.ws(req, socket, head, activeProxyOptions);
-      this.logger.info('[HPM] Upgrading to WebSocket');
+  private handleUpgrade = async (req: Request, socket: net.Socket, head: Buffer) => {
+    // Protect the raw upgrade socket while async preparation runs before http-proxy installs its listener.
+    const onSocketError = (err: Error) => {
+      this.proxy.emit('error', err, req, socket);
+    };
+    socket.on('error', onSocketError);
+    socket.once('close', () => socket.off('error', onSocketError));
+
+    try {
+      if (this.shouldProxy(this.config.context, req)) {
+        const activeProxyOptions = await this.prepareProxyRequest(req);
+        // http-proxy installs its own error handler synchronously when ws() is called.
+        socket.off('error', onSocketError);
+        this.proxy.ws(req, socket, head, activeProxyOptions);
+        this.logger.info('[HPM] Upgrading to WebSocket');
+      }
+    } catch (err) {
+      // This error does not include the URL as the fourth argument as we won't
+      // have the URL if this.prepareProxyRequest throws an error.
+      this.proxy.emit('error', err, req, socket);
+      // Upgrade requests have no response object to finish, so close the socket after a proxy error.
+      socket.destroy();
     }
   };
 
