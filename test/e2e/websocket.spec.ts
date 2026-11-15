@@ -300,16 +300,26 @@ describe('E2E WebSocket proxy', () => {
       const routerReady = new Promise<string>((resolve) => {
         resolveRouter = resolve;
       });
+      // Capture the synchronous handoff point after httpxy installs its socket listener.
+      const proxyReqWs = vi.fn((_proxyReq, _req, proxySocket) => {
+        expect(proxySocket.destroyed).toBe(false);
+      });
       const middleware = createProxyMiddleware({
         target: mockWsTargetServer.url,
         pathFilter: '/ws',
         ws: true,
         logger,
         router: () => routerReady,
+        on: {
+          proxyReqWs,
+        },
       });
       const server = http.createServer();
+      // The upgrade method and header let httpxy accept this as a WebSocket request.
       const req = createMockRequest({
         url: '/ws',
+        method: 'GET',
+        headers: { upgrade: 'websocket' },
         socket: { server } as unknown as Socket,
       });
       const socket = new Socket();
@@ -320,9 +330,11 @@ describe('E2E WebSocket proxy', () => {
       await Promise.resolve();
 
       const temporaryErrorListener = socket.listeners('error')[0];
+      // Preparation is still pending, so only the temporary guard should be attached.
       expect(temporaryErrorListener).toBeDefined();
       expect(socket.listenerCount('error')).toBe(1);
 
+      // The guard must absorb early socket errors without destroying the connection.
       expect(() => socket.emit('error', socketError)).not.toThrow();
       expect(logger.error).toHaveBeenCalledWith(socketError);
       expect(socket.listeners('error')).toContain(temporaryErrorListener);
@@ -332,8 +344,16 @@ describe('E2E WebSocket proxy', () => {
       await routerReady;
       await new Promise<void>((resolve) => setImmediate(resolve));
 
+      // A valid handoff fires proxyReqWs while the socket is still usable.
+      expect(proxyReqWs).toHaveBeenCalledTimes(1);
+      expect(socket.destroyed).toBe(false);
+      // The temporary guard is released, leaving the listener installed by httpxy.
       expect(socket.listeners('error')).not.toContain(temporaryErrorListener);
-      expect(socket.listenerCount('error')).toBe(1);
+      const proxyErrorListener = socket
+        .listeners('error')
+        .find((listener) => listener !== temporaryErrorListener);
+      expect(proxyErrorListener).toBeDefined();
+      expect(socket.listeners('error')).toContain(proxyErrorListener);
 
       socket.destroy();
     });
