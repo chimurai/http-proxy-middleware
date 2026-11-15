@@ -49,6 +49,7 @@ export class HttpProxyMiddleware<TReq, TRes> {
       try {
         const activeProxyOptions = await this.prepareProxyRequest(req);
         debug(`proxy request to target: %O`, activeProxyOptions.target);
+        this.assertHasTarget(activeProxyOptions);
         this.proxy.web(req, res, activeProxyOptions);
       } catch (err) {
         next?.(err);
@@ -100,21 +101,23 @@ export class HttpProxyMiddleware<TReq, TRes> {
   };
 
   private handleUpgrade = async (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
-    // Protect the raw upgrade socket while async preparation runs before httpxy installs its listener.
-    const onSocketError = (err: Error) => {
-      this.proxy.emit('error', err, req, socket);
-    };
-    socket.on('error', onSocketError);
-    socket.once('close', () => socket.off('error', onSocketError));
+    // Guard every upgrade socket, including unmatched ones left for another middleware.
+    // The guard is removed when the socket closes.
+    const releaseSocketGuard = this.guardUpgradeSocket(req, socket);
+
+    // Leave unmatched sockets available for another middleware on the same server.
+    if (!this.shouldProxy(this.proxyOptions.pathFilter, req)) {
+      return;
+    }
 
     try {
-      if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
-        const activeProxyOptions = await this.prepareProxyRequest(req);
-        // http-proxy installs its own error handler synchronously when ws() is called.
-        socket.off('error', onSocketError);
-        this.proxy.ws(req, socket, head, activeProxyOptions);
-        debug('server upgrade event received. Proxying WebSocket');
-      }
+      const activeProxyOptions = await this.prepareProxyRequest(req);
+      this.assertHasTarget(activeProxyOptions);
+
+      debug('server upgrade event received. Proxying WebSocket');
+      this.proxy.ws(req, socket, head, activeProxyOptions);
+      // http-proxy installs its own error handler synchronously when ws() is called.
+      releaseSocketGuard();
     } catch (err) {
       // This error does not include the URL as the fourth argument as we won't
       // have the URL if `this.prepareProxyRequest` throws an error.
@@ -123,6 +126,31 @@ export class HttpProxyMiddleware<TReq, TRes> {
       socket.destroy();
     }
   };
+
+  /**
+   * Forward errors of the raw upgrade socket to the proxy 'error' event while async
+   * preparation runs, before http-proxy installs its own listener.
+   * @return function to remove the guard (safe to call multiple times)
+   */
+  private guardUpgradeSocket(req: http.IncomingMessage, socket: net.Socket): () => void {
+    const onSocketError = (err: Error) => {
+      this.proxy.emit('error', err, req, socket);
+    };
+    const release = () => {
+      socket.off('error', onSocketError);
+    };
+
+    socket.on('error', onSocketError);
+    socket.once('close', release);
+
+    return release;
+  }
+
+  private assertHasTarget(options: Options<TReq, TRes>) {
+    if (!options.target && !options.forward) {
+      throw new Error('Must provide a proper URL as target');
+    }
+  }
 
   /**
    * Determine whether request should be proxied.
