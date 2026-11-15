@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- fix(htt-proxy-middleware): harden ws upgrade()
+
 ## [v3.0.10](https://github.com/chimurai/http-proxy-middleware/releases/tag/v3.0.10)
 
 - fix(fixRequestBody): wait for request stream to end

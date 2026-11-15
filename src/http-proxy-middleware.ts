@@ -100,9 +100,18 @@ export class HttpProxyMiddleware<TReq, TRes> {
   };
 
   private handleUpgrade = async (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
+    // Protect the raw upgrade socket while async preparation runs before httpxy installs its listener.
+    const onSocketError = (err: Error) => {
+      this.proxy.emit('error', err, req, socket);
+    };
+    socket.on('error', onSocketError);
+    socket.once('close', () => socket.off('error', onSocketError));
+
     try {
       if (this.shouldProxy(this.proxyOptions.pathFilter, req)) {
         const activeProxyOptions = await this.prepareProxyRequest(req);
+        // http-proxy installs its own error handler synchronously when ws() is called.
+        socket.off('error', onSocketError);
         this.proxy.ws(req, socket, head, activeProxyOptions);
         debug('server upgrade event received. Proxying WebSocket');
       }
@@ -110,6 +119,8 @@ export class HttpProxyMiddleware<TReq, TRes> {
       // This error does not include the URL as the fourth argument as we won't
       // have the URL if `this.prepareProxyRequest` throws an error.
       this.proxy.emit('error', err, req, socket);
+      // Upgrade requests have no response object to finish, so close the socket after a proxy error.
+      socket.destroy();
     }
   };
 

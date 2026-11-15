@@ -1,4 +1,5 @@
 import * as http from 'node:http';
+import { Socket } from 'node:net';
 
 import * as getPort from 'get-port';
 import { WebSocket, WebSocketServer } from 'ws';
@@ -93,6 +94,38 @@ describe('E2E WebSocket proxy', () => {
         done();
       });
       ws.send('foobar');
+    });
+  });
+
+  describe('unmatched WebSocket upgrade', () => {
+    it('should handle socket errors without destroying the socket', () => {
+      const onError = jest.fn();
+      const middleware = createProxyMiddleware({
+        target: 'http://localhost:1234',
+        pathFilter: '/ws',
+        ws: true,
+        on: { error: onError },
+      });
+      proxyServer = http.createServer();
+      ws = { close: () => undefined } as WebSocket;
+
+      // The upgrade hook discovers the server from the incoming request's socket.
+      const req = {
+        url: '/',
+        socket: { server: proxyServer },
+      } as unknown as http.IncomingMessage;
+      const socket = new Socket();
+      const socketError = new Error('connection reset');
+
+      // This unmatched upgrade must remain safe for another middleware to handle.
+      middleware.upgrade(req, socket, Buffer.alloc(0));
+
+      // Simulate the socket error caused by a client TCP reset.
+      expect(() => socket.emit('error', socketError)).not.toThrow();
+      expect(onError).toHaveBeenCalledWith(socketError, req, socket);
+      expect(socket.destroyed).toBe(false);
+      // This unconnected test socket is destroyed only for cleanup.
+      socket.destroy();
     });
   });
 
