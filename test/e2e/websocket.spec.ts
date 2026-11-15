@@ -288,6 +288,57 @@ describe('E2E WebSocket proxy', () => {
     });
   });
 
+  describe('matched WebSocket upgrade', () => {
+    it('should retain the socket error guard until proxy.ws installs its listener', async () => {
+      const logger = {
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
+      let resolveRouter: (target: string) => void = () => {};
+      // Keep preparation pending so the temporary socket guard handles early errors.
+      const routerReady = new Promise<string>((resolve) => {
+        resolveRouter = resolve;
+      });
+      const middleware = createProxyMiddleware({
+        target: mockWsTargetServer.url,
+        pathFilter: '/ws',
+        ws: true,
+        logger,
+        router: () => routerReady,
+      });
+      const server = http.createServer();
+      const req = createMockRequest({
+        url: '/ws',
+        socket: { server } as unknown as Socket,
+      });
+      const socket = new Socket();
+      const socketError = new Error('connection reset');
+
+      // A matched upgrade must install the guard before asynchronous preparation starts.
+      middleware.upgrade(req, socket, Buffer.alloc(0));
+      await Promise.resolve();
+
+      const temporaryErrorListener = socket.listeners('error')[0];
+      expect(temporaryErrorListener).toBeDefined();
+      expect(socket.listenerCount('error')).toBe(1);
+
+      expect(() => socket.emit('error', socketError)).not.toThrow();
+      expect(logger.error).toHaveBeenCalledWith(socketError);
+      expect(socket.listeners('error')).toContain(temporaryErrorListener);
+
+      // proxy.ws installs its own listener synchronously; only then may the temporary guard go.
+      resolveRouter(mockWsTargetServer.url);
+      await routerReady;
+      await new Promise<void>((resolve) => setImmediate(resolve));
+
+      expect(socket.listeners('error')).not.toContain(temporaryErrorListener);
+      expect(socket.listenerCount('error')).toBe(1);
+
+      socket.destroy();
+    });
+  });
+
   describe('option.ws across multiple servers', () => {
     it('should proxy websocket upgrades on every attached server', async () => {
       const serverPortA = await getPort();
