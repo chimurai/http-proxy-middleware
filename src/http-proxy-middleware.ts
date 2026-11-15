@@ -174,10 +174,11 @@ export class HttpProxyMiddleware<
    */
   private guardUpgradeSocket(req: TReq, socket: net.Socket): () => void {
     const onSocketError = (err: Error) => {
-      this.proxy.emit('error', err, req, socket);
+      this.logger.error(err);
     };
     const release = () => {
       socket.off('error', onSocketError);
+      socket.off('close', release);
     };
 
     socket.on('error', onSocketError);

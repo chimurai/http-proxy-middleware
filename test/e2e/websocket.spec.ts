@@ -256,12 +256,16 @@ describe('E2E WebSocket proxy', () => {
 
   describe('unmatched WebSocket upgrade', () => {
     it('should handle socket errors without destroying the socket', () => {
-      const onError = vi.fn();
+      const logger = {
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
       const middleware = createProxyMiddleware({
         target: mockWsTargetServer.url,
         pathFilter: '/ws',
         ws: true,
-        on: { error: onError },
+        logger,
       });
       const server = http.createServer();
       // The upgrade hook discovers the server from the incoming request's socket.
@@ -277,7 +281,7 @@ describe('E2E WebSocket proxy', () => {
 
       // Simulate the socket error caused by a client TCP reset.
       expect(() => socket.emit('error', socketError)).not.toThrow();
-      expect(onError).toHaveBeenCalledWith(socketError, req, socket);
+      expect(logger.error).toHaveBeenCalledWith(socketError);
       expect(socket.destroyed).toBe(false);
       // This unconnected test socket is destroyed only for cleanup.
       socket.destroy();
