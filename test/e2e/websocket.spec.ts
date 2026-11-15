@@ -1,4 +1,5 @@
 import * as http from 'node:http';
+import { Socket } from 'node:net';
 
 import * as getPort from 'get-port';
 import { WebSocket, WebSocketServer } from 'ws';
@@ -93,6 +94,97 @@ describe('E2E WebSocket proxy', () => {
         done();
       });
       ws.send('foobar');
+    });
+  });
+
+  describe('unmatched WebSocket upgrade', () => {
+    it('should handle socket errors without destroying the socket', () => {
+      const logger = {
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+      };
+      const middleware = createProxyMiddleware({
+        target: 'http://localhost:1234',
+        pathFilter: '/ws',
+        ws: true,
+        logger,
+      });
+      proxyServer = http.createServer();
+      ws = { close: () => undefined } as WebSocket;
+
+      // The upgrade hook discovers the server from the incoming request's socket.
+      const req = {
+        url: '/',
+        socket: { server: proxyServer },
+      } as unknown as http.IncomingMessage;
+      const socket = new Socket();
+      const socketError = new Error('connection reset');
+
+      // This unmatched upgrade must remain safe for another middleware to handle.
+      middleware.upgrade(req, socket, Buffer.alloc(0));
+
+      // Simulate the socket error caused by a client TCP reset.
+      expect(() => socket.emit('error', socketError)).not.toThrow();
+      expect(logger.error).toHaveBeenCalledWith(socketError);
+      expect(socket.destroyed).toBe(false);
+      // This unconnected test socket is destroyed only for cleanup.
+      socket.destroy();
+    });
+  });
+
+  describe('matched WebSocket upgrade', () => {
+    it('should retain the socket error guard until proxy.ws installs its listener', async () => {
+      const logger = {
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+      };
+      let resolveRouter: (target: string) => void = () => {};
+      // Keep preparation pending so the temporary socket guard handles early errors.
+      const routerReady = new Promise<string>((resolve) => {
+        resolveRouter = resolve;
+      });
+      const middleware = createProxyMiddleware({
+        target: `http://localhost:${WS_SERVER_PORT}`,
+        pathFilter: '/ws',
+        ws: true,
+        logger,
+        router: () => routerReady,
+      });
+      proxyServer = http.createServer();
+      ws = { close: () => undefined } as WebSocket;
+
+      const req = {
+        url: '/ws',
+        method: 'GET',
+        headers: { upgrade: 'websocket' },
+        socket: { server: proxyServer },
+      } as unknown as http.IncomingMessage;
+      const socket = new Socket();
+      const socketError = new Error('connection reset');
+
+      // A matched upgrade must install the guard before asynchronous preparation starts.
+      middleware.upgrade(req, socket, Buffer.alloc(0));
+      await Promise.resolve();
+
+      const temporaryErrorListener = socket.listeners('error')[0];
+      expect(temporaryErrorListener).toBeDefined();
+      expect(socket.listenerCount('error')).toBe(1);
+
+      expect(() => socket.emit('error', socketError)).not.toThrow();
+      expect(logger.error).toHaveBeenCalledWith(socketError);
+      expect(socket.listeners('error')).toContain(temporaryErrorListener);
+
+      // proxy.ws installs its own listener synchronously; only then may the temporary guard go.
+      resolveRouter(`http://localhost:${WS_SERVER_PORT}`);
+      await routerReady;
+      await new Promise<void>((resolve) => setImmediate(resolve));
+
+      expect(socket.listeners('error')).not.toContain(temporaryErrorListener);
+      expect(socket.listenerCount('error')).toBe(1);
+
+      socket.destroy();
     });
   });
 
