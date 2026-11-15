@@ -1,5 +1,5 @@
 import * as http from 'node:http';
-import type { Socket } from 'node:net';
+import { Socket } from 'node:net';
 
 import getPort from 'get-port';
 import type { Mockttp } from 'mockttp';
@@ -251,6 +251,111 @@ describe('E2E WebSocket proxy', () => {
       ws.send('foobar');
 
       await expect(messageReceived).resolves.toBe('foobar');
+    });
+  });
+
+  describe('unmatched WebSocket upgrade', () => {
+    it('should handle socket errors without destroying the socket', () => {
+      const logger = {
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
+      const middleware = createProxyMiddleware({
+        target: mockWsTargetServer.url,
+        pathFilter: '/ws',
+        ws: true,
+        logger,
+      });
+      const server = http.createServer();
+      // The upgrade hook discovers the server from the incoming request's socket.
+      const req = createMockRequest({
+        url: '/',
+        socket: { server } as unknown as Socket,
+      });
+      const socket = new Socket();
+      const socketError = new Error('connection reset');
+
+      // This unmatched upgrade must remain safe for another middleware to handle.
+      middleware.upgrade(req, socket, Buffer.alloc(0));
+
+      // Simulate the socket error caused by a client TCP reset.
+      expect(() => socket.emit('error', socketError)).not.toThrow();
+      expect(logger.error).toHaveBeenCalledWith(socketError);
+      expect(socket.destroyed).toBe(false);
+      // This unconnected test socket is destroyed only for cleanup.
+      socket.destroy();
+    });
+  });
+
+  describe('matched WebSocket upgrade', () => {
+    it('should retain the socket error guard until proxy.ws installs its listener', async () => {
+      const logger = {
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
+      let resolveRouter: (target: string) => void = () => {};
+      // Keep preparation pending so the temporary socket guard handles early errors.
+      const routerReady = new Promise<string>((resolve) => {
+        resolveRouter = resolve;
+      });
+      // Capture the synchronous handoff point after httpxy installs its socket listener.
+      const proxyReqWs = vi.fn((_proxyReq, _req, proxySocket) => {
+        expect(proxySocket.destroyed).toBe(false);
+      });
+      const middleware = createProxyMiddleware({
+        target: mockWsTargetServer.url,
+        pathFilter: '/ws',
+        ws: true,
+        logger,
+        router: () => routerReady,
+        on: {
+          proxyReqWs,
+        },
+      });
+      const server = http.createServer();
+      // The upgrade method and header let httpxy accept this as a WebSocket request.
+      const req = createMockRequest({
+        url: '/ws',
+        method: 'GET',
+        headers: { upgrade: 'websocket' },
+        socket: { server } as unknown as Socket,
+      });
+      const socket = new Socket();
+      const socketError = new Error('connection reset');
+
+      // A matched upgrade must install the guard before asynchronous preparation starts.
+      middleware.upgrade(req, socket, Buffer.alloc(0));
+      await Promise.resolve();
+
+      const temporaryErrorListener = socket.listeners('error')[0];
+      // Preparation is still pending, so only the temporary guard should be attached.
+      expect(temporaryErrorListener).toBeDefined();
+      expect(socket.listenerCount('error')).toBe(1);
+
+      // The guard must absorb early socket errors without destroying the connection.
+      expect(() => socket.emit('error', socketError)).not.toThrow();
+      expect(logger.error).toHaveBeenCalledWith(socketError);
+      expect(socket.listeners('error')).toContain(temporaryErrorListener);
+
+      // proxy.ws installs its own listener synchronously; only then may the temporary guard go.
+      resolveRouter(mockWsTargetServer.url);
+      await routerReady;
+      await new Promise<void>((resolve) => setImmediate(resolve));
+
+      // A valid handoff fires proxyReqWs while the socket is still usable.
+      expect(proxyReqWs).toHaveBeenCalledTimes(1);
+      expect(socket.destroyed).toBe(false);
+      // The temporary guard is released, leaving the listener installed by httpxy.
+      expect(socket.listeners('error')).not.toContain(temporaryErrorListener);
+      const proxyErrorListener = socket
+        .listeners('error')
+        .find((listener) => listener !== temporaryErrorListener);
+      expect(proxyErrorListener).toBeDefined();
+      expect(socket.listeners('error')).toContain(proxyErrorListener);
+
+      socket.destroy();
     });
   });
 
