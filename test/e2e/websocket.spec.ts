@@ -124,11 +124,16 @@ describe('E2E WebSocket proxy', () => {
 
   describe('unmatched WebSocket upgrade', () => {
     it('should handle socket errors without destroying the socket', () => {
-      const onError = jest.fn();
+      const logger = {
+        log: jest.fn(),
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+      };
       const middleware = createProxyMiddleware('/ws', {
         target: 'http://localhost:1234',
         ws: true,
-        onError,
+        logProvider: () => logger,
       });
       proxyServer = http.createServer();
 
@@ -142,7 +147,7 @@ describe('E2E WebSocket proxy', () => {
       middleware.upgrade(req, socket, Buffer.alloc(0));
 
       expect(() => socket.emit('error', socketError)).not.toThrow();
-      expect(onError).toHaveBeenCalledWith(socketError, req, socket);
+      expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Error: connection reset'));
       expect(socket.destroyed).toBe(false);
       socket.destroy();
     });
