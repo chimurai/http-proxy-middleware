@@ -51,8 +51,8 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
     let target: URL;
 
     try {
-      const port = getPort(proxyRes.req?.agent?.sockets);
       const { protocol, host, path } = proxyRes.req as ClientRequest;
+      const port = getPort(proxyRes.req?.agent?.sockets, host);
 
       target = createUrl({ protocol, host, port, path });
       const targetUrl = target.toString();
