@@ -4,7 +4,7 @@ import type { URL } from 'node:url';
 import { getLogger } from '../../logger.js';
 import type { Plugin } from '../../types.js';
 import { createUrl } from '../../utils/create-url.js';
-import { getPort } from '../../utils/logger-plugin.js';
+import { getPorts } from '../../utils/logger-plugin.js';
 import { definePlugin } from '../define-plugin.js';
 
 type ExpressRequest = {
@@ -41,12 +41,6 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
    * ```shell
    * [HPM] GET /users/ -> http://jsonplaceholder.typicode.com/users/ [304]
    * ```
-   * If an agent connects through a proxy, the logged port can be the proxy port
-   * instead of the target port. For example, with target `http://127.0.0.1:3000`
-   * and proxy port `3128`:
-   * ```shell
-   * [HPM] GET /api -> http://127.0.0.1:3128/api [200]
-   * ```
    */
   proxyServer.on('proxyRes', (proxyRes, req, res) => {
     // BrowserSync uses req.originalUrl
@@ -58,7 +52,8 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
 
     try {
       const proxyRequest = (proxyRes as IncomingMessage & { req: ClientRequest }).req;
-      const port = getPort(proxyRequest);
+      const { targetPort, remotePort } = getPorts(proxyRequest);
+      const port = targetPort ?? remotePort;
       const { protocol, host, path } = proxyRequest;
 
       target = createUrl({ protocol, host, port, path });
