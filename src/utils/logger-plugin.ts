@@ -1,11 +1,14 @@
-import type { Agent } from 'node:http';
+import type { ClientRequest } from 'node:http';
 
-export type Sockets = Pick<Agent, 'sockets'>;
+export type RequestWithSocketRemotePort = {
+  socket?: Pick<NonNullable<ClientRequest['socket']>, 'remotePort'> | null;
+};
 
 /**
- * Get port from target
- * Using proxyRes.req.agent.sockets to determine the target port
+ * Returns the remote port of the request socket as a string.
+ * If an agent connects through a proxy, this can be the proxy port, not the target port.
+ * Returns undefined if the request, socket, or remote port is missing.
  */
-export function getPort(sockets?: Sockets): string | undefined {
-  return Object.keys(sockets || {})?.[0]?.split(':')[1];
+export function getPort(request?: RequestWithSocketRemotePort): string | undefined {
+  return request?.socket?.remotePort?.toString();
 }
