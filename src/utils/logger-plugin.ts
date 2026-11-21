@@ -11,9 +11,10 @@ export function getPorts(request?: RequestWithPortInfo): {
 } {
   const sockets = request?.agent?.sockets;
   const remotePort = request?.socket?.remotePort?.toString();
-  const targetPort = Object.keys(sockets || {})?.[0]
-    ?.split(':')
-    ?.at(-2);
+  const targetPort =
+    Object.keys(sockets || {})?.[0]
+      ?.split(':')
+      ?.at(-2) || undefined;
 
   return { remotePort, targetPort };
 }
