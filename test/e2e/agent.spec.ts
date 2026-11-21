@@ -50,9 +50,12 @@ describe('agent option', () => {
 
   describe('https.Agent', () => {
     let targetServer: Mockttp;
+    let caCertificate: string;
 
     beforeEach(async () => {
-      targetServer = getLocal({ https: await generateCACertificate({ bits: 2048 }) });
+      const certificate = await generateCACertificate({ bits: 2048 });
+      caCertificate = certificate.cert;
+      targetServer = getLocal({ https: certificate });
       await targetServer.start();
     });
 
@@ -71,7 +74,7 @@ describe('agent option', () => {
       const proxy = createProxyMiddleware({
         target: `https://localhost:${targetServer.port}`,
         changeOrigin: true,
-        agent: new HttpsAgent({ rejectUnauthorized: false }),
+        agent: new HttpsAgent({ ca: caCertificate }),
         logger,
       });
 
