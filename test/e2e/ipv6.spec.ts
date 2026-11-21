@@ -1,7 +1,7 @@
 import type { Mockttp } from 'mockttp';
 import { getLocal } from 'mockttp';
 import request from 'supertest';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp, createProxyMiddleware, isIPv6Available } from './test-kit.js';
 
@@ -32,6 +32,28 @@ describe.runIf(await isIPv6Available())('ipv6 integration', () => {
     const response = await request(app).get('/api').expect(200);
 
     expect(response.text).toBe('/api');
+  });
+
+  it('should log ipv6 target with port', async () => {
+    await targetServer.forGet('/api').thenReply(200, 'OK');
+
+    const logger = {
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+    };
+    const proxy = createProxyMiddleware({
+      changeOrigin: true,
+      target: `http://[::1]:${targetServer.port}`,
+      logger,
+    });
+
+    const app = createApp(proxy);
+    await request(app).get('/api').expect(200, 'OK');
+
+    expect(logger.info).toHaveBeenCalledWith(
+      `[HPM] GET /api -> http://[::1]:${targetServer.port}/api [200]`,
+    );
   });
 
   it('should proxy to unspecified ipv6 target using bracket notation with port', async () => {

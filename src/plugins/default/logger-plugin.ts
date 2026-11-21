@@ -42,7 +42,7 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
    * [HPM] GET /users/ -> http://jsonplaceholder.typicode.com/users/ [304]
    * ```
    */
-  proxyServer.on('proxyRes', (proxyRes: any, req, res) => {
+  proxyServer.on('proxyRes', (proxyRes, req, res) => {
     // BrowserSync uses req.originalUrl
     // Next.js doesn't have req.baseUrl
     const originalUrl = req.originalUrl ?? `${req.baseUrl || ''}${req.url}`;
@@ -51,8 +51,9 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
     let target: URL;
 
     try {
-      const port = getPort(proxyRes.req?.agent?.sockets);
-      const { protocol, host, path } = proxyRes.req as ClientRequest;
+      const proxyRequest = (proxyRes as IncomingMessage & { req: ClientRequest }).req;
+      const port = getPort(proxyRequest);
+      const { protocol, host, path } = proxyRequest;
 
       target = createUrl({ protocol, host, port, path });
       const targetUrl = target.toString();

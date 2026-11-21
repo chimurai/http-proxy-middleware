@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- fix(logger-plugin): log target ipv6 port
+
 ## [v4.2.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.2.2)
 
 - fix(stringifyFormData): fix missing close-delimiter

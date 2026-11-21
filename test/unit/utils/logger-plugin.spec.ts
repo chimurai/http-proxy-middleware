@@ -1,25 +1,27 @@
 import { describe, expect, it } from 'vitest';
 
-import { type Sockets, getPort } from '../../../src/utils/logger-plugin.js';
+import { type TargetRequest, getPort } from '../../../src/utils/logger-plugin.js';
 
 describe('getPort()', () => {
-  it('should return port from proxyRes.req.agent.sockets', () => {
-    const sockets = {
-      'jsonplaceholder.typicode.com:80:': [],
-    } as unknown as Sockets;
+  describe('when target request is defined', () => {
+    it('should get the connected socket port', () => {
+      const request: TargetRequest = {
+        socket: { remotePort: 9000 },
+      };
 
-    expect(getPort(sockets)).toBe('80');
+      expect(getPort(request)).toBe('9000');
+    });
   });
 
-  it('should handle missing "sockets" from proxyRes?.req?.agent?.sockets', () => {
-    const sockets = undefined;
+  describe('when port data is missing', () => {
+    it('should handle a missing request', () => {
+      const request: TargetRequest | undefined = undefined;
+      expect(getPort(request)).toBeUndefined();
+    });
 
-    expect(getPort(sockets)).toBe(undefined);
-  });
-
-  it('should handle empty "sockets" from proxyRes?.req?.agent?.sockets', () => {
-    const sockets = {} as unknown as Sockets;
-
-    expect(getPort(sockets)).toBe(undefined);
+    it('should handle missing request socket', () => {
+      const request: TargetRequest = {};
+      expect(getPort(request)).toBeUndefined();
+    });
   });
 });

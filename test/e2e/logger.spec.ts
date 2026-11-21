@@ -1,12 +1,47 @@
 import { format } from 'node:util';
 
+import type { Mockttp } from 'mockttp';
+import { getLocal } from 'mockttp';
 import request from 'supertest';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Logger } from '../../src/types.js';
 import { createApp, createProxyMiddleware } from './test-kit.js';
 
 describe('logger', () => {
+  let targetServer: Mockttp;
+
+  beforeEach(async () => {
+    targetServer = getLocal();
+    await targetServer.start();
+  });
+
+  afterEach(async () => {
+    await targetServer.stop();
+  });
+
+  it('should log ipv4 target with port', async () => {
+    await targetServer.forGet('/api').thenReply(200, 'OK');
+
+    const logger: Logger = {
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+    };
+
+    const proxy = createProxyMiddleware({
+      changeOrigin: true,
+      target: `http://127.0.0.1:${targetServer.port}`,
+      logger,
+    });
+
+    await request(createApp(proxy)).get('/api').expect(200, 'OK');
+
+    expect(logger.info).toHaveBeenCalledWith(
+      `[HPM] GET /api -> http://127.0.0.1:${targetServer.port}/api [200]`,
+    );
+  });
+
   it('should log target ENOTFOUND errors', async () => {
     const logger: Logger = {
       info: vi.fn(),
