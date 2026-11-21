@@ -41,6 +41,12 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
    * ```shell
    * [HPM] GET /users/ -> http://jsonplaceholder.typicode.com/users/ [304]
    * ```
+   * If an agent connects through a proxy, the logged port can be the proxy port
+   * instead of the target port. For example, with target `http://127.0.0.1:3000`
+   * and proxy port `3128`:
+   * ```shell
+   * [HPM] GET /api -> http://127.0.0.1:3128/api [200]
+   * ```
    */
   proxyServer.on('proxyRes', (proxyRes, req, res) => {
     // BrowserSync uses req.originalUrl
