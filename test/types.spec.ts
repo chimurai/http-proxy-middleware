@@ -3,7 +3,7 @@ import * as http from 'node:http';
 import type * as net from 'node:net';
 
 import express from 'express';
-import type { ProxyServerEventMap, ProxyServerOptions, ProxyTarget } from 'httpxy';
+import type { ProxyServerEventMap, ProxyServerOptions, ProxyTarget, ProxyServer } from 'httpxy';
 import { beforeEach, describe, expect, expectTypeOf, it } from 'vitest';
 
 import {
@@ -12,7 +12,7 @@ import {
   createProxyMiddleware as middleware,
   responseInterceptor,
 } from '../src/index.js';
-import type { Options, RequestHandler } from '../src/types.js';
+import type { Options, Plugin, RequestHandler } from '../src/types.js';
 
 describe('http-proxy-middleware TypeScript Types', () => {
   let options: Options;
@@ -26,7 +26,8 @@ describe('http-proxy-middleware TypeScript Types', () => {
   describe('createProxyMiddleware()', () => {
     it('should create proxy with just options', () => {
       const proxy = middleware(options);
-      expect(proxy).toBeDefined();
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler>();
+      expectTypeOf(proxy.upgrade).toEqualTypeOf<RequestHandler['upgrade']>();
     });
 
     it('should create proxy and accept base http types (req, res) from native http server', () => {
@@ -41,40 +42,67 @@ describe('http-proxy-middleware TypeScript Types', () => {
   describe('HPM Filters', () => {
     it('should create proxy with path filter', () => {
       const proxy = middleware({ ...options, pathFilter: '/api' });
-      expect(proxy).toBeDefined();
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler>();
     });
 
     it('should create proxy with glob filter', () => {
       const proxy = middleware({ ...options, pathFilter: ['/path/**'] });
-      expect(proxy).toBeDefined();
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler>();
     });
 
     it('should create proxy with custom filter', () => {
-      const proxy = middleware({ ...options, pathFilter: (path, req) => true });
-      expect(proxy).toBeDefined();
+      const proxy = middleware({
+        ...options,
+        pathFilter: (path, req) => {
+          expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+          return true;
+        },
+      });
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler>();
     });
 
     it('should create proxy with truthy filter', () => {
       const proxy = middleware({
         ...options,
-        pathFilter: (path, req) => path.match('^/api') && req.method === 'GET',
+        pathFilter: (path, req) => {
+          expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+          return path.match('^/api') && req.method === 'GET';
+        },
       });
-      expect(proxy).toBeDefined();
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler>();
     });
 
     it('should create proxy with truthy regex match filter', () => {
-      const proxy = middleware({ ...options, pathFilter: (path, req) => path.match('^/api') });
-      expect(proxy).toBeDefined();
+      const proxy = middleware({
+        ...options,
+        pathFilter: (path, req) => {
+          expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+          return path.match('^/api');
+        },
+      });
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler>();
     });
 
     it('should create proxy with truthy regex test filter', () => {
-      const proxy = middleware({ ...options, pathFilter: (path, req) => /^\/api/.test(path) });
-      expect(proxy).toBeDefined();
+      const proxy = middleware({
+        ...options,
+        pathFilter: (path, req) => {
+          expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+          return /^\/api/.test(path);
+        },
+      });
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler>();
     });
 
     it('should create proxy with manual websocket upgrade function', () => {
-      const proxy = middleware({ ...options, pathFilter: (path, req) => true });
-      expect(proxy.upgrade).toBeDefined();
+      const proxy = middleware({
+        ...options,
+        pathFilter: (path, req) => {
+          expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+          return true;
+        },
+      });
+      expectTypeOf(proxy.upgrade).toEqualTypeOf<RequestHandler['upgrade']>();
     });
   });
 
@@ -84,7 +112,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
         target: 'http://example',
         ws: true,
       };
-      expect(options).toBeDefined();
+      expectTypeOf(options).toEqualTypeOf<Options>();
     });
   });
 
@@ -92,51 +120,67 @@ describe('http-proxy-middleware TypeScript Types', () => {
     describe('pathRewrite', () => {
       it('should have pathRewrite Type with table', () => {
         options = { pathRewrite: { '^/from': '/to' } };
-        expect(options).toBeDefined();
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
 
       it('should have pathRewrite Type with function', () => {
-        options = { pathRewrite: (path, req) => '/path' };
-        expect(options).toBeDefined();
+        options = {
+          pathRewrite: (path, req, res) => {
+            expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+            expectTypeOf(res).toEqualTypeOf<http.ServerResponse | undefined>();
+            return '/path';
+          },
+        };
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
 
       it('should have pathRewrite Type with async function', () => {
-        options = { pathRewrite: async (path, req) => '/path' };
-        expect(options).toBeDefined();
+        options = {
+          pathRewrite: async (path, req, res) => {
+            expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+            expectTypeOf(res).toEqualTypeOf<http.ServerResponse | undefined>();
+            return '/path';
+          },
+        };
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
     });
 
     describe('router', () => {
       it('should have router Type with table', () => {
         options = { router: { '^/from': '/to' } };
-        expect(options).toBeDefined();
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
 
       it('should have router Type with function', () => {
         options = {
           router: (req, res, options) => {
+            expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+            expectTypeOf(res).toEqualTypeOf<http.ServerResponse | undefined>();
             options.headers = { ...options.headers, 'x-added-header': 'value' };
             return '/path';
           },
         };
-        expect(options).toBeDefined();
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
 
       it('should have router Type with async function', () => {
         options = {
           router: async (req, res, options) => {
+            expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+            expectTypeOf(res).toEqualTypeOf<http.ServerResponse | undefined>();
             options.headers = { ...options.headers, 'x-added-header': 'value' };
             return '/path';
           },
         };
-        expect(options).toBeDefined();
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
     });
 
     describe('logger', () => {
       it('should have logger option', () => {
         options = { logger: console };
-        expect(options).toBeDefined();
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
 
       it('should allow custom logger option', () => {
@@ -146,7 +190,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
           error: () => {},
         };
         options = { logger: customLogger };
-        expect(options).toBeDefined();
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
 
       it('should fail when custom logger has missing log function', () => {
@@ -157,13 +201,13 @@ describe('http-proxy-middleware TypeScript Types', () => {
         };
         // @ts-expect-error explanation: should error when customLogger has a missing log function
         options = { logger: customLogger };
-        expect(options).toBeDefined();
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
 
       it('should fail when invalid logger is provided', () => {
         // @ts-expect-error explanation: should error when invalid logger is provided
         options = { logger: 500 };
-        expect(options).toBeDefined();
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
     });
 
@@ -171,21 +215,52 @@ describe('http-proxy-middleware TypeScript Types', () => {
       it('should have on events', () => {
         options = {
           on: {
-            error: (error, req, res, target) => {},
-            proxyReq: (proxyReq, req, res, options) => {},
-            proxyReqWs: (proxyReq, req, socket, options) => {},
-            proxyRes: (proxyRes, req, res) => {},
+            error: (error, req, res, target) => {
+              expectTypeOf(error).toEqualTypeOf<Error>();
+              expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+              expectTypeOf(res).toEqualTypeOf<http.ServerResponse | net.Socket>();
+              expectTypeOf(target).toEqualTypeOf<ProxyTarget | undefined>();
+            },
+            proxyReq: (proxyReq, req, res, options) => {
+              expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+              expectTypeOf(res).toEqualTypeOf<http.ServerResponse>();
+              expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
+            },
+            proxyReqWs: (proxyReq, req, socket, options) => {
+              expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+              expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
+            },
+            proxyRes: (proxyRes, req, res) => {
+              expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
+              expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+              expectTypeOf(res).toEqualTypeOf<http.ServerResponse>();
+            },
             open: (proxySocket) => {},
-            close: (proxyRes, proxySocket, proxyHead) => {},
-            start: (req, res, target) => {},
-            end: (req, res, proxyRes) => {},
-            econnreset: (error, req, res, target) => {},
+            close: (proxyRes, proxySocket, proxyHead) => {
+              expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
+            },
+            start: (req, res, target) => {
+              expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+              expectTypeOf(res).toEqualTypeOf<http.ServerResponse>();
+              expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
+            },
+            end: (req, res, proxyRes) => {
+              expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+              expectTypeOf(res).toEqualTypeOf<http.ServerResponse>();
+              expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
+            },
+            econnreset: (error, req, res, target) => {
+              expectTypeOf(error).toEqualTypeOf<Error>();
+              expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+              expectTypeOf(res).toEqualTypeOf<http.ServerResponse>();
+              expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
+            },
 
             // @ts-expect-error explanation: should error when unknown event is passed
             unknownEventName: () => {},
           },
         };
-        expect(options).toBeDefined();
+        expectTypeOf(options).toEqualTypeOf<Options>();
       });
     });
   });
@@ -195,26 +270,42 @@ describe('http-proxy-middleware TypeScript Types', () => {
       options = {
         on: {
           proxyReq(proxyReq, req, res, options) {
+            expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+            expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+            expectTypeOf(res).toEqualTypeOf<http.ServerResponse>();
+            expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
             // @ts-expect-error explanation: should error when express properties are used
             req.params;
           },
           proxyRes(proxyRes, req, res) {
+            expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
+            expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+            expectTypeOf(res).toEqualTypeOf<http.ServerResponse>();
             // @ts-expect-error explanation: should error when express properties are used
             res.status(200).send('OK');
           },
         },
       };
 
-      expect(options).toBeDefined();
+      expectTypeOf(options).toEqualTypeOf<Options>();
     });
 
     it('should get contextual types from express server', () => {
       const app = express();
       app.use(
         middleware({
-          router: (req) => req.params,
-          pathFilter: (pathname, req) => !!req.params,
+          router: (req, res) => {
+            expectTypeOf(req).toEqualTypeOf<express.Request>();
+            expectTypeOf(res).toEqualTypeOf<express.Response | undefined>();
+            return req.params;
+          },
+          pathFilter: (pathname, req) => {
+            expectTypeOf(req).toEqualTypeOf<express.Request>();
+            return !!req.params;
+          },
           pathRewrite: (path, req, res, options) => {
+            expectTypeOf(req).toEqualTypeOf<express.Request>();
+            expectTypeOf(res).toEqualTypeOf<express.Response | undefined>();
             req.params;
 
             // @ts-expect-error: should error when request is typed as `any`
@@ -227,6 +318,8 @@ describe('http-proxy-middleware TypeScript Types', () => {
           },
           on: {
             error(error, req, res, target) {
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response | net.Socket>();
               req.params;
 
               // @ts-expect-error: should error when request is typed as `any`
@@ -240,14 +333,23 @@ describe('http-proxy-middleware TypeScript Types', () => {
               }
             },
             proxyReq(proxyReq, req, res, options) {
+              expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
+              expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
               req.params;
               res.status(200).send('OK');
             },
             proxyReqWs(proxyReq, req, socket, options, head) {
+              expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
               req.params;
               head.byteLength;
             },
             proxyRes(proxyRes, req, res) {
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
               req.params;
               proxyRes.statusCode;
               // @ts-expect-error upstream response is not an Express request
@@ -265,10 +367,15 @@ describe('http-proxy-middleware TypeScript Types', () => {
               proxyHead.params;
             },
             start(req, res, target) {
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
+              expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
               req.params;
               res.status(200).send('OK');
             },
             end(req, res, proxyRes) {
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
               req.params;
               res.status(200).send('OK');
               proxyRes.statusCode;
@@ -276,6 +383,10 @@ describe('http-proxy-middleware TypeScript Types', () => {
               proxyRes.params;
             },
             econnreset(error, req, res, target) {
+              expectTypeOf(error).toEqualTypeOf<Error>();
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
+              expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
               req.params;
               res.status(200).send('OK');
             },
@@ -292,10 +403,21 @@ describe('http-proxy-middleware TypeScript Types', () => {
         '/',
         // FIXME: contextual types should work with express path middleware (without providing explicit types)
         middleware<express.Request, express.Response>({
-          router: (req) => req.params,
-          pathFilter: (pathname, req) => !!req.params,
+          router: (req, res) => {
+            expectTypeOf(req).toEqualTypeOf<express.Request>();
+            expectTypeOf(res).toEqualTypeOf<express.Response | undefined>();
+            return req.params;
+          },
+          pathFilter: (pathname, req) => {
+            expectTypeOf(req).toEqualTypeOf<express.Request>();
+            return !!req.params;
+          },
           on: {
             error(error, req, res, target) {
+              expectTypeOf(error).toEqualTypeOf<Error>();
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response | net.Socket>();
+              expectTypeOf(target).toEqualTypeOf<ProxyTarget | undefined>();
               req.params;
 
               // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
@@ -304,14 +426,24 @@ describe('http-proxy-middleware TypeScript Types', () => {
               }
             },
             proxyReq(proxyReq, req, res, options) {
+              expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
+              expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
               req.params;
               res.status(200).send('OK');
             },
             proxyReqWs(proxyReq, req, socket, options, head) {
+              expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(socket).toEqualTypeOf<net.Socket>();
+              expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
               req.params;
               head.byteLength;
             },
             proxyRes(proxyRes, req, res) {
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
               req.params;
 
               proxyRes.statusCode;
@@ -321,16 +453,24 @@ describe('http-proxy-middleware TypeScript Types', () => {
               res.status(200).send('OK');
             },
             close(proxyRes, proxySocket, proxyHead) {
+              expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
+              expectTypeOf(proxySocket).toEqualTypeOf<net.Socket>();
+              expectTypeOf(proxyHead).toEqualTypeOf<Buffer>();
               proxyRes.statusCode;
               // @ts-expect-error upstream response is not an Express request
               proxyRes.params;
               proxyHead.byteLength;
             },
             start(req, res, target) {
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
+              expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
               req.params;
               res.status(200).send('OK');
             },
             end(req, res, proxyRes) {
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
               req.params;
               res.status(200).send('OK');
               proxyRes.statusCode;
@@ -338,6 +478,10 @@ describe('http-proxy-middleware TypeScript Types', () => {
               proxyRes.params;
             },
             econnreset(error, req, res, target) {
+              expectTypeOf(error).toEqualTypeOf<Error>();
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
+              expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
               req.params;
               res.status(200).send('OK');
             },
@@ -358,11 +502,29 @@ describe('http-proxy-middleware TypeScript Types', () => {
       }
 
       const proxy: RequestHandler<MyRequest, MyResponse> = middleware({
-        router: (req) => req.myRequestParams,
-        pathFilter: (pathname, req) => !!req.myRequestParams,
+        router: (req, res, options) => {
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          expectTypeOf(res).toEqualTypeOf<MyResponse | undefined>();
+          expectTypeOf(options).toEqualTypeOf<Options<MyRequest, MyResponse>>();
+          return '/path';
+        },
+        pathFilter: (pathname, req) => {
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          return !!req.myRequestParams;
+        },
+        pathRewrite: (path, req, res, options) => {
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          expectTypeOf(res).toEqualTypeOf<MyResponse | undefined>();
+          expectTypeOf(options).toEqualTypeOf<Options<MyRequest, MyResponse> | undefined>();
+          return path;
+        },
 
         on: {
           error(error, req, res, target) {
+            expectTypeOf(error).toEqualTypeOf<Error>();
+            expectTypeOf(req).toEqualTypeOf<MyRequest>();
+            expectTypeOf(res).toEqualTypeOf<MyResponse | net.Socket>();
+            expectTypeOf(target).toEqualTypeOf<ProxyTarget | undefined>();
             req.myRequestParams;
 
             // https://www.typescriptlang.org/docs/handbook/2/narrowing.html
@@ -371,13 +533,25 @@ describe('http-proxy-middleware TypeScript Types', () => {
             }
           },
           proxyReq(proxyReq, req, res, options) {
+            expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+            expectTypeOf(req).toEqualTypeOf<MyRequest>();
+            expectTypeOf(res).toEqualTypeOf<MyResponse>();
+            expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
             req.myRequestParams;
             res.myResponseParams;
           },
           proxyReqWs(proxyReq, req, socket, options, head) {
+            expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+            expectTypeOf(req).toEqualTypeOf<MyRequest>();
+            expectTypeOf(socket).toEqualTypeOf<net.Socket>();
+            expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
+            expectTypeOf(head).toEqualTypeOf<Buffer>();
             req.myRequestParams;
           },
           proxyRes(proxyRes, req, res) {
+            expectTypeOf(req).toEqualTypeOf<MyRequest>();
+            expectTypeOf(res).toEqualTypeOf<MyResponse>();
+
             req.myRequestParams;
             proxyRes.statusCode;
             // @ts-expect-error upstream response does not have request properties
@@ -385,16 +559,23 @@ describe('http-proxy-middleware TypeScript Types', () => {
             res.myResponseParams;
           },
           close(proxyRes, proxySocket, proxyHead) {
+            expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
             proxyRes.statusCode;
             // @ts-expect-error upstream response does not have request properties
             proxyRes.myRequestParams;
+            expectTypeOf(proxyHead).toEqualTypeOf<Buffer>();
             proxyHead.byteLength;
           },
           start(req, res, target) {
+            expectTypeOf(req).toEqualTypeOf<MyRequest>();
+            expectTypeOf(res).toEqualTypeOf<MyResponse>();
+            expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
             req.myRequestParams;
             res.myResponseParams;
           },
           end(req, res, proxyRes) {
+            expectTypeOf(req).toEqualTypeOf<MyRequest>();
+            expectTypeOf(res).toEqualTypeOf<MyResponse>();
             req.myRequestParams;
             res.myResponseParams;
             proxyRes.statusCode;
@@ -402,13 +583,17 @@ describe('http-proxy-middleware TypeScript Types', () => {
             proxyRes.myRequestParams;
           },
           econnreset(error, req, res, target) {
+            expectTypeOf(error).toEqualTypeOf<Error>();
+            expectTypeOf(req).toEqualTypeOf<MyRequest>();
+            expectTypeOf(res).toEqualTypeOf<MyResponse>();
+            expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
             req.myRequestParams;
             res.myResponseParams;
           },
         },
       });
 
-      expect(proxy).toBeDefined();
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler<MyRequest, MyResponse>>();
     });
 
     it('should work with custom req & res types in responseInterceptor', () => {
@@ -424,9 +609,15 @@ describe('http-proxy-middleware TypeScript Types', () => {
         target: 'http://www.example.org',
         on: {
           error: (err: Error & { code?: string }, req, res) => {
+            expectTypeOf(req).toEqualTypeOf<MyRequest>();
+            expectTypeOf(res).toEqualTypeOf<MyResponse | net.Socket>();
             err.code;
           },
           proxyRes: responseInterceptor(async (buffer, proxyRes, req, res) => {
+            expectTypeOf(buffer).toEqualTypeOf<Buffer>();
+            expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
+            expectTypeOf(req).toEqualTypeOf<MyRequest>();
+            expectTypeOf(res).toEqualTypeOf<MyResponse>();
             req.myRequestParams;
             res.myResponseParams;
 
@@ -439,7 +630,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
         },
       });
 
-      expect(proxy).toBeDefined();
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler<MyRequest, MyResponse>>();
     });
 
     it('should work with express.Request with fixRequestBody', () => {
@@ -450,7 +641,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
         },
       });
 
-      expect(proxy).toBeDefined();
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler<express.Request>>();
     });
 
     it('should work with generic types in plugins', () => {
@@ -458,7 +649,16 @@ describe('http-proxy-middleware TypeScript Types', () => {
         target: 'http://www.example.org',
         plugins: [
           (proxyServer, options) => {
+            expectTypeOf(proxyServer).toEqualTypeOf<
+              ProxyServer<express.Request, express.Response>
+            >();
+            expectTypeOf(options).toEqualTypeOf<Options<express.Request, express.Response>>();
+
             proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
+              expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
+              expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
               req.params;
 
               // @ts-expect-error: should error when request is typed as `any`
@@ -469,6 +669,8 @@ describe('http-proxy-middleware TypeScript Types', () => {
               res.status(200).send('OK');
             });
             proxyServer.on('proxyRes', (proxyRes, req, res) => {
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
               req.params;
               res.status(200).send('OK');
               proxyRes.statusCode;
@@ -476,6 +678,8 @@ describe('http-proxy-middleware TypeScript Types', () => {
               proxyRes.params;
             });
             proxyServer.on('end', (req, res, proxyRes) => {
+              expectTypeOf(req).toEqualTypeOf<express.Request>();
+              expectTypeOf(res).toEqualTypeOf<express.Response>();
               req.params;
               res.status(200).send('OK');
               proxyRes.statusCode;
@@ -486,7 +690,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
         ],
       });
 
-      expect(proxy).toBeDefined();
+      expectTypeOf(proxy).toEqualTypeOf<RequestHandler<express.Request, express.Response>>();
     });
 
     it('should work with contextual Express types with shipped plugins', () => {
@@ -496,6 +700,11 @@ describe('http-proxy-middleware TypeScript Types', () => {
           target: 'http://www.example.org',
           plugins: [
             (proxyServer, options) => {
+              expectTypeOf(proxyServer).toEqualTypeOf<
+                ProxyServer<express.Request, express.Response>
+              >();
+              expectTypeOf(options).toEqualTypeOf<Options<express.Request, express.Response>>();
+
               // fixRequestBody
               proxyServer.on('proxyReq', fixRequestBody);
 
@@ -503,6 +712,10 @@ describe('http-proxy-middleware TypeScript Types', () => {
               proxyServer.on(
                 'proxyRes',
                 responseInterceptor(async (buffer, proxyRes, req, res) => {
+                  expectTypeOf(buffer).toEqualTypeOf<Buffer>();
+                  expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
+                  expectTypeOf(req).toEqualTypeOf<express.Request>();
+                  expectTypeOf(res).toEqualTypeOf<express.Response>();
                   req.params;
                   res.status(200).send('OK');
 
@@ -526,7 +739,17 @@ describe('http-proxy-middleware TypeScript Types', () => {
   describe('definePlugin()', () => {
     it('should define plugin with correct types', () => {
       const myPlugin = definePlugin((proxyServer, options) => {
+        expectTypeOf(proxyServer).toEqualTypeOf<
+          ProxyServer<http.IncomingMessage, http.ServerResponse>
+        >();
+        expectTypeOf(options).toEqualTypeOf<Options<http.IncomingMessage, http.ServerResponse>>();
+
         proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
+          expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+          expectTypeOf(req).toEqualTypeOf<http.IncomingMessage>();
+          expectTypeOf(res).toEqualTypeOf<http.ServerResponse>();
+          expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
+
           req.url;
           res.statusCode;
 
@@ -537,7 +760,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
         });
       });
 
-      expect(myPlugin).toBeDefined();
+      expectTypeOf(myPlugin).toEqualTypeOf<Plugin>();
     });
 
     it('should define plugin with custom req & res types', () => {
@@ -550,7 +773,15 @@ describe('http-proxy-middleware TypeScript Types', () => {
       }
 
       const myPlugin = definePlugin<MyRequest, MyResponse>((proxyServer, options) => {
+        expectTypeOf(proxyServer).toEqualTypeOf<ProxyServer<MyRequest, MyResponse>>();
+        expectTypeOf(options).toEqualTypeOf<Options<MyRequest, MyResponse>>();
+
         proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
+          expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          expectTypeOf(res).toEqualTypeOf<MyResponse>();
+          expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
+
           req.myRequestParams;
           res.myResponseParams;
 
@@ -561,7 +792,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
         });
       });
 
-      expect(myPlugin).toBeDefined();
+      expectTypeOf(myPlugin).toEqualTypeOf<Plugin<MyRequest, MyResponse>>();
     });
 
     it('should inherit event types in plugins with custom request and response types', () => {
@@ -573,7 +804,10 @@ describe('http-proxy-middleware TypeScript Types', () => {
         myResponseParams: { id: string };
       }
 
-      const myPlugin = definePlugin<MyRequest, MyResponse>((proxyServer) => {
+      const myPlugin = definePlugin<MyRequest, MyResponse>((proxyServer, options) => {
+        expectTypeOf(proxyServer).toEqualTypeOf<ProxyServer<MyRequest, MyResponse>>();
+        expectTypeOf(options).toEqualTypeOf<Options<MyRequest, MyResponse>>();
+
         proxyServer.on('error', (error, req, res, target) => {
           expectTypeOf(error).toEqualTypeOf<Error>();
           expectTypeOf(req).toEqualTypeOf<MyRequest | undefined>();
@@ -643,7 +877,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
         });
       });
 
-      expect(myPlugin).toBeDefined();
+      expectTypeOf(myPlugin).toEqualTypeOf<Plugin<MyRequest, MyResponse>>();
     });
   });
 });
