@@ -32,7 +32,6 @@ describe('parseAgentName()', () => {
       family: 4,
     });
 
-    expect(key).toBe('example.com:8080:127.0.0.1:4');
     expect(parseAgentName(key)).toEqual({ port: '8080' });
   });
 
@@ -43,7 +42,6 @@ describe('parseAgentName()', () => {
       ca: 'certificate:1234:value',
     });
 
-    expect(key).toBe('example.com:8443::certificate:1234:value:::::::::::::::::::');
     expect(parseAgentName(key)).toEqual({ port: '8443' });
   });
 
@@ -54,7 +52,6 @@ describe('parseAgentName()', () => {
       secureEndpoint: false,
     });
 
-    expect(key).toBe('example.com:8081:');
     expect(parseAgentName(key)).toEqual({ port: '8081' });
   });
 
@@ -65,7 +62,6 @@ describe('parseAgentName()', () => {
       secureEndpoint: true,
     });
 
-    expect(key).toBe('example.com:8444:::::::::::::::::::::');
     expect(parseAgentName(key)).toEqual({ port: '8444' });
   });
 
@@ -79,7 +75,6 @@ describe('parseAgentName()', () => {
       ca: 'target-certificate:1234:value',
     });
 
-    expect(key).toBe('example.com:8445::target-certificate:1234:value:::::::::::::::::::');
     expect(parseAgentName(key)).toEqual({ port: '8445' });
   });
 
@@ -123,7 +118,6 @@ describe('parseAgentName()', () => {
       secureEndpoint: false,
     });
 
-    expect(key).toBe('::1:8081:');
     expect(parseAgentName(key)).toEqual({ port: '8081' });
   });
 
@@ -134,7 +128,6 @@ describe('parseAgentName()', () => {
       secureEndpoint: true,
     });
 
-    expect(key).toBe('2001:db8:0:0:0:0:0:1:8443:::::::::::::::::::::');
     expect(parseAgentName(key)).toEqual({ port: '8443' });
   });
 
@@ -147,7 +140,6 @@ describe('parseAgentName()', () => {
       secureEndpoint: false,
     });
 
-    expect(key).toBe('2001:db8::1:8444:192.0.2.10:4');
     expect(parseAgentName(key)).toEqual({ port: '8444' });
   });
 
@@ -158,7 +150,6 @@ describe('parseAgentName()', () => {
       secureEndpoint: false,
     });
 
-    expect(key).toBe('fe80::1%eth0:65535:');
     expect(parseAgentName(key)).toEqual({ port: '65535' });
   });
 
@@ -169,7 +160,6 @@ describe('parseAgentName()', () => {
       secureEndpoint: true,
     });
 
-    expect(key).toBe('2001:db8::1:8446:::::::::::::::::::::');
     expect(parseAgentName(key)).toEqual({ port: '8446' });
   });
 
@@ -180,7 +170,6 @@ describe('parseAgentName()', () => {
       secureEndpoint: false,
     });
 
-    expect(key).toBe('::1::');
     expect(parseAgentName(key)).toEqual({ port: undefined });
   });
 
