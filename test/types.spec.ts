@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as http from 'node:http';
+import type * as net from 'node:net';
 
 import express from 'express';
-import { beforeEach, describe, expect, it } from 'vitest';
+import type { ProxyServerEventMap, ProxyServerOptions, ProxyTarget } from 'httpxy';
+import { beforeEach, describe, expect, expectTypeOf, it } from 'vitest';
 
 import {
   definePlugin,
@@ -248,10 +250,14 @@ describe('http-proxy-middleware TypeScript Types', () => {
             proxyRes(proxyRes, req, res) {
               req.params;
               proxyRes.statusCode;
+              // @ts-expect-error upstream response is not an Express request
+              proxyRes.params;
 
               res.status(200).send('OK');
             },
             close(proxyRes, proxySocket, proxyHead) {
+              proxyRes.statusCode;
+              // @ts-expect-error upstream response is not an Express request
               proxyRes.params;
               proxyHead.byteLength;
 
@@ -266,6 +272,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
               req.params;
               res.status(200).send('OK');
               proxyRes.statusCode;
+              // @ts-expect-error upstream response is not an Express request
               proxyRes.params;
             },
             econnreset(error, req, res, target) {
@@ -308,11 +315,14 @@ describe('http-proxy-middleware TypeScript Types', () => {
               req.params;
 
               proxyRes.statusCode;
+              // @ts-expect-error upstream response is not an Express request
               proxyRes.params;
 
               res.status(200).send('OK');
             },
             close(proxyRes, proxySocket, proxyHead) {
+              proxyRes.statusCode;
+              // @ts-expect-error upstream response is not an Express request
               proxyRes.params;
               proxyHead.byteLength;
             },
@@ -324,6 +334,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
               req.params;
               res.status(200).send('OK');
               proxyRes.statusCode;
+              // @ts-expect-error upstream response is not an Express request
               proxyRes.params;
             },
             econnreset(error, req, res, target) {
@@ -369,10 +380,13 @@ describe('http-proxy-middleware TypeScript Types', () => {
           proxyRes(proxyRes, req, res) {
             req.myRequestParams;
             proxyRes.statusCode;
+            // @ts-expect-error upstream response does not have request properties
             proxyRes.myRequestParams;
             res.myResponseParams;
           },
           close(proxyRes, proxySocket, proxyHead) {
+            proxyRes.statusCode;
+            // @ts-expect-error upstream response does not have request properties
             proxyRes.myRequestParams;
             proxyHead.byteLength;
           },
@@ -384,6 +398,7 @@ describe('http-proxy-middleware TypeScript Types', () => {
             req.myRequestParams;
             res.myResponseParams;
             proxyRes.statusCode;
+            // @ts-expect-error upstream response does not have request properties
             proxyRes.myRequestParams;
           },
           econnreset(error, req, res, target) {
@@ -452,6 +467,20 @@ describe('http-proxy-middleware TypeScript Types', () => {
               res.unknownProperty;
 
               res.status(200).send('OK');
+            });
+            proxyServer.on('proxyRes', (proxyRes, req, res) => {
+              req.params;
+              res.status(200).send('OK');
+              proxyRes.statusCode;
+              // @ts-expect-error upstream response is not an Express request
+              proxyRes.params;
+            });
+            proxyServer.on('end', (req, res, proxyRes) => {
+              req.params;
+              res.status(200).send('OK');
+              proxyRes.statusCode;
+              // @ts-expect-error upstream response is not an Express request
+              proxyRes.params;
             });
           },
         ],
@@ -529,6 +558,88 @@ describe('http-proxy-middleware TypeScript Types', () => {
           req.unknownProperty;
           // @ts-expect-error: should error when response is typed as `any`
           res.unknownProperty;
+        });
+      });
+
+      expect(myPlugin).toBeDefined();
+    });
+
+    it('should inherit event types in plugins with custom request and response types', () => {
+      interface MyRequest extends http.IncomingMessage {
+        myRequestParams: { id: string };
+      }
+
+      interface MyResponse extends http.ServerResponse {
+        myResponseParams: { id: string };
+      }
+
+      const myPlugin = definePlugin<MyRequest, MyResponse>((proxyServer) => {
+        proxyServer.on('error', (error, req, res, target) => {
+          expectTypeOf(error).toEqualTypeOf<Error>();
+          expectTypeOf(req).toEqualTypeOf<MyRequest | undefined>();
+          expectTypeOf(res).toEqualTypeOf<MyResponse | net.Socket | undefined>();
+          expectTypeOf(target).toEqualTypeOf<ProxyTarget | undefined>();
+        });
+
+        proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
+          expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          expectTypeOf(res).toEqualTypeOf<MyResponse>();
+          expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
+        });
+
+        proxyServer.on('proxyReqWs', (proxyReq, req, socket, options, head) => {
+          expectTypeOf(proxyReq).toEqualTypeOf<http.ClientRequest>();
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          expectTypeOf(socket).toEqualTypeOf<net.Socket>();
+          expectTypeOf(options).toEqualTypeOf<ProxyServerOptions>();
+          expectTypeOf(head).toEqualTypeOf<
+            ProxyServerEventMap<MyRequest, MyResponse>['proxyReqWs'][4]
+          >();
+        });
+
+        proxyServer.on('proxyRes', (proxyRes, req, res) => {
+          expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          expectTypeOf(res).toEqualTypeOf<MyResponse>();
+          // @ts-expect-error upstream response does not have request properties
+          proxyRes.myRequestParams;
+        });
+
+        proxyServer.on('open', (socket) => {
+          expectTypeOf(socket).toEqualTypeOf<net.Socket>();
+        });
+
+        proxyServer.on('close', (proxyRes, socket, head) => {
+          // FIXME: httpxy types the upstream response as the incoming request.
+          expectTypeOf(proxyRes).toEqualTypeOf<
+            ProxyServerEventMap<MyRequest, MyResponse>['close'][0]
+          >();
+          expectTypeOf(socket).toEqualTypeOf<net.Socket>();
+          expectTypeOf(head).toEqualTypeOf<
+            ProxyServerEventMap<MyRequest, MyResponse>['close'][2]
+          >();
+        });
+
+        proxyServer.on('start', (req, res, target) => {
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          expectTypeOf(res).toEqualTypeOf<MyResponse>();
+          expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
+        });
+
+        proxyServer.on('end', (req, res, proxyRes) => {
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          expectTypeOf(res).toEqualTypeOf<MyResponse>();
+          expectTypeOf(proxyRes).toEqualTypeOf<http.IncomingMessage>();
+          // @ts-expect-error upstream response does not have request properties
+          proxyRes.myRequestParams;
+        });
+
+        proxyServer.on('econnreset', (error, req, res, target) => {
+          expectTypeOf(error).toEqualTypeOf<Error>();
+          expectTypeOf(req).toEqualTypeOf<MyRequest>();
+          expectTypeOf(res).toEqualTypeOf<MyResponse>();
+          expectTypeOf(target).toEqualTypeOf<ProxyTarget>();
         });
       });
 

@@ -51,11 +51,11 @@ export interface OnProxyEvent<
     options: ProxyServerOptions,
     head: Buffer,
   ) => void;
-  proxyRes?: (proxyRes: TReq, req: TReq, res: TRes) => void | Promise<void>;
+  proxyRes?: (proxyRes: http.IncomingMessage, req: TReq, res: TRes) => void | Promise<void>;
   open?: (proxySocket: net.Socket) => void;
-  close?: (proxyRes: TReq, proxySocket: net.Socket, proxyHead: Buffer) => void;
+  close?: (proxyRes: http.IncomingMessage, proxySocket: net.Socket, proxyHead: Buffer) => void;
   start?: (req: TReq, res: TRes, target: ProxyTarget) => void;
-  end?: (req: TReq, res: TRes, proxyRes: TReq) => void;
+  end?: (req: TReq, res: TRes, proxyRes: http.IncomingMessage) => void;
   econnreset?: (err: Error, req: TReq, res: TRes, target: ProxyTarget) => void;
 }
 
