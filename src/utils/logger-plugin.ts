@@ -1,20 +1,24 @@
-import type { Agent, ClientRequest } from 'node:http';
+import { parseAgentName } from './parse-agent-name.js';
 
 export type RequestWithPortInfo = {
-  agent?: Pick<Agent, 'sockets'> | null;
-  socket?: Pick<NonNullable<ClientRequest['socket']>, 'remotePort'> | null;
+  agent?: { sockets?: unknown } | null;
+  socket?: object | null;
 };
 
 export function getPorts(request?: RequestWithPortInfo): {
-  remotePort: string | undefined;
   targetPort: string | undefined;
 } {
+  let targetPort: string | undefined;
   const sockets = request?.agent?.sockets;
-  const remotePort = request?.socket?.remotePort?.toString();
-  const targetPort =
-    Object.keys(sockets || {})?.[0]
-      ?.split(':')
-      ?.at(-2) || undefined;
 
-  return { remotePort, targetPort };
+  if (request?.socket && sockets && typeof sockets === 'object') {
+    for (const [name, agentSockets] of Object.entries(sockets)) {
+      if (Array.isArray(agentSockets) && agentSockets.includes(request.socket)) {
+        targetPort = parseAgentName(name).port;
+        break;
+      }
+    }
+  }
+
+  return { targetPort };
 }

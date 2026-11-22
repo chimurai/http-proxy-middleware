@@ -52,11 +52,10 @@ export const loggerPlugin: Plugin = definePlugin<FrameworkRequest>((proxyServer,
 
     try {
       const proxyRequest = (proxyRes as IncomingMessage & { req: ClientRequest }).req;
-      const { targetPort, remotePort } = getPorts(proxyRequest);
-      const port = targetPort ?? remotePort;
+      const { targetPort } = getPorts(proxyRequest);
       const { protocol, host, path } = proxyRequest;
 
-      target = createUrl({ protocol, host, port, path });
+      target = createUrl({ protocol, host, port: targetPort, path });
       const targetUrl = target.toString();
 
       const exchange = `[HPM] ${req.method} ${originalUrl} -> ${targetUrl} [${proxyRes.statusCode}]`;
