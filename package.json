@@ -96,6 +96,7 @@
     "get-port": "7.2.0",
     "globals": "17.14.0",
     "hono": "4.13.19",
+    "https-proxy-agent": "7.0.6",
     "husky": "9.1.7",
     "lint-staged": "17.6.1",
     "mockttp": "4.6.5",

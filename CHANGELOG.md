@@ -3,6 +3,7 @@
 ## next
 
 - fix(logger-plugin): log target ipv6 port
+- fix(logger-plugin): log target port with agent config"
 
 ## [v4.2.2](https://github.com/chimurai/http-proxy-middleware/releases/tag/v4.2.2)
 

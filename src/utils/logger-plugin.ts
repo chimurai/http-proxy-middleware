@@ -1,14 +1,24 @@
-import type { ClientRequest } from 'node:http';
+import { parseAgentName } from './parse-agent-name.js';
 
-export type RequestWithSocketRemotePort = {
-  socket?: Pick<NonNullable<ClientRequest['socket']>, 'remotePort'> | null;
+export type RequestWithPortInfo = {
+  agent?: { sockets?: unknown } | null;
+  socket?: object | null;
 };
 
-/**
- * Returns the remote port of the request socket as a string.
- * If an agent connects through a proxy, this can be the proxy port, not the target port.
- * Returns undefined if the request, socket, or remote port is missing.
- */
-export function getPort(request?: RequestWithSocketRemotePort): string | undefined {
-  return request?.socket?.remotePort?.toString();
+export function getPorts(request?: RequestWithPortInfo): {
+  targetPort: string | undefined;
+} {
+  let targetPort: string | undefined;
+  const sockets = request?.agent?.sockets;
+
+  if (request?.socket && sockets && typeof sockets === 'object') {
+    for (const [name, agentSockets] of Object.entries(sockets)) {
+      if (Array.isArray(agentSockets) && agentSockets.includes(request.socket)) {
+        targetPort = parseAgentName(name).port;
+        break;
+      }
+    }
+  }
+
+  return { targetPort };
 }
